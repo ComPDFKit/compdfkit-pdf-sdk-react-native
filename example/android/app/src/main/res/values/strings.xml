@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ComPDFKit_RN</string>
+    <string name="app_permission_storage">Apply for SD card read and write permission</string>
+
+</resources>
