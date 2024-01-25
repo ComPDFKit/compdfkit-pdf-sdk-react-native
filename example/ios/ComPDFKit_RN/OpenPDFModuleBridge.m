@@ -17,7 +17,7 @@
 
 RCT_EXTERN_METHOD(openPDF:(NSString *) configurationJson)
 
-RCT_EXTERN_METHOD(openPDFByConfiguration:(NSString *)filePath password:(NSString *)password configurationJson:(NSString *)configurationJson)
+RCT_EXTERN_METHOD(openPDFByConfiguration:(NSURL *)filePath password:(NSString *)password configurationJson:(NSString *)configurationJson)
 
 @end
 

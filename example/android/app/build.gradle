@@ -53,7 +53,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -78,8 +78,8 @@ android {
         applicationId "com.compdfkit.pdfviewer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.12.0"
     }
     signingConfigs {
         debug {
@@ -101,9 +101,6 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
 dependencies {
@@ -114,9 +111,9 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    api 'com.compdf:compdfkit:1.11.0'
-    api 'com.compdf:compdfkit-ui:1.11.0'
-    api 'com.compdf:compdfkit-tools:1.11.0'
+    api 'com.compdf:compdfkit:1.12.0'
+    api 'com.compdf:compdfkit-ui:1.12.0'
+    api 'com.compdf:compdfkit-tools:1.12.0'
 
     api 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'

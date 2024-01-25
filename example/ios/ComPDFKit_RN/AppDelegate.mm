@@ -8,7 +8,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [CPDFKit verifyWithKey:@"YOUR_LICENSE_KEY_GOES_HERE"];
+  [CPDFKit verifyWithKey:@"YOUR_COMPDFKIT_LICENSE"];
 
   
   self.moduleName = @"ComPDFKit_RN";

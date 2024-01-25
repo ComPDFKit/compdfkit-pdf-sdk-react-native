@@ -23,7 +23,7 @@
 - [**Annotations**](https://www.compdf.com/pdf-sdk/annotations) component offers Note, Link, Free Text, Line, Square, Circle, Highlight, Underline, Squiggly, Strikeout, Stamp, Ink, Sound, and more.
 - [**Forms**](https://www.compdf.com/pdf-sdk/forms) component offers Push Button, Check Box, Radio Button, Text Field, Combo Box, List Box, Signature, and more.
 - [**Document Editor**](https://www.compdf.com/pdf-sdk/document-editor) component offers Split, Extract, Merge, Delete, Insert, Crop, Move, Rotate, Replace, and Exchange pages, etc.
-- [**Content Editor**](https://www.compdf.com/pdf-sdk/edit-pdf) component offers Copy, Resize, Change Colors, Text Alignment, etc.
+- [**Content Editor**](https://www.compdf.com/pdf-sdk/edit-pdf) component offers Copy, Resize, Change Colors, Text Alignment, Find and Replace, etc.
 - [**Security**](https://www.compdf.com/pdf-sdk/security) component offers Encrypt and Decrypt PDFs, Watermark, etc.
 
 If you want to know all the features that ComPDFKit SDK can offer, please see our [Feature List](https://www.compdf.com/pdf-sdk/features-list).
@@ -131,8 +131,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.11.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.11.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.12.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.12.0.podspec'
 
   # Enables Flipper.
   #
@@ -186,7 +186,7 @@ Let's create a simple app that integrates ComPDFKit for React Native.
 
 4. Add the ComPDFKit library and import the presented PDF document.
 
-#### Android
+#### For Android
 
 1. Open the **android/build.gradle** file located in the project root directory and add the `mavenCentral` repository:
 
@@ -220,9 +220,9 @@ open android/app/build.gradle
 ```diff
 dependencies {
     ...
-+    implementation 'com.compdf:compdfkit:1.11.0'
-+    implementation 'com.compdf:compdfkit-ui:1.11.0'
-+    implementation 'com.compdf:compdfkit-tools:1.11.0'
++    implementation 'com.compdf:compdfkit:1.12.0'
++    implementation 'com.compdf:compdfkit-ui:1.12.0'
++    implementation 'com.compdf:compdfkit-tools:1.12.0'
 }
 ```
 
@@ -243,8 +243,10 @@ dependencies {
     <!-- Required to read and write documents from device storage -->
 +    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 +    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
++    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
++    android:requestLegacyExternalStorage="true"
         ...>
         ...
         <!-- Please replace it with your ComPDFKit license -->
@@ -256,18 +258,7 @@ dependencies {
 </manifest>
 ```
 
-7. Enable `viewBinding` in the android node setting of `app/build.gradle`
-
-```groovy
-android {
-		...
-    buildFeatures {
-        viewBinding = true
-    }
-}
-```
-
-8. Copy the **pdf** folder and `res/layout` code from the sample project Android project to your project
+7. Copy the **pdf** folder  code from the sample project Android project to your project
 
 <img src="./Image/1-5.png" alt="1-5" width="70%" height="70%" />
 
@@ -283,172 +274,13 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
-10. Add `PDFActivity` in `AndroidManifest.xml` file
-
-```diff
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.projectname">
-  <application
-    ...>
-    ...
-+    <activity
-+              android:name=".pdf.PDFActivity"
-+              android:configChanges="keyboardHidden|orientation|screenSize"
-+              android:windowSoftInputMode="adjustPan"
-+              android:exported="true"/>
-
-    </activity>
-  </application>
-</manifest>
-```
-
-11. Copy the sample pdf file to the `assets` directory
+10. Copy the sample pdf file to the `assets` directory
 
 <img src="./Image/1-6.png" alt="1-6" width="40%" height="40%" />
 
 
 
-12. Open your `App.tsx` file:
-
-```bash
-open App.tsx
-```
-
-13. Replace the entire contents of `App.tsx` with the following code snippet:
-
-```js
-/**
- * Sample React Native App
- * @flow
- */
-
-
- import React, { Component } from 'react';
- import {
-   Platform,
-   StyleSheet,
-   Text,
-   View,
-   Button,
-   NativeModules
- } from 'react-native';
-
- var nativeModule = NativeModules.OpenNativeModule;
-
- const instructions = Platform.select({
-   ios: 'Press Cmd+R to reload,\n' +
-     'Cmd+D or shake for dev menu',
-   android: 'Double tap R on your keyboard to reload,\n' +
-     'Shake or press menu button for dev menu',
- });
-
- // set disable functionality:
- const configuration = {
-                         "modeConfig": {
-                           // setting the default display mode when opening
-                           // viewer、annotations、contentEditor、forms、digitalSignatures
-                           "initialViewMode": "viewer"
-                         },
-                         // top toolbar configuration:
-                         "toolbarConfig": {
-                           "androidAvailableActions": [
-                             "thumbnail",
-                             "search",
-                             "bota",
-                             "menu"
-                           ],
-                           // ios top toolbar left buttons
-                           "iosLeftBarAvailableActions":[
-                             "back",
-                             "thumbnail"
-                           ],
-                           // ios top toolbar right buttons
-                           "iosRightBarAvailableActions":[
-                             "search",
-                             "bota",
-                             "menu"
-                           ],
-                           "availableMenus": [
-                             "viewSettings",
-                             "documentEditor",
-                             "security",
-                             "watermark",
-                             "documentInfo",
-                             "save",
-                             "share",
-                             "openDocument"
-                           ]
-                         },
-                         // readerView configuration 
-                         "readerViewConfig": {
-                           "linkHighlight": true,
-                           "formFieldHighlight": true
-                         }
-                       };
- 
- type Props = {};
- export default class App extends Component<Props> {
-   render() {
-     return (
-       <View style={styles.container}>
-         <Text style={styles.welcome}>
-           Welcome to React Native!
-         </Text>
-         <Text style={styles.instructions}>
-           To get started, edit App.js
-         </Text>
-         <Text style={styles.instructions}>
-           {instructions}
-         </Text>
-         <Button
-           title={'Jump to the native page'}
-           onPress={() => {
-             this.jumpToNativeView();
-           }}
-         />
-       </View>
-     );
-   }
-   
-   jumpToNativeView() {
-     		// open example pdf 
-        NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
-     		// open local pdf file
-        // NativeModules.OpenPDFModule.openPDFByConfiguration(filePath, password, JSON.stringify(configuration))
-   }
- }
- 
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-     backgroundColor: '#F5FCFF',
-   },
-   welcome: {
-     fontSize: 20,
-     textAlign: 'center',
-     margin: 10,
-   },
-   instructions: {
-     textAlign: 'center',
-     color: '#333333',
-     marginBottom: 5,
-   },
- });
- 
-```
-
-14. Go to the **example** folder and the app is now ready to launch! Go back to the terminal.
-
-```bash
-//Run on Android devices
-npx react-native run-android
-```
-
-
-
-#### iOS
+#### For iOS
 
 1. Import the header file ***"ComPDFKit/ComPDFKit.h"*** to `AppDelegate.m`.
 
@@ -504,8 +336,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.11.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.11.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.12.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.12.0.podspec'
 
   # Enables Flipper.
   #
@@ -536,7 +368,7 @@ open ios/PDFView_RN.xcworkspace
 
 <img src="Image/1-1.png" width="80%" height="80%"/>
 
-8. Import resource file, `CPDFViewController` view controller that contains ready-to-use UI module implementations.
+8. Import resource file，***"OpenPDFModule.swift"*** is the bridging file for connecting React Native to the iOS native module.
 
 <img src="Image/1-2.png" alt="1-2" width="80%" height="80%"/>
 
@@ -566,140 +398,134 @@ open ios/PDFView_RN.xcworkspace
 <string>Your consent is required before you could access the function.</string>
 ```
 
-12. Open your `App.tsx` file:
+
+
+### Run Project
+
+1. Create an `assets` directory in the project's root directory and copy the **[configuration.json](./example/assets/configuration.json)** file from the demo to this directory.
+
+<img src="./Image/2-3-1.png" alt="2-3-1" style="zoom:33%;" />
+
+2. Open your `App.tsx` file:
 
 ```bash
 open App.tsx
 ```
 
-13. Replace the entire contents of `App.tsx` with the following code snippet:
+3. Replace the entire contents of `App.tsx` with the following code snippet:
 
 ```js
 /**
- * Sample React Native App
- * @flow
+ * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
  */
 
+import React, { Component } from 'react';
+import configuration from './assets/configuration.json';
+import DocumentPicker from 'react-native-document-picker'
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  NativeModules
+} from 'react-native';
 
- import React, { Component } from 'react';
- import {
-   Platform,
-   StyleSheet,
-   Text,
-   View,
-   Button,
-   NativeModules
- } from 'react-native';
 
- var nativeModule = NativeModules.OpenNativeModule;
+const instructions = Platform.select({
+  ios: 'Press Cmd+R to reload,\n' +
+    'Cmd+D or shake for dev menu',
+  android: 'Double tap R on your keyboard to reload,\n' +
+    'Shake or press menu button for dev menu',
+});
 
- const instructions = Platform.select({
-   ios: 'Press Cmd+R to reload,\n' +
-     'Cmd+D or shake for dev menu',
-   android: 'Double tap R on your keyboard to reload,\n' +
-     'Shake or press menu button for dev menu',
- });
 
- // set disable functionality:
- const configuration = {
-                         "modeConfig": {
-                           // setting the default display mode when opening
-                           // viewer、annotations、contentEditor、forms、digitalSignatures
-                           "initialViewMode": "viewer"
-                         },
-                         // top toolbar configuration:
-                         "toolbarConfig": {
-                           "androidAvailableActions": [
-                             "thumbnail",
-                             "search",
-                             "bota",
-                             "menu"
-                           ],
-                           // ios top toolbar left buttons
-                           "iosLeftBarAvailableActions":[
-                             "back",
-                             "thumbnail"
-                           ],
-                           // ios top toolbar right buttons
-                           "iosRightBarAvailableActions":[
-                             "search",
-                             "bota",
-                             "menu"
-                           ],
-                           "availableMenus": [
-                             "viewSettings",
-                             "documentEditor",
-                             "security",
-                             "watermark",
-                             "documentInfo",
-                             "save",
-                             "share",
-                             "openDocument"
-                           ]
-                         },
-                         // readerView configuration 
-                         "readerViewConfig": {
-                           "linkHighlight": true,
-                           "formFieldHighlight": true
-                         }
-                       };
- 
- type Props = {};
- export default class App extends Component<Props> {
-   render() {
-     return (
-       <View style={styles.container}>
-         <Text style={styles.welcome}>
-           Welcome to React Native!
-         </Text>
-         <Text style={styles.instructions}>
-           To get started, edit App.js
-         </Text>
-         <Text style={styles.instructions}>
-           {instructions}
-         </Text>
-         <Button
-           title={'Jump to the native page'}
-           onPress={() => {
-             this.jumpToNativeView();
-           }}
-         />
-       </View>
-     );
-   }
-   
-   jumpToNativeView() {
-     		// open example pdf 
-        NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
-     		// open local pdf file
-        // NativeModules.OpenPDFModule.openPDFByConfiguration(filePath, password, JSON.stringify(configuration))
-   }
- }
- 
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-     backgroundColor: '#F5FCFF',
-   },
-   welcome: {
-     fontSize: 20,
-     textAlign: 'center',
-     margin: 10,
-   },
-   instructions: {
-     textAlign: 'center',
-     color: '#333333',
-     marginBottom: 5,
-   },
- });
- 
+type Props = {};
+export default class App extends Component<Props> {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Welcome to React Native!
+        </Text>
+        <Text style={styles.instructions}>
+          To get started, edit App.tsx
+        </Text>
+        <Text style={styles.instructions}>
+          {instructions}
+        </Text>
+        <Button
+          title={'Open sample document'}
+          onPress={() => {
+            this.jumpToNativeView();
+          }}
+        />
+        <View style={{margin:5}}/>
+        <Button 
+          title={'pick document'}
+          onPress={() => {
+            try {
+              const pickerResult = DocumentPicker.pick({
+                type: [DocumentPicker.types.pdf]
+              });
+              pickerResult.then(res => {
+                if (Platform.OS == 'android') {
+                  // only android
+                  NativeModules.OpenPDFModule.openPDFByUri(res[0].uri, '', JSON.stringify(configuration))
+                } else {
+                  NativeModules.OpenPDFModule.openPDFByConfiguration(res[0].uri, '', JSON.stringify(configuration))
+                }
+              })
+            } catch (err) {
+            }
+          }}
+        />
+      </View>
+    );
+  }
+
+  jumpToNativeView() {
+    NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
+
+    // android: filePath, ios:URL
+    // NativeModules.OpenPDFModule.openPDFByConfiguration(filePath, password, JSON.stringify(configuration))
+
+    // only android platform
+    // NativeModules.OpenPDFModule.openPDFByUri(uriString, password, JSON.stringify(configuration))
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  }
+});
 ```
 
-14. Go to the **example** folder and the app is now ready to launch! Go back to the terminal.
+4. Go to the **example** folder and the app is now ready to launch! Go back to the terminal.
 
 ```bash
+//Run on Android devices
+npx react-native run-android
+
 //Run on iOS devices
 npx react-native run-ios
 ```
@@ -718,6 +544,9 @@ NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
 
 // Open the document in the specified path
 NativeModules.OpenPDFModule.openPDFByConfiguration(String filePath, String password, String configuration)
+
+// Opening a document using Uri on the Android platform.
+NativeModules.OpenPDFModule.openPDFByUri(String uriString, String password, String configuration)
 ```
 
 

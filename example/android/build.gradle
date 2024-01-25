@@ -26,3 +26,6 @@ buildscript {
         classpath("com.facebook.react:react-native-gradle-plugin")
     }
 }
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
