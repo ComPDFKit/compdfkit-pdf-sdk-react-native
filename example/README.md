@@ -1,132 +1,42 @@
-# 1 Overview
+# ComPDFKit React-Native PDF Library
 
-ComPDFKit for React Native is a comprehensive SDK that allows you to quickly add PDF fuctions to any React Native application, such as viewer, annotations, editing PDFs, forms and signatures.  
+## Overview
 
-More information can be found at [https://www.compdf.com/](https://www.compdf.com/)
+[ComPDFKit PDF SDK](https://www.compdf.com/) is a robust PDF library, which offers comprehensive functions for quickly viewing, annotating, editing, and signing PDFs. It is feature-rich and battle-tested, making PDF files process and manipulation easier and faster.
 
-
-
-## 1.1 ComPDFKit for React Native
-
-ComPDFKit for React Native consists of two elements.
-
-The two elements for ComPDFKit for React Native:
-
-- **PDF Core API**
-
-  The Core API can be used independently for document rendering, analysis, text extraction, text search, form filling, password security, annotation creation and manipulation, and much more.
-
-- **PDF View**
-
-  The PDF View is a utility class that provides the functionality for developers to interact with rendering PDF documents per their requirements. The View Control provides fast and high-quality rendering, zooming, scrolling, and page navigation features. The View Control is derived from platform-related viewer classes (e.g. `UIView` on iOS) and allows for extension to accommodate specific user needs.
+[ComPDFKit for React Native](https://www.compdf.com/react-native) allows you to quickly add PDF functions to any Flutter application, elevating your Android and iOS apps to ensure seamless and efficient development.   
 
 
 
-## 1.2 Key Features
+## Related
 
-**Viewer** 
-component offers:
+- [ComPDFKit PDF Library for iOS](https://github.com/ComPDFKit/PDF-SDK-iOS)
+- [ComPDFKit PDF Library for Android](https://github.com/ComPDFKit/PDF-SDK-Android)
+- ComPDFKit PDF SDK - [Flutter Library](https://pub.dev/packages/compdfkit_flutter)
+- [How to Build a React Native PDF Viewer](https://www.compdf.com/blog/build-a-react-native-pdf-viewer)
+- [React Native & ComPDFKit PDF SDK](https://www.compdf.com/blog/react-native-and-compdfkit-pdf-sdk)
+- [ComPDFKit API](https://api.compdf.com/api/pricing) allows you to get 1000 files processing monthly now! Just [sign up](https://api.compdf.com/signup) for a free trial and enjoy comprehensive PDF functions.
 
-- Standard page display modes, including Scrolling, Double Page, Crop Mode, and Cover Mode.
-- Navigation with thumbnails, outlines, and bookmarks.
-- Text search & selection.
-- Zoom in and out & Fit-page.
-- Switch between different themes, including Dark Mode, Sepia Mode, Reseda Mode, and Custom Color Mode.
-- Text reflow.
+## Key Features
 
-**Annotations** 
-component offers:
+- [**Viewer**](https://www.compdf.com/pdf-sdk/viewer) component offers Standard page display modes, Navigation, Text search & selection, Zoom in and out & Fit-page, Text reflow, and more.
+- [**Annotations**](https://www.compdf.com/pdf-sdk/annotations) component offers Note, Link, Free Text, Line, Square, Circle, Highlight, Underline, Squiggly, Strikeout, Stamp, Ink, Sound, and more.
+- [**Forms**](https://www.compdf.com/pdf-sdk/forms) component offers Push Button, Check Box, Radio Button, Text Field, Combo Box, List Box, Signature, and more.
+- [**Document Editor**](https://www.compdf.com/pdf-sdk/document-editor) component offers Split, Extract, Merge, Delete, Insert, Crop, Move, Rotate, Replace, and Exchange pages, etc.
+- [**Content Editor**](https://www.compdf.com/pdf-sdk/edit-pdf) component offers Copy, Resize, Change Colors, Text Alignment, Find and Replace, etc.
+- [**Security**](https://www.compdf.com/pdf-sdk/security) component offers Encrypt and Decrypt PDFs, Watermark, etc.
 
-- Create, edit, and remove annotations, including Note, Link, Free Text, Line, Square, Circle, Highlight, Underline, Squiggly, Strikeout, Stamp, Ink, and Sound.
-- Support for annotation appearances.
-- Import and export annotations to/from XFDF.
-- Support for annotation flattening.
-- Predefine annotations.
-
-**Forms** 
-component offers:
-
-- Create, edit and remove form fields, including Push Button, Check Box, Radio Button, Text Field, Combo Box, List Box, and Signature.
-- Fill PDF Forms.
-- Support for PDF form flattening.
-
-**Document Editor** 
-component offers:
-
-- PDF manipulation, including Split pages, Extract pages, and Merge pages.
-- Page edit, including Delete pages, Insert pages, Crop pages, Move pages, Rotate pages, Replace pages, and Exchange pages.
-- Document information setting.
-- Extract images.
-
-**Content Editor** 
-component offers:
-
-- Programmatically add and remove text in PDFs and make it possible to edit PDFs like Word. Allow selecting text to copy, resize, change colors, text alignment, and the position of text boxes.
-- Undo or redo any change.
-- Find and Replace.
-
-**Security** 
-
-component offers:
-
-- Encrypt and decrypt PDFs, including Permission setting and Password protected.
-
-**Watermark** 
-
-component offers:
-
-- Add, remove, edit, update, and get the watermarks.
-- Support text and image watermarks.
-
-**Digital Signatures** 
-
-component offers:
-
-- Sign PDF documents with digital signatures.
-- Create and verify digital certificates.
-- Create and verify digital digital signatures.
-- Create self-sign digital ID and edit signature appearance.
-- Support PKCS12 certificates.
-- Trust certificates.
+If you want to know all the features that ComPDFKit SDK can offer, please see our [Feature List](https://www.compdf.com/pdf-sdk/features-list).
 
 
 
-## 1.3 License
+## Get Started
 
-ComPDFKit for React Native is a commercial SDK, which requires a license to grant developer permission to release their apps. Each license is only valid for one `bundle ID` or `applicationId` in development mode. Other flexible licensing options are also supported, please contact [our marketing team](mailto:support@compdf.com) to know more.  However, any documents, sample code, or source code distribution from the released package of ComPDFKit to any third party is prohibited.
-
-To initialize ComPDFKit using a license key, call either of the following before using any other ComPDFKit APIs or features:
-
-To set the license key for Android , use:
-
-```xml
-<!-- Add this license in the AndroidManifest.xml of the main module --/>
-<meta-data
-    android:name="compdfkit_key"
-    android:value="{your ComPDFKit key}" />
-```
-
-To set the license key for iOS, use:
-
-```objective-c
-// Set your license key here. ComPDFKit is commercial software.
-  // Each ComPDFKit license is bound to a specific app bundle id.
-  // com.compdfkit.pdfviewer
-    
- [CPDFKit verifyWithKey:@"YOUR_LICENSE_KEY_GOES_HERE"];
-```
+It's easy to embed ComPDFKit into React Native applications with a few lines of code. The following sections describe the optimal systems and environments to support, as well as quick integration steps. Let's take a few minutes to get started.
 
 
 
-# 2 Get Started
-
-It's easy to embed ComPDFKit into React Native applications with a few lines of code. Let's take a few minutes to get started.
-
-The following sections describe the optimal systems and environments to support, as well as quick integration steps.
-
-
-
-## 2.1 Requirements
+### Requirements
 
 **Android**
 
@@ -134,7 +44,7 @@ Please install the following required packages:
 
 * A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
 
-* The [latest stable version of Android Studio](https://developer.android.com/studio)
+* [The latest stable version of Android Studio](https://developer.android.com/studio)
 
 * The [Android NDK](https://developer.android.com/studio/projects/install-ndk)
 
@@ -145,17 +55,15 @@ Operating Environment Requirements:
 * Android `minSdkVersion` of `21` or higher.
 * ComPDFKit SDK 1.9.0 or higher.
 
-
-
 **iOS**
 
 Please install the following required packages:
 
 * A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
 
-* The [latest stable version of Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+* [The latest stable version of Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
 
-* The [latest stable version of CocoaPods](https://github.com/CocoaPods/CocoaPods/releases). Follow the [CocoaPods installation guide](https://guides.cocoapods.org/using/getting-started.html#installation) to install it.
+* [The latest stable version of CocoaPods](https://github.com/CocoaPods/CocoaPods/releases). Follow the [CocoaPods installation guide](https://guides.cocoapods.org/using/getting-started.html#installation) to install it.
 
 Operating Environment Requirements:
 
@@ -165,125 +73,35 @@ Operating Environment Requirements:
 
 
 
-## 2.2 Creating a New Project
+### How to Run a Demo
 
-Let's create a simple app that integrates ComPDFKit for React Native.
+[ComPDFKit PDF SDK for React-Native](https://www.compdf.com/guides/pdf-sdk/react-native/overview) provides a complete functional demonstration, you can view the sample project in the **Example** folder.
 
-1. In the terminal app, change the current working directory to the location you wish to save your project. In this example, we’ll use the `~/Documents/` directory:
+1. Enter the sample project directory in the `terminal` software
 
-   ```bash
-   cd ~/Documents
-   ```
-
-2. Create the React Native project by running the following command:
-
-   ```bash
-   react-native init compdfkit_rn
-   ```
-
-3. In the terminal app, change the location of the current working directory inside the newly created project:
-
-   ```bash
-   cd compdfkit_rn
-   ```
-
-4. Add the ComPDFKit library and import the presented PDF document.
-
-### For Android
-
-Open the `android/build.gradle` file located in the project root directory and add the `mavenCentral` repository:
-
-```diff
-repositories {
-    google()
-+   mavenCentral()
-}
+```
+cd Downloads/compdfkit-sdk-pdf-react-native/example
 ```
 
-Open the app’s Gradle build file, `android/app/build.gradle`:
+2. Execute the `yarn install` command to obtain the software package
 
-```bash
-open android/app/build.gradle
+**Android**
+
+Execute the following command to run on the Android device
+
+```
+yarn android
 ```
 
-Modify the minimum SDK version, All this is done inside the `android` section:
+**iOS**
 
-```diff
- android {
-     defaultConfig {
--        minSdkVersion rootProject.ext.minSdkVersion
-+        minSdkVersion 21
-         ...
-     }
- }
-```
-
-Add ComPDFKit SDK inside the dependencies section:
-
-```diff
-dependencies {
-    ...
-+    implementation 'com.compdf:compdfkit:1.12.0'
-+    implementation 'com.compdf:compdfkit-ui:1.12.0'
-+    implementation 'com.compdf:compdfkit-tools:1.12.0'
-}
-```
-
-open  `android/app/src/main/AndroidManifest.xml` , add`ComPDFKit License` and `Storage Permission`：
-
-```diff
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.compdfkit.flutter.example">
-    
-    <!-- Required to read and write documents from device storage -->
-+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-
-    <application
-+    android:requestLegacyExternalStorage="true"
-        ...>
-        ...
-        <!-- Please replace it with your ComPDFKit license -->
-+        <meta-data
-+            android:name="compdfkit_key"
-+            android:value="{your license key}" />
-				...
-    </application>
-</manifest>
-```
-
-Copy the `pdf` folder code from the sample project Android project to your project
-
-<img src="./Image/1-5.png" alt="1-5" width="60%" height="60%" />
-
-Open the `MainApplication` file and fill in the following code in the `getPackages()` method
-
-```diff
-@Override
-protected List<ReactPackage> getPackages() {
-  @SuppressWarnings("UnnecessaryLocalVariable")
-  List<ReactPackage> packages = new PackageList(this).getPackages();
-+  packages.add(new PDFReactPackage());
-  return packages;
-}
-```
-
-Copy the sample pdf file to the `assets` directory
-
-<img src="./Image/1-6.png" alt="1-6" style="zoom:33%;" />
-
-
-
-### For iOS
-
-Open your project’s Podfile in a text editor:
+1. Open your project's Podfile in a text editor:
 
 ```bash
 open ios/Podfile
 ```
 
-Update the platform to iOS 11 and add the ComPDFKit Podspec:
+2. Update the platform to iOS 11 and add the ComPDFKit Podspec:
 
 ```diff
 require_relative '../node_modules/react-native/scripts/react_native_pods'
@@ -313,8 +131,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.12.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.12.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
 
   # Enables Flipper.
   #
@@ -329,37 +147,224 @@ target 'PDFView_RN' do
 end
 ```
 
-Go to the `compdfkit_rn/ios` folder and run the `pod install` command:
+3. Go to the **example/ios** folder and run the `pod install` command:
 
 ```bash
 pod install
 ```
 
-Open your project’s Workspace in Xcode:
+4. Go to the **example** folder and the app is now ready to launch! Go back to the terminal.
+
+```bash
+//Run on iOS emulator
+npx react-native run-ios
+```
+
+
+
+### Integrate into a new React-Native APP
+
+Let's create a simple app that integrates ComPDFKit for React Native.
+
+1. In the terminal app, change the current working directory to the location you wish to save your project. In this example, we’ll use the `~/Documents/` directory:
+
+   ```bash
+   cd ~/Documents
+   ```
+
+2. Create the React Native project by running the following command:
+
+   ```bash
+   react-native init compdfkit_rn
+   ```
+
+3. In the terminal app, change the location of the current working directory inside the newly created project:
+
+   ```bash
+   cd compdfkit_rn
+   ```
+
+4. Add the ComPDFKit library and import the presented PDF document.
+
+#### For Android
+
+1. Open the **android/build.gradle** file located in the project root directory and add the `mavenCentral` repository:
+
+```diff
+repositories {
+    google()
++   mavenCentral()
+}
+```
+
+2. Open the app's Gradle build file, `android/app/build.gradle`:
+
+```bash
+open android/app/build.gradle
+```
+
+3. Modify the minimum SDK version, All this is done inside the `android` section:
+
+```diff
+ android {
+     defaultConfig {
+-        minSdkVersion rootProject.ext.minSdkVersion
++        minSdkVersion 21
+         ...
+     }
+ }
+```
+
+4. Add ComPDFKit SDK inside the dependencies section:
+
+```diff
+dependencies {
+    ...
++    implementation 'com.compdf:compdfkit:1.13.0'
++    implementation 'com.compdf:compdfkit-ui:1.13.0'
++    implementation 'com.compdf:compdfkit-tools:1.13.0'
+}
+```
+
+5. Add Proguard Rules, In the **proguard-rules.pro** file, please add the obfuscation configuration information for `compdfkit` as follows:
+
+```
+-keep class com.compdfkit.ui.** {*;}
+-keep class com.compdfkit.core.** {*;}
+-keep class com.compdfkit.tools.** {*;}
+```
+
+6. open  **android/app/src/main/AndroidManifest.xml** , add  `Internet Permission`  and `Storage Permission`:
+
+```diff
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.compdfkit.flutter.example">
+    
++    <uses-permission android:name="android.permission.INTERNET"/>
+    
+    <!-- Required to read and write documents from device storage -->
++    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
++    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <application
++    android:requestLegacyExternalStorage="true"
+        ...>
+        ...
+    </application>
+</manifest>
+```
+
+7. Copy the **pdf** folder  code from the sample project Android project to your project
+
+<img src="./Image/1-5.png" alt="1-5" width="70%" height="70%" />
+
+9. Open the **MainApplication** file and fill in the following code in the `getPackages()` method
+
+```diff
+@Override
+protected List<ReactPackage> getPackages() {
+  @SuppressWarnings("UnnecessaryLocalVariable")
+  List<ReactPackage> packages = new PackageList(this).getPackages();
++  packages.add(new PDFReactPackage());
+  return packages;
+}
+```
+
+10. Copy the sample pdf file to the `assets` directory
+
+<img src="./Image/1-6.png" alt="1-6" width="40%" height="40%" />
+
+
+
+#### For iOS
+
+1. Open your project's Podfile in a text editor:
+
+
+```bash
+open ios/Podfile
+```
+
+2. Update the platform to iOS 11 and add the ComPDFKit Podspec:
+
+```diff
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+- platform :ios, '10.0'
++ platform :ios, '11.0'
+install! 'cocoapods', :deterministic_uuids => false
+
+target 'PDFView_RN' do
+  config = use_native_modules!
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  target 'PDFView_RNTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  use_flipper!()
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
+```
+
+3. Go to the **compdfkit_rn/ios** folder and run the `pod install` command:
+
+```bash
+pod install
+```
+
+**Note:** If SSL network requests fail to download the `ComPDFKit` library when you run `pod install`, you can see the processing method in [Troubleshooting](#Troubleshooting).
+
+4. Open your project's Workspace in Xcode:
 
 ```bash
 open ios/PDFView_RN.xcworkspace	
 ```
 
-Make sure the deployment target is set to 10.0 or higher:
+5. Make sure the deployment target is set to 10.0 or higher:
 
-![](Image/1-1.png)
+<img src="Image/1-1.png" width="80%" height="80%"/>
 
-Import resource file，***"OpenPDFModule.swift"*** is the bridging file for connecting React Native to the iOS native module.
+6. Import resource file，***"OpenPDFModule.swift"*** is the bridging file for connecting React Native to the iOS native module.
 
-![1-2](Image/1-2.png)
+<img src="Image/1-2.png" alt="1-2" width="80%" height="80%"/>
 
-Search for **bridging** in the **Build Settings** and locate the **Objective-C Bridging Header** option. Then, enter the file path of the header file ***"ComPDFKit_RN-Bridging-Header.h"***: 
+7. Search for **bridging** in the **Build Settings** and locate the **Objective-C Bridging Header** option. Then, enter the file path of the header file ***"ComPDFKit_RN-Bridging-Header.h"***: 
 
-![1-9](Image/1-9.png)
+<img src="Image/1-9.png" alt="1-9" width="80%" height="80%"/>
 
-Add the PDF document you want to display to your application by dragging it into your project. On the dialog that’s displayed, select Finish to accept the default integration options. You can use "developer_guide_ios.pdf" as an example.
+8. Add the PDF document you want to display to your application by dragging it into your project. On the dialog that's displayed, select Finish to accept the default integration options. You can use "developer_guide_ios.pdf" as an example.
 
-<img src="Image/1-7.png" style="zoom:50%;" />
+<img src="Image/1-7.png" width="80%" height="80%" />
 
-To protect user privacy, before accessing the sensitive privacy data, you need to find the ***"Info"*** configuration in your iOS 10.0 or higher iOS project and configure the relevant privacy terms as shown in the following picture.
+9. To protect user privacy, before accessing the sensitive privacy data, you need to find the ***"Info"*** configuration in your iOS 10.0 or higher iOS project and configure the relevant privacy terms as shown in the following picture.
 
-<img src="Image/1-8.png" style="zoom:50%;" />
+<img src="Image/1-8.png" width="80%" height="80%" />
 
 ```objective-c
 <key>NSCameraUsageDescription</key>
@@ -373,13 +378,53 @@ To protect user privacy, before accessing the sensitive privacy data, you need t
 
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Your consent is required before you could access the function.</string>
+  
+<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+	<true/>
+</dict>
 ```
 
+### Apply the License Key
 
+ComPDFKit for React Native is a commercial SDK, which requires a license to grant developer permission to release their apps. Each license is only valid for one `bundle ID` or `applicationId` in development mode. Other flexible licensing options are also supported, please contact [our marketing team](mailto:support@compdf.com) to know more.
 
-## 2.3 Run Project
+To initialize ComPDFKit using a license key, call either of the following before using any other ComPDFKit APIs or features:
 
-1. Create an `assets` directory in the project's root directory and copy the **[configuration.json](./assets/configuration.json)** file from the demo to this directory.
+* **Online license**
+
+```tsx
+type Props = {};
+export default class App extends Component<Props> {
+	...
+  
+  componentDidMount(){
+    // Fill in your online license
+    NativeModules.OpenPDFModule.initialize('your android platform compdfkit license', 'your ios platform compdfkit license')
+  }
+  // ...
+}
+```
+
+* **Offline license**
+
+```tsx
+type Props = {};
+export default class App extends Component<Props> {
+	...
+  
+  componentDidMount(){
+    // Fill in your offline license
+    NativeModules.OpenPDFModule.init_('your compdfkit license')
+  }
+  // ...
+}
+```
+
+### Run Project
+
+1. Create an `assets` directory in the project's root directory and copy the **[configuration.json](./example/assets/configuration.json)** file from the demo to this directory.
 
 <img src="./Image/2-3-1.png" alt="2-3-1" style="zoom:33%;" />
 
@@ -424,6 +469,15 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+  
+   componentDidMount(){
+      // Fill in your online license
+         NativeModules.OpenPDFModule.initialize('your android platform compdfkit license', 'your ios platform compdfkit license')
+    
+      // Fill in your offline license
+      // NativeModules.OpenPDFModule.init_('your compdfkit license')
+  }
+  
   render() {
     return (
       <View style={styles.container}>
@@ -497,27 +551,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-7. We have provided two quick ways to open PDFs:
-
-- Open the default document directly
-
-```tsx
-NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
-```
-
-- Open the document in the specified path
-
-```tsx
-NativeModules.OpenPDFModule.openPDFByConfiguration(String filePath, String password, String configuration)
-```
-
-* Opening a document using Uri on the Android platform.
-
-```tsx
-NativeModules.OpenPDFModule.openPDFByUri(String uriString, String password, String configuration)
-```
-
-The app is now ready to launch! Go back to the terminal.
+4. Go to the **example** folder and the app is now ready to launch! Go back to the terminal.
 
 ```bash
 //Run on Android devices
@@ -529,354 +563,99 @@ npx react-native run-ios
 
 
 
-# 3 UI Customization
+## Example APP
 
-In version **1.12.0**, we have expanded the options defined in the **[configuration.json](./assets/configuration.json)**. When using the `NativeModules.OpenPDFModule.openPDFByConfiguration` method to open a PDF view, you can define the JSON content to meet your product requirements. We will continue to enrich the configuration options in the future to further enhance the flexibility of the product. Here are some examples of commonly used configuration options:
+To see [ComPDFKit for React-Native](https://www.compdf.com/contact-sales) in action, check out our [React-Native example app](./example)
 
-The following only shows the key parts of the example. Please pass in the complete json content when using it.
+Showing a PDF document inside your React-Native app is as simple as this:
 
-1. Set the initial display mode and the list of available modes. The following code shows enabling only the viewer mode and annotations mode:
+```tsx
+// Open the default document directly
+NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
 
-```json
-{
-  "modeConfig": {
-    "initialViewMode": "viewer",
-    "availableViewModes": [
-      "viewer",
-      "annotations"
-    ]
-  },
-  ... // other options
-}
+// Open the document in the specified path
+// The ios platform can use this method to pass in the url string
+NativeModules.OpenPDFModule.openPDFByConfiguration(String filePath, String password, String configuration)
+
+// Opening a document using Uri on the Android platform.
+NativeModules.OpenPDFModule.openPDFByUri(String uriString, String password, String configuration)
 ```
 
-2. Set the list of enabled annotation types and default annotation attribute values. For example, enable only highlight annotations and set the color and transparency for highlight annotations:
 
-```json
-{
-  "annotationsConfig": {
-    "availableTypes": [
-      "note"
-    ],
-    "availableTools": [
-      "setting",
-      "undo",
-      "redo"
-    ],
-    "initAttribute": {
-      "note": {
-        "color": "#1460F3",
-        "alpha": 255
-      }
-    }
-  }
-  ... // other options
-}
+
+## Troubleshooting
+
+1.SSL network request to download 'ComPDFKit' library failed when cocopods downloaded iOS third-party library
+
+If SSL network requests fail to download the `ComPDFKit` library when you run `pod install`, replace the third-party platform download address link of the ComPDFKit library and execute `pod install`
+
+```diff
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+- platform :ios, '10.0'
++ platform :ios, '11.0'
+install! 'cocoapods', :deterministic_uuids => false
+
+target 'PDFView_RN' do
+  config = use_native_modules!
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  target 'PDFView_RNTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  use_flipper!()
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
 ```
 
-3. Set the display mode and page flipping direction:
 
-```json
-{
-  "readerViewConfig": {
-    "displayMode": "doublePage",
-    "verticalMode": false
-  }
-  ... // other options
-}
-```
 
-The following is the complete [configuration](./assets/configuration.json) content with data description:
+## Support
 
-  ```json
-  {
-    "modeConfig": {
-      "initialViewMode": "viewer",	// When initializing the display mode, nsure that the selected mode exists in the availableViewModes. Otherwise, it will default to the viewer mode. Refer to the availableViewModes field for valid values.
-      "availableViewModes": [				// Only modes listed in the mode list will be displayed.
-        "viewer",
-        "annotations",
-        "contentEditor",
-        "forms",
-        "signatures"
-      ]
-    },
-    "toolbarConfig": {							// Top Toolbar Configuration
-      "androidAvailableActions": [
-        "thumbnail",
-        "search",
-        "bota",
-        "menu"
-      ],
-      "iosLeftBarAvailableActions": [
-        "back",
-        "thumbnail"
-      ],
-      "iosRightBarAvailableActions": [
-        "search",
-        "bota",
-        "menu"
-      ],
-      "availableMenus": [
-        "viewSettings",
-        "documentEditor",
-        "documentInfo",
-        "watermark",
-        "security",
-        "flattened",
-        "save",
-        "share",
-        "openDocument"
-      ]
-    },
-    "annotationsConfig": {			// Annotation Feature Configuration
-      "availableTypes": [				// List of enabled annotation types for the bottom annotation functionality
-        "note",
-        "highlight",
-        "underline",
-        "squiggly",
-        "strikeout",
-        "ink",
-        "pencil",								// only ios platform
-        "circle",
-        "square",
-        "arrow",
-        "line",
-        "freetext",
-        "signature",
-        "stamp",
-        "pictures",
-        "link",
-        "sound"
-      ],
-      "availableTools": [				// Annotation tools enabled for the bottom annotation functionality
-        "setting",
-        "undo",
-        "redo"
-      ],
-      "initAttribute": {				// Default properties for annotations upon initialization, influencing attributes such as color, transparency, etc., when adding annotations.
-        "note": {
-          "color": "#1460F3",
-          "alpha": 255					// Color transparency 0~255
-        },
-        "highlight": {
-          "color": "#1460F3",
-          "alpha": 77
-        },
-        "underline": {
-          "color": "#1460F3",
-          "alpha": 77
-        },
-        "squiggly": {
-          "color": "#1460F3",
-          "alpha": 77
-        },
-        "strikeout": {
-          "color": "#1460F3",
-          "alpha": 77
-        },
-        "ink": {
-          "color": "#1460F3",
-          "alpha": 100,
-          "borderWidth": 10
-        },
-        "square": {
-          "fillColor": "#1460F3",
-          "borderColor": "#000000",
-          "colorAlpha" : 128,
-          "borderWidth": 2,
-          "borderStyle": {
-            "style": "solid",				// Border line styles: solid, dashed
-            "dashGap": 0.0					// Dashed line interval length, applicable only when the style is set to 'dashed'.
-          }
-        },
-        "circle": {
-          "fillColor": "#1460F3",
-          "borderColor": "#000000",
-          "colorAlpha" : 128,
-          "borderWidth": 2,
-          "borderStyle": {
-            "style": "solid",
-            "dashGap": 0.0
-          }
-        },
-        "line": {
-          "borderColor": "#1460F3",
-          "borderAlpha": 100,
-          "borderWidth": 5,
-          "borderStyle": {
-            "style": "solid",
-            "dashGap": 0.0
-          }
-        },
-        "arrow": {
-          "borderColor": "#1460F3",
-          "borderAlpha": 100,
-          "borderWidth": 5,
-          "borderStyle": {
-            "style": "solid",
-            "dashGap": 0.0
-          },
-          "startLineType": "none",			// Starting arrow style options: none, openArrow, closedArrow, square, circle, diamond.
-          "tailLineType": "openArrow" 	// tail arrow style options
-        },
-        "freeText": {
-          "fontColor": "#000000",
-          "fontColorAlpha": 255,
-          "fontSize": 30,
-          "isBold": false,
-          "isItalic": false,
-          "alignment": "left",				// left, center, right
-          "typeface": "Helvetica"			// Courier, Helvetica, Times-Roman
-        }
-      }
-    },
-    "contentEditorConfig": {
-      "availableTypes": [
-        "editorText",
-        "editorImage"
-      ],
-      "availableTools": [
-        "setting",
-        "undo",
-        "redo"
-      ],
-      "initAttribute": {							// Default attributes for text type in content editing, influencing text properties when adding text.
-        "text": {
-          "fontColor": "#000000",
-          "fontColorAlpha" : 100,
-          "fontSize": 30,
-          "isBold": false,
-          "isItalic": false,
-          "typeface": "Times-Roman",	// Courier, Helvetica, Times-Roman
-          "alignment": "left"					// left, center, right
-        }
-      }
-    },
-    "formsConfig": {
-      "availableTypes": [							// Types of forms displayed in the list of the bottom form toolbar.
-        "textField",
-        "checkBox",
-        "radioButton",
-        "listBox",
-        "comboBox",
-        "signaturesFields",
-        "pushButton"
-      ],
-      "availableTools": [
-        "undo",
-        "redo"
-      ],
-      "initAttribute": {
-        "textField": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "fontColor": "#000000",
-          "fontSize": 20,
-          "isBold": false,
-          "isItalic": false,
-          "alignment": "left",				// left, center, right
-          "multiline": true,
-          "typeface": "Helvetica"			// Courier, Helvetica, Times-Roman
-        },
-        "checkBox": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "checkedColor": "#43474D",
-          "isChecked": false,
-          "checkedStyle": "check"			// check, circle, cross, diamond, square, star
-        },
-        "radioButton": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "checkedColor": "#43474D",
-          "isChecked": false,
-          "checkedStyle": "circle"		// check, circle, cross, diamond, square, star
-        },
-        "listBox": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "fontColor": "#000000",
-          "fontSize": 20,
-          "typeface": "Helvetica",		// Courier, Helvetica, Times-Roman
-          "isBold": false,
-          "isItalic": false
-        },
-        "comboBox": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "fontColor": "#000000",
-          "fontSize": 20,
-          "typeface": "Helvetica",		// Courier, Helvetica, Times-Roman
-          "isBold": false,
-          "isItalic": false
-        },
-        "pushButton": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#1460F3",
-          "borderWidth": 2,
-          "fontColor": "#000000",
-          "fontSize": 20,
-          "title": "Button",
-          "typeface": "Helvetica",		// Courier, Helvetica, Times-Roman
-          "isBold": false,
-          "isItalic": false
-        },
-        "signaturesFields": {
-          "fillColor": "#DDE9FF",
-          "borderColor": "#000000",
-          "borderWidth": 2
-        }
-      }
-    },
-    "readerViewConfig": {
-      "linkHighlight": true,
-      "formFieldHighlight": true,
-      "displayMode": "singlePage",		// singlePage, doublePage, coverPage
-      "continueMode": true,
-      "verticalMode": true,
-      "cropMode": false,
-      "themes" : "light",							// light, dark, sepia, reseda
-      "enableSliderBar": true,
-      "enablePageIndicator": true,
-      "pageSpacing": 10,
-      "pageScale": 1.0
-    }
-  }
-  ```
+[ComPDFKit](https://www.compdf.com/) has a professional R&D team that produces comprehensive technical documentation and guides to help developers. Also, you can get an immediate response when reporting your problems to our support team.
+
+- For detailed information, please visit our [Guides](https://www.compdf.com/guides/pdf-sdk/flutter/overview) page.
+- Stay updated with the latest improvements through our [Changelog](https://www.compdf.com/pdf-sdk/changelog-flutter).
+- For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support).
+- To get more details and an accurate quote, please contact our [Sales Team](https://compdf.com/contact-us).
 
 
 
-# 4 Support
+## License
+
+ComPDFKit PDF SDK supports flexible licensing options, please contact [our sales team](mailto:support@compdf.com) to know more. Each license is only valid for one application ID in development mode. However, any documents, sample code, or source code distribution from the released package of ComPDFKit PDF SDK to any third party is prohibited.
 
 
 
-## 4.1 Reporting Problems
+## Note
 
-Thank you for your interest in ComPDFKit PDF SDK, the only easy-to-use but powerful development solution to integrate high quality PDF rendering capabilities to your applications. If you encounter any technical questions or bug issues when using ComPDFKit PDF SDK for React Native, please submit the problem report to the ComPDFKit team. More information as follows would help us to solve your problem:
+We are glad to announce that you can register a ComPDFKit API account for a [free trial](https://api.compdf.com/api/pricing) to process 1000 documents per month for free.
 
-- ComPDFKit PDF SDK product and version.
-- Your operating system and IDE version.
-- Detailed descriptions of the problem.
-- Any other related information, such as an error screenshot.
+Thanks, 
 
-
-
-## 4.2 Contact Information
-
-**Home Link:**
-
-[https://www.compdf.com](https://www.compdf.com)
-
-**Support & General Contact:**
-
-Email: support@compdf.com
-
-
-
-Thanks,
 The ComPDFKit Team

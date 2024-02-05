@@ -252,6 +252,7 @@
     "enableSliderBar": true,
     "enablePageIndicator": true,
     "pageSpacing": 10,
-    "pageScale": 1.0
+    "pageScale": 1.0,
+    "pageSameWidth": true
   }
 }

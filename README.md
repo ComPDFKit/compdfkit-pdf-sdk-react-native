@@ -131,8 +131,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.12.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.12.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
 
   # Enables Flipper.
   #
@@ -220,9 +220,9 @@ open android/app/build.gradle
 ```diff
 dependencies {
     ...
-+    implementation 'com.compdf:compdfkit:1.12.0'
-+    implementation 'com.compdf:compdfkit-ui:1.12.0'
-+    implementation 'com.compdf:compdfkit-tools:1.12.0'
++    implementation 'com.compdf:compdfkit:1.13.0'
++    implementation 'com.compdf:compdfkit-ui:1.13.0'
++    implementation 'com.compdf:compdfkit-tools:1.13.0'
 }
 ```
 
@@ -234,11 +234,13 @@ dependencies {
 -keep class com.compdfkit.tools.** {*;}
 ```
 
-6. open  **android/app/src/main/AndroidManifest.xml** , add `ComPDFKit License` and `Storage Permission`:
+6. open  **android/app/src/main/AndroidManifest.xml** , add  `Internet Permission`  and `Storage Permission`:
 
 ```diff
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.compdfkit.flutter.example">
+    
++    <uses-permission android:name="android.permission.INTERNET"/>
     
     <!-- Required to read and write documents from device storage -->
 +    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -249,11 +251,6 @@ dependencies {
 +    android:requestLegacyExternalStorage="true"
         ...>
         ...
-        <!-- Please replace it with your ComPDFKit license -->
-+        <meta-data
-+            android:name="compdfkit_key"
-+            android:value="{your license key}" />
-				...
     </application>
 </manifest>
 ```
@@ -282,31 +279,14 @@ protected List<ReactPackage> getPackages() {
 
 #### For iOS
 
-1. Import the header file ***"ComPDFKit/ComPDFKit.h"*** to `AppDelegate.m`.
+1. Open your project's Podfile in a text editor:
 
-2. Follow the code below and call the method `CPDFKit verifyWithKey:@"LICENSE_KEY"` in `- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions`. You need to replace the **LICENSE_KEY** with the license you obtained.
-
-```objc
-#import <ComPDFKit/ComPDFKit.h>
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  // Set your license key here. ComPDFKit is commercial software.
-  // Each ComPDFKit license is bound to a specific app bundle id.
-  // com.compdfkit.pdfviewer
-    
-    [CPDFKit verifyWithKey:@"YOUR_LICENSE_KEY_GOES_HERE"];
-    
-    return YES;
-}
-```
-
-3. Open your project's Podfile in a text editor:
 
 ```bash
 open ios/Podfile
 ```
 
-4. Update the platform to iOS 11 and add the ComPDFKit Podspec:
+2. Update the platform to iOS 11 and add the ComPDFKit Podspec:
 
 ```diff
 require_relative '../node_modules/react-native/scripts/react_native_pods'
@@ -336,8 +316,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.12.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.12.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
 
   # Enables Flipper.
   #
@@ -352,35 +332,37 @@ target 'PDFView_RN' do
 end
 ```
 
-5. Go to the **compdfkit_rn/ios** folder and run the `pod install` command:
+3. Go to the **compdfkit_rn/ios** folder and run the `pod install` command:
 
 ```bash
 pod install
 ```
 
-6. Open your project's Workspace in Xcode:
+**Note:** If SSL network requests fail to download the `ComPDFKit` library when you run `pod install`, you can see the processing method in [Troubleshooting](#Troubleshooting).
+
+4. Open your project's Workspace in Xcode:
 
 ```bash
 open ios/PDFView_RN.xcworkspace	
 ```
 
-7. Make sure the deployment target is set to 10.0 or higher:
+5. Make sure the deployment target is set to 10.0 or higher:
 
 <img src="Image/1-1.png" width="80%" height="80%"/>
 
-8. Import resource file，***"OpenPDFModule.swift"*** is the bridging file for connecting React Native to the iOS native module.
+6. Import resource file，***"OpenPDFModule.swift"*** is the bridging file for connecting React Native to the iOS native module.
 
 <img src="Image/1-2.png" alt="1-2" width="80%" height="80%"/>
 
-9. Search for **bridging** in the **Build Settings** and locate the **Objective-C Bridging Header** option. Then, enter the file path of the header file ***"ComPDFKit_RN-Bridging-Header.h"***: 
+7. Search for **bridging** in the **Build Settings** and locate the **Objective-C Bridging Header** option. Then, enter the file path of the header file ***"ComPDFKit_RN-Bridging-Header.h"***: 
 
 <img src="Image/1-9.png" alt="1-9" width="80%" height="80%"/>
 
-10. Add the PDF document you want to display to your application by dragging it into your project. On the dialog that's displayed, select Finish to accept the default integration options. You can use "developer_guide_ios.pdf" as an example.
+8. Add the PDF document you want to display to your application by dragging it into your project. On the dialog that's displayed, select Finish to accept the default integration options. You can use "developer_guide_ios.pdf" as an example.
 
 <img src="Image/1-7.png" width="80%" height="80%" />
 
-11. To protect user privacy, before accessing the sensitive privacy data, you need to find the ***"Info"*** configuration in your iOS 10.0 or higher iOS project and configure the relevant privacy terms as shown in the following picture.
+9. To protect user privacy, before accessing the sensitive privacy data, you need to find the ***"Info"*** configuration in your iOS 10.0 or higher iOS project and configure the relevant privacy terms as shown in the following picture.
 
 <img src="Image/1-8.png" width="80%" height="80%" />
 
@@ -396,9 +378,49 @@ open ios/PDFView_RN.xcworkspace
 
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Your consent is required before you could access the function.</string>
+  
+<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+	<true/>
+</dict>
 ```
 
+### Apply the License Key
 
+ComPDFKit for React Native is a commercial SDK, which requires a license to grant developer permission to release their apps. Each license is only valid for one `bundle ID` or `applicationId` in development mode. Other flexible licensing options are also supported, please contact [our marketing team](mailto:support@compdf.com) to know more.
+
+To initialize ComPDFKit using a license key, call either of the following before using any other ComPDFKit APIs or features:
+
+* **Online license**
+
+```tsx
+type Props = {};
+export default class App extends Component<Props> {
+	...
+  
+  componentDidMount(){
+    // Fill in your online license
+    NativeModules.OpenPDFModule.initialize('your android platform compdfkit license', 'your ios platform compdfkit license')
+  }
+  // ...
+}
+```
+
+* **Offline license**
+
+```tsx
+type Props = {};
+export default class App extends Component<Props> {
+	...
+  
+  componentDidMount(){
+    // Fill in your offline license
+    NativeModules.OpenPDFModule.init_('your compdfkit license')
+  }
+  // ...
+}
+```
 
 ### Run Project
 
@@ -447,6 +469,15 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+  
+   componentDidMount(){
+      // Fill in your online license
+         NativeModules.OpenPDFModule.initialize('your android platform compdfkit license', 'your ios platform compdfkit license')
+    
+      // Fill in your offline license
+      // NativeModules.OpenPDFModule.init_('your compdfkit license')
+  }
+  
   render() {
     return (
       <View style={styles.container}>
@@ -543,10 +574,63 @@ Showing a PDF document inside your React-Native app is as simple as this:
 NativeModules.OpenPDFModule.openPDF(JSON.stringify(configuration))
 
 // Open the document in the specified path
+// The ios platform can use this method to pass in the url string
 NativeModules.OpenPDFModule.openPDFByConfiguration(String filePath, String password, String configuration)
 
 // Opening a document using Uri on the Android platform.
 NativeModules.OpenPDFModule.openPDFByUri(String uriString, String password, String configuration)
+```
+
+
+
+## Troubleshooting
+
+1.SSL network request to download 'ComPDFKit' library failed when cocopods downloaded iOS third-party library
+
+If SSL network requests fail to download the `ComPDFKit` library when you run `pod install`, replace the third-party platform download address link of the ComPDFKit library and execute `pod install`
+
+```diff
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+- platform :ios, '10.0'
++ platform :ios, '11.0'
+install! 'cocoapods', :deterministic_uuids => false
+
+target 'PDFView_RN' do
+  config = use_native_modules!
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  target 'PDFView_RNTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  use_flipper!()
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
 ```
 
 

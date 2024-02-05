@@ -2,7 +2,7 @@
 //  OpenPDFModule.swift
 //  ComPDFKit_RN
 //
-//  Copyright © 2014-2023 PDF Technologies, Inc. All Rights Reserved.
+//  Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -48,6 +48,22 @@ class OpenPDFModule: NSObject, CPDFViewBaseControllerDelete {
       let nav = CNavigationController(rootViewController: pdfViewController)
       nav.modalPresentationStyle = .fullScreen
       rootNav?.present(nav, animated: true)
+    }
+  }
+  
+  @objc(init_:)
+  func init_(_ license: String) {
+    DispatchQueue.main.async {
+      CPDFKit.verify(withKey: license)
+    }
+  }
+  
+  @objc(initialize: iosOnlineLicense:)
+  func initialize(_ androidOnlineLicense: String, iosOnlineLicense: String) {
+    DispatchQueue.main.async {
+      CPDFKit.verify(withOnlineLicense: iosOnlineLicense) { code, message in
+        print("Code: \(code), Message:\(String(describing: message))")
+      }
     }
   }
   

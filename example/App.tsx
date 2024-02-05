@@ -30,6 +30,12 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+
+  componentDidMount(){
+    // offline auth
+    NativeModules.OpenPDFModule.init_('your compdfkit key')
+  }
+
   render() {
     return (
       <View style={styles.container}>

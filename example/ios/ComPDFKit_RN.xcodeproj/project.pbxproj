@@ -549,7 +549,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.pdfviewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
 				PRODUCT_NAME = ComPDFKit_RN;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
