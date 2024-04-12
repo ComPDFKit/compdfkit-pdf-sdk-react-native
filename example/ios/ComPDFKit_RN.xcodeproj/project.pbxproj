@@ -15,6 +15,7 @@
 		7699B88040F8A987B510C191 /* libPods-ComPDFKit_RN-ComPDFKit_RNTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-ComPDFKit_RN-ComPDFKit_RNTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C93DCBED2AD6A52600DD0409 /* developer_guide_ios.pdf in Resources */ = {isa = PBXBuildFile; fileRef = C93DCBEA2AD6A52400DD0409 /* developer_guide_ios.pdf */; };
+		C9A635682BC8DFB5009F53FC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9A635662BC8DFB5009F53FC /* Localizable.strings */; };
 		C9E0B3F22B186DA600E8855B /* OpenPDFModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B3EF2B186DA600E8855B /* OpenPDFModuleBridge.m */; };
 		C9E0B3F42B186DED00E8855B /* OpenPDFModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B3F32B186DED00E8855B /* OpenPDFModule.swift */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ComPDFKit_RN/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-ComPDFKit_RN-ComPDFKit_RNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ComPDFKit_RN-ComPDFKit_RNTests.release.xcconfig"; path = "Target Support Files/Pods-ComPDFKit_RN-ComPDFKit_RNTests/Pods-ComPDFKit_RN-ComPDFKit_RNTests.release.xcconfig"; sourceTree = "<group>"; };
 		C93DCBEA2AD6A52400DD0409 /* developer_guide_ios.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = developer_guide_ios.pdf; sourceTree = "<group>"; };
+		C9A635672BC8DFB5009F53FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C9A635692BC8DFC6009F53FC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C9E0B3ED2B186DA600E8855B /* ComPDFKit_RN-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ComPDFKit_RN-Bridging-Header.h"; path = "ComPDFKit_RN/ComPDFKit_RN-Bridging-Header.h"; sourceTree = "<group>"; };
 		C9E0B3EF2B186DA600E8855B /* OpenPDFModuleBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenPDFModuleBridge.m; path = ComPDFKit_RN/OpenPDFModuleBridge.m; sourceTree = "<group>"; };
 		C9E0B3F02B186DA600E8855B /* OpenPDFModuleBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenPDFModuleBridge.h; path = ComPDFKit_RN/OpenPDFModuleBridge.h; sourceTree = "<group>"; };
@@ -104,6 +107,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				C9A635662BC8DFB5009F53FC /* Localizable.strings */,
 			);
 			name = ComPDFKit_RN;
 			sourceTree = "<group>";
@@ -231,6 +235,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -256,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				C9A635682BC8DFB5009F53FC /* Localizable.strings in Resources */,
 				C93DCBED2AD6A52600DD0409 /* developer_guide_ios.pdf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
@@ -443,6 +449,18 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		C9A635662BC8DFB5009F53FC /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9A635672BC8DFB5009F53FC /* en */,
+				C9A635692BC8DFC6009F53FC /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -503,7 +521,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.12.0;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				DEVELOPMENT_TEAM = 4GGQPGRTSV;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ComPDFKit_RN/Info.plist;
@@ -511,7 +529,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12.0;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -536,20 +554,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.12.0;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				DEVELOPMENT_TEAM = 4GGQPGRTSV;
 				INFOPLIST_FILE = ComPDFKit_RN/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12.0;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.pdfviewer;
 				PRODUCT_NAME = ComPDFKit_RN;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

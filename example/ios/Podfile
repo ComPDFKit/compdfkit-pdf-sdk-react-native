@@ -31,8 +31,8 @@ target 'ComPDFKit_RN' do
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-  pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
-  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.0.0.podspec'
+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.0.0.podspec'
 
   use_react_native!(
     :path => config[:reactNativePath],

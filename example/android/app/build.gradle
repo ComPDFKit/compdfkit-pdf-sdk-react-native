@@ -78,8 +78,8 @@ android {
         applicationId "com.compdfkit.pdfviewer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.13.0"
+        versionCode 5
+        versionName "2.0.0"
     }
     signingConfigs {
         debug {
@@ -111,9 +111,9 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    api 'com.compdf:compdfkit:1.13.0'
-    api 'com.compdf:compdfkit-ui:1.13.0'
-    api 'com.compdf:compdfkit-tools:1.13.0'
+    api 'com.compdf:compdfkit:2.0.0'
+    api 'com.compdf:compdfkit-ui:2.0.0'
+    api 'com.compdf:compdfkit-tools:2.0.0'
 
     api 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'

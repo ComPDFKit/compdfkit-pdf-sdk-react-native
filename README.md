@@ -131,8 +131,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.0.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.0.0.podspec'
 
   # Enables Flipper.
   #
@@ -220,9 +220,9 @@ open android/app/build.gradle
 ```diff
 dependencies {
     ...
-+    implementation 'com.compdf:compdfkit:1.13.0'
-+    implementation 'com.compdf:compdfkit-ui:1.13.0'
-+    implementation 'com.compdf:compdfkit-tools:1.13.0'
++    implementation 'com.compdf:compdfkit:2.0.0'
++    implementation 'com.compdf:compdfkit-ui:2.0.0'
++    implementation 'com.compdf:compdfkit-tools:2.0.0'
 }
 ```
 
@@ -245,6 +245,8 @@ dependencies {
     <!-- Required to read and write documents from device storage -->
 +    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 +    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+		<!-- Optional settings -->
 +    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
@@ -316,8 +318,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/1.13.0.podspec'
-+  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/1.13.0.podspec'
++  pod 'ComPDFKit_Tools', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.0.0.podspec'
++  pod 'ComPDFKit', podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.0.0.podspec'
 
   # Enables Flipper.
   #
@@ -617,8 +619,8 @@ target 'PDFView_RN' do
     # Pods for testing
   end
 
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '1.13.0'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.0.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.0.0'
 
   # Enables Flipper.
   #
