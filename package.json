@@ -1,0 +1,103 @@
+{
+  "name": "@compdfkit_pdf_sdk/react_native",
+  "version": "2.0.1-beta.1",
+  "description": "ComPDFKit for React Native is a comprehensive SDK that allows you to quickly add PDF functionality to Android, iOS, and React Native applications.",
+  "main": "./src/index.tsx",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "*.podspec",
+    "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "example": "yarn workspace @compdfkit_pdf_sdk/react_native-example",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "prepare": "bob build",
+    "release": "yarn prepare && release-it"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "pdf",
+    "cross-platform",
+    "pdf-viewer",
+    "pdf-document",
+    "pdf-editor",
+    "compdfkit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native"
+  },
+  "author": "ComPDFKit <youna@compdf.com> (https://github.com/ComPDFKit)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/issues"
+  },
+  "homepage": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "@types/react-native": "*",
+    "react": "*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
+}

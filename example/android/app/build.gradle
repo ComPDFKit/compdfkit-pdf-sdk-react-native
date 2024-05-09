@@ -1,4 +1,6 @@
+import groovy.json.JsonSlurper
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**
@@ -53,7 +55,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -68,18 +70,34 @@ def enableProguardInReleaseBuilds = true
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
+def getAppVersionName() {
+  def inputFile = new File("../package.json")
+  def packageJson = new JsonSlurper().parseText(inputFile.text)
+  return packageJson["version"]
+}
+
+def getAppVersionCode() {
+  def inputFile = new File("../package.json")
+  def packageJson = new JsonSlurper().parseText(inputFile.text)
+  return packageJson["versionCode"] as int
+}
+
+def appVersionName = getAppVersionName()
+
+def appVersionCode = getAppVersionCode()
+
 android {
     ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
-    namespace "com.compdfkit.pdfviewer"
+    namespace "com.compdfkit.reactnative.example"
     defaultConfig {
-        applicationId "com.compdfkit.pdfviewer"
+        applicationId "com.compdfkit.reactnative.example"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "2.0.1"
+        versionCode appVersionCode
+        versionName appVersionName
     }
     signingConfigs {
         debug {
@@ -104,31 +122,9 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    //noinspection GradleDynamicVersion
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    api 'com.compdf:compdfkit:2.0.1'
-    api 'com.compdf:compdfkit-ui:2.0.1'
-    api 'com.compdf:compdfkit-tools:2.0.1'
-
-    api 'com.github.bumptech.glide:glide:4.15.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
-    implementation 'androidx.documentfile:documentfile:1.0.1'
-
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
-
-
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
-
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

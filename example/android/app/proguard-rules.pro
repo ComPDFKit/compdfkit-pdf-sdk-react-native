@@ -8,3 +8,7 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+-keep class com.compdfkit.ui.** {*;}
+-keep class com.compdfkit.core.** {*;}
+-keep class com.compdfkit.tools.** {*;}
+-keep class com.compdfkit.reactnative.** {*;}
