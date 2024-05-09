@@ -412,7 +412,7 @@ The following example demonstrates the configuration settings for some aspects. 
 1. Set the initial display mode and the list of available modes. The following code shows enabling only the viewer mode and annotations mode:
 
 ```tsx
-import { ComPDFKit, CPDFViewMode } from 'react-native-compdfkit-pdf';
+import { ComPDFKit, CPDFViewMode } from '@compdfkit_pdf_sdk/react_native';
 
 var config = ComPDFKit.getDefaultConfig({
   modeConfig:{
@@ -429,7 +429,7 @@ ComPDFKit.openDocument(samplePDF, '', config)
 2. Set the list of enabled annotation types and default annotation attribute values. For example, enable only highlight annotations and set the color and transparency for highlight annotations:
 
 ```tsx
-import { ComPDFKit, CPDFAnnotationType, CPDFConfigTool } from 'react-native-compdfkit-pdf';
+import { ComPDFKit, CPDFAnnotationType, CPDFConfigTool } from '@compdfkit_pdf_sdk/react_native';
 
 var config = ComPDFKit.getDefaultConfig({
   annotationsConfig: {
@@ -455,7 +455,7 @@ ComPDFKit.openDocument(samplePDF, '', config)
 3. Set the display mode and page flipping direction:
 
 ```tsx
-import { ComPDFKit, CPDFDisplayMode } from 'react-native-compdfkit-pdf';
+import { ComPDFKit, CPDFDisplayMode } from '@compdfkit_pdf_sdk/react_native';
 
 var config = ComPDFKit.getDefaultConfig({
   readerViewConfig: {
