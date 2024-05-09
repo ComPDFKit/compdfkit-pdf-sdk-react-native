@@ -24,8 +24,9 @@
 * A license is required for trial. Please contact our [sales team](https://www.compdf.com/contact-sales) to obtain a free trial license.
 * npm or yarn
 * ComPDFKit SDK => 2.0.1
-* react-native => 0.60.0
+* react-native => 0.71.0
 * Android `minSdkVersion` of `21` or higher
+* Android `targetSdkVersion` of `23` or higher
 * iOS 11 or higher
 
 
@@ -104,7 +105,7 @@ You can integrate the SDK in two ways:
 
 <img src="./screenshots/demo-android-2.png" alt="demo-android-2" style="zoom:33%;" />
 
-2. Replace `App.js` (or `App.tsx`) with what is shown for [Usage Example](#Usage Example)
+2. Replace `App.js` (or `App.tsx`) with what is shown for [Usage-Example](#Usage-Example)
 3. Finally in the root project directory, run `react-native run-android`.
 
 #### iOS
@@ -171,7 +172,7 @@ end
 	</dict>
 ```
 
-3. Replace `App.js` (or `App.tsx`) with what is shown for [Usage Example](#Usage Example)
+3. Replace `App.js` (or `App.tsx`) with what is shown for [Usage-Example](#Usage-Example)
 4. Finally in the root project directory, run `react-native run-ios`.
 
 
@@ -184,7 +185,7 @@ ComPDFKit for React Native is a commercial SDK, which requires a license to gran
 
 
 
-## Usage Example
+## Usage-Example
 
 After installing from NPM or GitHub, replace `App.tsx` with the following code.
 
@@ -209,7 +210,7 @@ Here is the sample code for `App.tsx`:
  */
 
  import React, { Component } from 'react';
- import DocumentPicker from 'react-native-document-picker'
+ // import DocumentPicker from 'react-native-document-picker'
  import {
    StyleSheet,
    Text,
@@ -217,7 +218,7 @@ Here is the sample code for `App.tsx`:
    TouchableOpacity,
    SafeAreaView
  } from 'react-native';
- import { ComPDFKit } from 'react-native-compdfkit-pdf';
+ import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
  import { Platform } from 'react-native';
  
  type Props = {};
@@ -278,12 +279,12 @@ Here is the sample code for `App.tsx`:
     */
    pickPDFFile(){
      try {
-       const pickerResult = DocumentPicker.pick({
-         type: [DocumentPicker.types.pdf]
-       });
-       pickerResult.then(res => {
-         ComPDFKit.openDocument(res[0]?.uri as string, '', ComPDFKit.getDefaultConfig({}))
-       })
+//       const pickerResult = DocumentPicker.pick({
+//         type: [DocumentPicker.types.pdf]
+//       });
+//       pickerResult.then(res => {
+//         ComPDFKit.openDocument(res[0]?.uri as string, '', ComPDFKit.getDefaultConfig({}))
+//       })
      } catch (err) {
      }
    }
