@@ -45,15 +45,15 @@ export default class App extends Component<Props> {
     // Online certification, Fill in your online license
     // Returns true if initialization is successful, otherwise returns false.
 
-    //  var result = await ComPDFKit.initialize('NjYzODcyYTMxOWQzMA==', 'NjYzODcyYTgxM2YwNg==')
+    //  var result = await ComPDFKit.initialize('your android compdfkit license', 'your ios compdfkit license')
     //  console.log("ComPDFKitRN", "initialize:", result)
 
     // Offline authentication, Fill in your offline license
     var result;
     if (Platform.OS == 'android') {
-      result = await ComPDFKit.init_('nGkHDIO2BGVr/RqhP6yQPqO0XXVHekXzzTOR0OwKQRPP0PTIwpOcxIFNXoIiFumTzRdn0VRkfudjN0qsz7HWMq0iY5jeuNTKpynGOVxwGpyvkLFybGYkoJcFlt1qUm9RGdDiXabom6SMV70WDNA1zqdsRlLeL3/5uaPvMzr73LWuoIedz5uaGN4uxs7u9CRgey9jjjf4HQHKToN52snZoX8CxH57GnhyuRvBCPQdVlmjznOKoVEczGNeHd3TS6E+HZBEmmRVL1J/CbN/EE/dnebgdoklTLMPQbUG8v0vx9fd8CJmVzCiz9NPn+i1FpF4aS4zv534glY8EI3HqU7832u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50W363LuCsh9JihVahrRo+lBoiot0sxqz+fq3Hbs7pICMxGH5xSv6UE1vNpAzdUnZMph9Oz69ustQh1UlotiDLuIhzmxesEyeFzUslbxjgad4wnAzUkp/0SfANyT5mw/EUMjfeSN/Pguksj7eil2awIwr/GjmH/UTOYr+yB+2NtZ6G+C/BLW1JUsdWqn542iYE9OGV+9dTHCyV+gyP2Nstp7FHUdlWeiIkfzaiP8Y+58lPpC7x05cs28uc/hwXiZGx2KvdF+199pSLVUIrj85m/7+SqS01Dz6t4RwV7CZ/nQ4KOAyptnYBkUNyyOx7Q7j3CUXnxUN5HL5Yhqq2FFaD/HTTVwcjun3kBQWAiUV1AWDLVVx4Eopc0qGGOZzwY7voumlHVxwTcoJykSsLEyoWES7nkOX0AXbzRjlD/njRNg')
+      result = await ComPDFKit.init_('your compdfkit license')
     } else {
-      result = await ComPDFKit.init_('NS9HR7WMeEmHyqTGnhQ35oLgfO2ktM5FXuVFkCl0s/fAZ/82K1625IcfzMI6cbRL4UqVs6GD4uGyEmssHUu+Z+C5iXJTZ4QeBxmTuTseojHPWuR4gwPBtF9P6XxsN+fojSyXX0CL5kMw9hXp/JoNGAF23/pGEAHSNANQqM0B3lrQxEp6hh1JCFC1wZpgvc00QSFN+5IcjKr2B77BJsVHOH7G7LcxYEhiLv4nVkw1cl2RYee39k6qKjPTu+WQOGpRFkITVTbXNQbkDF7cKH57wTxEvfDUqGF5ZdeMlAGlrXHwS+Ze7Zzsh970FMk51BTvlxKB5gh0zRJb7VwECD2Nw2u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50W363LuCsh9JihVahrRo+mDgAJSMI2qe6FgOWrSV9NdN1tUqy/YCPxz4PvAib1q0YsbM47koQNz+gWOcywgP1s0vBE/3RNraw+iWcFOaCVAycWSKPP3lIr6+zPIVeNM7/9V+hQcUgoFS+esQrrYEncuhU6kau30e4oZAeZuZW4uCPPnzCZEk9/R0sj1ymWzB5SzrGNfsaQi2wIbQLmf2MR0uIQPwcXfzClC/ew/ZZIftEaBTyRSW/L5h3X09SnC1Ll1zv4sOQxMtrlExwu34ZLOd+DRO7H3qx1BYUfGzzxDFQRFwQ0iZ7xWsXxWc0crZQxjNktT8q4J3K3dzlz2pMXaYCC/i1GyVGRKsr3yekqEvPTzvclvrpTrxPBvbA3x+eEaoo6yq7MhvZzDW1elg2+M68QoaLuDTuBaeMrpFmlS')
+      result = await ComPDFKit.init_('your compdfkit license')
     }
     console.log("ComPDFKitRN", "init_:", result)
   }
@@ -72,7 +72,7 @@ export default class App extends Component<Props> {
    * Pick a PDF file from the local storage of Android or iOS device, this example uses the `react-native-document-picker` package,
    * If you want to use this example, please add this package to your project first.
    * {@link https://www.npmjs.com/package/react-native-document-picker}
-   * 
+   *
    */
   pickPDFFile() {
     try {
