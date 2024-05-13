@@ -4,9 +4,7 @@
 
 [ComPDFKit PDF SDK](https://www.compdf.com) seamlessly operates on [Web](https://www.compdf.com/web), [Windows](https://www.compdf.com/windows), [Android](https://www.compdf.com/android), [iOS](https://www.compdf.com/ios), [Mac](https://www.compdf.com/contact-sales), and [Server](https://www.compdf.com/server), with support for cross-platform frameworks such as [React Native](https://www.compdf.com/react-native), [Flutter](https://www.compdf.com/flutter), etc.
 
-[ComPDFKit for React Native](https://www.compdf.com/react-native) allows you to quickly and seamlessly add PDF functions to any React Native application, elevating your Android and iOS apps with annotations, content editing, conversion, data extraction, etc.   
-
-
+[ComPDFKit for React Native](https://www.compdf.com/react-native) allows you to quickly and seamlessly add PDF functions to any React Native application, elevating your Android and iOS apps with annotations, content editing, conversion, data extraction, etc.
 
 ## Related
 
@@ -16,8 +14,6 @@
 - [How to Build a React Native PDF Viewer](https://www.compdf.com/blog/build-a-react-native-pdf-viewer)
 - Recognize and extract data from PDFs with our online [Extract Demo](https://www.compdf.com/pdf-extract/demo)
 - [ComPDFKit API](https://api.compdf.com/api/pricing) allows you to get 1000 files processing monthly now! Just [sign up](https://api.compdf.com/signup) for a free trial and enjoy comprehensive PDF functions.
-
-
 
 ## Prerequisites
 
@@ -29,13 +25,11 @@
 * Android `targetSdkVersion` of `23` or higher
 * iOS 11 or higher
 
-
-
 ## Installation
 
-First, please follow the official [React Native environment setup guide](https://reactnative.dev/docs/environment-setup), configure [iOS and Android environments](https://reactnative.dev/docs/environment-setup), and create a [React Native project](https://reactnative.dev/docs/environment-setup). 
+First, please follow the official [React Native environment setup guide](https://reactnative.dev/docs/environment-setup), configure [iOS and Android environments](https://reactnative.dev/docs/environment-setup), and create a [React Native project](https://reactnative.dev/docs/environment-setup).
 
-If you have already created a React Native project, you can skip directly to [Installing the ComPDFKit Dependency](#Installing the ComPDFKit Dependency).
+If you have already created a React Native project, you can skip directly to [Installing the ComPDFKit Dependency](#Installing-the-ComPDFKit-Dependency).
 
 ### Creating a New Project
 
@@ -57,7 +51,9 @@ Let's create a simple app that integrates ComPDFKit for React Native.
    cd MyApp
    ```
 
-### Installing the ComPDFKit Dependency
+
+
+### Installing-the-ComPDFKit-Dependency
 
 You can integrate the SDK in two ways:
 
@@ -103,7 +99,7 @@ You can integrate the SDK in two ways:
 
 2. Copy the sample pdf file to the `assets` directory
 
-<img src="./screenshots/demo-android-2.png" alt="demo-android-2" style="zoom:33%;" />
+<img src="./screenshots/demo-android-2.png" alt="demo-android-2" width="40%" />
 
 2. Replace `App.js` (or `App.tsx`) with what is shown for [Usage-Example](#Usage-Example)
 3. Finally in the root project directory, run `react-native run-android`.
@@ -164,26 +160,22 @@ end
 
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Your consent is required before you could access the function.</string>
-  
+
 <key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
+<dict>
+<key>NSAllowsArbitraryLoads</key>
+<true/>
+</dict>
 ```
 
 3. Replace `App.js` (or `App.tsx`) with what is shown for [Usage-Example](#Usage-Example)
 4. Finally in the root project directory, run `react-native run-ios`.
 
-
-
 ### Apply the License Key
 
-Contact [ComPDFKit's sales team](https://www.compdf.com/contact-sales) to get a free 30-day license to test the project, and [apply the license key](https://www.compdf.com/guides/pdf-sdk/react-native/apply-the-license-key) following the guides.
+Contact [ComPDFKit&#39;s sales team](https://www.compdf.com/contact-sales) to get a free 30-day license to test the project, and [apply the license key](https://www.compdf.com/guides/pdf-sdk/react-native/apply-the-license-key) following the guides.
 
 ComPDFKit for React Native is a commercial SDK, which requires a license to grant developer permission to release their apps. Each license is only valid for one `bundle ID` or `applicationId` in development mode. Other flexible licensing options are also supported, please contact [our marketing team](mailto:support@compdf.com) to know more.
-
-
 
 ## Usage-Example
 
@@ -466,14 +458,9 @@ var config = ComPDFKit.getDefaultConfig({
 ComPDFKit.openDocument(samplePDF, '', config)
 ```
 
-
-
 ## **API**
 
 APIs are available on the [API](API.md)
-
-
-
 
 ## Support
 
@@ -484,13 +471,10 @@ APIs are available on the [API](API.md)
 - For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support).
 - To get more details and an accurate quote, please contact our [Sales Team](https://compdf.com/contact-us).
 
-
-
 ## Note
 
 We are glad to announce that you can register a ComPDFKit API account for a [free trial](https://api.compdf.com/api/pricing) to process 1000 documents per month for free.
 
-Thanks, 
+Thanks,
 
 The ComPDFKit Team
-

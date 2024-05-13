@@ -10,6 +10,9 @@
     "android",
     "ios",
     "cpp",
+    "API.md",
+    "CHANGELOG.md",
+    "CONFIGURATION.md",
     "*.podspec",
     "!ios/build",
     "!android/build",
@@ -20,7 +23,8 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!**/.*"
+    "!**/.*",
+    "example"
   ],
   "scripts": {
     "example": "yarn workspace @compdfkit_pdf_sdk/react_native-example",
@@ -51,15 +55,13 @@
   "bugs": {
     "url": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/issues"
   },
-  "homepage": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
+  "homepage": "https://www.compdf.com/react-native",
   "devDependencies": {
     "@types/react": "*",
     "@types/react-native": "*",
     "react": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "react-native-builder-bob": "^0.20.4"
   },
   "peerDependencies": {
     "react": "*",
