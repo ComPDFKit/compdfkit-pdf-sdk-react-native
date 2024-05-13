@@ -1,6 +1,6 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native-example",
-  "version": "2.0.1-beta.1",
+  "version": "2.0.1-beta.2",
   "versionCode": "6",
   "private": true,
   "scripts": {
