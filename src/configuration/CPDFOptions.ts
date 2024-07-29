@@ -116,7 +116,13 @@ export const CPDFToolbarMenuAction = {
     /**
      * Open the system file selector and open a new pdf document.
      */
-    OPEN_DOCUMENT: 'openDocument'
+    OPEN_DOCUMENT: 'openDocument',
+
+    /**
+     * The PDF capture function allows you to capture an area
+     * in the PDF document and convert it into an image.
+     */
+    SNIP: 'snip'
 
 } as const
 export type CPDFToolbarMenuAction = ValueOf<typeof CPDFToolbarMenuAction>;
@@ -315,6 +321,29 @@ export const CPDFThemes = {
 
 }
 export type CPDFThemes = ValueOf<typeof CPDFThemes>;
+
+/**
+ * Set UI theme modes, including light, dark, and follow system modes
+ * Default: Follow system
+ */
+export const CPDFThemeMode = {
+
+    /**
+     * Light mode, with a primarily white UI
+     */
+    LIGHT: 'light',
+
+    /**
+     * Dark night mode, with a primarily black UI
+     */
+    DARK: 'dark',
+
+    /**
+     * Follow the current system setting
+     */
+    SYSTEM: 'system'
+}
+export type CPDFThemeMode = ValueOf<typeof CPDFThemeMode>;
 
 export type AnyCase<T extends string> =
     string extends T ? string :

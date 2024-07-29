@@ -64,7 +64,16 @@ var configuration = CPDFConfiguration(
     ]
   )
 );
-ComPDFKit.openDocument(document, password: '', configuration: configuration);    
+ComPDFKit.openDocument(document, password: '', configuration: configuration);
+
+// usage Widget
+Scaffold(
+  resizeToAvoidBottomInset: false,
+  appBar: AppBar(title: const Text('CPDFReaderWidget Example'),),
+  body: CPDFReaderWidget(
+    document: widget.documentPath,
+    configuration: configuration
+  ));
 ```
 
 ### Option Explanations
@@ -77,10 +86,11 @@ Used to configure the initial display mode and supported modes when displaying a
 
 ##### **Parameters**
 
-| Name               | Type   | Description                                                  |
-| ------------------ | ------ | ------------------------------------------------------------ |
-| initialViewMode    | string | Default mode to display when opening the PDF View, default is `viewer` |
-| availableViewModes | string | Configure supported modes                                    |
+| Name               | Type    | Description                                                  |
+| ------------------ | ------- | ------------------------------------------------------------ |
+| initialViewMode    | string  | Default mode to display when opening the PDF View, default is `viewer` |
+| availableViewModes | string  | Configure supported modes                                    |
+| readerOnly         | boolean | View only PDF documents, hiding all top and bottom toolbars.<br />**ComPDFKit SDK for Flutter Version:** => 2.0.2 |
 
 ##### **Constants**
 
@@ -181,11 +191,12 @@ Configure annotation-related settings, such as enabling types displayed in the a
 
 ##### **Parameters**
 
-| Name           | Type  | Description                                                  |
-| -------------- | ----- | ------------------------------------------------------------ |
-| availableTypes | Array | The types of annotations enabled in the toolbar at the bottom. |
-| availableTools | Array | Annotation tools, including `Setting`, `Undo`, and `Redo`.   |
-| initAttribute  | Array | Set default attributes for annotations.                      |
+| Name             | Type   | Description                                                              |
+| ---------------- | ------ |--------------------------------------------------------------------------|
+| availableTypes   | Array  | The types of annotations enabled in the toolbar at the bottom.           |
+| availableTools   | Array  | Annotation tools, including `Setting`, `Undo`, and `Redo`.               |
+| initAttribute    | Array  | Set default attributes for annotations.                                  |
+| annotationAuthor | String | Set the author name when adding annotations and replying to annotations. |
 
 ##### **availableTypes Constants**
 
@@ -333,7 +344,7 @@ Configure annotation-related settings, such as enabling types displayed in the a
 | typeface       | string  | Helvetica | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
 
 ```json
-{ 
+{
 "annotationsConfig": {
     "availableTypes": [
       "note",
@@ -755,6 +766,23 @@ This section is used to configure the types of forms enabled in the view's botto
 | sepia  | brown paper color.                           |
 | reseda | Light green, eye protection mode.            |
 
+#### globalConfig
+
+##### Parameters
+
+| Name                    | Type          | Example | Description                                                  |
+| ----------------------- | ------------- | ------- | ------------------------------------------------------------ |
+| themeMode               | CPDFThemeMode | light   | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
+| fileSaveExtraFontSubset | boolean       | true    | When saving a document, whether to save the used font set together with the document. |
+
+##### themeMode Constants
+
+| Name   | Description                           |
+| ------ | ------------------------------------- |
+| light  | The UI is displayed in a light theme. |
+| dark   | The UI is displayed in a dark theme.  |
+| system | Theme follow system settings.         |
+
 
 
 ## Json Example
@@ -763,6 +791,7 @@ This section is used to configure the types of forms enabled in the view's botto
 {
   "modeConfig": {
     "initialViewMode": "viewer",
+    "readerOnly": false,
     "availableViewModes": [
       "viewer",
       "annotations",
@@ -800,6 +829,7 @@ This section is used to configure the types of forms enabled in the view's botto
     ]
   },
   "annotationsConfig": {
+    "annotationAuthor": "Guest",
     "availableTypes": [
       "note",
       "highlight",
@@ -1016,6 +1046,10 @@ This section is used to configure the types of forms enabled in the view's botto
     "pageSpacing": 10,
     "pageScale": 1.0,
     "pageSameWidth":true
+  },
+  "global" : {
+    "themeMode" : "system",
+    "fileSaveExtraFontSubset" : true
   }
 }
 ```

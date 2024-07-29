@@ -45,15 +45,15 @@ export default class App extends Component<Props> {
     // Online certification, Fill in your online license
     // Returns true if initialization is successful, otherwise returns false.
 
-    //  var result = await ComPDFKit.initialize('your android compdfkit license', 'your ios compdfkit license')
+    //  var result = await ComPDFKit.initialize('NjYzODcyYTMxOWQzMA==', 'NjYzODcyYTgxM2YwNg==')
     //  console.log("ComPDFKitRN", "initialize:", result)
 
     // Offline authentication, Fill in your offline license
     var result;
     if (Platform.OS == 'android') {
-      result = await ComPDFKit.init_('SsFUBGT6t2g9mu/FmY/tH2rNi83UByh2bEXYl8KViCupYHcuOtXureb7D2SXxrhIrmkfCQn32v/BYFJsmDX4aJKMVRWuo7L9Ek7d4eMslDYWDwbrXq4RA9jjwNhDQpzfKbfv7q845gicZDoORi2xRdyKq9AGP7jfszTSY6fuslbom/ycXHS5JRk6WctpYbD6WK+PeJDyJe/K15GvqbJsr/hRVHJnko6pVpkxBY9hA7DQH0HRm0zE9e+z/s+EtiTCALLTGsRve9jF8Ht2WTg7ddn+iDiiy0avaoZ6m8GTV5Rk0xHzz6vbjGodTtjqjM8cjDALt1E3F3BQTdgJaAKAgGu0lH1oY17eVN2TRW5amzrVRSqpTOyx2LGvW1Ilra90nzlp2dEBHH+rU3Jo93jy94eWecFWMwgKBD5sABvhJFteiZTpP6NufkmmJm5UhS1bbWwQ3416ecpKs8D9TAlLLO+rbIocuxdoPE2dxWFYLq6zF8kJV3z7dKYtAwQKdoQiS08ryGXVZybCx2GjZp97I7zNemiorRWKQUrxpNk0vCLwL1yz7NzjlB6YQ8UxvmTkX/GU7T7Ubg9LoyZuVo4tLHLplMSlHIcA4guqZL7JbQ6/jomhcJGFpGo+X7tbrCvMTnbvjZoxJRlcNN1+9x100WEfF4A2XbJZEjcpxV9tk1rTt+jS8dkX803ij16yHI1THSycP2aKkWjgDAsAUt98KCUHLaZi4F73ifo4l7JQoj1djOeLrrsCEaYBrVJtuJVPXjjpHv/B36v7bv6BhL0LQkMwgm8pSYa3fBvOAq3l2ib74w2j2b01ku5P245z+W4lq21AE/PTaYZR5F5nWaQfKMzT8HB92qLwarLi0hBbbFEbEUIZUBdN9TIroRmRrzLIx1IzmoMwQENYtUWaDmknkcj4x9yOy/fdSALl+QtcwUmCpi6m0j863I+F86pEzCkHYvQvPdaW+bx8LBHRdmY6CNIX7w5oxO2NAXEkxwnoE85BE++rTWnjdjWjzJ8AcSSxxEaSCXAF6mtqTjjiHAkyJgmbSXDejv0NeYpybCfDkzwO4zL1qOkq+ZtdME0RqR3eI3Sv2hnO4mbco6Kdff5VZlg6/9qDYi/dNTH8GVYVPAtNKhtEbZRIPR9E+4aRXdIL')
+      result = await ComPDFKit.init_('nGkHDIO2BGVr/RqhP6yQPqO0XXVHekXzzTOR0OwKQRPP0PTIwpOcxIFNXoIiFumTzRdn0VRkfudjN0qsz7HWMq0iY5jeuNTKpynGOVxwGpyvkLFybGYkoJcFlt1qUm9RGdDiXabom6SMV70WDNA1zqdsRlLeL3/5uaPvMzr73LWuoIedz5uaGN4uxs7u9CRgey9jjjf4HQHKToN52snZoX8CxH57GnhyuRvBCPQdVlmjznOKoVEczGNeHd3TS6E+HZBEmmRVL1J/CbN/EE/dnebgdoklTLMPQbUG8v0vx9fd8CJmVzCiz9NPn+i1FpF4aS4zv534glY8EI3HqU7832u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50W363LuCsh9JihVahrRo+lBoiot0sxqz+fq3Hbs7pICMxGH5xSv6UE1vNpAzdUnZMph9Oz69ustQh1UlotiDLuIhzmxesEyeFzUslbxjgad4wnAzUkp/0SfANyT5mw/EUMjfeSN/Pguksj7eil2awIwr/GjmH/UTOYr+yB+2NtZ6G+C/BLW1JUsdWqn542iYE9OGV+9dTHCyV+gyP2Nstp7FHUdlWeiIkfzaiP8Y+58lPpC7x05cs28uc/hwXiZGx2KvdF+199pSLVUIrj85m/7+SqS01Dz6t4RwV7CZ/nQ4KOAyptnYBkUNyyOx7Q7j3CUXnxUN5HL5Yhqq2FFaD/HTTVwcjun3kBQWAiUV1AWDLVVx4Eopc0qGGOZzwY7voumlHVxwTcoJykSsLEyoWES7nkOX0AXbzRjlD/njRNg')
     } else {
-      result = await ComPDFKit.init_('t2p6R8/clQc4jpf9A++mB6YfUQ0rrECgKes5bUnW8wGwIf+R1Ot6nRmN4qBoHUqkooBY/9qhRStv0BM95jxXkTj60TiVIXy9WsztqeU33thasOiTK0hdeXMvwYZ4+4BHyQHwkYNf6/3inJiUnRl3xfTNeD8/NENiro+iLdpbEOGBNd7rTzR4p7WNo3bbLVzcvCK0esWkMXZz2+JuzdtwXFXHghkbLejFFVRE3PyIob6iZBawLtt+TUAhnQkbU7Q/Z399YuIiw3ur230H4icn7ZmHHgIJzFTaIYCuluF/QNarTs0Z4eh8ClYm0u6rJz42XHk1PsI10KCfPVxSaVYGvGu0lH1oY17eVN2TRW5amzrVRSqpTOyx2LGvW1Ilra90nzlp2dEBHH+rU3Jo93jy94eWecFWMwgKBD5sABvhJFteiZTpP6NufkmmJm5UhS1bbWwQ3416ecpKs8D9TAlLLO+rbIocuxdoPE2dxWFYLq6zF8kJV3z7dKYtAwQKdoQiS08ryGXVZybCx2GjZp97I7zNemiorRWKQUrxpNk0vCLwL1yz7NzjlB6YQ8UxvmTkX/GU7T7Ubg9LoyZuVo4tLHLplMSlHIcA4guqZL7JbQ6/jomhcJGFpGo+X7tbrCvMTnbvjZoxJRlcNN1+9x100WEfF4A2XbJZEjcpxV9tk1rTt+jS8dkX803ij16yHI1THSycP2aKkWjgDAsAUt98KCUHLaZi4F73ifo4l7JQoj2iW5vEiAxKL+Hs+L5PEV11WKVc3vOYWIu1AAWEabsmhISUekul02fLSjxwtcXbhwDGmOFer4XQ2gyRUAo+ydpYX/ev3VY2ZrUyXsWGHyrDlSFzQ1nW5cOwbM0BhzyHAZevr3Ct4nrLtc0ELnw3glKoYvGz6OKkWoe6qCgesJOfvzh+A49/TL9Ap760hiQNzceOlL4vWLTvXQ9fSDWVZnRxl3wq0mV7E+lek14llLmD1mQypPqwJiH3RTfITGPxxXIdI8xu/5FEGy6+IZn5YrWaJ1yXfMqkdgp6OZpWDHiImeGHFc9l2ZsRcUpj8kY2r6/TAZboh+ksP4pzCLqDpfkZN5Dnbbn7cBliFty0fcuMFlFqVYuDakXTQBwNPN/SNG4a6ZZwc8lYmSRSxaSHWghm')
+      result = await ComPDFKit.init_('NS9HR7WMeEmHyqTGnhQ35oLgfO2ktM5FXuVFkCl0s/fAZ/82K1625IcfzMI6cbRL4UqVs6GD4uGyEmssHUu+Z+C5iXJTZ4QeBxmTuTseojHPWuR4gwPBtF9P6XxsN+fojSyXX0CL5kMw9hXp/JoNGAF23/pGEAHSNANQqM0B3lrQxEp6hh1JCFC1wZpgvc00QSFN+5IcjKr2B77BJsVHOH7G7LcxYEhiLv4nVkw1cl2RYee39k6qKjPTu+WQOGpRFkITVTbXNQbkDF7cKH57wTxEvfDUqGF5ZdeMlAGlrXHwS+Ze7Zzsh970FMk51BTvlxKB5gh0zRJb7VwECD2Nw2u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50W363LuCsh9JihVahrRo+mDgAJSMI2qe6FgOWrSV9NdN1tUqy/YCPxz4PvAib1q0YsbM47koQNz+gWOcywgP1s0vBE/3RNraw+iWcFOaCVAycWSKPP3lIr6+zPIVeNM7/9V+hQcUgoFS+esQrrYEncuhU6kau30e4oZAeZuZW4uCPPnzCZEk9/R0sj1ymWzB5SzrGNfsaQi2wIbQLmf2MR0uIQPwcXfzClC/ew/ZZIftEaBTyRSW/L5h3X09SnC1Ll1zv4sOQxMtrlExwu34ZLOd+DRO7H3qx1BYUfGzzxDFQRFwQ0iZ7xWsXxWc0crZQxjNktT8q4J3K3dzlz2pMXaYCC/i1GyVGRKsr3yekqEvPTzvclvrpTrxPBvbA3x+eEaoo6yq7MhvZzDW1elg2+M68QoaLuDTuBaeMrpFmlS')
     }
     console.log("ComPDFKitRN", "init_:", result)
   }
@@ -63,6 +63,7 @@ export default class App extends Component<Props> {
    */
   openSample() {
     var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
+
     // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
     var config = ComPDFKit.getDefaultConfig({})
     ComPDFKit.openDocument(samplePDF, '', config)

@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { BorderWidth, ColorAlpha, CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode, DashGap, FontSize, HexColor } from "./CPDFOptions";
+import { BorderWidth, ColorAlpha, CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode, DashGap, FontSize, HexColor, CPDFThemeMode } from "./CPDFOptions";
 
 /**
  * Configuration information for displaying PDF using the ComPDFKit.openDocument method.
@@ -39,6 +39,8 @@ export class CPDFConfiguration {
          * Default mode to display when opening the PDF View, default is [CPDFToolbarAction.VIEWER]
          */
         initialViewMode?: CPDFViewMode,
+
+        readerOnly?: boolean,
         /**
          * Configure supported modes
          */
@@ -80,6 +82,8 @@ export class CPDFConfiguration {
      * annotation config
      */
     annotationsConfig?: {
+
+        annotationAuthor?: string,
         /**
          * {@link CPDFViewMode.ANNOTATIONS} mode, list of annotation functions shown at the bottom of the view.
          */
@@ -410,6 +414,11 @@ export class CPDFConfiguration {
          * only android platform.
          */
         pageSameWidth?: boolean
+    }
+
+    global? : {
+        themeMode?: CPDFThemeMode,
+        fileSaveExtraFontSubset?: boolean
     }
 };
 

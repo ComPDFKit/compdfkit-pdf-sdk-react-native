@@ -9,7 +9,7 @@
 
 import { NativeModules } from 'react-native';
 import { CPDFConfiguration } from './configuration/CPDFConfiguration';
-import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
+import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
 
 declare module 'react-native' {
   interface NativeModulesStatic {
@@ -135,9 +135,9 @@ interface ComPDFKit {
 const ComPDFKit = NativeModules.ComPDFKit
 
 export { ComPDFKit };
-export { 
-  CPDFViewMode, 
-  CPDFToolbarAction, 
+export {
+  CPDFViewMode,
+  CPDFToolbarAction,
   CPDFToolbarMenuAction,
   CPDFAnnotationType,
   CPDFConfigTool,
@@ -158,6 +158,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
   const defaultConfig : CPDFConfiguration = {
     modeConfig:{
       initialViewMode: CPDFViewMode.VIEWER,
+      readerOnly: false,
       availableViewModes: [
         CPDFViewMode.VIEWER,
         CPDFViewMode.ANNOTATIONS,
@@ -191,10 +192,12 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         CPDFToolbarMenuAction.FLATTENED,
         CPDFToolbarMenuAction.SAVE,
         CPDFToolbarMenuAction.SHARE,
-        CPDFToolbarMenuAction.OPEN_DOCUMENT
+        CPDFToolbarMenuAction.OPEN_DOCUMENT,
+        CPDFToolbarMenuAction.SNIP
       ]
     },
     annotationsConfig: {
+      annotationAuthor: '',
       availableTypes: [
         CPDFAnnotationType.NOTE,
         CPDFAnnotationType.HIGHLIGHT,
@@ -308,11 +311,11 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         initAttribute: {
           text: {
             fontColor: '#000000',
-            fontColorAlpha: 100,
+            fontColorAlpha: 255,
             fontSize: 30,
-            isBold: false,
-            isItalic: false,
-            typeface: CPDFTypeface.TIMES_ROMAN,
+            isBold: true,
+            isItalic: true,
+            typeface: CPDFTypeface.HELVETICA,
             alignment: CPDFAlignment.LEFT
           }
         }
@@ -411,6 +414,10 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       pageScale: 1.0,
       pageSpacing: 10,
       pageSameWidth: true
+    },
+    global: {
+      themeMode: CPDFThemeMode.SYSTEM,
+      fileSaveExtraFontSubset: true
     }
   }
   return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);

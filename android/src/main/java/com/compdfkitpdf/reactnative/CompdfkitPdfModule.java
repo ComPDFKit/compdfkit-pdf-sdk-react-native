@@ -20,11 +20,14 @@ import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
+import com.compdfkit.tools.common.utils.CLog;
+import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import java.io.File;
 
 /**
  * RN and Android native ComPDFKit SDK interaction class
@@ -39,6 +42,7 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   public static final String ASSETS_SCHEME = "file:///android_asset";
 
   public static final String CONTENT_SCHEME = "content://";
+  public static final String FILE_SCHEME = "file://";
 
   private ReactContext mReactContext;
 
@@ -178,6 +182,11 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     } else if (document.startsWith(CONTENT_SCHEME)) {
       Uri uri = Uri.parse(document);
       intent.setData(uri);
+    } else if (document.startsWith(FILE_SCHEME)) {
+      Uri uri = Uri.parse(document);
+      intent.setData(uri);
+    } else {
+      intent.putExtra(CPDFDocumentActivity.EXTRA_FILE_PATH, document);
     }
   }
 
