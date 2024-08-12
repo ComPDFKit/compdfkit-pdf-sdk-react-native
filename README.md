@@ -81,7 +81,7 @@ You can integrate the SDK in two ways:
     package="com.compdfkit.flutter.example">
 
 +    <uses-permission android:name="android.permission.INTERNET"/>
-  
+
     <!-- Required to read and write documents from device storage -->
 +    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 +    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -117,8 +117,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.1.0.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.1.0.podspec'
++    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.1.1.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.1.1.podspec'
     # ...
 end
 ```
@@ -128,8 +128,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.0'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.0'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.1'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.1'
     # ...
 end
 ```
@@ -212,21 +212,21 @@ Here is the sample code for `App.tsx`:
  } from 'react-native';
  import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
  import { Platform } from 'react-native';
- 
+
  type Props = {};
- 
+
  export default class App extends Component<Props> {
- 
+
    state = {
      versionCode: ''
    }
- 
+
    constructor(props: Props) {
      super(props)
      this.initialize()
      this.getVersionCode()
    }
- 
+
    async getVersionCode() {
      // Get the version code of ComPDFKit SDK
      var version = await ComPDFKit.getVersionCode()
@@ -234,13 +234,13 @@ Here is the sample code for `App.tsx`:
        versionCode: version
      })
    }
- 
+
    async initialize() {
      // Online certification, Fill in your online license
      // Returns true if initialization is successful, otherwise returns false.
      var result = await ComPDFKit.initialize('compdfkit android license', 'compdfkit ios license')
      console.log("ComPDFKitRN", "initialize:", result)
- 
+
      // Offline authentication, Fill in your offline license
      // var result;
      // if(Platform.OS == 'android') {
@@ -250,7 +250,7 @@ Here is the sample code for `App.tsx`:
      // }
      // console.log("ComPDFKitRN", "init_:", result)
    }
- 
+
    /**
     * Open the sample document embedded in Android or iOS project.
     */
@@ -258,16 +258,16 @@ Here is the sample code for `App.tsx`:
      var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
      // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
      var config = ComPDFKit.getDefaultConfig({
- 
+
      })
      ComPDFKit.openDocument(samplePDF, '', config)
    }
- 
+
    /**
     * Pick a PDF file from the local storage of Android or iOS device, this example uses the `react-native-document-picker` package,
     * If you want to use this example, please add this package to your project first.
     * {@link https://www.npmjs.com/package/react-native-document-picker}
-    * 
+    *
     */
    pickPDFFile(){
      try {
@@ -280,7 +280,7 @@ Here is the sample code for `App.tsx`:
      } catch (err) {
      }
    }
- 
+
    render() {
      return (
        <SafeAreaView style={{ flex: 1 }}>
@@ -298,9 +298,9 @@ Here is the sample code for `App.tsx`:
                  <Text style={{ fontWeight: 'bold' }}>{'Open Sample'}</Text>
                </View>
              </TouchableOpacity>
- 
+
              <View style={styles.dividingLine} />
- 
+
              <TouchableOpacity onPress={() => {
                this.pickPDFFile()
              }}>
@@ -308,20 +308,20 @@ Here is the sample code for `App.tsx`:
                  <Text style={{ fontWeight: 'bold' }}>{'Pick Document'}</Text>
                </View>
                <View style={styles.dividingLine} />
- 
+
              </TouchableOpacity>
- 
+
              <View style={styles.buttom}>
                <Text style={styles.body2}>ComPDFKit for {Platform.OS == 'android' ? 'Android' : 'iOS'} {this.state.versionCode}</Text>
              </View>
            </View>
          </View>
        </SafeAreaView>
- 
+
      );
    }
  }
- 
+
  const styles = StyleSheet.create({
    appBar: {
      height: 56,

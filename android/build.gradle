@@ -80,8 +80,8 @@ repositories {
 dependencies {
 
   implementation "com.facebook.react:react-native:+"
-  api "com.compdf:compdfkit:2.1.0"
-  api "com.compdf:compdfkit-ui:2.1.0"
-  api "com.compdf:compdfkit-tools:2.1.0"
+  api "com.compdf:compdfkit:2.1.1"
+  api "com.compdf:compdfkit-ui:2.1.1"
+  api "com.compdf:compdfkit-tools:2.1.1"
 }
 

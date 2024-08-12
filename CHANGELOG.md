@@ -1,5 +1,16 @@
 ## Newest Release
 
+### 2.1.1 - 12 Aug 2024
+
+* Added the features support for ComPDFKit PDF SDK for iOS V2.1.1.
+* Added the features support for ComPDFKit PDF SDK for Android V2.1.1.
+* Optimized the logic for selecting text by long press.
+* Fixed low text contrast issue in dark mode for some documents.
+* Fixed crash issues with some documents.
+
+
+## Previous Release
+
 ### 2.1.0 - 29 July 2024
 
 * Added the features support for ComPDFKit PDF SDK for iOS V2.1.0.
@@ -11,7 +22,6 @@
 * Android platform adaptation for **Laban Key Keyboard**.
 * Fixed an issue with the Ink annotation color display on Android.
 
-## Previous Release
 
 ### 2.0.1 - 13 May 2024
 
