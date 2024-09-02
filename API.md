@@ -4,8 +4,6 @@
 
 ComPDFKit React Native supports TypeScript. Types used in this document will be described using TypeScript types. Type information is automatically provided when encoding, and the exact type aliases and constants used in our custom types can be found in the [CPDFConfiguration](./src/configuration/CPDFConfiguration.ts) and [CPDFOptions](./src/configuration/CPDFOptions.ts) source folders.
 
-
-
 ## ComPDFKit
 
 ComPDFKit contains static methods for global library initialization, configuration, and utility methods.
@@ -111,7 +109,7 @@ Parameters:
 
 * (Android) For local storage file path:
 ```tsx
-document = 'file:///storage/emulated/0/Download/sample.pdf'
+document = '/storage/emulated/0/Download/PDF_document.pdf'
 ComPDFKit.openDocument(document, '', ComPDFKit.getDefaultConfig({}))
 ```
 
@@ -140,7 +138,9 @@ ComPDFKit.openDocument(document, '', ComPDFKit.getDefaultConfig({}))
 
 ### getDefaultConfig
 
-When you use the `ComPDFKit.openDocument` method to present a PDF file, you need to pass configuration parameters to customize the UI features and PDF view properties. `ComPDFKit` provides default configuration parameters through `ComPDFKit.getDefaultConfig`. You can retrieve them using the following example:
+When using the `ComPDFKit.openDocument` method or the `CPDFReaderView` UI component to display a PDF file, you need to pass configuration parameters to customize the UI features and PDF view properties. `ComPDFKit` provides default configuration parameters through `ComPDFKit.getDefaultConfig`. You can retrieve them using the following example:
+
+---
 
 ```tsx
 ComPDFKit.getDefaultConfig({})
@@ -197,4 +197,82 @@ ComPDFKit.getDefaultConfig({
 ```
 
 For more configuration parameter descriptions, please see [CPDFCONFIGURATION.md](./CONFIGURATION.md).
+
+## CPDFReaderView - Props
+
+### Open Document
+
+`CPDFReaderView` is a React component designed to display PDF documents. Below are details about the required `document` prop.
+
+#### document
+
+Specifies the path or URI of the PDF document to be displayed.
+
+* **Type:** `string`
+* **Required:** Yes
+
+**Usage Examples:
+
+* (Android) For local storage file path:
+
+```tsx
+<CPDFReaderView
+	document={'/storage/emulated/0/Download/PDF_document.pdf'}/>
+```
+
+* (Android) For content Uri: 
+
+```tsx
+<CPDFReaderView
+	document={'content://...'}/>
+```
+
+* (Android) For assets path:
+
+```tsx
+<CPDFReaderView
+	document={'file:///android_asset/...'}/>
+```
+
+* (iOS) For app bundle file path:
+
+```tsx
+<CPDFReaderView	
+	document={'pdf_document.pdf'}/>
+```
+
+#### password
+
+The password to open the document is an optional parameter.
+
+* **Type:** `string`
+
+**Usage Examples:**
+
+```tsx
+<CPDFReaderView	
+	document={'pdf_document.pdf'}
+  password={'password'}/>
+```
+
+#### configuration
+
+Used to pass configuration parameters when rendering a PDF file to customize UI features and PDF view properties. `ComPDFKit` provides default configuration parameters through `ComPDFKit.getDefaultConfig`.
+
+* **Type:**`string`
+* **Required:** Yes
+
+**Usage Examples:**
+
+```tsx
+<CPDFReaderView
+  document={samplePDF}
+  configuration={ComPDFKit.getDefaultConfig({
+
+  })}
+  style={{flex:1}}
+  />
+```
+
+
 

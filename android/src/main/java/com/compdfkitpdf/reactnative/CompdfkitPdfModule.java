@@ -35,7 +35,7 @@ import java.io.File;
  */
 public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
 
-  private static final String TAG = "ComPDFKit-RN";
+  private static final String TAG = "ComPDFKitRN";
 
   public static final String NAME = "ComPDFKit";
 
@@ -105,7 +105,7 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void init_(String license, Promise promise) {
     CPDFSdk.init(mReactContext, license, true, (code, msg) -> {
-      Log.e(TAG, "init_: code:" + code + ", msg:" + msg);
+      Log.d(TAG, "init_: code:" + code + ", msg:" + msg);
       promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
     });
   }
@@ -127,7 +127,7 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void initialize(String androidOnlineLicense, String iosOnlineLicense, Promise promise) {
     CPDFSdk.init(mReactContext, androidOnlineLicense, false, (code, msg) -> {
-      Log.e(TAG, "initialize: code:" + code + ", msg:" + msg);
+      Log.d(TAG, "initialize: code:" + code + ", msg:" + msg);
       promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
     });
   }

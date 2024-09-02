@@ -9,7 +9,7 @@
 
 import { NativeModules } from 'react-native';
 import { CPDFConfiguration } from './configuration/CPDFConfiguration';
-import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
+import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType,CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
 
 declare module 'react-native' {
   interface NativeModulesStatic {
@@ -150,6 +150,8 @@ export {
   CPDFCheckStyle,
   CPDFDisplayMode,
   CPDFThemes } from './configuration/CPDFOptions';
+export { CPDFReaderView } from './view/CPDFReaderView';
+
 
 ComPDFKit.getDefaultConfig = getDefaultConfig
 
@@ -313,8 +315,8 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
             fontColor: '#000000',
             fontColorAlpha: 255,
             fontSize: 30,
-            isBold: true,
-            isItalic: true,
+            isBold: false,
+            isItalic: false,
             typeface: CPDFTypeface.HELVETICA,
             alignment: CPDFAlignment.LEFT
           }

@@ -7,5 +7,16 @@
 //
 
 #import <React/RCTBridgeModule.h>
-#import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>
+
+@interface RCT_EXTERN_MODULE(CPDFViewManager, NSObject)
+
+RCT_EXTERN_METHOD(save:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
++ (BOOL)requiresMainQueueSetup
+{
+  return NO;
+}
+
+@end

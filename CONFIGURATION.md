@@ -49,7 +49,15 @@ var configuration = ComPDFKit.getDefaultConfig({
     ]
   }
 })
+
 ComPDFKit.openDocument(document, '', configuration)
+
+// Use in UI components
+<CPDFReaderView
+	document={samplePDF}
+	configuration={config}
+	style={{ flex: 1 }}
+/>
 ```
 
 **Flutter**

@@ -22,8 +22,8 @@
 * ComPDFKit SDK => 2.0.1
 * react-native => 0.71.0
 * Android `minSdkVersion` of `21` or higher
-* Android `targetSdkVersion` of `23` or higher
-* iOS 11 or higher
+* Android `targetSdkVersion` of `30` or higher
+* iOS 12 or higher
 
 ## Installation
 
@@ -117,8 +117,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.1.1.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.1.1.podspec'
++    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.1.2.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.1.2.podspec'
     # ...
 end
 ```
@@ -128,8 +128,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.1'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.1'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.2'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.2'
     # ...
 end
 ```
@@ -183,12 +183,6 @@ After installing from NPM or GitHub, replace `App.tsx` with the following code.
 
 Make sure to follow the above steps to copy the sample document into your Android or iOS project.
 
-The example includes a usage demonstration of selecting a PDF document from local file storage, which requires the use of the [react-native-document-picker](https://www.npmjs.com/package/react-native-document-picker) package. You can add this package as follows or remove the `pickPDFFile` function code from the example:
-
-```shell
-npm i react-native-document-picker
-```
-
 Here is the sample code for `App.tsx`:
 
 ```tsx
@@ -201,172 +195,81 @@ Here is the sample code for `App.tsx`:
  * This notice may not be removed from this file.
  */
 
- import React, { Component } from 'react';
- // import DocumentPicker from 'react-native-document-picker'
- import {
-   StyleSheet,
-   Text,
-   View,
-   TouchableOpacity,
-   SafeAreaView
- } from 'react-native';
- import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
- import { Platform } from 'react-native';
+import React, { Component } from 'react';
+import {
+    SafeAreaView
+} from 'react-native';
+import { ComPDFKit, CPDFReaderView } from '@compdfkit_pdf_sdk/react_native';
+import { Platform } from 'react-native';
 
- type Props = {};
+type Props = {};
 
- export default class App extends Component<Props> {
+export default class App extends Component<Props> {
 
-   state = {
-     versionCode: ''
-   }
+    state = {
+        versionCode: ''
+    }
 
-   constructor(props: Props) {
-     super(props)
-     this.initialize()
-     this.getVersionCode()
-   }
+    constructor(props: Props) {
+        super(props)
+        this.initialize()
+        this.getVersionCode()
+    }
 
-   async getVersionCode() {
-     // Get the version code of ComPDFKit SDK
-     var version = await ComPDFKit.getVersionCode()
-     this.setState({
-       versionCode: version
-     })
-   }
+    async getVersionCode() {
+        // Get the version code of ComPDFKit SDK
+        var version = await ComPDFKit.getVersionCode()
+        this.setState({
+            versionCode: version
+        })
+    }
 
-   async initialize() {
-     // Online certification, Fill in your online license
-     // Returns true if initialization is successful, otherwise returns false.
-     var result = await ComPDFKit.initialize('compdfkit android license', 'compdfkit ios license')
-     console.log("ComPDFKitRN", "initialize:", result)
+    async initialize() {
+        // Online certification, Fill in your online license
+        // Returns true if initialization is successful, otherwise returns false.
+        // var result = await ComPDFKit.initialize('compdfkit android license', 'compdfkit ios license')
+        // console.log("ComPDFKitRN", "initialize:", result)
 
-     // Offline authentication, Fill in your offline license
-     // var result;
-     // if(Platform.OS == 'android') {
-     //   result = await ComPDFKit.init_('your compdfkit license')
-     // } else {
-     //   result = await ComPDFKit.init_('your compdfkit license')
-     // }
-     // console.log("ComPDFKitRN", "init_:", result)
-   }
+        // Offline authentication, Fill in your offline license
+        var result = await ComPDFKit.init_('jkqgDbjmu/wZnFWVRjEjvZ97oJE65uEurW3WqNaVyhFj1HXmeFsxUATQn4p0HYABrjJkvsZ8lbP1w/h/XpNuEHBYscDEUOdJO4wvY9/rKRb6Cizo1016AAzPEkY5m9l+nF4sfx1xf6VTCjhBEwHjo8uu+804VbZSIskn58mcHg0RcsydGYfQyYGf2ec7ZgSRa6Af+rd7De833kbPx2XI8G1YtXCltFfuQSXgYhE48o8BrAIwRLUMxXtMiVvzOBsR7YpYWNmZopopr5Gl9bLsvOK/VNDzHxGaDUg3CspTydlcJqangWZwi/i/SAdyHAVEZDmx8yshp4ts7fM2ore1m2u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50NckPDhF4Jmjsjb0LXK/bRpxkkuyEYFaz4564aaZEovVo8qwJUkIDPadcRz3j1bMwrqiQMhyGL/CLyGlIiYGkjTdTyNMMHpYPUwPldrVMX4inb9KYdgJggKiH4aXNda34I5yuEfzFxlh8twdPhV7TyiUlFC5mg1ZXVW4rENlJxGheVfNI+5KOfueczv6umprFKusrOsv3g1BSw+mmRndsOcha/6QKMJHwnrDE1N2OTENH0a2YGMI+IdylVlk9Belz0e7qXSW2p6XVnGIzVa12xNGYjQV4tC0mUG8KeUljNpyqd6jdpA0bccj7S1aoN5ky53LuaWx/EZdW9UM3uuB/gJwbizOgM1HWwN4k+xh/zqL3M8AoJo5yXAPiYfIQoS3E1LqRj/dyR3uQhMlfCCGsA=')
+        console.log("ComPDFKitRN", "init_:", result)
+    }
 
-   /**
-    * Open the sample document embedded in Android or iOS project.
-    */
-   openSample(){
-     var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
-     // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
-     var config = ComPDFKit.getDefaultConfig({
+    /**
+     * Open the sample document embedded in Android or iOS project.
+     */
+    openSample() {
+        var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
+        // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
+        var config = ComPDFKit.getDefaultConfig({
 
-     })
-     ComPDFKit.openDocument(samplePDF, '', config)
-   }
+        })
+        ComPDFKit.openDocument(samplePDF, '', config)
+    }
 
-   /**
-    * Pick a PDF file from the local storage of Android or iOS device, this example uses the `react-native-document-picker` package,
-    * If you want to use this example, please add this package to your project first.
-    * {@link https://www.npmjs.com/package/react-native-document-picker}
-    *
-    */
-   pickPDFFile(){
-     try {
-//       const pickerResult = DocumentPicker.pick({
-//         type: [DocumentPicker.types.pdf]
-//       });
-//       pickerResult.then(res => {
-//         ComPDFKit.openDocument(res[0]?.uri as string, '', ComPDFKit.getDefaultConfig({}))
-//       })
-     } catch (err) {
-     }
-   }
+    samplePDF = Platform.OS === 'android'
+        ? 'file:///android_asset/PDF_Document.pdf'
+        : 'PDF_Document.pdf';
 
-   render() {
-     return (
-       <SafeAreaView style={{ flex: 1 }}>
-         <View style={styles.scaffold}>
-           <View style={styles.appBar}>
-             <Text style={styles.mediumTitle}>
-               ComPDFKit PDF SDK for ReactNative
-             </Text>
-           </View>
-           <View style={styles.container}>
-             <TouchableOpacity onPress={() => {
-               this.openSample()
-             }}>
-               <View style={styles.funItem}>
-                 <Text style={{ fontWeight: 'bold' }}>{'Open Sample'}</Text>
-               </View>
-             </TouchableOpacity>
 
-             <View style={styles.dividingLine} />
-
-             <TouchableOpacity onPress={() => {
-               this.pickPDFFile()
-             }}>
-               <View style={styles.funItem}>
-                 <Text style={{ fontWeight: 'bold' }}>{'Pick Document'}</Text>
-               </View>
-               <View style={styles.dividingLine} />
-
-             </TouchableOpacity>
-
-             <View style={styles.buttom}>
-               <Text style={styles.body2}>ComPDFKit for {Platform.OS == 'android' ? 'Android' : 'iOS'} {this.state.versionCode}</Text>
-             </View>
-           </View>
-         </View>
-       </SafeAreaView>
-
-     );
-   }
- }
-
- const styles = StyleSheet.create({
-   appBar: {
-     height: 56,
-     backgroundColor: '#FAFCFF',
-     elevation: 4,
-     flexDirection: "row",
-     justifyContent: "space-between",
-     alignItems: "center",
-     padding: 16
-   },
-   mediumTitle: {
-     fontSize: 16,
-   },
-   body2: {
-     textAlign: 'center',
-     fontSize: 12
-   },
-   scaffold: {
-     flex: 1,
-   },
-   container: {
-     marginHorizontal: 16,
-     marginVertical: 8,
-     flex: 1,
-     // backgroundColor: '#F5FCFF',
-   },
-   funItem: {
-     height: 56,
-     justifyContent: 'center',
-     textAlign: 'center'
-   },
-   dividingLine: {
-     height: 0.5, backgroundColor: '#4D333333', width: '100%'
-   },
-   buttom: {
-     flex: 1,
-     justifyContent: 'flex-end',
-   }
- });
+    render() {
+        return (
+            <SafeAreaView style={{ flex: 1 }}>
+                <CPDFReaderView
+                    document={this.samplePDF}
+                    configuration={ComPDFKit.getDefaultConfig({})}
+                    style={{ flex: 1 }}
+                />
+            </SafeAreaView>
+        );
+    }
+}
 ```
 
 * (Android) For local storage file path:
 
 ```tsx
-document = 'file:///storage/emulated/0/Download/sample.pdf'
+document = '/storage/emulated/0/Download/PDF_document.pdf'
 ```
 
 * (Android) For content Uri:
@@ -395,7 +298,7 @@ document = "file://xxxx/document.pdf"
 
 ### Configuration
 
-When rendering a PDF view using the `ComPDFKit.openDocument` method, you have the flexibility to enable or disable certain features or adjust default attribute values for PDF annotations, forms, and more through the `CPDFConfiguration` settings.
+When rendering a PDF view using the `ComPDFKit.openDocument` method or the `CPDFReaderView` UI component , you have the flexibility to enable or disable certain features or adjust default attribute values for PDF annotations, forms, and more through the `CPDFConfiguration` settings.
 
 For your convenience, you can obtain default attribute values by using the `ComPDFKit.getDefaultConfig({})` method.
 
@@ -415,7 +318,16 @@ var config = ComPDFKit.getDefaultConfig({
     ]
   }
 })
+
+// Use in Modal View
 ComPDFKit.openDocument(samplePDF, '', config)
+
+// Use in UI components
+<CPDFReaderView
+	document={this.samplePDF}
+	configuration={config}
+	style={{ flex: 1 }}
+/>
 ```
 
 2. Set the list of enabled annotation types and default annotation attribute values. For example, enable only highlight annotations and set the color and transparency for highlight annotations:
@@ -441,7 +353,16 @@ var config = ComPDFKit.getDefaultConfig({
     }
   }
 })
+
+// Use in Modal View
 ComPDFKit.openDocument(samplePDF, '', config)
+
+// Use in UI components
+<CPDFReaderView
+	document={this.samplePDF}
+	configuration={config}
+	style={{ flex: 1 }}
+/>
 ```
 
 3. Set the display mode and page flipping direction:
@@ -455,7 +376,15 @@ var config = ComPDFKit.getDefaultConfig({
     verticalMode: false
   }
 })
+// Use in Modal View
 ComPDFKit.openDocument(samplePDF, '', config)
+
+// Use in UI components
+<CPDFReaderView
+	document={this.samplePDF}
+	configuration={config}
+	style={{ flex: 1 }}
+/>
 ```
 
 ## **API**

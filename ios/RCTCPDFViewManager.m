@@ -1,3 +1,7 @@
+//
+//  RCTCPDFViewManager.m
+//  react-native-compdfkit-pdf
+//
 //  Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
@@ -6,6 +10,15 @@
 //  This notice may not be removed from this file.
 //
 
-#import <React/RCTBridgeModule.h>
+#import <Foundation/Foundation.h>
 #import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>
+
+@interface RCT_EXTERN_MODULE(RCTCPDFReaderView, RCTViewManager)
+
+RCT_EXPORT_VIEW_PROPERTY(configuration, NSString);
+
+RCT_EXPORT_VIEW_PROPERTY(document, NSURL);
+
+RCT_EXPORT_VIEW_PROPERTY(password, NSString);
+
+@end

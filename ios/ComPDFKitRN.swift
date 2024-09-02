@@ -130,12 +130,23 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete{
     @objc(openDocument: password: configurationJson:)
     func openDocument(document : URL, password: String, configurationJson : String) -> Void {
         DispatchQueue.main.async {
+            let fileManager = FileManager.default
+            let samplesFilePath = NSHomeDirectory().appending("/Documents/BasicViewer")
+            let fileName = document.lastPathComponent
+            let docsFilePath = samplesFilePath + "/" + fileName
+            
+            if !fileManager.fileExists(atPath: samplesFilePath) {
+                try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+            }
+            
+            try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
+            
             let rootNav = ComPDFKit.presentedViewController()
           
             let jsonDataParse = CPDFJSONDataParse(String: configurationJson)
             guard let configuration = jsonDataParse.configuration else { return }
             
-            let pdfViewController = CPDFViewController(filePath: document.path, password: password, configuration: configuration)
+            let pdfViewController = CPDFViewController(filePath: docsFilePath, password: password, configuration: configuration)
             pdfViewController.delegate = self
             let nav = CNavigationController(rootViewController: pdfViewController)
             nav.modalPresentationStyle = .fullScreen
