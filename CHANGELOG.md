@@ -1,13 +1,17 @@
 ## Newest Release
 
+### 2.1.3-1 - 25 Sep 2024
+
+* Added the features support for ComPDFKit PDF SDK for iOS V2.1.3.
+* iOS annotation toolbar image button adaptation for iPad.
+* RN iOS sandbox structure modification.
+
+## Previous Release
+
 ### 2.1.2 - 01 Sep 2024
 
 * Added `CPDFReaderView` UI component.
 * Optimize document opening speed.
-
-
-
-## Previous Release
 
 ### 2.1.1 - 12 Aug 2024
 
