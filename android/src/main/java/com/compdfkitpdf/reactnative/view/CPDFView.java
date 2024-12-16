@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -21,8 +22,17 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
+import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
+import com.compdfkit.ui.reader.CPDFReaderView;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CPDFView extends FrameLayout {
@@ -43,7 +53,10 @@ public class CPDFView extends FrameLayout {
 
   private CPDFConfiguration configuration;
 
+  private ThemedReactContext themedReactContext;
+
   public void setup(ThemedReactContext reactContext, FragmentManager fragmentManager) {
+    this.themedReactContext = reactContext;
     this.fragmentManager = fragmentManager;
     int width = ViewGroup.LayoutParams.MATCH_PARENT;
     int height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -100,18 +113,45 @@ public class CPDFView extends FrameLayout {
       View fragmentView = documentFragment.getView();
       addView(fragmentView, ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT);
+      documentFragment.initDocument(()->{
+        try {
+          documentFragment.pdfView.indicatorView.setRNMeasureLayout(true);
+        }catch (Exception e){
+        }
+
+        documentFragment.pdfView.addReaderViewCallback(new CPDFIReaderViewCallback() {
+          @Override
+          public void onMoveToChild(int pageIndex) {
+            super.onMoveToChild(pageIndex);
+            WritableMap params = Arguments.createMap();
+            params.putInt("onPageChanged", pageIndex);
+            onReceiveNativeEvent(params);
+          }
+        });
+        documentFragment.pdfView.setSaveCallback((s, uri) -> {
+          WritableMap event = Arguments.createMap();
+          event.putString("saveDocument", "saveDocument");
+          event.putString("path", s);
+          event.putString("uri", uri.toString());
+          onReceiveNativeEvent(event);
+        }, e -> {
+
+        });
+      });
     }
   }
 
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    Log.i("ComPDFKit", "CPDFView-onAttachedToWindow()");
     getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
   }
 
   @Override
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
+    Log.i("ComPDFKit", "CPDFView-onDetachedFromWindow()");
     getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
   }
 
@@ -146,10 +186,40 @@ public class CPDFView extends FrameLayout {
     layout(getLeft(), getTop(), getRight(), getBottom());
   };
 
+  public CPDFReaderView getCPDFReaderView() {
+    return documentFragment.pdfView.getCPdfReaderView();
+  }
+
 
   @Override
   public void requestLayout() {
     super.requestLayout();
     post(mLayoutRunnable);
+  }
+
+  public void onReceiveNativeEvent(String key, String message) {
+    ReactContext reactContext = (ReactContext) getContext();
+    WritableMap event = Arguments.createMap();
+    event.putString(key, message);
+    reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+      getId(),
+      "topChange",
+      event);
+  }
+
+  public void onReceiveNativeEvent(String key, int message) {
+    WritableMap event = Arguments.createMap();
+    event.putInt(key, message);
+    themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+      getId(),
+      "topChange",
+      event);
+  }
+
+  public void onReceiveNativeEvent(WritableMap event) {
+    themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+      getId(),
+      "topChange",
+      event);
   }
 }

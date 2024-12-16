@@ -1,5 +1,18 @@
 ## Newest Release
 
+### 2.2.0 - 13 Dec. 2024
+* Added features support for ComPDFKit PDF SDK for [Android V2.2.0](https://www.compdf.com/pdf-sdk/changelog-android#v2-2-0).
+* Added features support for ComPDFKit PDF SDK for [iOS V2.2.0](https://www.compdf.com/pdf-sdk/changelog-ios#v2-2-0).
+* Added import and export annotation interfaces.
+* Added delete all annotations interface.
+* Added get page number interface and page number listener callback.
+* Added save document callback.
+* Optimized document saving logic on iOS platform.
+
+
+
+## Previous Release
+
 ### 2.1.3-2 - 26 Sep 2024
 
 * Added the features support for ComPDFKit PDF SDK for Android V2.1.3.
@@ -10,8 +23,6 @@
 * Fixed abnormal annotation display after rotating the page.
 * Fixed crash when releasing watermarks.
 * Fixed memory leak in the property window of the ComPDFKit_Tools module.
-
-## Previous Release
 
 ### 2.1.3-1 - 25 Sep 2024
 

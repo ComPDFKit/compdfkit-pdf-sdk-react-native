@@ -119,6 +119,20 @@ declare module 'react-native' {
        *
        */
       openDocument: (document: string, password: string, configuration: string) => void;
+
+      /**
+       * Delete the saved signature file from the annotation signature list
+       * 
+       * @example
+       * ComPDFKit.removeSignFileList().then((result : boolean) => {
+       *  console.log('ComPDFKit removeSignFileList:', result)
+       * })
+       * 
+       * @returns 
+       */
+      removeSignFileList : () => Promise<boolean>;
+
+      pickFile : () => Promise<string>;
     };
   }
 }
@@ -130,6 +144,8 @@ interface ComPDFKit {
   init_(license: string): Promise<boolean>;
   initialize(androidOnlineLicense: string, iosOnlineLicense: string): Promise<boolean>;
   openDocument(document: string, password: string, configurationJson: string): void;
+  removeSignFileList() : Promise<boolean>;
+  pickFile() : Promise<string>;
 }
 
 const ComPDFKit = NativeModules.ComPDFKit
@@ -170,6 +186,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       ]
     },
     toolbarConfig: {
+      mainToolbarVisible : true,
       androidAvailableActions: [
         CPDFToolbarAction.THUMBNAIL,
         CPDFToolbarAction.SEARCH,
@@ -414,6 +431,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       enableSliderBar: true,
       enablePageIndicator: true,
       pageScale: 1.0,
+      margins: [0,0,0,0],
       pageSpacing: 10,
       pageSameWidth: true
     },

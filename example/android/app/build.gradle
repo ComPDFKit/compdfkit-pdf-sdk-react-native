@@ -123,6 +123,7 @@ android {
 
 dependencies {
   implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
+  api "com.compdf:compdfkit:2.2.0-SNAPSHOT"
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

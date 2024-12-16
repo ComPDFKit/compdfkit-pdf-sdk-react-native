@@ -14,6 +14,33 @@ RCT_EXTERN_METHOD(save:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setMargins:(NSInteger)tag
+                  withEdges:[Int]edges)
+
+RCT_EXTERN_METHOD(removeAllAnnotations:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(importAnnotations:(NSInteger)tag
+                  withXfdfFile:(NSURL *)xfdfFile
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(exportAnnotations:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setDisplayPageIndex:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex)
+
+RCT_EXTERN_METHOD(getCurrentPageIndex:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(hasChange:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

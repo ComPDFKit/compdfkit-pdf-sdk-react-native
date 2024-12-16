@@ -114,6 +114,7 @@ Used to configure the initial display mode and supported modes when displaying a
 {
   "modeConfig": {
     "initialViewMode": "viewer",
+    "readerOnly": false,
     "availableViewModes": [
       "viewer",
       "annotations",
@@ -131,12 +132,13 @@ Configure functions for the top toolbar in the PDF view.
 
 ##### **Parameters**
 
-| Name                        | Type  | Description                                                  |
-| --------------------------- | ----- | ------------------------------------------------------------ |
-| androidAvailableActions     | Array | Functions available in the top toolbar for Android platform.<br />Defaults: `thumbnail`, `search`, `bota`, `menu` |
-| iosLeftBarAvailableActions  | Array | Functions available in the left side of the top toolbar for iOS platform.<br />Defaults: `back`, `thumbnail` |
-| iosRightBarAvailableActions | Array | Functions available in the right side of the top toolbar for iOS platform.<br />Defaults: `search`, `bota`, `menu` |
-| availableMenus              | Array | A list of more functions popped up by the `menu` option on the top toolbar. |
+| Name                        | Type    | Description                                                  |
+| --------------------------- | ------- | ------------------------------------------------------------ |
+| androidAvailableActions     | Array   | Functions available in the top toolbar for Android platform.<br />Defaults: `thumbnail`, `search`, `bota`, `menu` |
+| iosLeftBarAvailableActions  | Array   | Functions available in the left side of the top toolbar for iOS platform.<br />Defaults: `back`, `thumbnail` |
+| iosRightBarAvailableActions | Array   | Functions available in the right side of the top toolbar for iOS platform.<br />Defaults: `search`, `bota`, `menu` |
+| availableMenus              | Array   | A list of more functions popped up by the `menu` option on the top toolbar. |
+| mainToolbarVisible          | boolean | 是否显示主界面视图顶部工具栏                                 |
 
 ##### **Constants**
 
@@ -160,9 +162,11 @@ Configure functions for the top toolbar in the PDF view.
 | save           | Saves the document.                                         |
 | share          | Shares the PDF document.                                    |
 | openDocument   | Opens the system file selector to choose and open a PDF document. |
+| snip           | The PDF capture function allows you to capture an area in the PDF document and convert it into an image. |
 ```json
 {
    "toolbarConfig": {
+    "mainToolbarVisible" : true,
     "androidAvailableActions": [
       "thumbnail",
       "search",
@@ -187,7 +191,8 @@ Configure functions for the top toolbar in the PDF view.
       "flattened",
       "save",
       "share",
-      "openDocument"
+      "openDocument",
+      "snip"
     ]
   }
 }
@@ -756,6 +761,7 @@ This section is used to configure the types of forms enabled in the view's botto
 | pageSpacing         | int     | 10           | Spacing between each page of the PDF.<br/>default `10px`.    |
 | pageScale           | double  | 1.0          | Page scale value, default 1.0.<br/>value range:1.0~5.0       |
 | pageSameWidth       | boolean | true         | only android platform.                                       |
+| margins             | Array   | [0,0,0,0]    | Set the outer spacing of the PDF area. The setting order is: left, top, right, bottom. |
 
 ##### displayMode Constants
 
@@ -809,6 +815,7 @@ This section is used to configure the types of forms enabled in the view's botto
     ]
   },
   "toolbarConfig": {
+    "mainToolbarVisible" : true,
     "androidAvailableActions": [
       "thumbnail",
       "search",
@@ -833,7 +840,8 @@ This section is used to configure the types of forms enabled in the view's botto
       "flattened",
       "save",
       "share",
-      "openDocument"
+      "openDocument",
+      "snip"
     ]
   },
   "annotationsConfig": {
@@ -1052,6 +1060,7 @@ This section is used to configure the types of forms enabled in the view's botto
     "enableSliderBar": true,
     "enablePageIndicator": true,
     "pageSpacing": 10,
+    "margins" : [0,0,0,0],
     "pageScale": 1.0,
     "pageSameWidth":true
   },

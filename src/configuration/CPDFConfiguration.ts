@@ -51,6 +51,13 @@ export class CPDFConfiguration {
      * Configuration for top toolbar functionality
      */
     toolbarConfig?: {
+
+        /**
+         * Set whether to display the top toolbar
+         * 
+         * Default: true
+         */
+        mainToolbarVisible?: boolean,
         /**
          * Top toolbar actions for Android platform
          *
@@ -406,6 +413,17 @@ export class CPDFConfiguration {
          * Spacing between each page of the PDF, default 10px.
          */
         pageSpacing?: number,
+        
+        /**
+         * Sets the outer margins for the PDF reading view.
+         * - `index 0`: margin left
+         * - `index 1`: margin top
+         * - `index 2`: margin right
+         * - `index 3`: margin bottom
+         * 
+         * **Default:** `[0,0,0,0]`
+         */
+        margins?: number[],
         /**
          * Page scale value, default 1.0.
          */

@@ -21,4 +21,6 @@ RCT_EXPORT_VIEW_PROPERTY(document, NSURL);
 
 RCT_EXPORT_VIEW_PROPERTY(password, NSString);
 
+RCT_EXPORT_VIEW_PROPERTY(onChange, RCTBubblingEventBlock)
+
 @end

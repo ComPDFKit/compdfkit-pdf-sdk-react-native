@@ -8,8 +8,6 @@ ComPDFKit React Native supports TypeScript. Types used in this document will be 
 
 ComPDFKit contains static methods for global library initialization, configuration, and utility methods.
 
-
-
 ### init_
 
 Initialize the ComPDFKit SDK offline using your ComPDFKit commercial license key. Please contact our sales to obtain a trial license.
@@ -140,7 +138,6 @@ ComPDFKit.openDocument(document, '', ComPDFKit.getDefaultConfig({}))
 
 When using the `ComPDFKit.openDocument` method or the `CPDFReaderView` UI component to display a PDF file, you need to pass configuration parameters to customize the UI features and PDF view properties. `ComPDFKit` provides default configuration parameters through `ComPDFKit.getDefaultConfig`. You can retrieve them using the following example:
 
----
 
 ```tsx
 ComPDFKit.getDefaultConfig({})
@@ -197,6 +194,22 @@ ComPDFKit.getDefaultConfig({
 ```
 
 For more configuration parameter descriptions, please see [CPDFCONFIGURATION.md](./CONFIGURATION.md).
+
+### removeSignFileList
+
+Delete the signature saved in the electronic signature annotation list.
+
+Returns a Promise.
+
+| Name   | Type    | Description                                                  |
+| ------ | ------- | ------------------------------------------------------------ |
+| result | boolean | Returns `true` if the deletion was successful, otherwise returns `false`. |
+
+```tsx
+ComPDFKit.removeSignFileList();
+```
+
+
 
 ## CPDFReaderView - Props
 
@@ -274,5 +287,181 @@ Used to pass configuration parameters when rendering a PDF file to customize UI 
   />
 ```
 
+### Document
 
+#### hasChange
+Checks whether the document has been modified.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name      | Type    | Description                                                  |
+| --------- | ------- | ------------------------------------------------------------ |
+| hasChange | boolean | `true`: The document has been modified,   <br/>`false`: The document has not been modified. |
+
+```tsx
+const hasChange = await pdfReaderRef.current?.hasChange();
+```
+
+#### save
+
+Save the current document changes.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description                                            |
+| ------ | ------- | ------------------------------------------------------ |
+| result | boolean | **true**: Save successful,<br/>**false**: Save failed. |
+
+```js
+const saveResult = await pdfReaderRef.current.save();
+```
+
+#### onSaveDocument
+
+function, optional
+
+This function will be called when the document is saved.
+
+Parameters:
+
+| Name       | Type | Description             |
+| ---------- | ---- | ----------------------- |
+| pageNumber | int  | the current page number |
+
+```tsx
+<CPDFReaderView
+	onSaveDocument={()=>{}}
+	/>
+```
+
+### Viewer
+
+#### setMargins
+
+Set the current PDF view margin.
+
+Parameters:
+
+| Name   | Type | Description   |
+| ------ | ---- | ------------- |
+| left   | int  | margin left   |
+| top    | int  | margin top    |
+| right  | int  | margin right  |
+| bottom | int  | margin bottom |
+
+```tsx
+await pdfReaderRef.current?.setMargins(10,10,10,10);
+```
+
+
+
+### Page
+
+#### setDisplayPageIndex
+
+Jump to the index page.
+
+Parameters:
+
+| Name      | Type | Description    |
+| --------- | ---- | -------------- |
+| pageIndex | int  | 需要跳转的页码 |
+
+```tsx
+await pdfReaderRef.current?.setDisplayPageIndex(1);
+```
+
+#### getCurrentPageIndex
+
+get current page index.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name      | Type | Description                |
+| --------- | ---- | -------------------------- |
+| pageIndex | int  | 返回当前文档展示的页面索引 |
+
+```tsx
+const pageIndex = await pdfReaderRef.current?.getCurrentPageIndex();
+```
+
+#### onPageChanged
+
+function, optional
+
+This function is called when the page number has been changed.
+
+Parameters:
+
+| Name       | Type | Description             |
+| ---------- | ---- | ----------------------- |
+| pageNumber | int  | the current page number |
+
+```tsx
+<CPDFReaderView
+	onPageChanged={(pageIndex:number)=>{
+	}}
+  />
+```
+
+### Annotations
+
+#### import Annotations
+
+Imports annotations from the specified XFDF file into the current PDF document.
+
+Parameters:
+
+| Name     | Type   | Description                                                  |
+| -------- | ------ | ------------------------------------------------------------ |
+| xfdfFile | string | Path of the XFDF file to be imported.<br/>The Android platform supports the following paths：<br/>- **assets file**:'file:///android_assets/test.xfdf'<br/>- **file path**: '/data/xxx.xfdf'<br/>- **Uri**: 'content://xxxx' |
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description                                                |
+| ------ | ------- | ---------------------------------------------------------- |
+| result | boolean | **true**: import successful,<br/>**false**: import failed. |
+
+```tsx
+const result = await pdfReaderRef.current.importAnnotations('xxx.xfdf');
+```
+
+#### export Annotations
+Exports annotations from the current PDF document to an XFDF file.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name     | Type   | Description                                                  |
+| -------- | ------ | ------------------------------------------------------------ |
+| xfdfPath | string | The path of the XFDF file if export is successful; an empty string if the export fails. |
+
+```tsx
+const exportXfdfFilePath = await pdfReaderRef.current?.exportAnnotations();
+```
+
+
+#### removeAllAnnotations
+Delete all comments in the current document.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| result | boolean | true、false |
+
+```tsx
+const removeResult = await pdfReaderRef.current?.removeAllAnnotations();
+```
 

@@ -13,7 +13,7 @@ import { CPDFReaderView, ComPDFKit, CPDFToolbarAction } from '@compdfkit_pdf_sdk
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
-    CPDFReaderViewExample: { document?: string }; // 定义 `document` 参数
+    CPDFReaderViewExample: { document?: string }; 
 };
 
 type CPDFReaderViewExampleScreenRouteProp = RouteProp<
@@ -64,6 +64,7 @@ const CPDFReaderViewExampleScreen = () => {
             document={samplePDF}
             configuration={ComPDFKit.getDefaultConfig({
                 toolbarConfig: {
+                    mainToolbarVisible: true,
                     iosLeftBarAvailableActions:[
                         CPDFToolbarAction.THUMBNAIL
                       ]

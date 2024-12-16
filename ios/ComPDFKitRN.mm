@@ -30,6 +30,12 @@ RCT_EXTERN_METHOD(openDocument:(NSURL *)document
                   password:(NSString *)password
                   configurationJson:(NSString *)configurationJson)
 
+RCT_EXTERN_METHOD(removeSignFileList:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(pickFile:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

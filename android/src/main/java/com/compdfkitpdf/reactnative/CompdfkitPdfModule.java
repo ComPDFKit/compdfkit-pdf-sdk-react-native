@@ -9,6 +9,7 @@
 
 package com.compdfkitpdf.reactnative;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.CLog;
 import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -44,11 +47,16 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   public static final String CONTENT_SCHEME = "content://";
   public static final String FILE_SCHEME = "file://";
 
+  public static final int PICK_PDF_FILE_REQUEST_CODE = 90;
+
+  private Promise promise;
+
   private ReactContext mReactContext;
 
   public CompdfkitPdfModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.mReactContext = reactContext;
+    this.mReactContext.addActivityEventListener(activityEventListener);
   }
 
   @Override
@@ -190,4 +198,58 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     }
   }
 
+  /**
+   * Delete the saved signature file from the annotation signature list.
+   * @param promise
+   */
+  @ReactMethod
+  public void removeSignFileList(Promise promise){
+    File dirFile = new File(mReactContext.getFilesDir(), CFileUtils.SIGNATURE_FOLDER);
+    boolean deleteResult = CFileUtils.deleteDirectory(dirFile.getAbsolutePath());
+    promise.resolve(deleteResult);
+  }
+
+  @ReactMethod
+  public void pickFile(Promise promise){
+    this.promise = promise;
+    Activity activity = getCurrentActivity();
+    if (activity != null) {
+      activity.startActivityForResult(CFileUtils.getContentIntent(), PICK_PDF_FILE_REQUEST_CODE);
+    }else {
+      this.promise.reject(new Throwable("activity is null"));
+    }
+  }
+
+  @Override
+  public void invalidate() {
+    getReactApplicationContext().removeActivityEventListener(activityEventListener);
+    super.invalidate();
+  }
+
+  private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+      boolean isForeignResult = requestCode != PICK_PDF_FILE_REQUEST_CODE;
+      if (isForeignResult) {
+        return;
+      }
+      final Promise storedPromise = promise;
+      if (storedPromise == null) {
+        Log.e(NAME, "promise was null in onActivityResult");
+        return;
+      }
+      if (resultCode == Activity.RESULT_CANCELED) {
+        storedPromise.reject("PICK_FILE_CANCEL","User canceled directory picker" );
+        return;
+      }
+      if (requestCode == PICK_PDF_FILE_REQUEST_CODE) {
+        Uri uri = data.getData();
+        if (uri != null) {
+          storedPromise.resolve(uri.toString());
+        }else {
+          storedPromise.reject("PICK_FILE_URI_IS_NULL", "uri is null");
+        }
+      }
+    }
+  };
 }

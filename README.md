@@ -51,8 +51,6 @@ Let's create a simple app that integrates ComPDFKit for React Native.
    cd MyApp
    ```
 
-
-
 ### Installing-the-ComPDFKit-Dependency
 
 You can integrate the SDK in two ways:
@@ -117,8 +115,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.1.3.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.1.3.podspec'
++    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.2.0.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.2.0.podspec'
     # ...
 end
 ```
@@ -128,8 +126,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.3'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.1.3'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.2.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.2.0'
     # ...
 end
 ```
@@ -141,7 +139,7 @@ end
    open ios/MyApp.xcworkspace
    ```
 
-   Make sure the deployment target is set to 10.0 or higher:
+   Make sure the deployment target is set to 12.0 or higher:
 
    ![1-1](./screenshots/1-1.png)
 5. Add the PDF document you want to display to your application by dragging it into your project. On the dialog that’s displayed, select Finish to accept the default integration options. You can use **"PDF_Document.pdf"** as an example.
@@ -231,7 +229,7 @@ export default class App extends Component<Props> {
         // console.log("ComPDFKitRN", "initialize:", result)
 
         // Offline authentication, Fill in your offline license
-        var result = await ComPDFKit.init_('jkqgDbjmu/wZnFWVRjEjvZ97oJE65uEurW3WqNaVyhFj1HXmeFsxUATQn4p0HYABrjJkvsZ8lbP1w/h/XpNuEHBYscDEUOdJO4wvY9/rKRb6Cizo1016AAzPEkY5m9l+nF4sfx1xf6VTCjhBEwHjo8uu+804VbZSIskn58mcHg0RcsydGYfQyYGf2ec7ZgSRa6Af+rd7De833kbPx2XI8G1YtXCltFfuQSXgYhE48o8BrAIwRLUMxXtMiVvzOBsR7YpYWNmZopopr5Gl9bLsvOK/VNDzHxGaDUg3CspTydlcJqangWZwi/i/SAdyHAVEZDmx8yshp4ts7fM2ore1m2u0lH1oY17eVN2TRW5amzqSj1QR5Q0MX/v2nFNCjvJImeroTsMiyvSO5KjU5Zrs50NckPDhF4Jmjsjb0LXK/bRpxkkuyEYFaz4564aaZEovVo8qwJUkIDPadcRz3j1bMwrqiQMhyGL/CLyGlIiYGkjTdTyNMMHpYPUwPldrVMX4inb9KYdgJggKiH4aXNda34I5yuEfzFxlh8twdPhV7TyiUlFC5mg1ZXVW4rENlJxGheVfNI+5KOfueczv6umprFKusrOsv3g1BSw+mmRndsOcha/6QKMJHwnrDE1N2OTENH0a2YGMI+IdylVlk9Belz0e7qXSW2p6XVnGIzVa12xNGYjQV4tC0mUG8KeUljNpyqd6jdpA0bccj7S1aoN5ky53LuaWx/EZdW9UM3uuB/gJwbizOgM1HWwN4k+xh/zqL3M8AoJo5yXAPiYfIQoS3E1LqRj/dyR3uQhMlfCCGsA=')
+        var result = await ComPDFKit.init_('compdfkit license')
         console.log("ComPDFKitRN", "init_:", result)
     }
 
@@ -250,13 +248,22 @@ export default class App extends Component<Props> {
     samplePDF = Platform.OS === 'android'
         ? 'file:///android_asset/PDF_Document.pdf'
         : 'PDF_Document.pdf';
+  
+    const onPageChanged = (pageIndex : number) =>{
+        // console.log('ComPDFKitRN --- onPageChanged:', pageIndex);
+    }
 
+    const saveDocument = () => {
+        console.log('ComPDFKitRN saveDocument');
+    }
 
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <CPDFReaderView
                     document={this.samplePDF}
+                  	onPageChanged={onPageChanged}
+                    saveDocument={saveDocument}
                     configuration={ComPDFKit.getDefaultConfig({})}
                     style={{ flex: 1 }}
                 />

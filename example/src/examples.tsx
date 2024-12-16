@@ -9,7 +9,6 @@
 
 import { Platform } from 'react-native';
 import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
-import DocumentPicker from 'react-native-document-picker'
 
 const examples = [
     {
@@ -27,17 +26,15 @@ const examples = [
         key: 'item2',
         title: 'Select External Files Example',
         description: `Select pdf document form system file manager`,
-        action: (component: any)  => {
+        action: async (component: any)  => {
             // Pick a PDF file from the local storage of Android or iOS device,
             // this example uses the `react-native-document-picker` package,
             // If you want to use this example, please add this package to your project first.
             try {
-                const pickerResult = DocumentPicker.pick({
-                    type: [DocumentPicker.types.pdf]
-                });
-                pickerResult.then(res => {
-                    ComPDFKit.openDocument(res[0]?.uri as string, '', ComPDFKit.getDefaultConfig({}))
-                })
+                const pdfPath = await ComPDFKit.pickFile();
+                if(pdfPath != null){
+                    ComPDFKit.openDocument(pdfPath, '', ComPDFKit.getDefaultConfig({}))
+                }
             } catch (err) {
             }
         }
@@ -54,19 +51,26 @@ const examples = [
         key: 'item4',
         title: 'CPDFReaderView Example 2',
         description: 'Select a file from the system storage and display the PDF view in the React Native component',
-        action: (component: any)  => {
+        action: async (component: any)  => {
             try {
-                const pickerResult = DocumentPicker.pick({
-                    type: [DocumentPicker.types.pdf]
-                });
-                pickerResult.then(res => {
+                const pdfPath = await ComPDFKit.pickFile();
+
+                if(pdfPath != null){
                     component.props.navigation.navigate('CPDFReaderViewExample',{
-                        document: res[0]?.uri as string
+                        document: pdfPath
                     });
-                })
+                }
             } catch (err) {
             }
         }
-    }
+    },
+    {
+        key: 'item5',
+        title: 'CPDFReaderView Controller Example',
+        description: 'Examples of functions that can be used with the PDF component',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFReaderViewControllerExample');
+        }
+    },
 ];
 export default examples;
