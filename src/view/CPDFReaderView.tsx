@@ -41,7 +41,7 @@ type CPDFReaderViewProps = PropTypes.InferProps<typeof propTypes>;
 
 function func<T>(): Requireable<T> {
 
-  let validator: Validator<T> = function (props: { [key: string]: any }, propName: string, componentName: string, location: string, propFullName: string): Error | null {
+  let validator: Validator<T> = function (props: { [key: string]: any }, propName: string, componentName: string): Error | null {
     if (typeof props[propName] !== "function" && typeof props[propName] !== "undefined") {
       return new Error(`Invalid prop \`${propName}\` of type \`${typeof props[propName]}\` supplied to \`${componentName}\`, expected a function.`);
     }
