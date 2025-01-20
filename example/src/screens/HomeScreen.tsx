@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-import examples from "../examples";
+import {examples} from "../examples";
 
 type Props = {};
 class HomeScreen extends Component<Props> {
@@ -16,7 +16,6 @@ class HomeScreen extends Component<Props> {
   render() {
     return (
         <View style={styles.container}>
-          <Text style={{ fontSize: 16, fontWeight: '500', color:'#000' }}>Examples</Text>
           <FlatList
             data={examples}
             renderItem={this._renderItem}
@@ -27,19 +26,22 @@ class HomeScreen extends Component<Props> {
   }
 
   _renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.funItem} onPress={() => item.action(this)}>
-
-        <Image source={require('../../assets/view.png')} style={styles.itemIcon} />
-        <View style={{ flexDirection: 'column', flex: 1 }}>
-          <Text style={styles.itemTitle}>{item.title}</Text>
-          <Text style={styles.itemDescription}>{item.description}</Text>
-        </View>
-        <Image source={require('../../assets/arrow_right.png')} style={styles.itemTailIcon} />
-
-      </TouchableOpacity>
-    );
+    if(item.type === 'header'){
+      return (<Text style={{ fontSize: 16, fontWeight: '500', color:'#000', marginTop : 8 }}>{item.title}</Text>)
+    } else {
+      return (
+        <TouchableOpacity
+          style={styles.funItem} onPress={() => item.action(this)}>
+          <Image source={require('../../assets/view.png')} style={styles.itemIcon} />
+          <View style={{ flexDirection: 'column', flex: 1 }}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            <Text style={styles.itemDescription}>{item.description}</Text>
+          </View>
+          <Image source={require('../../assets/arrow_right.png')} style={styles.itemTailIcon} />
+  
+        </TouchableOpacity>
+      );
+    }
   }
 
 }
@@ -56,6 +58,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
+    marginTop: 4,
+    marginBottom: 4
   },
   itemIcon: {
     width: 32,
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   itemDescription: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#000',
     opacity: 0.6
   },

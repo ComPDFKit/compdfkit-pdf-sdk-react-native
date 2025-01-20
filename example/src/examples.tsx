@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -10,7 +10,7 @@
 import { Platform } from 'react-native';
 import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 
-const examples = [
+const modalViewExamples = [
     {
         key: 'item1',
         title: 'Basic Example',
@@ -38,7 +38,11 @@ const examples = [
             } catch (err) {
             }
         }
-    },
+    }
+];
+
+
+const uiConpomentExamples = [
     {
         key: 'item3',
         title: 'CPDFReaderView Example',
@@ -72,5 +76,28 @@ const examples = [
             component.props.navigation.navigate('CPDFReaderViewControllerExample');
         }
     },
+    {
+        key: 'item6',
+        title: 'Annotations Example',
+        description: 'Demonstrate how to implement annotation functionality using the CPDFReaderView UI component, including adding, editing, and deleting annotations.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFAnnotationsExample');
+        }
+    },
+    {
+        key: 'item7',
+        title: 'Security Example',
+        description: 'This example shows how to set passwords, watermarks, etc.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFSecurityExample');
+        }
+    },
 ];
-export default examples;
+
+export const examples = [
+    { key: 'header1', type: 'header', title: 'CPDFReaderView Examples' },
+    ...uiConpomentExamples.map(item => ({ ...item, type: 'uiComponent' })),
+
+    { key: 'header2', type: 'header', title: 'Modal View Examples' },
+    ...modalViewExamples.map(item => ({ ...item, type: 'modalView' }))
+];

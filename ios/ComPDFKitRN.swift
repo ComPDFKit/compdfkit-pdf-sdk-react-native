@@ -1,4 +1,4 @@
-//  Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+//  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -17,9 +17,9 @@ import ComPDFKit_Tools
  */
 @objc(ComPDFKit)
 class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegate{
-    
+
     private var pdfViewController: CPDFViewController?
-    
+
     private var _resolve: RCTPromiseResolveBlock?
 
     /**
@@ -136,10 +136,10 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
         DispatchQueue.main.async {
             var documentPath = document.path
             var success = false
-            
+
             let homeDiectory = NSHomeDirectory()
             let bundlePath = Bundle.main.bundlePath
-                
+
             if (documentPath.hasPrefix(homeDiectory) || documentPath.hasPrefix(bundlePath)) {
                 let fileManager = FileManager.default
                 let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
@@ -151,12 +151,12 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
                 }
 
                 try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
-                
+
                 documentPath = docsFilePath
             } else {
                 success = document.startAccessingSecurityScopedResource()
             }
-            
+
             let rootNav = ComPDFKit.presentedViewController()
 
             let jsonDataParse = CPDFJSONDataParse(String: configurationJson)
@@ -167,14 +167,14 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
             let nav = CNavigationController(rootViewController: self.pdfViewController!)
             nav.modalPresentationStyle = .fullScreen
             rootNav?.present(nav, animated: true)
-            
+
             if success {
                 document.stopAccessingSecurityScopedResource()
             }
         }
     }
-    
-    
+
+
     @objc(removeSignFileList:withRejecter:)
     func removeSignFileList(resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -182,7 +182,7 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
             resolve(true)
         }
     }
-    
+
     @objc(pickFile:withRejecter:)
     func pickFile(resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -193,7 +193,26 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
             self._resolve = resolve
         }
     }
-
+    
+    @objc(setImportFontDir:addSysFont:withResolver: withRejecter:)
+    func setImportFontDir(fontDir : String, addSysFont : Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        let fileManager = FileManager.default
+        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationPath = documentDirectory.appendingPathComponent("Font")
+        
+        do {
+            if fileManager.fileExists(atPath: destinationPath.path) {
+                try fileManager.removeItem(at: destinationPath)
+            }
+            
+            try fileManager.copyItem(atPath: fontDir, toPath: destinationPath.path)
+            CPDFFont.setImportDir(destinationPath.path, isContainSysFont: addSysFont)
+        } catch {
+            print("Error copying Font directory: \(error)")
+        }
+        resolve(true)
+    }
+    
     //MARK: - ViewController Method
 
     /**
@@ -202,9 +221,9 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
     func PDFViewBaseControllerDissmiss(_ baseControllerDelete: CPDFViewBaseController) {
       baseControllerDelete.dismiss(animated: true)
     }
-    
+
     func PDFViewBaseController(_ baseController: CPDFViewBaseController, SaveState success: Bool) {
-        
+
     }
 
     /**
@@ -248,9 +267,9 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
 
       return currentViewController
     }
-    
+
     //MARK: - UIDocumentPickerDelegate
-    
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         let fileUrlAuthozied = urls.first?.startAccessingSecurityScopedResource() ?? false
         if fileUrlAuthozied {

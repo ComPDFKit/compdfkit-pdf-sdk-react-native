@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  * <p>
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -8,6 +8,10 @@
  */
 
 package com.compdfkitpdf.reactnative;
+
+import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.ASSETS_SCHEME;
+import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.CONTENT_SCHEME;
+import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.FILE_SCHEME;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,11 +45,6 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   private static final String TAG = "ComPDFKitRN";
 
   public static final String NAME = "ComPDFKit";
-
-  public static final String ASSETS_SCHEME = "file:///android_asset";
-
-  public static final String CONTENT_SCHEME = "content://";
-  public static final String FILE_SCHEME = "file://";
 
   public static final int PICK_PDF_FILE_REQUEST_CODE = 90;
 
@@ -218,6 +217,12 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     }else {
       this.promise.reject(new Throwable("activity is null"));
     }
+  }
+
+  @ReactMethod
+  public void setImportFontDir(String dir, boolean addSysFont,Promise promise){
+    CPDFSdk.setImportFontDir(dir, addSysFont);
+    promise.resolve(true);
   }
 
   @Override

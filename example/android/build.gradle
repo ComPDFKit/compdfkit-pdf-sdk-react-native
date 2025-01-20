@@ -10,9 +10,6 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-    maven {
-      url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-    }
     mavenLocal()
 
   }
@@ -27,11 +24,7 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-    maven {
-      url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-    }
     mavenLocal()
-
   }
 }
 

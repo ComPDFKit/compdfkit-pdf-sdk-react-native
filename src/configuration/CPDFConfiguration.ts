@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -54,7 +54,7 @@ export class CPDFConfiguration {
 
         /**
          * Set whether to display the top toolbar
-         * 
+         *
          * Default: true
          */
         mainToolbarVisible?: boolean,
@@ -413,14 +413,14 @@ export class CPDFConfiguration {
          * Spacing between each page of the PDF, default 10px.
          */
         pageSpacing?: number,
-        
+
         /**
          * Sets the outer margins for the PDF reading view.
          * - `index 0`: margin left
          * - `index 1`: margin top
          * - `index 2`: margin right
          * - `index 3`: margin bottom
-         * 
+         *
          * **Default:** `[0,0,0,0]`
          */
         margins?: number[],

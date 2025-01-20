@@ -15,6 +15,8 @@
 		7699B88040F8A987B510C191 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FCF5E12C475A9100CEFDBB /* Localizable.strings */; };
+		EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */ = {isa = PBXBuildFile; fileRef = EC09D8202D3DE886001B2CB3 /* test.xfdf */; };
+		EC4EF3572D36664A00EEA52B /* extraFonts in Resources */ = {isa = PBXBuildFile; fileRef = EC4EF3562D36664A00EEA52B /* extraFonts */; };
 		ECF47E9D2BDF6D3300E7456A /* PDF_Document.pdf in Resources */ = {isa = PBXBuildFile; fileRef = ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +50,8 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		C9FCF5E22C475A9100CEFDBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9FCF5E42C475AB600CEFDBB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xfdf; sourceTree = "<group>"; };
+		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
 		ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PDF_Document.pdf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -124,6 +128,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				EC09D8202D3DE886001B2CB3 /* test.xfdf */,
+				EC4EF3562D36664A00EEA52B /* extraFonts */,
 				ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */,
 				13B07FAE1A68108700A75B9A /* CompdfkitPdfExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -252,9 +258,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
 				C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				ECF47E9D2BDF6D3300E7456A /* PDF_Document.pdf in Resources */,
+				EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,6 +498,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4GGQPGRTSV;
 				ENABLE_BITCODE = NO;
@@ -500,15 +510,16 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.2.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.flutter.example;
 				PRODUCT_NAME = ComPDFKit_RN;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -525,6 +536,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4GGQPGRTSV;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -534,15 +547,16 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.2.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.flutter.example;
 				PRODUCT_NAME = ComPDFKit_RN;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
@@ -625,10 +639,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -701,10 +712,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

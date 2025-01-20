@@ -1,4 +1,4 @@
-//  Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+//  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -35,6 +35,13 @@ RCT_EXTERN_METHOD(removeSignFileList:(RCTPromiseResolveBlock)resolve
 
 RCT_EXTERN_METHOD(pickFile:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setImportFontDir:(NSString *) fontDir
+                  addSysFont:(BOOL) addSysFont
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
 
 + (BOOL)requiresMainQueueSetup
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -10,6 +10,8 @@
 import { NativeModules } from 'react-native';
 import { CPDFConfiguration } from './configuration/CPDFConfiguration';
 import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType,CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
+import React from 'react';
+import { CPDFReaderView } from './view/CPDFReaderView';
 
 declare module 'react-native' {
   interface NativeModulesStatic {
@@ -122,17 +124,41 @@ declare module 'react-native' {
 
       /**
        * Delete the saved signature file from the annotation signature list
-       * 
+       *
        * @example
        * ComPDFKit.removeSignFileList().then((result : boolean) => {
        *  console.log('ComPDFKit removeSignFileList:', result)
        * })
-       * 
-       * @returns 
+       *
+       * @returns
        */
       removeSignFileList : () => Promise<boolean>;
+      
+      /**
+       * Opens the system file picker to select a PDF document.
+       * @returns A promise that resolves to the file path of the selected PDF document.
+       **/
+      pickFile: () => Promise<string>;
 
-      pickFile : () => Promise<string>;
+      /**
+       * Imports font files to support displaying additional languages. 
+       * Imported fonts will appear in the font list for FreeText annotations and text editing.
+       * 
+       * **Note:** Fonts must be imported before initializing the SDK.
+       * 
+       * Steps to import fonts:
+       * 1. Copy the fonts you want to import into a custom folder.
+       * 2. Call `setImportFontDir` with the folder path as a parameter.
+       * 3. Initialize the SDK using `ComPDFKit.init_`.
+       * 
+       * @param {string} fontDir - The path to the folder containing font files to import.
+       * @param {boolean} addSysFont - Whether to include system fonts in the font list.
+       * 
+       * @example
+       * ComPDFKit.setImportFontDir('fontdir', true);
+       * @returns A promise that resolves when the fonts have been successfully imported.
+       */
+      setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
     };
   }
 }
@@ -146,6 +172,7 @@ interface ComPDFKit {
   openDocument(document: string, password: string, configurationJson: string): void;
   removeSignFileList() : Promise<boolean>;
   pickFile() : Promise<string>;
+  setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
 }
 
 const ComPDFKit = NativeModules.ComPDFKit
@@ -165,8 +192,11 @@ export {
   CPDFFormType,
   CPDFCheckStyle,
   CPDFDisplayMode,
-  CPDFThemes } from './configuration/CPDFOptions';
+  CPDFThemes,
+  CPDFDocumentPermissions,
+  CPDFDocumentEncryptAlgo } from './configuration/CPDFOptions';
 export { CPDFReaderView } from './view/CPDFReaderView';
+export { CPDFDocument} from './view/CPDFDocument';
 
 
 ComPDFKit.getDefaultConfig = getDefaultConfig
@@ -459,3 +489,7 @@ function mergeDeep(defaults: any, overrides: any): any {
 
   return merged;
 }
+
+const PDFReaderContext = React.createContext<CPDFReaderView | null>(null);
+
+export default PDFReaderContext;

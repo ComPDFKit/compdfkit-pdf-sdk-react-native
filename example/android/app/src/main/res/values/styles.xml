@@ -8,6 +8,7 @@
       <item name="isLightTheme">true</item>
       <item name="android:isLightTheme" tools:targetApi="q">true</item>
       <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
     </style>
 
 </resources>

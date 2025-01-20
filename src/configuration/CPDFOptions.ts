@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -299,27 +299,28 @@ export type CPDFDisplayMode = ValueOf<typeof CPDFDisplayMode>;
 
 export const CPDFThemes = {
 
-  /**
-   * Bright mode, readerview background is white
-   */
-  LIGHT: 'light',
+    /**
+     * Bright mode, readerview background is white
+     */
+    LIGHT: 'light',
 
-  /**
-   * dark mode, readerview background is black
-   */
-  DARK: 'dark',
+    /**
+     * dark mode, readerview background is black
+     */
+    DARK: 'dark',
 
-  /**
-   * brown paper color
-   */
-  SEPIA: 'sepia',
+    /**
+     * brown paper color
+     */
+    SEPIA: 'sepia',
 
-  /**
-   * Light green, eye protection mode
-   */
-  RESEDA: 'reseda'
+    /**
+     * Light green, eye protection mode
+     */
+    RESEDA: 'reseda'
 
-}
+  }
+
 export type CPDFThemes = ValueOf<typeof CPDFThemes>;
 
 /**
@@ -344,6 +345,54 @@ export const CPDFThemeMode = {
     SYSTEM: 'system'
 }
 export type CPDFThemeMode = ValueOf<typeof CPDFThemeMode>;
+
+/**
+ * Represents the permissions available for the currently opened document.
+ */
+export const CPDFDocumentPermissions = {
+    /**
+     * No restrictions. The document does not have an open password or owner permission password.
+     */
+    NONE: 'none',
+
+    /**
+     * User permissions. The document can only be viewed and has an owner password set.
+     */
+    USER: 'user',
+
+    /**
+     * Owner permissions. The current viewer is identified as the owner of the document.
+     */
+    OWNER: 'owner',
+};
+export type CPDFDocumentPermissions = ValueOf<typeof CPDFDocumentPermissions>;
+
+/**
+ * Specifies the encryption algorithms supported for a PDF document.
+ */
+export const CPDFDocumentEncryptAlgo = {
+    /**
+     * RC4 encryption algorithm.
+     */
+    RC4: 'rc4',
+
+    /**
+     * AES 128-bit encryption algorithm.
+     */
+    AES128: 'aes128',
+
+    /**
+     * AES 256-bit encryption algorithm.
+     */
+    AES256: 'aes256',
+
+    /**
+     * Indicates that no encryption algorithm is applied.
+     */
+    NO_ENCRYPT_ALGO: 'noEncryptAlgo',
+};
+
+export type CPDFDocumentEncryptAlgo = ValueOf<typeof CPDFDocumentEncryptAlgo>;
 
 export type AnyCase<T extends string> =
     string extends T ? string :

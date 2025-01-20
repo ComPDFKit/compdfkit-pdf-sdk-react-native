@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  * <p>
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -108,17 +108,16 @@ public class CPDFView extends FrameLayout {
   private void prepareFragment(CPDFDocumentFragment documentFragment, boolean attachFragment) {
     if (attachFragment) {
       fragmentManager.beginTransaction()
-        .add(documentFragment, "CPDFViewRN")
+        .add(documentFragment, "documentFragment")
         .commitNow();
       View fragmentView = documentFragment.getView();
       addView(fragmentView, ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT);
-      documentFragment.initDocument(()->{
+      documentFragment.setInitListener((pdfView)->{
         try {
           documentFragment.pdfView.indicatorView.setRNMeasureLayout(true);
         }catch (Exception e){
         }
-
         documentFragment.pdfView.addReaderViewCallback(new CPDFIReaderViewCallback() {
           @Override
           public void onMoveToChild(int pageIndex) {
