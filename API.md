@@ -957,7 +957,7 @@ Promise Parameters:
 const pageCount = await pdfReaderRef.current?._pdfDocument.getPageCount();
 ```
 
-#### 
+
 
 ### Annotations
 

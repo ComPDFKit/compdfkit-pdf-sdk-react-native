@@ -313,11 +313,11 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         }
     }
     
-    @objc(showAddWatermarkView:)
-    func showAddWatermarkView(forCPDFViewTag tag : Int) {
+    @objc(showAddWatermarkView:withSaveAsNewFile:)
+    func showAddWatermarkView(forCPDFViewTag tag : Int, saveAsNewFile : Bool) {
         DispatchQueue.main.async {
             let reader = self.readerView()
-            reader.showAddWatermarkView(forCPDFViewTag: tag)
+          reader.showAddWatermarkView(forCPDFViewTag: tag, saveAsNewFile: saveAsNewFile)
         }
     }
     

@@ -724,10 +724,10 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @returns
    */
-  showAddWatermarkView = () : Promise<void> => {
+  showAddWatermarkView = (saveAsNewFile : boolean = true) : Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if(tag != null){
-      return CPDFViewManager.showAddWatermarkView(tag);
+      return CPDFViewManager.showAddWatermarkView(tag, saveAsNewFile);
     }
     return Promise.resolve();
   }

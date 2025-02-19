@@ -214,9 +214,9 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         rtcCPDFView?.showBotaView()
     }
     
-    func showAddWatermarkView(forCPDFViewTag tag : Int) {
+  func showAddWatermarkView(forCPDFViewTag tag : Int, saveAsNewFile : Bool) {
         let rtcCPDFView = cpdfViews[tag]
-        rtcCPDFView?.showAddWatermarkView()
+    rtcCPDFView?.showAddWatermarkView(saveAsNewFile: saveAsNewFile)
     }
     
     func showSecurityView(forCPDFViewTag tag : Int) {

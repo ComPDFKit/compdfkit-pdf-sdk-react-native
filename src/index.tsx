@@ -467,7 +467,10 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
     },
     global: {
       themeMode: CPDFThemeMode.SYSTEM,
-      fileSaveExtraFontSubset: true
+      fileSaveExtraFontSubset: true,
+      watermark: {
+        saveAsNewFile: true
+      }
     }
   }
   return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);

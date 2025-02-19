@@ -322,9 +322,9 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void showAddWatermarkView(int tag){
+  public void showAddWatermarkView(int tag, boolean saveAsNewFile){
     uiBlock(nativeViewHierarchyManager -> {
-      mPDFViewInstance.showAddWatermarkView(tag);
+      mPDFViewInstance.showAddWatermarkView(tag, saveAsNewFile);
     });
   }
 

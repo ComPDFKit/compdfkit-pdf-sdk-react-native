@@ -436,7 +436,10 @@ export class CPDFConfiguration {
 
     global? : {
         themeMode?: CPDFThemeMode,
-        fileSaveExtraFontSubset?: boolean
+        fileSaveExtraFontSubset?: boolean,
+        watermark?: {
+          saveAsNewFile?: boolean
+        }
     }
 };
 

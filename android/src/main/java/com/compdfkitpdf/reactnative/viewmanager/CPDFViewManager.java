@@ -34,6 +34,7 @@ import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
+import com.compdfkit.tools.common.utils.print.CPDFPrintUtils;
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl;
@@ -45,6 +46,7 @@ import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
 import com.compdfkitpdf.reactnative.view.CPDFView;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -367,9 +369,9 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     pdfView.documentFragment.showBOTA();
   }
 
-  public void showAddWatermarkView(int tag) {
+  public void showAddWatermarkView(int tag, boolean saveAsNewFile) {
     CPDFView pdfView = mDocumentViews.get(tag);
-    pdfView.documentFragment.showAddWatermarkDialog();
+    pdfView.documentFragment.showAddWatermarkDialog(saveAsNewFile);
   }
 
   public void showSecurityView(int tag) {
@@ -476,11 +478,11 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   }
 
   public void print(int tag) {
-    CPDFView pdfView = mDocumentViews.get(tag);
-    CPDFReaderView readerView = pdfView.getCPDFReaderView();
-    String path = readerView.getPDFDocument().getAbsolutePath();
-    Uri uri = readerView.getPDFDocument().getUri();
-    CFileUtils.startPrint(reactContext, path, uri);
+    if (reactContext.getCurrentActivity() != null) {
+      CPDFView pdfView = mDocumentViews.get(tag);
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFPrintUtils.printCurrentDocument(reactContext.getCurrentActivity(), readerView.getPDFDocument());
+    }
   }
 
   public void removePassword(int tag, Promise promise) {
@@ -510,7 +512,6 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     Promise promise) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFDocument document = pdfView.getCPDFReaderView().getPDFDocument();
-    ;
     CThreadPoolUtils.getInstance().executeIO(() -> {
       try {
         if (!TextUtils.isEmpty(userPassword)) {

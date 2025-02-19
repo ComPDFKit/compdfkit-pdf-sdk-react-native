@@ -394,8 +394,8 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         self.pdfViewController?.buttonItemClicked_Bota(UIButton(frame: .zero))
     }
     
-    func showAddWatermarkView() {
-        self.pdfViewController?.enterPDFWatermark()
+  func showAddWatermarkView(saveAsNewFile : Bool) {
+    self.pdfViewController?.enterPDFWatermark(isSaveAs: saveAsNewFile)
     }
     
     func showSecurityView() {

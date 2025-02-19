@@ -1,4 +1,20 @@
 ## Newest Release
+### 2.2.2 - 19 Feb. 2025
+
+* Added the features support for ComPDFKit PDF SDK for iOS iOS V2.2.2.
+
+* Added the features support for ComPDFKit PDF SDK for Android Android V2.2.2.
+* Added the ability to save a watermark to the current PDF when adding it.
+* Fixed the inaccurate judgment issue in the `hasChange()` method.
+* Fixed an issue where some document text fields in forms were not displaying content.
+* Fixed an issue on the Android platform where Ink annotations became smaller after drawing.
+* Fixed an issue on the Android platform where the pen size shrank when drawing Ink annotations after zooming in on a page.
+* Fixed an input issue with the LaBan Key input method on the Android platform.
+* Fixed a potential crash issue on the Android platform when enabling the rotate function.
+* Fixed a crash issue on the Android platform when importing XFDF annotations.
+
+
+## Previous Release
 
 ### 2.2.1 - 21 Jan. 2025
 * Added the features support for ComPDFKit PDF SDK for iOS [iOS V2.2.1](https://www.compdf.com/pdf-sdk/changelog-ios#v2-2-1).
@@ -19,9 +35,8 @@
 * Fixed an issue on Android where form background color was transparent when highlighting forms was not enabled.
 * Fixed an issue on Android where annotation text would display incorrectly when editing text in highlighted comment areas.
 * Fixed an issue on Android where cloud comment borders were displayed incorrectly in graphic annotations.
-For detailed information about the new interfaces, please refer to `CPDFReaderView.tsx` and `CPDFDocument.tsx`.
+  For detailed information about the new interfaces, please refer to `CPDFReaderView.tsx` and `CPDFDocument.tsx`.
 
-## Previous Release
 
 ### 2.2.0 - 13 Dec. 2024
 * Added features support for ComPDFKit PDF SDK for [Android V2.2.0](https://www.compdf.com/pdf-sdk/changelog-android#v2-2-0).

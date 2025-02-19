@@ -122,7 +122,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 await pdfReaderRef.current?.showBotaView();
                 break;
             case 'showAddWatermarkView':
-                await pdfReaderRef.current?.showAddWatermarkView();
+                await pdfReaderRef.current?.showAddWatermarkView(false);
                 break;
             case 'showSecurityView':
                 await pdfReaderRef.current?.showSecurityView();

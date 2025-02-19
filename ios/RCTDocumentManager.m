@@ -116,7 +116,8 @@ RCT_EXTERN_METHOD(showThumbnailView:(NSInteger *)tag
 
 RCT_EXTERN_METHOD(showBotaView:(NSInteger *)tag)
 
-RCT_EXTERN_METHOD(showAddWatermarkView:(NSInteger *)tag)
+RCT_EXTERN_METHOD(showAddWatermarkView:(NSInteger *)tag
+                  withSaveAsNewFile: (BOOL) saveAsNewFile)
 
 RCT_EXTERN_METHOD(showSecurityView:(NSInteger *)tag)
 

@@ -784,10 +784,11 @@ This section is used to configure the types of forms enabled in the view's botto
 
 ##### Parameters
 
-| Name                    | Type          | Example | Description                                                  |
-| ----------------------- | ------------- | ------- | ------------------------------------------------------------ |
-| themeMode               | CPDFThemeMode | light   | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
-| fileSaveExtraFontSubset | boolean       | true    | When saving a document, whether to save the used font set together with the document. |
+| Name                    | Type                | Example                      | Description                                                  |
+| ----------------------- | ------------------- | ---------------------------- | ------------------------------------------------------------ |
+| themeMode               | CPDFThemeMode       | light                        | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
+| fileSaveExtraFontSubset | boolean             | true                         | When saving a document, whether to save the used font set together with the document. |
+| watermark               | CPDFWatermarkConfig | {   "saveAsNewFile" : true } | The user can configure the watermark addition popup, allowing them to choose whether to save the watermark directly to the current document or save it to a different directory.<br>**true**: Save to a different directory<br>**false**: Add to the current document directly |
 
 ##### themeMode Constants
 
@@ -1066,7 +1067,10 @@ This section is used to configure the types of forms enabled in the view's botto
   },
   "global" : {
     "themeMode" : "system",
-    "fileSaveExtraFontSubset" : true
+    "fileSaveExtraFontSubset" : true,
+    "watermark": {
+      "saveAsNewFile" : true
+    }
   }
 }
 ```
