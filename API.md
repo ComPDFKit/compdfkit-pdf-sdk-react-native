@@ -20,15 +20,13 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
-| result | boolean | Returns ```true``` if initialization is successful, otherwise returns ```false```. |
+| Name   | Type    | Description                                                                    |
+| ------ | ------- | ------------------------------------------------------------------------------ |
+| result | boolean | Returns ``true`` if initialization is successful, otherwise returns ``false``. |
 
 ```tsx
 ComPDFKit.init_('your compdfkit license')
 ```
-
-
 
 ### initialize
 
@@ -43,15 +41,13 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
-| result | boolean | Returns ```true``` if initialization is successful, otherwise returns ```false```. |
+| Name   | Type    | Description                                                                    |
+| ------ | ------- | ------------------------------------------------------------------------------ |
+| result | boolean | Returns ``true`` if initialization is successful, otherwise returns ``false``. |
 
 ```tsx
 ComPDFKit.initialize('android online license', 'ios online license')
 ```
-
-
 
 ### getVersionCode
 
@@ -71,8 +67,6 @@ ComPDFKit.getVersionCode().then((versionCode : string) => {
 })
 ```
 
-
-
 ### getSDKBuildTag
 
 Get the build tag of the ComPDFKit PDF SDK.
@@ -91,27 +85,26 @@ ComPDFKit.getSDKBuildTag().then((buildTag : string) => {
 })
 ```
 
-
-
 ### openDocument
 
 Used to present a PDF document.
 
 Parameters:
 
-| Name          | Type   | Description                                                  |
-| ------------- | ------ | ------------------------------------------------------------ |
-| document      | string | The path to the PDF document to be presented.                |
-| password      | string | PDF document password.                                       |
+| Name          | Type   | Description                                                                  |
+| ------------- | ------ | ---------------------------------------------------------------------------- |
+| document      | string | The path to the PDF document to be presented.                                |
+| password      | string | PDF document password.                                                       |
 | configuration | string | Configuration objects to customize the appearance and behavior of ComPDFKit. |
 
 * (Android) For local storage file path:
+
 ```tsx
 document = '/storage/emulated/0/Download/PDF_document.pdf'
 ComPDFKit.openDocument(document, '', ComPDFKit.getDefaultConfig({}))
 ```
 
-* (Android) For content Uri: 
+* (Android) For content Uri:
 
 ```tsx
 document = 'content://...'
@@ -132,12 +125,9 @@ document = 'pdf_document.pdf'
 ComPDFKit.openDocument(document, '', ComPDFKit.getDefaultConfig({}))
 ```
 
-
-
 ### getDefaultConfig
 
 When using the `ComPDFKit.openDocument` method or the `CPDFReaderView` UI component to display a PDF file, you need to pass configuration parameters to customize the UI features and PDF view properties. `ComPDFKit` provides default configuration parameters through `ComPDFKit.getDefaultConfig`. You can retrieve them using the following example:
-
 
 ```tsx
 ComPDFKit.getDefaultConfig({})
@@ -201,8 +191,8 @@ Delete the signature saved in the electronic signature annotation list.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                   |
+| ------ | ------- | ----------------------------------------------------------------------------- |
 | result | boolean | Returns `true` if the deletion was successful, otherwise returns `false`. |
 
 ```tsx
@@ -215,9 +205,9 @@ Opens the system file picker to select a PDF document.
 
 Returns a Promise.
 
-| Name   | Type   | Description           |
-| ------ | ------ | --------------------- |
-| result | string | 返回选择的PDF文件路径 |
+| Name   | Type   | Description                        |
+| ------ | ------ | ---------------------------------- |
+| result | string | Returns the selected PDF file path |
 
 ```tsx
 String? path = ComPDFKit.pickFile();
@@ -225,13 +215,13 @@ String? path = ComPDFKit.pickFile();
 
 ### setImportFontDir
 
-Imports font files to support displaying additional languages. 
+Imports font files to support displaying additional languages.
 mported fonts will appear in the font list for FreeText annotations and text editing.
 
 **Note:** Fonts must be imported before initializing the SDK.
 
-
 steps to import fonts:
+
 1. Copy the fonts you want to import into a custom folder.
 2. Call `setImportFontDir` with the folder path as a parameter.
 3. Initialize the SDK using `ComPDFKit.init_`.
@@ -245,9 +235,9 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type | Description  |
-| ------ | ---- | ------------ |
-| result | bool | 是否设置成功 |
+| Name   | Type | Description                                                |
+| ------ | ---- | ---------------------------------------------------------- |
+| result | bool | Returns true if the setting is successful, otherwise false |
 
 ```tsx
 // Set the font directory
@@ -256,6 +246,29 @@ ComPDFKit.setImportFontDir('fontdir', true);
 ComPDFKit.init_('your license key');
 ```
 
+### createUri
+
+This method is supported only on the Android platform. It is used to create a URI for saving a file on the Android device.
+The file is saved in the `Downloads` directory by default, but you can specify a subdirectory within `Downloads` using the [childDirectoryName] parameter. If the [childDirectoryName] is not provided, the file will be saved directly in the `Downloads` directory.
+The [fileName] parameter is required to specify the name of the file (e.g., `test.pdf`).
+
+Parameters:
+
+| Name               | Type   | Description                                                 |
+| ------------------ | ------ | ----------------------------------------------------------- |
+| fileName           | string | specifies the name of the file, for example `test.pdf`.     |
+| childDirectoryName | string | specifies a subdirectory within the `Downloads` folder.     |
+| mimeType           | string | the MIME type of the file, defaulting to `application/pdf`. |
+
+Returns a Promise.
+
+| Name | Type   | Description                           |
+| ---- | ------ | ------------------------------------- |
+| uri  | string | Returns the uri used to save the file |
+
+```tsx
+const uri: string = await ComPDFKit.createUri('test.pdf', '', 'application/pdf');
+```
 
 ## CPDFReaderView - Props
 
@@ -279,7 +292,7 @@ Specifies the path or URI of the PDF document to be displayed.
 	document={'/storage/emulated/0/Download/PDF_document.pdf'}/>
 ```
 
-* (Android) For content Uri: 
+* (Android) For content Uri:
 
 ```tsx
 <CPDFReaderView
@@ -296,7 +309,7 @@ Specifies the path or URI of the PDF document to be displayed.
 * (iOS) For app bundle file path:
 
 ```tsx
-<CPDFReaderView	
+<CPDFReaderView
 	document={'pdf_document.pdf'}/>
 ```
 
@@ -309,7 +322,7 @@ The password to open the document is an optional parameter.
 **Usage Examples:**
 
 ```tsx
-<CPDFReaderView	
+<CPDFReaderView
 	document={'pdf_document.pdf'}
   password={'password'}/>
 ```
@@ -348,8 +361,8 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
+| Name   | Type | Description                                                                                      |
+| ------ | ---- | ------------------------------------------------------------------------------------------------ |
 | result | bool | A promise that resolves to `true` if the document is successfully opened, otherwise `false`. |
 
 ```tsx
@@ -357,15 +370,16 @@ await pdfReaderRef.current?._pdfDocument.open(document, 'password');
 ```
 
 #### hasChange
+
 Checks whether the document has been modified.
 
 Returns a Promise.
 
 Promise Parameters:
 
-| Name      | Type    | Description                                                  |
-| --------- | ------- | ------------------------------------------------------------ |
-| hasChange | boolean | `true`: The document has been modified,   <br/>`false`: The document has not been modified. |
+| Name      | Type    | Description                                                                                     |
+| --------- | ------- | ----------------------------------------------------------------------------------------------- |
+| hasChange | boolean | `true`: The document has been modified,   `false`: The document has not been modified. |
 
 ```tsx
 const hasChange = await pdfReaderRef.current?.hasChange();
@@ -379,9 +393,9 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                            |
-| ------ | ------- | ------------------------------------------------------ |
-| result | boolean | **true**: Save successful,<br/>**false**: Save failed. |
+| Name   | Type    | Description                                                            |
+| ------ | ------- | ---------------------------------------------------------------------- |
+| result | boolean | **true**: Save successful,``**false**: Save failed. |
 
 ```js
 const saveResult = await pdfReaderRef.current.save();
@@ -406,6 +420,7 @@ Parameters:
 ```
 
 #### getFileName
+
 Gets the file name of the PDF document.
 
 Returns a Promise.
@@ -424,15 +439,27 @@ Checks if the PDF document is an image document. This is a time-consuming operat
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                              |
+| ------ | ------- | ---------------------------------------------------------------------------------------- |
 | result | boolean | Return `true` if the document is a scanned image document, otherwise return `false`. |
 
 ```tsx
 const isImageDoc = await pdfReaderRef.current?._pdfDocument.isImageDoc();
 ```
 
+#### getDocumentPath
 
+Retrieves the path of the current document.
+
+Returns a Promise.
+
+| Name | Type   | Description                                 |
+| ---- | ------ | ------------------------------------------- |
+| path | string | Retrieves the path of the current document. |
+
+```tsx
+const documentPath = await pdfReaderRef.current?._pdfDocument.getDocumentPath();
+```
 
 ### Viewer
 
@@ -509,7 +536,6 @@ Parameters:
 | -------- | ------- | ----------- |
 | canScale | boolean | scale value |
 
-
 ```tsx
 await pdfReaderRef.current?.setCanScale(false);
 ```
@@ -526,18 +552,17 @@ Parameters:
 | ----- | ---------- | ----------- |
 | theme | CPDFThemes |             |
 
-
 ```tsx
 await pdfReaderRef.current?.setReadBackgroundColor(CPDFThemes.LIGHT);
 ```
 
 **Explanation of Themes**
 
-| Mode   | Description                                                  | Option Values     |
-| ------ | ------------------------------------------------------------ | ----------------- |
-| LIGHT  | Uses a white background and black text, suitable for reading in well-lit environments. | CPDFThemes.LIGHT  |
-| DARK   | Uses a dark background and light text, suitable for reading in low-light environments. | CPDFThemes.DARK   |
-| SEPIA  | Use a beige background for users who are used to reading on paper. | CPDFThemes.SEPIA  |
+| Mode   | Description                                                                                                                                 | Option Values     |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| LIGHT  | Uses a white background and black text, suitable for reading in well-lit environments.                                                      | CPDFThemes.LIGHT  |
+| DARK   | Uses a dark background and light text, suitable for reading in low-light environments.                                                      | CPDFThemes.DARK   |
+| SEPIA  | Use a beige background for users who are used to reading on paper.                                                                          | CPDFThemes.SEPIA  |
 | RESEDA | Soft light green background reduces discomfort from high brightness and strong contrast when reading, effectively relieving visual fatigue. | CPDFThemes.RESEDA |
 
 #### getReadBackgroundColor
@@ -630,8 +655,8 @@ Whether it is vertical scroll mode.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                    |
+| ------ | ------- | ------------------------------------------------------------------------------ |
 | result | boolean | Returns `true` for vertical scrolling and `false` for horizontal scrolling |
 
 ```tsx
@@ -658,8 +683,8 @@ Whether it is continuous scroll mode.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                        |
+| ------ | ------- | ---------------------------------------------------------------------------------- |
 | result | boolean | Returns `true` if the page is scrolled continuously, otherwise returns `false` |
 
 ```tsx
@@ -686,8 +711,8 @@ Whether it is double page mode.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                     |
+| ------ | ------- | ------------------------------------------------------------------------------- |
 | result | boolean | Returns `true` if double page display is enabled, otherwise returns `false` |
 
 ```tsx
@@ -718,8 +743,8 @@ Whether it is cover page mode.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                      |
+| ------ | ------- | -------------------------------------------------------------------------------- |
 | result | boolean | Returns `true` if the document cover is displayed, otherwise returns `false` |
 
 ```tsx
@@ -746,8 +771,8 @@ Whether it is cover page mode.
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                        |
+| ------ | ------- | ---------------------------------------------------------------------------------- |
 | result | boolean | Returns `true` if the current mode is clipping mode, otherwise returns `false` |
 
 ```tsx
@@ -760,8 +785,8 @@ In the single page mode, set whether all pages keep the same width and the origi
 
 Parameters:
 
-| Name            | Type    | Description                                                  |
-| --------------- | ------- | ------------------------------------------------------------ |
+| Name            | Type    | Description                                                                                                                         |
+| --------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | isPageSameWidth | boolean | true: All pages keep the same width, the original state keeps the same width as readerView; false: Show in the actual width of page |
 
 ```tsx
@@ -845,7 +870,9 @@ await pdfReaderRef.current?.showThumbnailView(true);
 ```
 
 #### showBotaView
+
 Displays the BOTA view, which includes the document outline, bookmarks, and annotation list.
+
 ```tsx
 await pdfReaderRef.current?.showBotaView();
 ```
@@ -890,6 +917,14 @@ Enters snip mode, allowing users to capture screenshots.
 await pdfReaderRef.current?.exitSnipMode();
 ```
 
+#### printDocument
+
+Invokes the system's print service to print the current document.
+
+```tsx
+await pdfReaderRef.current?._pdfDocument.printDocument();
+```
+
 ### Page
 
 #### setDisplayPageIndex
@@ -898,9 +933,9 @@ Jump to the index page.
 
 Parameters:
 
-| Name      | Type | Description    |
-| --------- | ---- | -------------- |
-| pageIndex | int  | 需要跳转的页码 |
+| Name      | Type | Description         |
+| --------- | ---- | ------------------- |
+| pageIndex | int  | Jump to page number |
 
 ```tsx
 await pdfReaderRef.current?.setDisplayPageIndex(1);
@@ -914,9 +949,9 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name      | Type | Description                |
-| --------- | ---- | -------------------------- |
-| pageIndex | int  | 返回当前文档展示的页面索引 |
+| Name      | Type | Description                                            |
+| --------- | ---- | ------------------------------------------------------ |
+| pageIndex | int  | Returns the page index of the current document display |
 
 ```tsx
 const pageIndex = await pdfReaderRef.current?.getCurrentPageIndex();
@@ -957,8 +992,6 @@ Promise Parameters:
 const pageCount = await pdfReaderRef.current?._pdfDocument.getPageCount();
 ```
 
-
-
 ### Annotations
 
 #### import Annotations
@@ -967,39 +1000,40 @@ Imports annotations from the specified XFDF file into the current PDF document.
 
 Parameters:
 
-| Name     | Type   | Description                                                  |
-| -------- | ------ | ------------------------------------------------------------ |
-| xfdfFile | string | Path of the XFDF file to be imported.<br/>The Android platform supports the following paths：<br/>- **assets file**:'file:///android_assets/test.xfdf'<br/>- **file path**: '/data/xxx.xfdf'<br/>- **Uri**: 'content://xxxx' |
+| Name     | Type   | Description                                                                                                                                                                                                                                                    |
+| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| xfdfFile | string | Path of the XFDF file to be imported.``The Android platform supports the following paths：``- **assets file**:'file:///android_assets/test.xfdf'``- **file path**: '/data/xxx.xfdf'``- **Uri**: 'content://xxxx' |
 
 Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                                |
-| ------ | ------- | ---------------------------------------------------------- |
-| result | boolean | **true**: import successful,<br/>**false**: import failed. |
+| Name   | Type    | Description                                                                |
+| ------ | ------- | -------------------------------------------------------------------------- |
+| result | boolean | **true**: import successful,``**false**: import failed. |
 
 ```tsx
 const result = await pdfReaderRef.current.importAnnotations('xxx.xfdf');
 ```
 
 #### export Annotations
+
 Exports annotations from the current PDF document to an XFDF file.
 
 Returns a Promise.
 
 Promise Parameters:
 
-| Name     | Type   | Description                                                  |
-| -------- | ------ | ------------------------------------------------------------ |
+| Name     | Type   | Description                                                                             |
+| -------- | ------ | --------------------------------------------------------------------------------------- |
 | xfdfPath | string | The path of the XFDF file if export is successful; an empty string if the export fails. |
 
 ```tsx
 const exportXfdfFilePath = await pdfReaderRef.current?.exportAnnotations();
 ```
 
-
 #### removeAllAnnotations
+
 Delete all comments in the current document.
 
 Returns a Promise.
@@ -1014,6 +1048,48 @@ Promise Parameters:
 const removeResult = await pdfReaderRef.current?.removeAllAnnotations();
 ```
 
+### Forms
+
+#### importWidgets
+
+Imports the form data from the specified XFDF file into the current PDF document.
+
+The API only imports form data and modifies the form content through the corresponding form name.
+
+Parameters:
+
+| Name     | Type   | Description                                                  |
+| -------- | ------ | ------------------------------------------------------------ |
+| xfdfFile | string | Path of the XFDF file to be imported.The Android platform supports the following paths：<br>- **assets file**:'file:///android_assets/test.xfdf'<br>- **file path**: '/data/xxx.xfdf'<br>- **Uri**: 'content://xxxx' |
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description                                             |
+| ------ | ------- | ------------------------------------------------------- |
+| result | boolean | **true**: import successful,``**false**: import failed. |
+
+```tsx
+const result = await pdfReaderRef.current.importWidgets('xxx.xfdf');
+```
+
+#### exportWidgets
+
+exports the form data from the current PDF document to an XFDF file.
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name     | Type   | Description                                                  |
+| -------- | ------ | ------------------------------------------------------------ |
+| xfdfPath | string | The path of the XFDF file if export is successful; an empty string if the export fails. |
+
+```tsx
+const exportXfdfFilePath = await pdfReaderRef.current?.exportWidgets();
+```
+
 ### Security
 
 #### isEncrypted
@@ -1022,9 +1098,9 @@ Checks if the PDF document is encrypted.
 
 Returns a Promise.
 
-| Name   | Type    | Description        |
-| ------ | ------- | ------------------ |
-| result | boolean | 当前文档是否已加密 |
+| Name   | Type    | Description                       |
+| ------ | ------- | --------------------------------- |
+| result | boolean | Is the current document encrypted |
 
 ```tsx
 const isEncrypted = await pdfReaderRef.current?._pdfDocument.isEncrypted();
@@ -1074,8 +1150,8 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                                |
+| ------ | ------- | ------------------------------------------------------------------------------------------ |
 | result | boolean | A promise that resolves to `true` if the owner password is correct, otherwise `false`. |
 
 ```tsx
@@ -1090,18 +1166,18 @@ This method sets the document password, including the user password for access r
 
 Parameters:
 
-| Name           | Type                    | Description                                                  |
-| -------------- | ----------------------- | ------------------------------------------------------------ |
-| userPassword   | string                  | The user password for document access restrictions.          |
-| ownerPassword  | string                  | The owner password to grant permissions (e.g., printing, copying). |
-| allowsPrinting | boolean                 | Whether printing is allowed (true or false).                 |
-| allowsCopying  | boolean                 | Whether copying is allowed (true or false).                  |
-| encryptAlgo    | CPDFDocumentEncryptAlgo | The encryption algorithm to use (e.g., `CPDFDocumentEncryptAlgo.rc4`). |
+| Name           | Type                    | Description                                                             |
+| -------------- | ----------------------- | ----------------------------------------------------------------------- |
+| userPassword   | string                  | The user password for document access restrictions.                     |
+| ownerPassword  | string                  | The owner password to grant permissions (e.g., printing, copying).      |
+| allowsPrinting | boolean                 | Whether printing is allowed (true or false).                            |
+| allowsCopying  | boolean                 | Whether copying is allowed (true or false).                             |
+| encryptAlgo    | CPDFDocumentEncryptAlgo | The encryption algorithm to use (e.g.,`CPDFDocumentEncryptAlgo.rc4`). |
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                                   |
+| ------ | ------- | --------------------------------------------------------------------------------------------- |
 | result | boolean | A promise that resolves to `true` if the password is successfully set, otherwise `false`. |
 
 ```tsx
@@ -1120,8 +1196,8 @@ Remove the user password and owner permission password. set in the document, and
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                              |
+| ------ | ------- | ------------------------------------------------------------------------ |
 | result | boolean | Returns `true` if password removal is successful, otherwise `false`. |
 
 ```tsx
@@ -1141,4 +1217,3 @@ Returns a Promise.
 ```tsx
 const encryptAlgo = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
 ```
-

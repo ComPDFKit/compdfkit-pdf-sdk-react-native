@@ -31,6 +31,7 @@ import com.compdfkit.core.document.CPDFDocument.PDFDocumentEncryptAlgo;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentPermissions;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentSaveType;
 import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
+import com.compdfkit.core.page.CPDFPage.PDFFlattenOption;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
@@ -398,9 +399,9 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFViewCtrl viewCtrl = pdfView.documentFragment.pdfView;
     if (filePath.startsWith(ASSETS_SCHEME)) {
-      String assetsPath = filePath.replace(ASSETS_SCHEME + "/","");
+      String assetsPath = filePath.replace(ASSETS_SCHEME + "/", "");
       String[] strs = filePath.split("/");
-      String fileName = strs[strs.length -1];
+      String fileName = strs[strs.length - 1];
       String samplePDFPath = CFileUtils.getAssetsTempFile(reactContext, assetsPath, fileName);
       viewCtrl.openPDF(samplePDFPath, password, () -> {
         promise.resolve(true);
@@ -454,19 +455,22 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
   public void saveAs(int tag, String savePath, boolean removeSecurity, boolean fontSubSet,
     Promise result) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFDocument document = pdfView.getCPDFReaderView().getPDFDocument();
+    pdfView.documentFragment.pdfView.exitEditMode();
     CThreadPoolUtils.getInstance().executeIO(() -> {
       try {
-        CPDFView pdfView = mDocumentViews.get(tag);
-        CPDFDocument document = pdfView.getCPDFReaderView().getPDFDocument();
         boolean saveResult;
         if (savePath.startsWith(CONTENT_SCHEME)) {
           saveResult = document.saveAs(Uri.parse(savePath), removeSecurity, fontSubSet);
         } else {
           saveResult = document.saveAs(savePath, removeSecurity, false, fontSubSet);
         }
-        if (document.shouleReloadDocument()) {
-          document.reload();
-        }
+        CThreadPoolUtils.getInstance().executeMain(()->{
+          if (document.shouleReloadDocument()) {
+            document.reload();
+          }
+        });
         result.resolve(saveResult);
       } catch (CPDFDocumentException e) {
         e.printStackTrace();
@@ -481,7 +485,8 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     if (reactContext.getCurrentActivity() != null) {
       CPDFView pdfView = mDocumentViews.get(tag);
       CPDFReaderView readerView = pdfView.getCPDFReaderView();
-      CPDFPrintUtils.printCurrentDocument(reactContext.getCurrentActivity(), readerView.getPDFDocument());
+      CPDFPrintUtils.printCurrentDocument(reactContext.getCurrentActivity(),
+        readerView.getPDFDocument());
     }
   }
 
@@ -573,5 +578,97 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       case PDFDocumentAES256 -> "aes256";
       case PDFDocumentNoEncryptAlgo -> "noEncryptAlgo";
     };
+  }
+
+  public boolean importWidgets(int tag, String xfdfFilePath) throws Exception {
+    String xfdf = CPDFDocumentUtil.getImportAnnotationPath(reactContext, xfdfFilePath);
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.documentFragment.pdfView.getCPdfReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    File file = new File(xfdf);
+    if (!file.exists()) {
+      throw new Exception("File not found: " + xfdf);
+    }
+    File cacheFile = new File(reactContext.getCacheDir(),
+      CFileUtils.CACHE_FOLDER + File.separator + "importWidgetsCache/"
+        + CFileUtils.getFileNameNoExtension(document.getFileName()));
+    cacheFile.mkdirs();
+    boolean importResult = document.importWidgets(xfdf,
+      cacheFile.getAbsolutePath());
+    readerView.reloadPages();
+    return importResult;
+  }
+
+  public String exportWidgets(int tag) throws Exception {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.documentFragment.pdfView.getCPdfReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    // export file directory
+    File dirFile = new File(reactContext.getFilesDir(), "compdfkit/widgets/export/");
+    dirFile.mkdirs();
+    // export file name
+    String fileName = CFileUtils.getFileNameNoExtension(document.getFileName());
+    // export file cache file
+    File cacheFile = new File(reactContext.getCacheDir(),
+      CFileUtils.CACHE_FOLDER + File.separator + "exportWidgetsCache/" + fileName);
+    cacheFile.mkdirs();
+    // export file
+    File saveFile = new File(dirFile, fileName + ".xfdf");
+    saveFile = CFileUtils.renameNameSuffix(saveFile);
+    boolean exportResult = document.exportWidgets(saveFile.getAbsolutePath(),
+      cacheFile.getAbsolutePath());
+    if (exportResult) {
+      return saveFile.getAbsolutePath();
+    } else {
+      return null;
+    }
+  }
+
+  public void flattenAllPages(int tag, String savePath, boolean fontSubset, Promise promise) {
+    try {
+      CPDFView pdfView = mDocumentViews.get(tag);
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      boolean success = document.flattenAllPages(PDFFlattenOption.FLAT_NORMALDISPLAY);
+      if (!success) {
+        promise.reject("FLATTEN_FAIL", "Flatten all pages failed.");
+        return;
+      }
+      boolean saveResult;
+      if (savePath.startsWith(CONTENT_SCHEME)) {
+        saveResult = document.saveAs(Uri.parse(savePath), false, fontSubset);
+      } else {
+        saveResult = document.saveAs(savePath, false, false, fontSubset);
+      }
+      if (document.shouleReloadDocument()) {
+        document.reload();
+      }
+      if (saveResult) {
+        promise.resolve(savePath);
+      } else {
+        promise.reject("SAVE_FAIL", "Save failed.");
+      }
+    } catch (Exception e) {
+      if (e instanceof CPDFDocumentException){
+        promise.reject("SAVE_FAIL", ((CPDFDocumentException) e).getErrType().name());
+      }else {
+        promise.reject("SAVE_FAIL", e.getMessage());
+      }
+    }
+  }
+
+  public void reloadPages(int tag){
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    cpdfView.getCPDFReaderView().reloadPages();
+  }
+
+  public String getDocumentPath(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    if (!TextUtils.isEmpty(document.getAbsolutePath())){
+      return document.getAbsolutePath();
+    }
+    return document.getUri().toString();
   }
 }

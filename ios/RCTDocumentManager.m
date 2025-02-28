@@ -176,6 +176,34 @@ RCT_EXTERN_METHOD(getEncryptAlgo:(NSInteger *) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+//----------------------
+//v2.3.0-beta.1
+RCT_EXTERN_METHOD(printDocument:(NSInteger *)tag)
+
+RCT_EXTERN_METHOD(importWidgets:(NSInteger)tag
+                  withXfdfFile:(NSURL *)xfdfFile
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(exportWidgets:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getDocumentPath:(NSInteger *)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                    withRejecter:(RCTPromiseRejectBlock)reject)
+//------------------------
+// v2.3.0 release
+// 扁平化文档
+// info 参数：
+// save_path : 保存路径
+// font_sub_set: 保存是否包含字体集
+RCT_EXTERN_METHOD(flattenAllPages:(NSInteger)tag
+                  withInfo:(NSDictionary) info
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
 
 
 + (BOOL)requiresMainQueueSetup

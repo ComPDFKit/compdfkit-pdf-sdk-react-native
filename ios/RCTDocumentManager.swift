@@ -18,13 +18,13 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
     static func moduleName() -> String! {
         return "RCTDocumentManager"
     }
-
+    
     internal var bridge: RCTBridge!
-
+    
     @objc func readerView() -> RCTCPDFReaderView {
         self.bridge.module(for: RCTCPDFReaderView.self) as! RCTCPDFReaderView
     }
-
+    
     @objc(save: withResolver: withRejecter:)
     func save(tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -36,10 +36,9 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
                     reject("save_failed", "Failed to save document", nil);
                 }
             }
-
         }
     }
-
+    
     @objc(setMargins: withEdges:)
     func setMargins(tag : Int, edges: [Int]) -> Void {
         DispatchQueue.main.async {
@@ -49,7 +48,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(removeAllAnnotations: withResolver: withRejecter:)
     func removeAllAnnotations(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -63,7 +62,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(importAnnotations: withXfdfFile: withResolver: withRejecter:)
     func importAnnotations(tag : Int, xfdfFile : URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -77,7 +76,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(exportAnnotations: withResolver: withRejecter:)
     func exportAnnotations(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -87,7 +86,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(setDisplayPageIndex: withPageIndex:)
     func setDisplayPageIndex(tag : Int, pageIndex : Int) -> Void {
         DispatchQueue.main.async {
@@ -95,7 +94,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setDisplayPageIndex(forCPDFViewTag: tag, pageIndex: pageIndex)
         }
     }
-
+    
     @objc(getCurrentPageIndex: withResolver: withRejecter:)
     func getCurrentPageIndex(tag : Int,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -105,7 +104,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(hasChange: withResolver: withRejecter:)
     func hasChange(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -115,7 +114,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(setScale: withScaleValue:)
     func setScale(tag : Int, scale : NSNumber) -> Void {
         DispatchQueue.main.async {
@@ -123,7 +122,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setScale(forCPDFViewTag: tag, scale: scale)
         }
     }
-
+    
     @objc(getScale: withResolver: withRejecter:)
     func getScale(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -133,7 +132,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(setReadBackgroundColor: withThemes:)
     func setReadBackgroundColor(tag : Int, themes : NSDictionary) -> Void{
         DispatchQueue.main.async {
@@ -142,7 +141,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setReadBackgroundColor(forCPDFViewTag: tag, displayMode: displayMode)
         }
     }
-
+    
     @objc(getReadBackgroundColor: withResolver: withRejecter:)
     func getReadBackgroundColor(tag: Int,  resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -152,7 +151,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setFormFieldHighlight: withFormFieldHighlight:)
     func setFormFieldHighlight(tag: Int, formFieldHighlight : Bool) {
         DispatchQueue.main.async {
@@ -160,7 +159,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setFormFieldHighlight(forCPDFViewTag: tag, formFieldHighlight: formFieldHighlight)
         }
     }
-
+    
     @objc(isFormFieldHighlight: withResolver: withRejecter:)
     func isFormFieldHighlight(tag: Int,  resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -170,7 +169,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setLinkHighlight: withLinkHighlight:)
     func setLinkHighlight(tag: Int, linkHighlight : Bool) {
         DispatchQueue.main.async {
@@ -178,7 +177,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setLinkHighlight(forCPDFViewTag: tag, linkHighlight: linkHighlight)
         }
     }
-
+    
     @objc(isLinkHighlight: withResolver: withRejecter:)
     func isLinkHighlight(tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -188,7 +187,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setVerticalMode: withVerticalMode:)
     func setVerticalMode(tag : Int, isVerticalMode : Bool){
         DispatchQueue.main.async {
@@ -196,7 +195,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setVerticalMode(forCPDFViewTag: tag, isVerticalMode: isVerticalMode)
         }
     }
-
+    
     @objc(isVerticalMode: withResolver: withRejecter:)
     func isVerticalMode(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -206,7 +205,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setContinueMode: withContiueMode:)
     func setContinueMode(forCPDFViewTag tag : Int, isContinueMode : Bool) {
         DispatchQueue.main.async {
@@ -214,7 +213,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setContinueMode(forCPDFViewTag: tag, isContinueMode: isContinueMode)
         }
     }
-
+    
     @objc(isContinueMode: withResolver: withRejecter:)
     func isContinueMode(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -224,7 +223,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setDoublePageMode: withDoublePageMode:)
     func setDoublePageMode(forCPDFViewTag tag : Int, isDoublePageMode : Bool) {
         DispatchQueue.main.async {
@@ -232,7 +231,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setDoublePageMode(forCPDFViewTag: tag, isDoublePageMode: isDoublePageMode)
         }
     }
-
+    
     @objc(isDoublePageMode: withResolver: withRejecter:)
     func isDoublePageMode(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -242,7 +241,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setCoverPageMode: withCoverPageMode:)
     func setCoverPageMode(forCPDFViewTag tag : Int, isCoverPageMode : Bool) {
         DispatchQueue.main.async {
@@ -250,7 +249,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setCoverPageMode(forCPDFViewTag: tag, isCoverPageMode: isCoverPageMode)
         }
     }
-
+    
     @objc(isCoverPageMode: withResolver: withRejecter:)
     func isCoverPageMode(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -260,7 +259,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(setCropMode: withCropMode:)
     func setCropMode(forCPDFViewTag tag : Int, isCropMode : Bool) {
         DispatchQueue.main.async {
@@ -268,7 +267,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             reader.setCropMode(forCPDFViewTag: tag, isCropMode: isCropMode)
         }
     }
-
+    
     @objc(isCropMode: withResolver: withRejecter:)
     func isCropMode(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -317,7 +316,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
     func showAddWatermarkView(forCPDFViewTag tag : Int, saveAsNewFile : Bool) {
         DispatchQueue.main.async {
             let reader = self.readerView()
-          reader.showAddWatermarkView(forCPDFViewTag: tag, saveAsNewFile: saveAsNewFile)
+            reader.showAddWatermarkView(forCPDFViewTag: tag, saveAsNewFile: saveAsNewFile)
         }
     }
     
@@ -362,7 +361,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(getFileName: withResolver: withRejecter:)
     func getFileName(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -372,7 +371,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(isEncrypted: withResolver: withRejecter:)
     func isEncrypted(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -382,7 +381,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(isImageDoc: withResolver: withRejecter:)
     func isImageDoc(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -392,7 +391,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(getPermissions: withResolver: withRejecter:)
     func getPermissions(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -402,7 +401,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(getPageCount: withResolver: withRejecter:)
     func getPageCount(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -412,7 +411,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
+    
     @objc(checkOwnerUnlocked: withResolver: withRejecter:)
     func checkOwnerUnlocked(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -422,8 +421,8 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
-
-
+    
+    
     @objc(checkOwnerPassword: withPassword: withResolver: withRejecter:)
     func checkOwnerPassword(forCPDFViewTag tag : Int, password : String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
@@ -453,7 +452,7 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
-
+    
     @objc(getEncryptAlgo: withResolver: withRejecter:)
     func getEncryptAlgo(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
@@ -463,4 +462,47 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             })
         }
     }
+    
+    @objc(printDocument:)
+    func printDocument(forCPDFViewTag tag : Int){
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.printDocument(forCPDFViewTag: tag)
+        }
+    }
+    
+    @objc(importWidgets: withXfdfFile: withResolver: withRejecter:)
+    func importWidgets(tag : Int, xfdfFile : URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.importWidgets(forCPDFViewTag: tag, xfdfFile: xfdfFile) { success in
+                if success {
+                    resolve(success)
+                } else {
+                    reject("import_widgets_failed", "Failed to import widgets", nil);
+                }
+            }
+        }
+    }
+    
+    @objc(exportWidgets: withResolver: withRejecter:)
+    func exportWidgets(tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.exportWidgets(forCPDFViewTag: tag) { xfdfFilePath in
+                resolve(xfdfFilePath)
+            }
+        }
+    }
+    
+    @objc(getDocumentPath: withResolver: withRejecter:)
+    func getDocumentPath(forCPDFViewTag tag : Int , resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.getDocumentPath(forCPDFViewTag: tag) { path in
+                resolve(path)
+            }
+        }
+    }
+    
 }

@@ -1,8 +1,23 @@
 ## Newest Release
+
+### 2.3.0-beta.1 - 28 Feb. 2025
+
+* Added import/export interface for form data in XFDF format files.
+* Added the ability to create text input boxes and insert images by clicking on the page area in content editing mode.
+* Added a system print API for navigation.
+* Fixed issue where editing or deleting text in some documents caused crashes.
+* Fixed issue with the border appearing after completing FreeText annotation.
+* Fixed issue where the LaBan Key input method deletes the last character when editing text.
+
+* Fixed the issue of text garbling in content editing mode.
+
+
+
+## Previous Release
+
 ### 2.2.2 - 19 Feb. 2025
 
 * Added the features support for ComPDFKit PDF SDK for iOS iOS V2.2.2.
-
 * Added the features support for ComPDFKit PDF SDK for Android Android V2.2.2.
 * Added the ability to save a watermark to the current PDF when adding it.
 * Fixed the inaccurate judgment issue in the `hasChange()` method.
@@ -13,10 +28,8 @@
 * Fixed a potential crash issue on the Android platform when enabling the rotate function.
 * Fixed a crash issue on the Android platform when importing XFDF annotations.
 
-
-## Previous Release
-
 ### 2.2.1 - 21 Jan. 2025
+
 * Added the features support for ComPDFKit PDF SDK for iOS [iOS V2.2.1](https://www.compdf.com/pdf-sdk/changelog-ios#v2-2-1).
 * Added the features support for ComPDFKit PDF SDK for Android [Android V2.2.1](https://www.compdf.com/pdf-sdk/changelog-android#v2-2-1).
 * Added API for importing fonts.
@@ -37,8 +50,8 @@
 * Fixed an issue on Android where cloud comment borders were displayed incorrectly in graphic annotations.
   For detailed information about the new interfaces, please refer to `CPDFReaderView.tsx` and `CPDFDocument.tsx`.
 
-
 ### 2.2.0 - 13 Dec. 2024
+
 * Added features support for ComPDFKit PDF SDK for [Android V2.2.0](https://www.compdf.com/pdf-sdk/changelog-android#v2-2-0).
 * Added features support for ComPDFKit PDF SDK for [iOS V2.2.0](https://www.compdf.com/pdf-sdk/changelog-ios#v2-2-0).
 * Added import and export annotation interfaces.
@@ -87,7 +100,6 @@
 * Added screenshot feature.
 * Android platform adaptation for **Laban Key Keyboard**.
 * Fixed an issue with the Ink annotation color display on Android.
-
 
 ### 2.0.1 - 13 May 2024
 

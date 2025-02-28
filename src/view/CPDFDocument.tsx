@@ -320,5 +320,123 @@ export class CPDFDocument {
         return Promise.resolve(false);
     }
 
+    /**
+     * Imports the form data from the specified XFDF file into the current PDF document.
+     * @example
+     * const importResult = await pdfReaderRef.current?._pdfDocument.importWidgets(xfdfFile);
+     *
+     * @param xfdfFile Path of the XFDF file to be imported.
+     * @returns true if the import is successful; otherwise, false.
+     */
+    importWidgets = (xfdfFile : string) : Promise<boolean> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.importWidgets(tag, xfdfFile);
+        }
+        return Promise.resolve(false);
+    }
+
+    /**
+     * exports the form data from the current PDF document to an XFDF file.
+     * @example
+     * const exportXfdfFilePath = await pdfReaderRef.current?._pdfDocument.exportWidgets();
+     * @returns The path of the XFDF file if export is successful; an empty string if the export fails.
+     */
+    exportWidgets = (): Promise<string> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.exportWidgets(tag);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Invokes the system's print service to print the current document.
+     * @example
+     * await pdfReaderRef.current?._pdfDocument.printDocument();
+     * @returns
+     */
+    printDocument = () : Promise<void> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.printDocument(tag);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Flatten all pages of the current document
+     * @param savePath The path to save the flattened document. On Android, you can pass a Uri.
+     * @param fontSubset Whether to include the font subset when saving.
+     * @example
+     * const savePath = 'file:///storage/emulated/0/Download/flatten.pdf';
+     * // or use Uri on the Android Platform.
+     * const savePath = await ComPDFKit.createUri('flatten_test.pdf', 'compdfkit', 'application/pdf');
+     * const fontSubset = true;
+     * const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
+     * @returns Returns the save path of the current document.
+     */
+    // flattenAllPages = (savePath : string, fontSubset : boolean) : Promise<string> => {
+    //     const tag = findNodeHandle(this._viewerRef);
+    //     if (tag != null) {
+    //         return CPDFViewManager.flattenAllPages(tag, {
+    //             'save_path': savePath,
+    //             'font_sub_set': fontSubset
+    //         });
+    //     }
+    //     return Promise.reject(new Error('Unable to find the native view reference'));
+    // }
+
+    /**
+     * Saves the document to the specified directory.
+     * @example
+     * const savePath = 'file:///storage/emulated/0/Download/save.pdf';
+     * const removeSecurity = false;
+     * const fontSubset = true;
+     * const result = await pdfReaderRef.current?._pdfDocument.saveAs(savePath, removeSecurity, fontSubset);
+     * @param savePath Specifies the path where the document should be saved.<br>
+     *
+     *      On Android, both file paths and URIs are supported. For example:
+     *      - File path: `/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Document.pdf`
+     *      - URI: `content://media/external/file/1000045118`
+     * @param removeSecurity Whether to remove the document's password.
+     * @param fontSubset
+     * @returns Whether to embed the font subset when saving the PDF.
+     */
+    // saveAs = (savePath : string, removeSecurity : boolean, fontSubset : boolean) : Promise<string> => {
+    //     const tag = findNodeHandle(this._viewerRef);
+    //     if (tag != null) {
+    //         return CPDFViewManager.saveAs(tag, {
+    //             'save_path': savePath,
+    //             'remove_security': removeSecurity,
+    //             'font_sub_set': fontSubset
+    //         });
+    //     }
+    //     return Promise.reject(new Error('Unable to find the native view reference'));
+    // }
+
+    /**
+     * Retrieves the path of the current document.
+     * On Android, if the document was opened via a URI, the URI will be returned.
+     * 
+     * This function returns the path of the document being viewed. If the document was opened 
+     * through a file URI on Android, the URI string will be returned instead of a file path.
+     * 
+     * @example
+     * const documentPath = await pdfReaderRef.current?._pdfDocument.getDocumentPath();
+     * 
+     * @returns A promise that resolves to the path (or URI) of the current document.
+     * If the native view reference is not found, the promise will be rejected with an error.
+     * 
+     * @throws Will reject with an error message if the native view reference cannot be found.
+     */
+    getDocumentPath = () : Promise<string> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.getDocumentPath(tag);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
 }
 // export default CPDFDocument;

@@ -55,7 +55,10 @@ const CPDFAnnotationsExampleScreen = () => {
         'Remove All Annotations',
         'Import Annotations 1',
         'Import Annotations 2',
-        'Export Annotations'];
+        'Export Annotations',
+        'Import Widgets',
+        'Export Widgets',
+        'openDocument'];
 
     const handleMenuItemPress = async (action: string) => {
         switch (action) {
@@ -107,6 +110,38 @@ const CPDFAnnotationsExampleScreen = () => {
                 const exportXfdfFilePath = await pdfReaderRef.current?._pdfDocument.exportAnnotations();
                 console.log('ComPDFKitRN exportAnnotations:', exportXfdfFilePath);
                 break;
+            case 'Import Widgets':
+                const pickerResult = DocumentPicker.pick({
+                    type: [DocumentPicker.types.allFiles],
+                    copyTo: 'cachesDirectory'
+                });
+                pickerResult.then(async (res) => {
+                    const file = res[0];
+                
+                    console.log('fileUri:', file?.uri);
+                    console.log('fileCopyUri:', file?.fileCopyUri);
+                    console.log('fileType:', file?.type);
+                    const path = file!!.fileCopyUri!!
+                    if (!path?.endsWith('xml') && !path?.endsWith('xfdf')) {
+                        console.log('ComPDFKitRN please select xfdf format file');
+                        return;
+                    }
+                    console.log('ComPDFKitRN importWidget, filePath:', path);
+                    const importWidgetResult = await pdfReaderRef.current?._pdfDocument.importWidgets(path);
+                    console.log('ComPDFKitRN importWidget:', importWidgetResult);
+                })
+                
+                break;
+            case 'Export Widgets':
+                const exportWidgetsPath = await pdfReaderRef.current?._pdfDocument.exportWidgets();
+                console.log('ComPDFKitRN exportWidgets:', exportWidgetsPath)
+                break;
+                           case 'openDocument':
+                                const document = await ComPDFKit.pickFile();
+                                if (document) {
+                                    await pdfReaderRef.current?._pdfDocument.open(document);
+                                }
+                                break;
             default:
                 break;
         }

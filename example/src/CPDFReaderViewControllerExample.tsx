@@ -16,6 +16,7 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFDisplaySettingsScreen } from './screens/CPDFDisplaySettingsScreen';
 import { CPDFPreviewModeListScreen } from './screens/CPDFPreviewModeListScreen';
+import RNFS from 'react-native-fs';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -92,7 +93,8 @@ const CPDFReaderViewControllerExampleScreen = () => {
         'setPageSpacing',
         'setPageSameWidth',
         'isPageInScreen',
-        'setFixedScroll'];
+        'setFixedScroll',
+        'print'];
 
     const handleMenuItemPress = async (action: string) => {
         switch (action) {
@@ -105,6 +107,17 @@ const CPDFReaderViewControllerExampleScreen = () => {
             case 'save':
                 handleSave();
                 break;
+            // case 'saveAs':
+            //     const appCacheDirectory = RNFS.CachesDirectoryPath;
+            //     const savePath = appCacheDirectory + '/save_as_test.pdf';
+
+            //     // const androidUri = await ComPDFKit.createUri('save_as_test.pdf', '', 'application/pdf');
+            //     const success = await pdfReaderRef.current?._pdfDocument.saveAs(savePath, false, true);
+            //     if(success){
+            //         await pdfReaderRef.current?._pdfDocument.open(savePath, '');
+            //     }
+            //     console.log('ComPDFKitRN saveAs:', success);
+            //     break;
             case 'hasChange':
                 const hasChange = await pdfReaderRef.current?._pdfDocument.hasChange();
                 console.log('ComPDFKitRN hasChange:', hasChange);
@@ -166,6 +179,9 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 break;
             case 'setFixedScroll':
                 await pdfReaderRef.current?.setFixedScroll(false);
+                break;
+            case 'print':
+                await pdfReaderRef.current?._pdfDocument.printDocument();
                 break;
             default:
                 break;

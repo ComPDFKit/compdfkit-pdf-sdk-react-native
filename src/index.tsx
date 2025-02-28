@@ -159,6 +159,22 @@ declare module 'react-native' {
        * @returns A promise that resolves when the fonts have been successfully imported.
        */
       setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
+      
+      
+      /**
+       * This method is supported only on the Android platform. It is used to create a URI for saving a file on the Android device.
+       * The file is saved in the `Downloads` directory by default, but you can specify a subdirectory within `Downloads` using the
+       * [childDirectoryName] parameter. If the [childDirectoryName] is not provided, the file will be saved directly in the `Downloads` directory.
+       * The [fileName] parameter is required to specify the name of the file (e.g., `test.pdf`).
+       *
+       * @example
+       * const uri: string = await ComPDFKit.createUri('test.pdf', '', 'application/pdf');
+       *
+       * @param { string } fileName(required): specifies the name of the file, for example `test.pdf`.
+       * @param { string } childDirectoryName (optional): specifies a subdirectory within the `Downloads` folder.
+       * @param { string } mimeType (optional): the MIME type of the file, defaulting to `application/pdf`.
+       */
+      createUri : (fileName : string, childDirectoryName : string | null, mimeType : string) => Promise<string>;
     };
   }
 }
@@ -173,6 +189,7 @@ interface ComPDFKit {
   removeSignFileList() : Promise<boolean>;
   pickFile() : Promise<string>;
   setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
+  createUri : (fileName : string, childDIrectoryName : string | null, mimeType : string) => Promise<string>;
 }
 
 const ComPDFKit = NativeModules.ComPDFKit

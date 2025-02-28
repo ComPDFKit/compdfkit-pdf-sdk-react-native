@@ -16,6 +16,8 @@ import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.FILE_SCHEME;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.CLog;
+import com.compdfkit.tools.common.utils.CUriUtil;
 import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
@@ -216,6 +219,22 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
       activity.startActivityForResult(CFileUtils.getContentIntent(), PICK_PDF_FILE_REQUEST_CODE);
     }else {
       this.promise.reject(new Throwable("activity is null"));
+    }
+  }
+
+  @ReactMethod
+  public void createUri(String fileName , String childDirectoryName, String mimeType, Promise promise){
+    String dir = Environment.DIRECTORY_DOWNLOADS ;
+    if (!TextUtils.isEmpty(childDirectoryName)){
+      dir += File.separator + childDirectoryName;
+    }
+    Uri uri = CUriUtil.createFileUri(mReactContext,
+      dir,
+      fileName, mimeType);
+    if (uri != null){
+      promise.resolve(uri.toString());
+    }else {
+      promise.reject("CREATE_URI_FAIL", "create uri fail");
     }
   }
 
