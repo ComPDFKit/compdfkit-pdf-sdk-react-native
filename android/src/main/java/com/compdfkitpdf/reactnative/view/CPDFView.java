@@ -14,6 +14,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -24,15 +25,13 @@ import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
 import com.compdfkit.ui.reader.CPDFReaderView;
+import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class CPDFView extends FrameLayout {
@@ -45,6 +44,8 @@ public class CPDFView extends FrameLayout {
 
   public CPDFView(@NonNull Context context) {
     super(context);
+    setClickable(true);
+    setFocusableInTouchMode(true);
   }
 
   private String document;
@@ -55,6 +56,8 @@ public class CPDFView extends FrameLayout {
 
   private ThemedReactContext themedReactContext;
 
+  private CPDFPageUtil pageUtil = new CPDFPageUtil();
+
   public void setup(ThemedReactContext reactContext, FragmentManager fragmentManager) {
     this.themedReactContext = reactContext;
     this.fragmentManager = fragmentManager;
@@ -62,6 +65,12 @@ public class CPDFView extends FrameLayout {
     int height = ViewGroup.LayoutParams.MATCH_PARENT;
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
     setLayoutParams(params);
+    setFocusable(true);
+    setFocusableInTouchMode(true);
+    post(() -> {
+      requestFocus();
+      requestFocusFromTouch();
+    });
   }
 
   public void setDocument(String document) {
@@ -109,7 +118,7 @@ public class CPDFView extends FrameLayout {
     if (attachFragment) {
       fragmentManager.beginTransaction()
         .add(documentFragment, "documentFragment")
-        .commitNow();
+        .commitNowAllowingStateLoss();
       View fragmentView = documentFragment.getView();
       addView(fragmentView, ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT);
@@ -145,6 +154,13 @@ public class CPDFView extends FrameLayout {
     super.onAttachedToWindow();
     Log.i("ComPDFKit", "CPDFView-onAttachedToWindow()");
     getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+    if (themedReactContext != null) {
+      themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+        getId(),
+        "topChange",
+        Arguments.createMap()
+      );
+    }
   }
 
   @Override
@@ -152,6 +168,11 @@ public class CPDFView extends FrameLayout {
     super.onDetachedFromWindow();
     Log.i("ComPDFKit", "CPDFView-onDetachedFromWindow()");
     getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+  }
+
+  public CPDFPageUtil getCPDFPageUtil(){
+    pageUtil.setDocument(getCPDFReaderView().getPDFDocument());
+    return pageUtil;
   }
 
   private boolean mShouldHandleKeyboard = false;

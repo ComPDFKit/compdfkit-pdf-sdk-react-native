@@ -207,6 +207,7 @@ export {
   CPDFTypeface,
   CPDFContentEditorType,
   CPDFFormType,
+  CPDFWidgetType,
   CPDFCheckStyle,
   CPDFDisplayMode,
   CPDFThemes,
@@ -214,6 +215,19 @@ export {
   CPDFDocumentEncryptAlgo } from './configuration/CPDFOptions';
 export { CPDFReaderView } from './view/CPDFReaderView';
 export { CPDFDocument} from './view/CPDFDocument';
+export { CPDFPage } from './page/CPDFPage';
+export { CPDFAnnotation } from './annotation/CPDFAnnotation';
+export { CPDFWidget } from './annotation/form/CPDFWidget';
+export { CPDFTextWidget } from './annotation/form/CPDFTextWidget';
+export { CPDFSignatureWidget } from './annotation/form/CPDFSignatureWidget';
+export { CPDFRadiobuttonWidget } from './annotation/form/CPDFRadiobuttonWidget';
+export { CPDFPushbuttonWidget } from './annotation/form/CPDFPushbuttonWidget';
+export { CPDFListboxWidget } from './annotation/form/CPDFListboxWidget';
+export { CPDFComboboxWidget } from './annotation/form/CPDFComboboxWidget';
+export { CPDFCheckboxWidget } from './annotation/form/CPDFCheckboxWidget';
+
+
+
 
 
 ComPDFKit.getDefaultConfig = getDefaultConfig

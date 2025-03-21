@@ -141,18 +141,23 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
             let bundlePath = Bundle.main.bundlePath
 
             if (documentPath.hasPrefix(homeDiectory) || documentPath.hasPrefix(bundlePath)) {
-                let fileManager = FileManager.default
-                let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
-                let fileName = document.lastPathComponent
-                let docsFilePath = samplesFilePath + "/" + fileName
-
-                if !fileManager.fileExists(atPath: samplesFilePath) {
-                    try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+                let documentHome = homeDiectory.appending("/Documents")
+                if documentPath.hasPrefix(homeDiectory) && documentPath.hasPrefix(documentHome) {
+                    
+                } else {
+                    let fileManager = FileManager.default
+                    let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
+                    let fileName = document.lastPathComponent
+                    let docsFilePath = samplesFilePath + "/" + fileName
+                    
+                    if !fileManager.fileExists(atPath: samplesFilePath) {
+                        try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    
+                    try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
+                    
+                    documentPath = docsFilePath
                 }
-
-                try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
-
-                documentPath = docsFilePath
             } else {
                 success = document.startAccessingSecurityScopedResource()
             }

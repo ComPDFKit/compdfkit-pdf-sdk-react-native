@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFDisplaySettingsScreen } from './screens/CPDFDisplaySettingsScreen';
 import { CPDFPreviewModeListScreen } from './screens/CPDFPreviewModeListScreen';
 import RNFS from 'react-native-fs';
+import { CPDFFileUtil } from './util/CPDFFileUtil';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -75,6 +76,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
     const menuOptions = [
         'openDocument',
         'save',
+        'saveAs',
         'hasChange',
         'DisplaySettings',
         'PreviewModeScreen',
@@ -90,10 +92,12 @@ const CPDFReaderViewControllerExampleScreen = () => {
         'setMargins',
         'removeSignFileList',
         'setScale',
-        'setPageSpacing',
-        'setPageSameWidth',
-        'isPageInScreen',
-        'setFixedScroll',
+        ...(Platform.OS === 'android') ? [
+            'setPageSpacing',
+            'setPageSameWidth',
+            'setFixedScroll',
+            'isPageInScreen',
+        ] : [],
         'print'];
 
     const handleMenuItemPress = async (action: string) => {
@@ -107,17 +111,20 @@ const CPDFReaderViewControllerExampleScreen = () => {
             case 'save':
                 handleSave();
                 break;
-            // case 'saveAs':
-            //     const appCacheDirectory = RNFS.CachesDirectoryPath;
-            //     const savePath = appCacheDirectory + '/save_as_test.pdf';
-
-            //     // const androidUri = await ComPDFKit.createUri('save_as_test.pdf', '', 'application/pdf');
-            //     const success = await pdfReaderRef.current?._pdfDocument.saveAs(savePath, false, true);
-            //     if(success){
-            //         await pdfReaderRef.current?._pdfDocument.open(savePath, '');
-            //     }
-            //     console.log('ComPDFKitRN saveAs:', success);
-            //     break;
+            case 'saveAs':
+                
+                const fileUtil = new CPDFFileUtil();
+                const baseName = 'save_as_test';
+                const extension = 'pdf';
+                const uniqueFilePath = await fileUtil.getUniqueFilePath(baseName, extension);
+                console.log('ComPDFKitRN saveAs:', uniqueFilePath);
+                // const androidUri = await ComPDFKit.createUri('save_as_test.pdf', '', 'application/pdf');
+                const success = await pdfReaderRef.current?._pdfDocument.saveAs(uniqueFilePath, false, true);
+                if (success) {
+                    await pdfReaderRef.current?._pdfDocument.open(uniqueFilePath, '');
+                }
+                console.log('ComPDFKitRN saveAs:', success);
+                break;
             case 'hasChange':
                 const hasChange = await pdfReaderRef.current?._pdfDocument.hasChange();
                 console.log('ComPDFKitRN hasChange:', hasChange);

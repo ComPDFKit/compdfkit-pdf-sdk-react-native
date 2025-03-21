@@ -25,9 +25,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.common.CPDFDocumentException;
 import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentEncryptAlgo;
+import com.compdfkit.core.document.CPDFDocument.PDFDocumentError;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentPermissions;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentSaveType;
 import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
@@ -38,21 +40,25 @@ import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.print.CPDFPrintUtils;
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
+import com.compdfkit.tools.common.views.pdfview.CPDFPageIndicatorView;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl.COnSaveCallback;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl.COnSaveError;
 import com.compdfkit.tools.common.views.pdfview.CPreviewMode;
+import com.compdfkit.ui.proxy.CPDFBaseAnnotImpl;
+import com.compdfkit.ui.proxy.form.CPDFSignatureWidgetImpl;
+import com.compdfkit.ui.reader.CPDFPageView;
 import com.compdfkit.ui.reader.CPDFReaderView;
+import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
 import com.compdfkitpdf.reactnative.view.CPDFView;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import java.io.File;
-import java.util.Map;
 
 public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
@@ -89,6 +95,14 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
     @Override
     public void onViewDetachedFromWindow(View v) {
+      CPDFView documentView = (CPDFView) v;
+      try {
+        CPDFReaderView readerView = documentView.getCPDFReaderView();
+        readerView.getContextMenuShowListener()
+          .dismissContextMenu();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       mDocumentViews.remove(v.getId());
     }
   };
@@ -169,7 +183,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   }
 
   public boolean importAnnotations(int tag, String xfdfFilePath) throws Exception {
-    String xfdf = CPDFDocumentUtil.getImportAnnotationPath(reactContext, xfdfFilePath);
+    String xfdf = CPDFDocumentUtil.getImportFilePath(reactContext, xfdfFilePath);
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.documentFragment.pdfView.getCPdfReaderView();
     CPDFDocument document = readerView.getPDFDocument();
@@ -466,7 +480,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
         } else {
           saveResult = document.saveAs(savePath, removeSecurity, false, fontSubSet);
         }
-        CThreadPoolUtils.getInstance().executeMain(()->{
+        CThreadPoolUtils.getInstance().executeMain(() -> {
           if (document.shouleReloadDocument()) {
             document.reload();
           }
@@ -581,7 +595,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   }
 
   public boolean importWidgets(int tag, String xfdfFilePath) throws Exception {
-    String xfdf = CPDFDocumentUtil.getImportAnnotationPath(reactContext, xfdfFilePath);
+    String xfdf = CPDFDocumentUtil.getImportFilePath(reactContext, xfdfFilePath);
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.documentFragment.pdfView.getCPdfReaderView();
     CPDFDocument document = readerView.getPDFDocument();
@@ -643,32 +657,149 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       if (document.shouleReloadDocument()) {
         document.reload();
       }
-      if (saveResult) {
-        promise.resolve(savePath);
-      } else {
-        promise.reject("SAVE_FAIL", "Save failed.");
-      }
+      promise.resolve(saveResult);
     } catch (Exception e) {
-      if (e instanceof CPDFDocumentException){
+      if (e instanceof CPDFDocumentException) {
         promise.reject("SAVE_FAIL", ((CPDFDocumentException) e).getErrType().name());
-      }else {
+      } else {
         promise.reject("SAVE_FAIL", e.getMessage());
       }
     }
   }
 
-  public void reloadPages(int tag){
+  public void reloadPages(int tag) {
     CPDFView cpdfView = mDocumentViews.get(tag);
     cpdfView.getCPDFReaderView().reloadPages();
+  }
+
+  public void importDocument(int tag, String filePath, String password, int[] pages,
+    int insertPosition, Promise promise) {
+    try {
+      CPDFView cpdfView = mDocumentViews.get(tag);
+      CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+
+      CPDFDocument importDocument = new CPDFDocument(reactContext);
+      String importDocumentPath = CPDFDocumentUtil.getImportFilePath(reactContext, filePath);
+      PDFDocumentError error = importDocument.open(importDocumentPath, password);
+      if (error != PDFDocumentError.PDFDocumentErrorSuccess) {
+        promise.reject("IMPORT_DOCUMENT_FAIL", "open import document fail, error:" + error.name());
+        return;
+      }
+      if (pages == null || pages.length == 0) {
+        int pageCount = importDocument.getPageCount();
+        pages = new int[pageCount];
+        for (int i = 0; i < pageCount; i++) {
+          pages[i] = i;
+        }
+      }
+      if (insertPosition == -1) {
+        insertPosition = document.getPageCount();
+      }
+      boolean importResult = document.importPages(importDocument, pages, insertPosition);
+      promise.resolve(importResult);
+      CPDFPageIndicatorView indicatorView = cpdfView.documentFragment.pdfView.indicatorView;
+      cpdfView.getCPDFReaderView().reloadPages();
+      indicatorView.setTotalPage(document.getPageCount());
+      indicatorView.setCurrentPageIndex(cpdfView.getCPDFReaderView().getPageNum());
+    } catch (Exception e) {
+      promise.reject("IMPORT_DOCUMENT_FAIL", "error:" + e.getMessage());
+    }
+  }
+
+
+  public void splitDocumentPage(int tag, String savePath, int[] pages, Promise promise) {
+    try {
+      CPDFView cpdfView = mDocumentViews.get(tag);
+      CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+      if (pages == null || pages.length == 0) {
+        int pageCount = document.getPageCount();
+        pages = new int[pageCount];
+        for (int i = 0; i < pageCount; i++) {
+          pages[i] = i;
+        }
+      }
+      int[] finalPages = pages;
+      CThreadPoolUtils.getInstance().executeIO(() -> {
+        try {
+          CPDFDocument newDocument = CPDFDocument.createDocument(reactContext);
+          newDocument.importPages(document, finalPages, 0);
+          boolean saveResult;
+          if (savePath.startsWith(CONTENT_SCHEME)) {
+            saveResult = newDocument.saveAs(Uri.parse(savePath), false, true);
+          } else {
+            saveResult = newDocument.saveAs(savePath, false, false, true);
+          }
+          promise.resolve(saveResult);
+          newDocument.close();
+        } catch (CPDFDocumentException e) {
+          promise.reject("SPLIT_DOCUMENT_FAIL", "error:" + e.getErrType().name());
+        }
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
+      promise.reject("SPLIT_DOCUMENT_FAIL", "error:" + e.getMessage());
+    }
   }
 
   public String getDocumentPath(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     CPDFDocument document = readerView.getPDFDocument();
-    if (!TextUtils.isEmpty(document.getAbsolutePath())){
+    if (!TextUtils.isEmpty(document.getAbsolutePath())) {
       return document.getAbsolutePath();
     }
     return document.getUri().toString();
   }
+
+  public WritableArray getAnnotations(int tag, int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFPageUtil rcpdfPage = pdfView.getCPDFPageUtil();
+    return rcpdfPage.getAnnotations(pageIndex);
+  }
+
+  public WritableArray getForms(int tag, int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFPageUtil rcpdfPage = pdfView.getCPDFPageUtil();
+    return rcpdfPage.getWidgets(pageIndex);
+  }
+
+  public void setTextWidgetText(int tag, int pageIndex, String uuid, String text) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFPageUtil rcpdfPage = pdfView.getCPDFPageUtil();
+    rcpdfPage.setTextWidgetText(pageIndex, uuid, text);
+  }
+
+  public void updateAp(int tag, int pageIndex, String uuid) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFPageUtil rcpdfPage = pdfView.getCPDFPageUtil();
+    CPDFPageView pageView = (CPDFPageView) pdfView.getCPDFReaderView().getChild(pageIndex);
+    if (pageView == null) {
+      return;
+    }
+    CPDFAnnotation annotation = rcpdfPage.getAnnotation(pageIndex, uuid);
+    CPDFBaseAnnotImpl impl = pageView.getAnnotImpl(annotation);
+    if (impl == null) {
+      rcpdfPage.updateAp(pageIndex, uuid);
+      return;
+    }
+    if (impl instanceof CPDFSignatureWidgetImpl) {
+      ((CPDFSignatureWidgetImpl) impl).refresh();
+    } else {
+      rcpdfPage.updateAp(pageIndex, uuid);
+      impl.onAnnotAttrChange();
+    }
+    pageView.invalidate();
+  }
+
+  public void setWidgetIsChecked(int tag, int pageIndex, String uuid, boolean checked) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFPageUtil rcpdfPage = pdfView.getCPDFPageUtil();
+    rcpdfPage.setChecked(pageIndex, uuid, checked);
+  }
+
+  public boolean addWidgetImageSignature(int tag, int pageIndex, String uuid, String imagePath) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    return cpdfView.getCPDFPageUtil().addWidgetImageSignature(pageIndex, uuid, imagePath);
+  }
+
 }

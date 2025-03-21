@@ -1,6 +1,15 @@
+/**
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
 import PDFReaderContext, { CPDFDisplayMode, CPDFThemes } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect, useState } from "react";
-import { Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Image, Modal, Platform, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { CPDFReaderView } from "../../../lib/typescript/src";
 
 
@@ -66,7 +75,10 @@ export const CPDFDisplaySettingsScreen: React.FC<CPDFDisplaySettingsScreenProps>
     const renderScrollItem = () =>{
         return (
             <View>
-                <Text style={styles.subTitle}>Scroll</Text>
+                <View style={styles.subTitleView}>
+                    <Text style={styles.subTitle}>Scroll</Text>
+                </View>
+                
                 {_item('Vertical Scrolling', isVertical, () => {
                     pdfReader?.setVerticalMode(true);
                     setIsVertical(true);
@@ -82,7 +94,10 @@ export const CPDFDisplaySettingsScreen: React.FC<CPDFDisplaySettingsScreenProps>
     const renderDisplayMode = () => {
         return (
             <View>
-                <Text style={styles.subTitle}>Display Mode</Text>
+                <View style={styles.subTitleView}>
+                    <Text style={styles.subTitle}>Display Mode</Text>
+                </View>
+                
                 {_item('Single Page', displayMode == CPDFDisplayMode.SINGLE_PAGE, () => {
                     pdfReader?.setDoublePageMode(false)
                     setDisplayMode(CPDFDisplayMode.SINGLE_PAGE)
@@ -103,7 +118,7 @@ export const CPDFDisplaySettingsScreen: React.FC<CPDFDisplaySettingsScreenProps>
     const renderOtherSettings = () => {
         return (
             <View>
-                <View style={styles.subTitle} ></View>
+                <View style={styles.subTitleView} ></View>
                 {_switchItem('Highlight Links', isLinkHighlight, (value) => {
                     pdfReader?.setLinkHighlight(value);
                     setIsLinkHighlight(value);
@@ -120,7 +135,8 @@ export const CPDFDisplaySettingsScreen: React.FC<CPDFDisplaySettingsScreenProps>
                     pdfReader?.setCropMode(value);
                     setIsCrop(value);
                 })}
-                {_switchItem('Can Scale', isCanScale, (value) => {
+                
+                {Platform.OS === 'android' && _switchItem('Can Scale', isCanScale, (value) => {
                     pdfReader?.setCanScale(value);
                     setCanScale(value);
                 })}
@@ -131,7 +147,10 @@ export const CPDFDisplaySettingsScreen: React.FC<CPDFDisplaySettingsScreenProps>
     const renderThemes = () => {
         return (
             <View>
-                <Text style={styles.subTitle}>Themes</Text>
+                <View style={styles.subTitleView}>
+                    <Text style={styles.subTitle}>Themes</Text>
+                </View>
+                
                 {_item('Light', themes == CPDFThemes.LIGHT, () => {
                     pdfReader?.setReadBackgroundColor(CPDFThemes.LIGHT);
                     setThemes(CPDFThemes.LIGHT);
@@ -211,14 +230,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
     },
     modalView: {
         backgroundColor: 'white',
         height: '80%',
         justifyContent: 'flex-start',
         borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderTopRightRadius: 20
     },
     title : {
         fontSize: 20,
@@ -228,15 +247,22 @@ const styles = StyleSheet.create({
         marginBottom : 16,
         color: 'black',
     },
-    subTitle : {
-        fontSize : 14,
+    subTitleView : {
+        justifyContent:'center',
         height: 32,
         marginHorizontal: 16,
+        lineHeight:32,
+        fontWeight : 'bold',
+        backgroundColor: '#DDE9FF',
+        paddingStart:8,
+        borderRadius: 4
+    },
+    subTitle : {
+        fontSize : 14,
         textAlignVertical: 'center',
+        alignContent:'center',
         color : 'black',
         fontWeight : 'bold',
-        backgroundColor: '#FAFCFF',
-        borderRadius: 4
     },
     item : {
         height : 48,

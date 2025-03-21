@@ -2,9 +2,6 @@ package com.compdfkitpdf.reactnative.util;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
-import com.compdfkit.core.utils.TFileUtils;
-import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.CUriUtil;
 import java.io.File;
@@ -23,7 +20,7 @@ public class CPDFDocumentUtil {
       return CFileUtils.getAssetsTempFile(context, assetsPath, fileName);
   }
 
-  public static String getImportAnnotationPath(Context context, String pathOrUri) {
+  public static String getImportFilePath(Context context, String pathOrUri) {
     if (pathOrUri.startsWith(ASSETS_SCHEME)) {
       String assetsPath = pathOrUri.replace(ASSETS_SCHEME + "/","");
       String[] strs = pathOrUri.split("/");

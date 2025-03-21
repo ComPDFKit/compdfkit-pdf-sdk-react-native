@@ -20,6 +20,8 @@ import SettingScreen from './src/screens/SettingScreen';
 import CPDFReaderViewControllerExampleScreen from './src/CPDFReaderViewControllerExample';
 import CPDFAnnotationsExampleScreen from './src/CPDFAnnotationsExample';
 import CPDFSecurityExampleScreen from './src/CPDFSecurityExample';
+import CPDFPagesExampleScreen from './src/CPDFPagesExample';
+import CPDFWidgetsExampleScreen from './src/CPDFWidgetsExample';
 
 const androidLicense = 'rbbJE34FnGSu19mumutDtH/JnZhGG/F6seFnRkRsptiPhTZhNJOzf51sCT12LQ156NyvXbTeAyPG0OjCqApqvQc6DWibQP8onZSn/sUb6BBAlbx+t4+7MCivLFhFFIpVq591KeYsrLJrvaZKDqVBYVpy7BHvTSgyLs3+NgQaWFJRQsRmUsyu45BZDXA2wY+IZp+JwQM2/SF/WqulTugytbdep2zBlvPoBKQRGNlcTa2dRTbZaR5OMh6yqOCPcEVFA5GXzynDoz4MOLZsEs8i5ia5k6LuzDWLcdBvALMyQqWOahVsg7lnGGuV8pKWva9JO6l/ID5e3mMDDTS+kF3g6mu0lH1oY17eVN2TRW5amzrVRSqpTOyx2LGvW1Ilra90nzlp2dEBHH+rU3Jo93jy94eWecFWMwgKBD5sABvhJFteiZTpP6NufkmmJm5UhS1bbWwQ3416ecpKs8D9TAlLLO+rbIocuxdoPE2dxWFYLq6zF8kJV3z7dKYtAwQKdoQiS08ryGXVZybCx2GjZp97I7zNemiorRWKQUrxpNk0vCLwL1yz7NzjlB6YQ8UxvmTkX/GU7T7Ubg9LoyZuVo4tLHLplMSlHIcA4guqZL7JbQ6/jomhcJGFpGo+X7tbrCvMTnbvjZoxJRlcNN1+9x100WEfF4A2XbJZEjcpxV9tk1rTt+jS8dkX803ij16yHI1THSycP2aKkWjgDAsAUt98KL+h4U+jgXH+NDKksS1nHNj/D5gUzVZb9YIL3msCOLra4rzx64xPkJIcG6OXS1I7ASw3WWaEyJI4QKz6HXbZVHElJx5uuHIhpDNpBfXjax9kTT1Mzoph8Erom3hpRQDJSC2kvsKCucB2mdJLA7WTQ9Dq5pRmWXKTD/ai5zNtuN7pC8yRr9oKkPeGPYIjBPgWARDCEIZ7Rf9+/RTkZdbGHfll7zGmrsqVrVuYKYpSwbyNgiXJYToIyivs4+KgV2p+F7tt51Noj0WSS2ElzuLDGBt30KBnZPmMtd+2b8DUWw/52swmGAQwiAvmwIXS7p/3qNnMOP0anG+yUppiVnRlTB8fA11CjAWlPcYHpNU0Rne3ByvR3dptlknz9cdRS0IBFgtdeLznIunz3Fy/mdGGKU5mRPfGllKeWrZUHA7apS2GPE8xv7A9FrUFMFzWJLqFIHzaC1MQ3kkvme60gCvofx8BiQipXClbzvo7TI5qTVVozCXZF48sRJQbUOelPyjSCwBU35tqO2nPB0yHmCnEk+O4mPrM4DEwHsRi9KaXrnj9';
 
@@ -102,6 +104,20 @@ export default class App extends Component<Props> {
           <Stack.Screen
             name='CPDFSecurityExample'
             component={CPDFSecurityExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFPagesExample'
+            component={CPDFPagesExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFWidgetsExample'
+            component={CPDFWidgetsExampleScreen}
             options={() => ({
                   headerShown: false,
               })}

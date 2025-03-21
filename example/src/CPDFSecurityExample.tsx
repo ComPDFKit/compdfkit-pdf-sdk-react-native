@@ -9,12 +9,13 @@
 
 import React, { useState, useRef } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFDocumentEncryptAlgo, CPDFDocument } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFDocumentEncryptAlgo } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RNFS from 'react-native-fs';
+import { CPDFFileUtil } from './util/CPDFFileUtil';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -42,6 +43,7 @@ const CPDFSecurityExampleScreen = () => {
     const menuOptions = [
         'Set Password',
         'Remove Password',
+        'Flatten All Pages',
         'Check Owner Password',
         'Document Info'];
 
@@ -59,21 +61,27 @@ const CPDFSecurityExampleScreen = () => {
             case 'Check Owner Password':
                 console.log('ComPDFKit-RN checkOwnerPassword:', await document?.checkOwnerPassword('4321'));
                 break;
-            // case 'flatten All Pages':
+            case 'Flatten All Pages':
 
-            //     const appCacheDirectory = RNFS.CachesDirectoryPath;
-            //     const savePath = appCacheDirectory + '/flattened.pdf';
+                const fileUtil = new CPDFFileUtil();
+                const baseName = 'flattened';
+                const extension = 'pdf';
 
-            //     // only android platform
-            //     // const savePath = await ComPDFKit.createUri('rn_flatten_test.pdf', 'compdfkit', 'application/pdf');
+                const uniqueFilePath = await fileUtil.getUniqueFilePath(baseName, extension);
 
-            //     const flattenResult = await document?.flattenAllPages(savePath, true)
-            //     .catch(error => {
-            //         console.log('ComPDFKit-RN flattenAllPages error:', error);
-            //     });
-            //     await pdfReaderRef.current?.reloadPages();
-            //     console.log('ComPDFKit-RN flattenAllPages:', flattenResult);
-            //     break;
+                // only android platform
+                // const savePath = await ComPDFKit.createUri('rn_flatten_test.pdf', 'compdfkit', 'application/pdf');
+
+                const flattenResult = await document?.flattenAllPages(uniqueFilePath, true)
+                .catch(error => {
+                    console.log('ComPDFKit-RN flattenAllPages error:', error);
+                });
+                console.log('ComPDFKit-RN flattenAllPages:', flattenResult);
+                console.log('ComPDFKit-RN uniqueFilePath:', uniqueFilePath);
+                if(flattenResult){
+                    pdfReaderRef?.current?._pdfDocument?.open(uniqueFilePath)
+                }
+                break;
             case 'Document Info':
                 console.log('ComPDFKit-RN fileName:', await document?.getFileName());
                 console.log('ComPDFKit-RN documentPath:', await document?.getDocumentPath());

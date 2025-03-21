@@ -11,6 +11,7 @@ package com.compdfkitpdf.reactnative.modules;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkitpdf.reactnative.viewmanager.CPDFViewManager;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -334,12 +335,9 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void saveAs(int tag, ReadableMap array, Promise promise) {
+  public void saveAs(int tag, String savePath, boolean removeSecurity, boolean fontSubset, Promise promise) {
     uiBlock(nativeViewHierarchyManager -> {
-      String savePath = array.getString("save_path");
-      boolean removeSecurity = array.getBoolean("remove_security");
-      boolean fontSubSet = array.getBoolean("font_sub_set");
-      mPDFViewInstance.saveAs(tag, savePath, removeSecurity, fontSubSet, promise);
+      mPDFViewInstance.saveAs(tag, savePath, removeSecurity, fontSubset, promise);
     });
   }
 
@@ -400,12 +398,8 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void flattenAllPages(int tag, ReadableMap array, Promise promise) {
-    uiBlock(nativeViewHierarchyManager -> {
-      String savePath = array.getString("save_path");
-      boolean fontSubset = array.getBoolean("font_sub_set");
-      mPDFViewInstance.flattenAllPages(tag, savePath, fontSubset, promise);
-    });
+  public void flattenAllPages(int tag, String savePath, boolean fontSubset, Promise promise) {
+    uiBlock(nativeViewHierarchyManager -> mPDFViewInstance.flattenAllPages(tag, savePath, fontSubset, promise));
   }
 
   @ReactMethod
@@ -418,6 +412,82 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
     uiBlock(nativeViewHierarchyManager -> promise.resolve(mPDFViewInstance.getDocumentPath(tag)));
   }
 
+  @ReactMethod
+  public void importDocument(int tag, String filePath, ReadableMap array, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      String password = array.getString("password");
+      int insertPosition = array.getInt("insert_position");
+      ReadableArray pagesArray = array.getArray("pages");
+      int[] pages = new int[pagesArray.size()];
+      for (int i = 0; i < pagesArray.size(); i++) {
+        pages[i] = pagesArray.getInt(i);
+      }
+      mPDFViewInstance.importDocument(tag, filePath, password, pages, insertPosition, promise);
+    });
+  }
+
+  @ReactMethod
+  public void splitDocumentPages(int tag, String savePath, ReadableArray pagesArray, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      int size = 0;
+      if (pagesArray != null){
+        size = pagesArray.size();
+      }
+      int[] pages = new int[size];
+      if (size >0){
+        for (int i = 0; i < size; i++) {
+          pages[i] = pagesArray.getInt(i);
+        }
+      }
+      mPDFViewInstance.splitDocumentPage(tag, savePath, pages, promise);
+    });
+  }
+
+  @ReactMethod
+  public void getAnnotations(int tag, int pageIndex, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      CThreadPoolUtils.getInstance().executeIO(()->{
+        promise.resolve(mPDFViewInstance.getAnnotations(tag, pageIndex));
+      });
+    });
+  }
+
+  @ReactMethod
+  public void getForms(int tag, int pageIndex, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      CThreadPoolUtils.getInstance().executeIO(()->{
+        promise.resolve(mPDFViewInstance.getForms(tag, pageIndex));
+      });
+    });
+  }
+
+  @ReactMethod
+  public void setTextWidgetText(int tag, int pageIndex, String uuid, String text){
+    uiBlock(nativeViewHierarchyManager -> {
+      mPDFViewInstance.setTextWidgetText(tag, pageIndex, uuid, text);
+    });
+  }
+
+  @ReactMethod
+  public void updateAp(int tag, int pageIndex, String uuid){
+    uiBlock(nativeViewHierarchyManager -> {
+      mPDFViewInstance.updateAp(tag, pageIndex, uuid);
+    });
+  }
+
+  @ReactMethod
+  public void setWidgetIsChecked(int tag, int pageIndex, String uuid, boolean isChecked){
+    uiBlock(nativeViewHierarchyManager -> {
+      mPDFViewInstance.setWidgetIsChecked(tag, pageIndex, uuid, isChecked);
+    });
+  }
+
+  @ReactMethod
+  public void addWidgetImageSignature(int tag, int pageIndex, String uuid, String imagePath, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      promise.resolve(mPDFViewInstance.addWidgetImageSignature(tag, pageIndex, uuid, imagePath));
+    });
+  }
 
   private void uiBlock(UIBlock uiBlock) {
     UIManagerModule uiManager = getReactApplicationContext().getNativeModule(UIManagerModule.class);

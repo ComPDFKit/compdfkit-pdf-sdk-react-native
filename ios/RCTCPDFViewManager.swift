@@ -28,6 +28,8 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         return rtcCPDFView
     }
     
+    // MARK: - Document Methods
+    
     func saveDocument(forCPDFViewTag tag: Int, completionHandler: @escaping (Bool) -> Void) {
         let rtcCPDFView = cpdfViews[tag]
         rtcCPDFView?.saveDocument(completionHandler: { success in
@@ -324,6 +326,105 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         rtcCPDFView?.exportWidgets(completionHandler: { success in
             completionHandler(success)
         })
+    }
+    
+    func flattenAllPages(forCPDFViewTag tag : Int, savePath: URL, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.flattenAllPages(savePath: savePath, fontSubset: fontSubset,  completionHandler: { success in
+            completionHandler(success)
+        })
+    }
+    
+    func saveAs(forCPDFViewTag tag : Int, savePath: URL, removeSecurity: Bool, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.saveAs(savePath: savePath, removeSecurity: removeSecurity, fontSubset: fontSubset, completionHandler: { success in
+            completionHandler(success)
+        })
+    }
+    
+    func importDocument(forCPDFViewTag tag : Int, filePath: URL, info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.importDocument(filePath, info, completionHandler: { success in
+            completionHandler(success)
+        })
+    }
+    
+    func splitDocumentPages(forCPDFViewTag tag : Int, savePath: URL, pages: [Int], completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.splitDocumentPages(savePath: savePath, pages: pages, completionHandler: { success in
+            completionHandler(success)
+        })
+    }
+    
+    // MARK: - Pages Methods
+    
+    func getAnnotations(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping ([Dictionary<String, Any>]) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        let annotations = pageUtil.getAnnotations()
+        
+        completionHandler(annotations)
+    }
+    
+    func getWidgets(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping ([Dictionary<String, Any>]) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        let widgets = pageUtil.getForms()
+        
+        completionHandler(widgets)
+    }
+    
+    func setWidgetIsChecked(forCPDFViewTag tag :Int, pageIndex: Int, uuid: String, isChecked: Bool) {
+        let rtcCPDFView = cpdfViews[tag]
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        
+        pageUtil.setWidgetIsChecked(uuid: uuid, isChecked: isChecked)
+    }
+    
+    func setTextWidgetText(forCPDFViewTag tag :Int, pageIndex: Int, uuid: String, text: String) {
+        let rtcCPDFView = cpdfViews[tag]
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        
+        pageUtil.setTextWidgetText(uuid: uuid, text: text)
+    }
+
+    func addWidgetImageSignature(forCPDFViewTag tag :Int, pageIndex: Int, uuid: String, imagePath: URL, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        
+        pageUtil.addWidgetImageSignature(uuid: uuid, imagePath: imagePath) { success in
+            completionHandler(success)
+        }
+    }
+    
+    func updateAp(forCPDFViewTag tag : Int, pageIndex: Int, uuid: String) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        pageUtil.updateAp(uuid: uuid)
+        
+        rtcCPDFView?.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+    }
+    
+    func reloadPages(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+    
+        rtcCPDFView?.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+        rtcCPDFView?.pdfViewController?.pdfListView?.layoutDocumentView()
     }
     
     // MARK: - RCTCPDFViewDelegate

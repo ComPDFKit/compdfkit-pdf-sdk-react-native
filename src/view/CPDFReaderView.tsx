@@ -796,6 +796,10 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     return Promise.resolve();
   }
 
+  /**
+   * Reloads all pages in the readerview.
+   * @returns 
+   */
   reloadPages = () : Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if(tag != null){

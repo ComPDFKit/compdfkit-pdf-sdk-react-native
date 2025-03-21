@@ -79,17 +79,33 @@ const uiConpomentExamples = [
     {
         key: 'item6',
         title: 'Annotations Example',
-        description: 'Demonstrate how to implement annotation functionality using the CPDFReaderView UI component, including adding, editing, and deleting annotations.',
+        description: 'Demonstrate annotation functionality in CPDFReaderView, including adding, editing, and deleting.',
         action: (component: any)  => {
             component.props.navigation.navigate('CPDFAnnotationsExample');
         }
     },
     {
         key: 'item7',
+        title: 'Widgets Example',
+        description: 'Demonstrate form functionality in CPDFReaderView, including retrieving, modifying, importing, and exporting data.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFWidgetsExample');
+        }
+    },
+    {
+        key: 'item8',
         title: 'Security Example',
         description: 'This example shows how to set passwords, watermarks, etc.',
         action: (component: any)  => {
             component.props.navigation.navigate('CPDFSecurityExample');
+        }
+    },
+    {
+        key: 'item9',
+        title: 'Pages Example',
+        description: 'This example demonstrates PDF page related operations, such as inserting and splitting PDF documents.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFPagesExample');
         }
     },
 ];

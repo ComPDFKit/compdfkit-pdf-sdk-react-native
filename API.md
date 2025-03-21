@@ -401,6 +401,33 @@ Promise Parameters:
 const saveResult = await pdfReaderRef.current.save();
 ```
 
+#### saveAs
+
+Saves the document to the specified directory.
+
+Parameters:
+
+| Name           | Type    | Description                                                  |
+| -------------- | ------- | ------------------------------------------------------------ |
+| savePath       | string  | Specifies the path where the document should be saved.       |
+| removeSecurity | boolean | Whether to remove the document's password.                   |
+| fontSubset     | boolean | Whether to embed font subsets into PDF. Defaults to **true**. |
+
+Returns a Promise.
+
+| Name   | Type | Description                                                  |
+| ------ | ---- | ------------------------------------------------------------ |
+| result | bool | Returns `true` if the document is saved successfully, otherwise `false`. |
+
+```tsx
+const savePath = '/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Document.pdf';
+// android platfrom support uri, for example:
+const savePath = 'content://media/external/file/1000045118';
+const removeSecurity = false;
+const fontSubset = true;
+const result = await pdfReaderRef.current?._pdfDocument.saveAs(savePath, removeSecurity, fontSubset);
+```
+
 #### onSaveDocument
 
 function, optional
@@ -992,6 +1019,78 @@ Promise Parameters:
 const pageCount = await pdfReaderRef.current?._pdfDocument.getPageCount();
 ```
 
+#### importDocument
+
+Imports another PDF document and inserts it at a specified position in the current document.
+
+Parameters:
+
+| Name           | Type          | Description                                                  |
+| -------------- | ------------- | ------------------------------------------------------------ |
+| filePath       | string        | The path of the PDF document to import. Must be a valid, accessible path on the device. |
+| pages          | Array[number] | The collection of pages to import, represented as an array of integers. If `null` or an empty array is passed, the entire document will be imported. |
+| insertPosition | number        | The position to insert the external document into the current document. This value must be provided. If not specified, the document will be inserted at the end of the current document. |
+| password       | string        | The password for the document, if it is encrypted. If the document is not encrypted, an empty string `''` can be passed. |
+
+Returns a Promise.
+
+| Name   | Type | Description                                                  |
+| ------ | ---- | ------------------------------------------------------------ |
+| result | bool | Returns a `Promise<boolean>` indicating whether the document import was successful.<br>\- `true` indicates success<br>\- `false` or an error indicates failure |
+
+```tsx
+// Define the file path of the document to import
+// For local files (e.g., from app cache):
+const filePath = '/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Document.pdf';
+// For Android content URIs (e.g., from media storage):
+const filePath = 'content://media/external/file/1000045118';
+
+// Specify the pages to import. An empty array [] imports all pages.
+// In this example, only the first page (index 0) is imported.
+const pages = [0]; 
+
+// Define the position to insert the imported pages.
+// 0 means inserting at the beginning of the document.
+const insertPosition = 0; 
+
+// Provide the document password if encrypted. Leave empty if not required.
+const password = '';
+
+// Import the document into the PDF reader.
+const importResult = await pdfReaderRef.current?._pdfDocument.importDocument(
+  filePath, 
+  pages, 
+  insertPosition, 
+  password
+);
+```
+
+#### splitDocumentPages
+
+Splits the specified pages from the current document and saves them as a new document.
+
+This function extracts the given pages from the current PDF document and saves them as a new document at the provided save path.
+
+Parameters:
+
+| Name     | Type          | Description                                    |
+| -------- | ------------- | ---------------------------------------------- |
+| savePath | string        | The path where the new document will be saved. |
+| pages    | Array[number] | Pages to extract from the current document.    |
+
+Returns a Promise.
+
+| Name   | Type | Description                                                  |
+| ------ | ---- | ------------------------------------------------------------ |
+| result | bool | A Promise that resolves to `true` if the operation is successful, or `false` if it fails. |
+
+```tsx
+const savePath = '/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Document.pdf';
+// Pages to extract from the current document
+const pages = [0, 1, 2]; 
+const result = await pdfReaderRef.current?.splitDocumentPages(savePath, pages);
+```
+
 ### Annotations
 
 #### import Annotations
@@ -1048,6 +1147,54 @@ Promise Parameters:
 const removeResult = await pdfReaderRef.current?.removeAllAnnotations();
 ```
 
+#### getAnnotations
+
+Retrieves all annotations on the current page.
+
+This method fetches all annotations present on the current page of the PDF document  and returns a list of corresponding CPDFAnnotation instances.
+
+Promise Parameters:
+
+| Name        | Type             | Description                                                  |
+| ----------- | ---------------- | ------------------------------------------------------------ |
+| annotations | CPDFAnnotation[] | A promise that resolves with all annotations on the current page, or an empty array if retrieval fails. |
+
+```tsx
+// Page index, where 0 represents the first page
+const pageIndex = 0;
+
+// Retrieve the page object from the document
+const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+
+// Fetch all annotations on the specified page
+const annotations = await page?.getAnnotations();
+```
+
+#### flattenAllPages
+
+Flatten all pages of the current document.
+
+Parameters:
+
+| Name       | Type    | Description                                                  |
+| ---------- | ------- | ------------------------------------------------------------ |
+| savePath   | string  | The path to save the flattened document. On Android, you can pass a Uri. |
+| fontSubset | boolean | Whether to include the font subset when saving.              |
+
+Returns a Promise.
+
+| Name   | Type    | Description                                                  |
+| ------ | ------- | ------------------------------------------------------------ |
+| result | boolean | Returns 'true' if the flattened document is saved successfully, otherwise 'false'. |
+
+```tsx
+const savePath = 'file:///storage/emulated/0/Download/flatten.pdf';
+// or use Uri on the Android Platform.
+const savePath = await ComPDFKit.createUri('flatten_test.pdf', 'compdfkit', 'application/pdf');
+const fontSubset = true;
+const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
+```
+
 ### Forms
 
 #### importWidgets
@@ -1088,6 +1235,95 @@ Promise Parameters:
 
 ```tsx
 const exportXfdfFilePath = await pdfReaderRef.current?.exportWidgets();
+```
+
+#### getWidgets
+
+Retrieves all form widgets on the current page.
+
+This method fetches all form widgets present on the current page of the PDF document and returns a list of corresponding CPDFWidget instances.
+
+Returns a Promise.
+
+**Promise Parameters:**
+
+| Name    | Type         | Description                                             |
+| ------- | ------------ | ------------------------------------------------------- |
+| widgets | CPDFWidget[] | **true**: import successful,``**false**: import failed. |
+
+```tsx
+const pageIndex = 0;
+const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+const widgets = await page?.getWidgets();
+```
+
+**Related Widgets**
+
+| Class                 | Description                     |
+| --------------------- | ------------------------------- |
+| CPDFWidget            | Base class for all form widgets |
+| CPDFTextWidget        | Text input field widget         |
+| CPDFSignatureWidget   | Signature widget                |
+| CPDFRadiobuttonWidget | Radio button widget             |
+| CPDFPushbuttonWidget  | Button widget                   |
+| CPDFListboxWidget     | List box widget                 |
+| CPDFCheckboxWidget    | Checkbox widget                 |
+| CPDFComboboxWidget    | Combo box widget                |
+
+#### Fill Form Fields
+
+ComPDFKit supports programmatically filling form fields in a PDF document.
+
+The steps to fill in form fields using code are as follows:
+
+1. Get the page object of the form to be filled in from CPDFDocument.
+
+2. Retrieve all forms from the page object.
+
+3. Traverse all forms to find the one to be filled in.
+
+4. Modify the form field contents as needed.
+
+This example shows how to fill in form fields:
+
+```tsx
+const pageIndex = 0;
+// Retrieve the page object of the first page
+const cpdfPage: CPDFPage = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+
+// Retrieve all form widgets on the current page
+const widgets = await page?.getWidgets();
+
+// Fill in the text field content
+// Assume that there is a text field form on the current page and retrieve the CPDFTextWidget object
+const textWidget = widgets[0] as CPDFTextWidget;
+// Set the text field content to "Hello World"
+await textWidget.setText('Hello World');
+// Refresh the appearance of the form to apply changes, this step is necessary
+await textWidget.updateAp();
+
+// Modify the radio button's checked state
+const radioButtonWidget = widgets[0] as CPDFRadiobuttonWidget;
+// Set the radio button to checked
+await radioButtonWidget.setChecked(true);
+// Refresh the appearance of the radio button
+await radioButtonWidget.updateAp();
+
+// Modify the checkbox's checked state
+const checkboxWidget = widgets[0] as CPDFCheckboxWidget;
+// Set the checkbox to checked
+await checkboxWidget.setChecked(true);
+// Refresh the appearance of the checkbox
+await checkboxWidget.updateAp();
+
+// Add an electronic signature to the signature form
+const signatureWidget = widgets[0] as CPDFSignatureWidget;
+// Android-supported URI format:
+await signatureWidget.addImageSignature('content://media/external/images/media/123');
+// Or file path:
+await signatureWidget.addImageSignature('/path/to/image');
+// Refresh the appearance of the signature form
+await signatureWidget.updateAp();
 ```
 
 ### Security
@@ -1217,3 +1453,4 @@ Returns a Promise.
 ```tsx
 const encryptAlgo = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
 ```
+

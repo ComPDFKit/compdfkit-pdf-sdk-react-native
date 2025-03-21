@@ -39,6 +39,8 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         }
     }
     
+    // MARK: - Document Methods
+    
     @objc(setMargins: withEdges:)
     func setMargins(tag : Int, edges: [Int]) -> Void {
         DispatchQueue.main.async {
@@ -496,12 +498,117 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
     }
     
     @objc(getDocumentPath: withResolver: withRejecter:)
-    func getDocumentPath(forCPDFViewTag tag : Int , resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func getDocumentPath(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         DispatchQueue.main.async {
             let reader = self.readerView()
             reader.getDocumentPath(forCPDFViewTag: tag) { path in
                 resolve(path)
             }
+        }
+    }
+    
+    @objc(flattenAllPages: withSavePath: withFontSubset: withResolver: withRejecter:)
+    func flattenAllPages(forCPDFViewTag tag : Int, savePath: URL, fontSubset: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.flattenAllPages(forCPDFViewTag: tag, savePath: savePath, fontSubset: fontSubset) { success in
+                resolve(success)
+            }
+        }
+    }
+    
+    @objc(saveAs: withSavePath: withRemoveSecurity: withFontSubset:  withResolver: withRejecter:)
+    func saveAs(forCPDFViewTag tag : Int, savePath: URL, removeSecurity: Bool, fontSubset: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.saveAs(forCPDFViewTag: tag, savePath: savePath, removeSecurity: removeSecurity, fontSubset: fontSubset) { success in
+                resolve(success)
+            }
+        }
+    }
+    
+    @objc(importDocument: withFilePath: withInfo: withResolver: withRejecter:)
+    func importDocument(forCPDFViewTag tag : Int, filePath: URL, info: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock)  {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.importDocument(forCPDFViewTag: tag, filePath: filePath, info: info) { success in
+                resolve(success)
+            }
+        }
+    }
+    
+    @objc(splitDocumentPages: withSavePath: withPages: withResolver: withRejecter:)
+    func splitDocumentPages(forCPDFViewTag tag : Int, savePath: URL, pages: [Int], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.splitDocumentPages(forCPDFViewTag: tag, savePath: savePath, pages: pages) { success in
+                resolve(success)
+            }
+        }
+    }
+    
+    // MARK: - Pages Methods
+    
+    @objc(getAnnotations: withPageIndex: withResolver: withRejecter:)
+    func getAnnotations(forCPDFViewTag tag : Int, pageIndex: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.getAnnotations(forCPDFViewTag: tag, pageIndex: pageIndex) { annotations in
+                resolve(annotations)
+            }
+        }
+    }
+    
+    @objc(getForms: withPageIndex: withResolver: withRejecter:)
+    func getForms(forCPDFViewTag tag : Int, pageIndex: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.getWidgets(forCPDFViewTag: tag, pageIndex: pageIndex) { widgets in
+                resolve(widgets)
+            }
+        }
+    }
+    
+    @objc(setWidgetIsChecked: withPage: withUuid: withIsChecked: )
+    func setWidgetIsChecked(forCPDFViewTag tag : Int, page: Int, uuid: String, isChecked: Bool) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.setWidgetIsChecked(forCPDFViewTag: tag, pageIndex: page, uuid: uuid, isChecked: isChecked)
+        }
+    }
+    
+    @objc(setTextWidgetText: withPage: withUuid: withText:)
+    func setTextWidgetText(forCPDFViewTag tag : Int, page: Int, uuid: String, text: String) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.setTextWidgetText(forCPDFViewTag: tag, pageIndex: page, uuid: uuid, text: text)
+        }
+    }
+    
+    @objc(addWidgetImageSignature: withPage: withUuid: withImagePath: withResolver: withRejecter:)
+    func addWidgetImageSignature(forCPDFViewTag tag : Int, page: Int, uuid: String, imagePath: URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.addWidgetImageSignature(forCPDFViewTag: tag, pageIndex: page, uuid: uuid, imagePath: imagePath) { success in
+                resolve(success)
+                
+            }
+        }
+    }
+    
+  @objc(updateAp: withPage: withUuid:)
+    func updateAp(forCPDFViewTag tag : Int, page: Int, uuid: String) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.updateAp(forCPDFViewTag: tag, pageIndex: page, uuid: uuid)
+        }
+    }
+    
+    @objc(reloadPages: withResolver: withRejecter:)
+    func reloadPages(forCPDFViewTag tag : Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.reloadPages(forCPDFViewTag: tag)
         }
     }
     

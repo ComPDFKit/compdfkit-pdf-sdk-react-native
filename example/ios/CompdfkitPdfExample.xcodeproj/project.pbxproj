@@ -14,10 +14,12 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */ = {isa = PBXBuildFile; fileRef = C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */; };
 		C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FCF5E12C475A9100CEFDBB /* Localizable.strings */; };
 		EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */ = {isa = PBXBuildFile; fileRef = EC09D8202D3DE886001B2CB3 /* test.xfdf */; };
 		EC4EF3572D36664A00EEA52B /* extraFonts in Resources */ = {isa = PBXBuildFile; fileRef = EC4EF3562D36664A00EEA52B /* extraFonts */; };
-		ECF47E9D2BDF6D3300E7456A /* PDF_Document.pdf in Resources */ = {isa = PBXBuildFile; fileRef = ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */; };
+		EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */; };
+		EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30152D7AC832004E62E0 /* test_sign_pic.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,11 +50,13 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-CompdfkitPdfExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CompdfkitPdfExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CompdfkitPdfExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PDF_Document.pdf; sourceTree = "<group>"; };
 		C9FCF5E22C475A9100CEFDBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9FCF5E42C475AB600CEFDBB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xfdf; sourceTree = "<group>"; };
 		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
-		ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PDF_Document.pdf; sourceTree = "<group>"; };
+		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = annot_test.pdf; sourceTree = "<group>"; };
+		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_sign_pic.png; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -128,9 +132,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */,
+				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
+				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
 				EC09D8202D3DE886001B2CB3 /* test.xfdf */,
 				EC4EF3562D36664A00EEA52B /* extraFonts */,
-				ECF47E9C2BDF6D3300E7456A /* PDF_Document.pdf */,
 				13B07FAE1A68108700A75B9A /* CompdfkitPdfExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* CompdfkitPdfExampleTests */,
@@ -257,12 +263,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
+				EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */,
 				C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				ECF47E9D2BDF6D3300E7456A /* PDF_Document.pdf in Resources */,
 				EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */,
+				EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,7 +518,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.3.0-beta";
+				MARKETING_VERSION = 2.3.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -547,7 +555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.3.0-beta";
+				MARKETING_VERSION = 2.3.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

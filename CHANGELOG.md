@@ -1,5 +1,29 @@
 ## Newest Release
 
+### 2.3.0 - 21 Mar. 2025
+
+1. Added the features support for ComPDFKit PDF SDK for iOS iOS V2.3.0.
+2. Added the features support for ComPDFKit PDF SDK for Android Android V2.3.0.
+3. Added import/export form data API, supporting XFDF format files.
+4. Added the ability to create text input fields and insert images by clicking on a page area in content editing mode.
+5. Added navigation system print API.
+6. Added import PDF document API.
+7. Added split PDF document API.
+8. Added fill form content API.
+9. Added `saveAs` API.
+10. Added API to retrieve all annotations and form data on a page.
+11. Added document flattening API.
+12. Fixed a crash issue when editing or deleting text in certain documents.
+13. Fixed the border display issue after completing a free text annotation.
+14. Fixed an issue where the LaBan Key input method could not delete the last character while editing text.
+15. Fixed text garbling issues in content editing mode.
+16. Fixed an issue where form field content was not displayed in some documents.
+17. Fixed the issue that the zoomed-in page area did not follow the zooming when jumping to draw a rectangular area.
+18. Fixed the issue of Chinese garbled characters in the form name.
+19. Fixed the issue where the prompt did not appear for scanned PDF documents on iOS.
+
+## Previous Release
+
 ### 2.3.0-beta.1 - 28 Feb. 2025
 
 * Added import/export interface for form data in XFDF format files.
@@ -8,12 +32,7 @@
 * Fixed issue where editing or deleting text in some documents caused crashes.
 * Fixed issue with the border appearing after completing FreeText annotation.
 * Fixed issue where the LaBan Key input method deletes the last character when editing text.
-
 * Fixed the issue of text garbling in content editing mode.
-
-
-
-## Previous Release
 
 ### 2.2.2 - 19 Feb. 2025
 

@@ -134,6 +134,8 @@ export type CPDFToolbarMenuAction = ValueOf<typeof CPDFToolbarMenuAction>;
  */
 export const CPDFAnnotationType = {
 
+    UNKNOWN: 'unknown',
+
     NOTE: 'note',
 
     HIGHLIGHT: 'highlight',
@@ -257,6 +259,7 @@ export type CPDFContentEditorType =  ValueOf<typeof CPDFContentEditorType>;
 
 /**
  * form types
+ * @deprecated please use 'CPDFWidgetType' instead.
  */
 export const CPDFFormType = {
 
@@ -272,10 +275,22 @@ export const CPDFFormType = {
 
     SIGNATURES_FIELDS: 'signaturesFields',
 
-    PUSH_BUTTON: 'pushButton'
+    PUSH_BUTTON: 'pushButton',
+
+    UNKNOWN: 'unknown'
 
 } as const
+/**
+ * @deprecated Please use `CPDFWidgetType` instead.
+ */
 export type CPDFFormType = ValueOf<typeof CPDFFormType>;
+/** 
+ * New widget type definition, recommended for use.
+ */
+export const CPDFWidgetType = { ...CPDFFormType } as const;
+
+export type CPDFWidgetType = ValueOf<typeof CPDFWidgetType>;
+
 
 export const CPDFCheckStyle = {
     CHECK: 'check',

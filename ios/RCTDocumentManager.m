@@ -10,6 +10,8 @@
 
 @interface RCT_EXTERN_MODULE(CPDFViewManager, NSObject)
 
+// MARK: - Document Methods
+
 RCT_EXTERN_METHOD(save:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -176,8 +178,6 @@ RCT_EXTERN_METHOD(getEncryptAlgo:(NSInteger *) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-//----------------------
-//v2.3.0-beta.1
 RCT_EXTERN_METHOD(printDocument:(NSInteger *)tag)
 
 RCT_EXTERN_METHOD(importWidgets:(NSInteger)tag
@@ -192,19 +192,72 @@ RCT_EXTERN_METHOD(exportWidgets:(NSInteger)tag
 RCT_EXTERN_METHOD(getDocumentPath:(NSInteger *)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                     withRejecter:(RCTPromiseRejectBlock)reject)
-//------------------------
-// v2.3.0 release
-// 扁平化文档
-// info 参数：
-// save_path : 保存路径
-// font_sub_set: 保存是否包含字体集
+
 RCT_EXTERN_METHOD(flattenAllPages:(NSInteger)tag
+                  withSavePath:(NSURL *) savePath
+                  withFontSubset:(BOOL) fontSubset
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(saveAs:(NSInteger)tag
+                  withSavePath:(NSURL *) savePath
+                  withRemoveSecurity:(BOOL) removeSecurity
+                  withFontSubset:(BOOL) fontSubset
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(importDocument:(NSInteger)tag
+                  withFilePath:(NSURL *) filePath
                   withInfo:(NSDictionary) info
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(splitDocumentPages:(NSInteger)tag
+                  withSavePath:(NSURL *) savePath
+                  withPages:(NSArray *) pages
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+// MARK: - Pages Methods
+
+RCT_EXTERN_METHOD(getAnnotations:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getForms:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setWidgetIsChecked:(NSInteger)tag
+                  withPage:(NSInteger) page
+                  withUuid:(NSString *) uuid
+                  withIsChecked:(BOOL)isChecked
+                  )
+
+RCT_EXTERN_METHOD(setTextWidgetText:(NSInteger)tag
+                  withPage:(NSInteger) page
+                  withUuid:(NSString *) uuid
+                  withText:(NSString *)text
+                  )
+
+RCT_EXTERN_METHOD(addWidgetImageSignature:(NSInteger)tag
+                  withPage:(NSInteger) page
+                  withUuid:(NSString *) uuid
+                  withImagePath:(NSURL *)imagePath
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 
+RCT_EXTERN_METHOD(updateAp:(NSInteger)tag
+                  withPage:(NSInteger) page
+                  withUuid:(NSString *) uuid
+                  )
+
+RCT_EXTERN_METHOD(reloadPages:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 + (BOOL)requiresMainQueueSetup
 {

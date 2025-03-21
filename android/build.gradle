@@ -87,7 +87,7 @@ dependencies {
   compileOnly fileTree(include: ['*.jar','*.aar'], dir: 'libs')
   implementation "com.facebook.react:react-native:+"
 
-  api "com.compdf:compdfkit-tools:2.3.0-SNAPSHOT"
+  api "com.compdf:compdfkit-tools:2.3.0"
   api 'com.github.bumptech.glide:glide:4.15.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
   api 'androidx.documentfile:documentfile:1.0.1'
@@ -95,4 +95,6 @@ dependencies {
   api 'com.google.android.material:material:1.8.0'
   api 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
+configurations.all { resolutionStrategy.cacheChangingModulesFor 0, 'seconds' }
+
 

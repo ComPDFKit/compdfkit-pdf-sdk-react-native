@@ -1,3 +1,12 @@
+/**
+ * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
 import React, { Component } from "react";
 import {
   FlatList,
@@ -6,12 +15,37 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 
 import {examples} from "../examples";
 
-type Props = {};
+type Props = {
+  navigation: any; 
+};
+
 class HomeScreen extends Component<Props> {
+
+  state = {
+    isFocused: false,
+  };
+  focusListener: any;
+  blurListener: any;
+
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('focus', () => {
+      this.setState({ isFocused: true });
+    });
+
+    this.blurListener = this.props.navigation.addListener('blur', () => {
+      this.setState({ isFocused: false });
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.focusListener) this.focusListener();
+    if (this.blurListener) this.blurListener();
+  }
 
   render() {
     return (
@@ -31,7 +65,15 @@ class HomeScreen extends Component<Props> {
     } else {
       return (
         <TouchableOpacity
-          style={styles.funItem} onPress={() => item.action(this)}>
+          style={styles.funItem} onPress={() => {
+            if(Platform.OS == 'android'){
+              if (this.state.isFocused) {
+                item.action(this);
+              }
+            }else{
+              item.action(this);
+            }
+          }}>
           <Image source={require('../../assets/view.png')} style={styles.itemIcon} />
           <View style={{ flexDirection: 'column', flex: 1 }}>
             <Text style={styles.itemTitle}>{item.title}</Text>

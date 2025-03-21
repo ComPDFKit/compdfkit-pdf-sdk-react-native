@@ -46,18 +46,23 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         let bundlePath = Bundle.main.bundlePath
         
         if (documentPath.hasPrefix(homeDiectory) || documentPath.hasPrefix(bundlePath)) {
-            let fileManager = FileManager.default
-            let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
-            let fileName = document.lastPathComponent
-            let docsFilePath = samplesFilePath + "/" + fileName
-            
-            if !fileManager.fileExists(atPath: samplesFilePath) {
-                try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+            let documentHome = homeDiectory.appending("/Documents")
+            if documentPath.hasPrefix(homeDiectory) && documentPath.hasPrefix(documentHome) {
+                
+            } else {
+                let fileManager = FileManager.default
+                let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
+                let fileName = document.lastPathComponent
+                let docsFilePath = samplesFilePath + "/" + fileName
+                
+                if !fileManager.fileExists(atPath: samplesFilePath) {
+                    try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+                }
+                 
+                try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
+                
+                documentPath = docsFilePath
             }
-            
-            try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
-            
-            documentPath = docsFilePath
         } else {
             success = document.startAccessingSecurityScopedResource()
         }
@@ -82,20 +87,88 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         }
     }
     
-    // MARK: - Public Methods
+    func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: UInt) -> Bool {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var _index: UInt = index
+            if index < 0 || index > pdfListView.document.pageCount {
+                if Int(index) == -1 {
+                    _index = pdfListView.document.pageCount
+                } else {
+                    return false
+                }
+            }
+            
+            var indexSet = IndexSet()
+            for page in pages {
+                indexSet.insert(IndexSet.Element(page))
+            }
+            
+            let success = pdfListView.document.importPages(indexSet, from: document, at: _index)
+            pdfListView.layoutDocumentView()
+            
+            return success
+        } else {
+            return false
+        }
+    }
+    
+    func extractPDFDocument(_ savePath: URL, Pages pages: [Int]) -> Bool {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var indexSet = IndexSet()
+            for page in pages {
+                indexSet.insert(page)
+            }
+            
+            let document = CPDFDocument()
+            document?.importPages(indexSet, from: pdfListView.document, at: 0)
+            
+            let success = document?.write(to: savePath, isSaveFontSubset: true) ?? false
+            
+            return success
+        } else {
+            return false
+        }
+    }
+    
+    func getValue<T>(from info: [String: Any]?, key: String, defaultValue: T) -> T {
+        guard let value = info?[key] as? T else {
+            return defaultValue
+        }
+        return value
+    }
+    
+    // MARK: - Page Public Methods
+    
+    func getPage(_ index: UInt) -> CPDFPage {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let page = pdfListView.document.page(at: index) ?? CPDFPage()
+            return page
+        } else {
+            return CPDFPage()
+        }
+    }
+    
+    // MARK: - Document Public Methods
     
     func saveDocument(completionHandler: @escaping (Bool) -> Void) {
         if (self.pdfViewController?.pdfListView?.isEditing() == true && self.pdfViewController?.pdfListView?.isEdited() == true) {
-            self.pdfViewController?.pdfListView?.commitEditing()
-            
-            if self.pdfViewController?.pdfListView?.document.isModified() == true {
-                let document = self.pdfViewController?.pdfListView?.document
-                let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
-                completionHandler(success)
-            } else {
-                completionHandler(true)
+            DispatchQueue.global(qos: .default).async {
+                if self.pdfViewController?.pdfListView?.isEdited() == true {
+                    
+                    self.pdfViewController?.pdfListView?.commitEditing()
+                }
+                
+                DispatchQueue.main.async {
+                    
+                    if self.pdfViewController?.pdfListView?.document.isModified() == true {
+                        let document = self.pdfViewController?.pdfListView?.document
+                        let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
+                        completionHandler(success)
+                    } else {
+                        completionHandler(true)
+                    }
+                }
             }
-            
         } else {
             if self.pdfViewController?.pdfListView?.document.isModified() == true {
                 let document = self.pdfViewController?.pdfListView?.document
@@ -421,8 +494,18 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
                 newDocument?.unlock(withPassword: password)
             }
             pdfListView.document = newDocument
+            self.pdfViewController?.filePath = newDocument?.documentURL.path
             pdfListView.setNeedsDisplay()
             completionHandler(true)
+            
+            if newDocument?.isImageDocument() == true {
+                let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }
+                let alert = UIAlertController(title: NSLocalizedString("Warning", comment: ""), message: NSLocalizedString("The current page is scanned images that do not support adding highlights, underlines, strikeouts, and squiggly lines.", comment: ""), preferredStyle: .alert)
+                alert.addAction(okAction)
+                UIApplication.presentedViewController()?.present(alert, animated: true, completion: nil)
+            }
         } else {
             completionHandler(false)
         }
@@ -615,7 +698,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
             let fileNameWithExtension = pdfListView.document?.documentURL.lastPathComponent ?? ""
             let fileName = (fileNameWithExtension as NSString).deletingPathExtension
             let documentFolder = NSHomeDirectory().appending("/Documents/\(fileName)_xfdf.xfdf")
-            let succes = pdfListView.document?.exportForm(toXFDFPath: documentFolder) ?? false
+            let succes = pdfListView.document?.export(toXFDFPath: documentFolder) ?? false
             
             if succes {
                 completionHandler(documentFolder)
@@ -627,11 +710,63 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         }
     }
     
-    func getValue<T>(from info: [String: Any]?, key: String, defaultValue: T) -> T {
-        guard let value = info?[key] as? T else {
-            return defaultValue
+    func flattenAllPages(savePath: URL, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let success = pdfListView.document.writeFlatten(to: savePath, isSaveFontSubset: fontSubset)
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
         }
-        return value
+    }
+    
+    func saveAs(savePath: URL, removeSecurity: Bool, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+           
+            var success: Bool = false
+            if removeSecurity {
+                success = pdfListView.document.writeDecrypt(to: savePath, isSaveFontSubset: fontSubset)
+            } else {
+                success = pdfListView.document.write(to: savePath, isSaveFontSubset: fontSubset)
+            }
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func importDocument(_ filePath:URL, _ info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let _info = info as? [String: Any]
+            
+            let password: String = self.getValue(from: _info, key: "password", defaultValue: "")
+            let pages: [Int] = self.getValue(from: _info, key: "pages", defaultValue: [])
+            let insert_position: Int = self.getValue(from: _info, key: "insert_position", defaultValue: 0)
+
+            
+            let _document = CPDFDocument(url: filePath)
+            
+            if _document?.isLocked == true {
+                _document?.unlock(withPassword: password)
+            }
+            
+            let success = self.insertPDFDocument(_document!, Pages: pages, Position: UInt(insert_position))
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func splitDocumentPages(savePath: URL, pages: [Int], completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let success = self.extractPDFDocument(savePath, Pages: pages)
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
     }
     
     // MARK: - CPDFViewBaseControllerDelete
