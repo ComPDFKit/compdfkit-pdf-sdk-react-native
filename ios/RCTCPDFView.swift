@@ -18,6 +18,8 @@ protocol RCTCPDFViewDelegate: AnyObject {
     func cpdfViewAttached(_ cpdfView: RCTCPDFView)
     func saveDocumentChange(_ cpdfView: RCTCPDFView)
     func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
+    func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView)
+    func onFullScreenChanged(_ cpdfView: RCTCPDFView, isFull: Bool)
 }
 
 class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
@@ -87,12 +89,12 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         }
     }
     
-    func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: UInt) -> Bool {
+    func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: Int) -> Bool {
         if let pdfListView = self.pdfViewController?.pdfListView {
-            var _index: UInt = index
+            var _index = index
             if index < 0 || index > pdfListView.document.pageCount {
                 if Int(index) == -1 {
-                    _index = pdfListView.document.pageCount
+                    _index = Int(pdfListView.document.pageCount)
                 } else {
                     return false
                 }
@@ -103,7 +105,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
                 indexSet.insert(IndexSet.Element(page))
             }
             
-            let success = pdfListView.document.importPages(indexSet, from: document, at: _index)
+            let success = pdfListView.document.importPages(indexSet, from: document, at: UInt(_index))
             pdfListView.layoutDocumentView()
             
             return success
@@ -744,14 +746,13 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
             let pages: [Int] = self.getValue(from: _info, key: "pages", defaultValue: [])
             let insert_position: Int = self.getValue(from: _info, key: "insert_position", defaultValue: 0)
 
-            
             let _document = CPDFDocument(url: filePath)
             
             if _document?.isLocked == true {
                 _document?.unlock(withPassword: password)
             }
             
-            let success = self.insertPDFDocument(_document!, Pages: pages, Position: UInt(insert_position))
+            let success = self.insertPDFDocument(_document!, Pages: pages, Position: insert_position)
             completionHandler(success)
         } else {
             completionHandler(false)
@@ -769,6 +770,27 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         }
     }
     
+    func insertBlankPage(pageIndex: Int, pageWidth: Float, pageHeight: Float, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var _index = pageIndex
+            if pageIndex < 0 || pageIndex > pdfListView.document.pageCount {
+                if pageIndex == -1 {
+                    _index = Int(pdfListView.document.pageCount)
+                } else {
+                    completionHandler(false)
+                }
+            }
+            
+            let size = CGSize(width: Double(pageWidth), height: Double(pageHeight))
+            let success = pdfListView.document.insertPage(size, at: UInt(_index))
+            self.pdfViewController?.pdfListView?.layoutDocumentView()
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
     // MARK: - CPDFViewBaseControllerDelete
     
     func PDFViewBaseController(_ baseController: CPDFViewBaseController, SaveState success: Bool) {
@@ -777,6 +799,14 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     
     func PDFViewBaseController(_ baseController: CPDFViewBaseController, currentPageIndex index: Int) {
         self.delegate?.onPageChanged(self, pageIndex: index)
+    }
+    
+    func PDFViewBaseControllerPageEditBack(_ baseController: CPDFViewBaseController) {
+        self.delegate?.onPageEditDialogBackPress(self)
+    }
+    
+    func PDFViewBaseController(_ baseController: CPDFViewBaseController, HiddenState state: Bool) {
+        self.delegate?.onFullScreenChanged(self, isFull: state)
     }
     
     // MARK: - RCT Methods

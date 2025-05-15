@@ -195,43 +195,48 @@ interface ComPDFKit {
 const ComPDFKit = NativeModules.ComPDFKit
 
 export { ComPDFKit };
-export {
-  CPDFViewMode,
-  CPDFToolbarAction,
-  CPDFToolbarMenuAction,
-  CPDFAnnotationType,
-  CPDFConfigTool,
-  CPDFBorderStyle,
-  CPDFLineType,
-  CPDFAlignment,
-  CPDFTypeface,
-  CPDFContentEditorType,
-  CPDFFormType,
-  CPDFWidgetType,
-  CPDFCheckStyle,
-  CPDFDisplayMode,
-  CPDFThemes,
-  CPDFDocumentPermissions,
-  CPDFDocumentEncryptAlgo } from './configuration/CPDFOptions';
+// === Options & Configs ===
+export * from './configuration/CPDFOptions';
+export { CPDFConfiguration } from './configuration/CPDFConfiguration';
+
+// === Core Views ===
 export { CPDFReaderView } from './view/CPDFReaderView';
-export { CPDFDocument} from './view/CPDFDocument';
-export { CPDFPage } from './page/CPDFPage';
+// === Document & Pages ===
+export { CPDFDocument } from './document/CPDFDocument';
+export * from './page/CPDFPage';
+
+// === Actions ===
+export * from './document/action/CPDFAction';
+export { CPDFGoToAction } from './document/action/CPDFGoToAction';
+export { CPDFUriAction } from './document/action/CPDFUriAction';
+
+// === Annotations ===
 export { CPDFAnnotation } from './annotation/CPDFAnnotation';
+export { CPDFCircleAnnotation } from './annotation/CPDFCircleAnnotation';
+export { CPDFFreeTextAnnotation } from './annotation/CPDFFreeTextAnnotation';
+export { CPDFInkAnnotation } from './annotation/CPDFInkAnnotation';
+export { CPDFLineAnnotation } from './annotation/CPDFLineAnnotation';
+export { CPDFLinkAnnotation } from './annotation/CPDFLinkAnnotation';
+export { CPDFMarkupAnnotation } from './annotation/CPDFMarkupAnnotation';
+export { CPDFSquareAnnotation } from './annotation/CPDFSquareAnnotation';
+export { CPDFTextAttribute } from './annotation/CPDFTextAttribute';
+
+// === Form Widgets ===
 export { CPDFWidget } from './annotation/form/CPDFWidget';
-export { CPDFTextWidget } from './annotation/form/CPDFTextWidget';
-export { CPDFSignatureWidget } from './annotation/form/CPDFSignatureWidget';
-export { CPDFRadiobuttonWidget } from './annotation/form/CPDFRadiobuttonWidget';
-export { CPDFPushbuttonWidget } from './annotation/form/CPDFPushbuttonWidget';
-export { CPDFListboxWidget } from './annotation/form/CPDFListboxWidget';
-export { CPDFComboboxWidget } from './annotation/form/CPDFComboboxWidget';
 export { CPDFCheckboxWidget } from './annotation/form/CPDFCheckboxWidget';
+export { CPDFComboboxWidget } from './annotation/form/CPDFComboboxWidget';
+export { CPDFListboxWidget } from './annotation/form/CPDFListboxWidget';
+export { CPDFPushbuttonWidget } from './annotation/form/CPDFPushbuttonWidget';
+export { CPDFRadiobuttonWidget } from './annotation/form/CPDFRadiobuttonWidget';
+export { CPDFSignatureWidget } from './annotation/form/CPDFSignatureWidget';
+export { CPDFTextWidget } from './annotation/form/CPDFTextWidget';
+export { CPDFWidgetItem } from './annotation/form/CPDFWidgetItem';
 
-
-
+// === Utils ===
+export { CPDFRectF } from './util/CPDFRectF';
 
 
 ComPDFKit.getDefaultConfig = getDefaultConfig
-
 
 function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string {
   const defaultConfig : CPDFConfiguration = {
@@ -500,8 +505,10 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       themeMode: CPDFThemeMode.SYSTEM,
       fileSaveExtraFontSubset: true,
       watermark: {
-        saveAsNewFile: true
-      }
+        saveAsNewFile: true,
+      },
+      signatureType : 'manual',
+      enableExitSaveTips: false
     }
   }
   return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);

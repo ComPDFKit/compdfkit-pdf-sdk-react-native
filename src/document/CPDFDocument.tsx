@@ -9,7 +9,9 @@
 
 import { NativeModules, findNodeHandle } from 'react-native';
 import { CPDFDocumentEncryptAlgo, CPDFDocumentPermissions } from '../configuration/CPDFOptions';
-import { CPDFPage } from '../page/CPDFPage';
+import { CPDFPage, CPDFPageSize } from '../page/CPDFPage';
+import { CPDFAnnotation } from '../annotation/CPDFAnnotation';
+import { CPDFWidget } from '../annotation/form/CPDFWidget';
 const { CPDFViewManager } = NativeModules;
 
 export class CPDFDocument {
@@ -522,6 +524,62 @@ export class CPDFDocument {
         }
         return Promise.reject(new Error('Unable to find the native view reference'));
     }
+
+    /**
+     * Inserts a blank page at the specified index in the document.
+     *
+     * This method allows adding a blank page of a specified size at a specific index within the PDF document.
+     * It is useful for document editing scenarios where page insertion is needed.
+     *
+     * @param pageIndex - The index position where the blank page will be inserted. Must be a valid index within the document.
+     * @param pageSize - The size of the blank page to insert. Defaults to A4 size if not specified.
+     *   Custom page sizes can be used by creating an instance of `CPDFPageSize` with custom dimensions.
+     * @example
+     * const pageSize = CPDFPageSize.a4;
+     * // Custom page size
+     * // const pageSize = new CPDFPageSize(500, 800);
+     * const result = await pdfReaderRef.current?._pdfDocument.insertBlankPage(0, pageSize);
+     * @returns A Promise that resolves to a boolean value indicating the success or failure of the blank page insertion.
+     *   Resolves to `true` if the insertion was successful, `false` otherwise.
+     */
+    insertBlankPage(pageIndex : number, pageSize : CPDFPageSize = CPDFPageSize.a4) : Promise<boolean> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.insertBlankPage(tag, pageIndex, pageSize.width, pageSize.height);
+        }
+        return Promise.reject('Unable to find the native view reference');
+    }
+
+    /**
+     * Removes an annotation from the current page.
+     * @param annotation The annotation to be removed.
+     * @example
+     * await pdfReaderRef?.current?._pdfDocument.removeAnnotation(annotation);
+     */
+    removeAnnotation(annotation : CPDFAnnotation) : Promise<boolean> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.removeAnnotation(tag, annotation.page, annotation.uuid);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Removes a form widget from the current page.
+     * @example
+     * await pdfReaderRef?.current?._pdfDocument.removeWidget(widget);
+     * @see CPDFWidget - Base class for all form widgets
+     * @param widget The widget to be removed.
+     * @returns
+     */
+    removeWidget(widget : CPDFWidget) : Promise<boolean> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.removeWidget(tag, widget.page, widget.uuid);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
 }
 
 

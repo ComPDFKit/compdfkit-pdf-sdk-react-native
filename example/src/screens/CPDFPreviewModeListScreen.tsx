@@ -43,7 +43,7 @@ export const CPDFPreviewModeListScreen : React.FC<CPDFPreviewModeListScreenProps
         },
         ];
 
-    const [viewMode, setViewMode] = useState(CPDFViewMode.VIEWER);
+    const [viewMode, setViewMode] = useState<CPDFViewMode>(CPDFViewMode.VIEWER);
     
     const _item = (title : string, isChecked : boolean, onPress : () =>void) => {
         return (

@@ -10,18 +10,23 @@ import { CPDFAnnotation } from "./CPDFAnnotation";
 
 /**
  * @class CPDFMarkupAnnotation
- * @property { CPDFAnnotationType } [type] Annotation type identifier
- * @property { title } [title] Annotation title
- * @property { number } [page] The page number where the note is located
- * @property { string } [content] annotation content.
+ * @memberof CPDFMarkupAnnotation
  * @property { string } [markedText] The text that is marked by the annotation
+ * @property { string } [color] The color of the annotation
+ * @property { number } [alpha] The alpha of the annotation
  */
 export class CPDFMarkupAnnotation extends CPDFAnnotation {
 
     markedText: string;
 
+    color : string;
+
+    alpha : number;
+
     constructor(viewerRef: any,params: Partial<CPDFMarkupAnnotation>) {
         super(viewerRef,params);
         this.markedText = params.markedText ?? '';
+        this.color = params.color ?? '#000000';
+        this.alpha = params.alpha ?? 255;
     }
 }

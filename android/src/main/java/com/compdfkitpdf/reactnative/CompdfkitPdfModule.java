@@ -22,6 +22,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.compdfkit.core.document.CPDFAbility;
 import com.compdfkit.core.document.CPDFSdk;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
@@ -117,6 +118,7 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     CPDFSdk.init(mReactContext, license, true, (code, msg) -> {
       Log.d(TAG, "init_: code:" + code + ", msg:" + msg);
       promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+      CPDFAbility.checkLicenseAllAbility();
     });
   }
 

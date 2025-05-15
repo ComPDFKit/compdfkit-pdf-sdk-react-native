@@ -1,5 +1,30 @@
 ## Newest Release
 
+### 2.4.0 - 15 May. 2025
+
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.0.  
+2. Added the features support for ComPDFKit PDF SDK for Android V2.4.0.
+3. Added configuration options for signature methods in signature form fields on Android.
+4. Added a document save reminder when exiting the interface on Android.
+5. Added functionality to erase existing Ink annotations on Android.
+6. Added APIs to delete annotations and form fields.
+7. Added an API to insert blank pages.
+8. Enhanced annotation property data.
+9. Enhanced form field property data.
+10. Fixed OOM crash issues on some devices during SDK initialization.
+11. Fixed an issue where signature appearance was not correctly displayed after digital signing.
+12. Fixed an issue where images failed to display after adding a watermark to certain documents.
+13. Fixed an issue that prevented inserting PNG images when inserting pages.
+14. Fixed incorrect handling of `ActionType_GoToR` and `ActionType_Launch` in hyperlink annotations.
+15. Fixed an issue where long input in electronic signatures within `ComPDFKit_Tools` caused incomplete display after saving.
+16. Fixed blurry display issue after zooming in on text annotations.
+17. Fixed jump behavior of `CPDFReaderView.setScale() `scaling method.
+18. Fixed a font inconsistency issue during content editing when adding text to already selected text with an existing device font.
+
+
+
+## Previous Release
+
 ### 2.3.0 - 21 Mar. 2025
 
 1. Added the features support for ComPDFKit PDF SDK for iOS iOS V2.3.0.
@@ -21,8 +46,6 @@
 17. Fixed the issue that the zoomed-in page area did not follow the zooming when jumping to draw a rectangular area.
 18. Fixed the issue of Chinese garbled characters in the form name.
 19. Fixed the issue where the prompt did not appear for scanned PDF documents on iOS.
-
-## Previous Release
 
 ### 2.3.0-beta.1 - 28 Feb. 2025
 

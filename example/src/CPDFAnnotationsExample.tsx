@@ -40,8 +40,8 @@ const CPDFAnnotationsExampleScreen = () => {
 
     const [samplePDF] = useState(
         route.params?.document || (Platform.OS === 'android'
-            ? 'file:///android_asset/PDF_Document.pdf'
-            : 'PDF_Document.pdf')
+            ? 'file:///android_asset/annot_test.pdf'
+            : 'annot_test.pdf')
     );
 
     const handleSave = async () => {
@@ -130,7 +130,6 @@ const CPDFAnnotationsExampleScreen = () => {
                     if (annotations) {
                         allAnnotations = allAnnotations.concat(annotations);
                     }
-                    console.log(JSON.stringify(annotations, null, 2));
                 }
                 setAnnotationData(allAnnotations);
                 setAnnotationModalVisible(true);
@@ -186,7 +185,15 @@ const CPDFAnnotationsExampleScreen = () => {
                         <CPDFAnnotationListScreen
                             visible={annotationModalVisible}
                             annotations={annotationData}
-                            onClose={() => setAnnotationModalVisible(false)} />
+                            onClose={() => {
+                                setAnnotationModalVisible(false)
+                            }}
+                            onDelete={async (annotation) => {
+                                // const page = pdfReaderRef.current?._pdfDocument.pageAtIndex(annotation.page);
+                                // page?.removeAnnotation(annotation);
+                                await pdfReaderRef.current?._pdfDocument.removeAnnotation(annotation);
+                                setAnnotationModalVisible(false);
+                            }} />
                     </View>
                 </SafeAreaView>
             </MenuProvider>

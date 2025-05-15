@@ -49,6 +49,21 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = markupAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = markupAnnotation.contents
+                    
+                    if markupAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(markupAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    annotaionDict["color"] = markupAnnotation.color?.toHexString()
+                    annotaionDict["alpha"] = markupAnnotation.opacity * 255.0
+                    let rectDict = [
+                        "bottom": markupAnnotation.bounds.origin.y,
+                        "left": markupAnnotation.bounds.origin.x,
+                        "top": markupAnnotation.bounds.origin.y + markupAnnotation.bounds.size.height,
+                        "right": markupAnnotation.bounds.origin.x + markupAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    annotaionDict["markedText"] = markupAnnotation.markupText()
+                    
                 }
             case "Circle":
                 if let circleAnnotation = annoation as? CPDFCircleAnnotation {
@@ -60,6 +75,31 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = circleAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = circleAnnotation.contents
+                    
+                    if circleAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(circleAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": circleAnnotation.bounds.origin.y,
+                        "left": circleAnnotation.bounds.origin.x,
+                        "top": circleAnnotation.bounds.origin.y + circleAnnotation.bounds.size.height,
+                        "right": circleAnnotation.bounds.origin.x + circleAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    annotaionDict["borderWidth"] = circleAnnotation.borderWidth
+                    annotaionDict["borderColor"] = circleAnnotation.color?.toHexString()
+                    annotaionDict["borderAlpha"] = circleAnnotation.opacity * 255.0
+                    annotaionDict["fillColor"] = circleAnnotation.interiorColor?.toHexString()
+                    annotaionDict["fillAlpha"] = circleAnnotation.interiorOpacity * 255.0
+                    let borderEeffect: CPDFBorderEffectType = circleAnnotation.borderEffect?.borderEffectType ?? .solid
+                    switch borderEeffect {
+                    case .solid:
+                        annotaionDict["bordEffectType"] = "solid"
+                    case .cloudy:
+                        annotaionDict["bordEffectType"] = "cloudy"
+                    @unknown default:
+                        annotaionDict["bordEffectType"] = "solid"
+                    }
                 }
             case "Square":
                 if let squareAnnotation = annoation as? CPDFSquareAnnotation {
@@ -71,6 +111,31 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = squareAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = squareAnnotation.contents
+                    
+                    if squareAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(squareAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": squareAnnotation.bounds.origin.y,
+                        "left": squareAnnotation.bounds.origin.x,
+                        "top": squareAnnotation.bounds.origin.y + squareAnnotation.bounds.size.height,
+                        "right": squareAnnotation.bounds.origin.x + squareAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    annotaionDict["borderWidth"] = squareAnnotation.borderWidth
+                    annotaionDict["borderColor"] = squareAnnotation.color?.toHexString()
+                    annotaionDict["borderAlpha"] = squareAnnotation.opacity * 255.0
+                    annotaionDict["fillColor"] = squareAnnotation.interiorColor?.toHexString()
+                    annotaionDict["fillAlpha"] = squareAnnotation.interiorOpacity * 255.0
+                    let borderEeffect: CPDFBorderEffectType = squareAnnotation.borderEffect?.borderEffectType ?? .solid
+                    switch borderEeffect {
+                    case .solid:
+                        annotaionDict["bordEffectType"] = "solid"
+                    case .cloudy:
+                        annotaionDict["bordEffectType"] = "cloudy"
+                    @unknown default:
+                        annotaionDict["bordEffectType"] = "solid"
+                    }
                 }
             case "Line", "Arrow":
                 if let lineAnnotation = annoation as? CPDFLineAnnotation {
@@ -82,6 +147,26 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = lineAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = lineAnnotation.contents
+                    
+                    if lineAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(lineAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": lineAnnotation.bounds.origin.y,
+                        "left": lineAnnotation.bounds.origin.x,
+                        "top": lineAnnotation.bounds.origin.y + lineAnnotation.bounds.size.height,
+                        "right": lineAnnotation.bounds.origin.x + lineAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    annotaionDict["borderWidth"] = lineAnnotation.borderWidth
+                    annotaionDict["borderColor"] = lineAnnotation.color?.toHexString()
+                    annotaionDict["borderAlpha"] = lineAnnotation.opacity * 255.0
+                    annotaionDict["fillColor"] = lineAnnotation.interiorColor?.toHexString()
+                    annotaionDict["fillAlpha"] = lineAnnotation.interiorOpacity * 255.0
+                    let startLineStyle = lineAnnotation.startLineStyle
+                    let endLineStyle = lineAnnotation.endLineStyle
+                    annotaionDict["lineHeadType"] = getLineStyle(startLineStyle)
+                    annotaionDict["lineTailType"] = getLineStyle(endLineStyle)
                 }
             case "Freehand":
                 if let inkAnnotation = annoation as? CPDFInkAnnotation {
@@ -92,6 +177,20 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = inkAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = inkAnnotation.contents
+                    
+                    if inkAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(inkAnnotation.modificationDate().timeIntervalSince1970  * 1000)
+                    }
+                    annotaionDict["color"] = inkAnnotation.color?.toHexString()
+                    annotaionDict["alpha"] = inkAnnotation.opacity * 255.0
+                    let rectDict = [
+                        "bottom": inkAnnotation.bounds.origin.y,
+                        "left": inkAnnotation.bounds.origin.x,
+                        "top": inkAnnotation.bounds.origin.y + inkAnnotation.bounds.size.height,
+                        "right": inkAnnotation.bounds.origin.x + inkAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    annotaionDict["borderWidth"] = inkAnnotation.borderWidth
                 }
                 
             case "Note":
@@ -104,6 +203,17 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = noteAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = noteAnnotation.contents
+                    
+                    if noteAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(noteAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": noteAnnotation.bounds.origin.y,
+                        "left": noteAnnotation.bounds.origin.x,
+                        "top": noteAnnotation.bounds.origin.y + noteAnnotation.bounds.size.height,
+                        "right": noteAnnotation.bounds.origin.x + noteAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
                 }
                 
             case "FreeText":
@@ -115,6 +225,38 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = freeTextAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = freeTextAnnotation.contents
+                    
+                    if freeTextAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(freeTextAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    annotaionDict["color"] = freeTextAnnotation.color?.toHexString()
+                    annotaionDict["alpha"] = freeTextAnnotation.opacity * 255.0
+                    let rectDict = [
+                        "bottom": freeTextAnnotation.bounds.origin.y,
+                        "left": freeTextAnnotation.bounds.origin.x,
+                        "top": freeTextAnnotation.bounds.origin.y + freeTextAnnotation.bounds.size.height,
+                        "right": freeTextAnnotation.bounds.origin.x + freeTextAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    let alignment = freeTextAnnotation.alignment
+                    switch alignment {
+                    case .left:
+                        annotaionDict["alignment"] = "left"
+                    case .center:
+                        annotaionDict["alignment"] = "center"
+                    case .right:
+                        annotaionDict["alignment"] = "right"
+                    default:
+                        annotaionDict["alignment"] = "left"
+                    }
+                    
+                    let fontDict: [String: Any] = [
+                        "fontSize": freeTextAnnotation.fontSize,
+                        "familyName": freeTextAnnotation.cFont.familyName,
+                        "styleName": freeTextAnnotation.cFont.styleName ?? "",
+                        "fontColor": freeTextAnnotation.fontColor?.toHexString() ?? ""
+                    ]
+                    annotaionDict["textAttribute"] = fontDict
                 }
                 
             case "Stamp", "Image":
@@ -130,6 +272,16 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = stampAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = stampAnnotation.contents
+                    if stampAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(stampAnnotation.modificationDate().timeIntervalSince1970  * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": stampAnnotation.bounds.origin.y,
+                        "left": stampAnnotation.bounds.origin.x,
+                        "top": stampAnnotation.bounds.origin.y + stampAnnotation.bounds.size.height,
+                        "right": stampAnnotation.bounds.origin.x + stampAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
                 }
                 
             case "Link":
@@ -142,6 +294,26 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = linkAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = linkAnnotation.contents
+                    
+                    if linkAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(linkAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": linkAnnotation.bounds.origin.y,
+                        "left": linkAnnotation.bounds.origin.x,
+                        "top": linkAnnotation.bounds.origin.y + linkAnnotation.bounds.size.height,
+                        "right": linkAnnotation.bounds.origin.x + linkAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
+                    var actionDict: [String: Any] = [:];
+                    if (linkAnnotation.url() != nil) {
+                        actionDict["actionType"] = "uri"
+                        actionDict["uri"] = linkAnnotation.url()
+                    } else {
+                        actionDict["actionType"] = "goTo"
+                        actionDict["pageIndex"] = linkAnnotation.destination()?.pageIndex ?? 0
+                    }
+                    annotaionDict["action"] = actionDict
                 }
                 
             case "Media":
@@ -153,6 +325,17 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = mediaAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = mediaAnnotation.contents
+                    
+                    if mediaAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(mediaAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": mediaAnnotation.bounds.origin.y,
+                        "left": mediaAnnotation.bounds.origin.x,
+                        "top": mediaAnnotation.bounds.origin.y + mediaAnnotation.bounds.size.height,
+                        "right": mediaAnnotation.bounds.origin.x + mediaAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
                 }
             case "":
                 if let signatureAnnotation = annoation as? CPDFSignatureAnnotation {
@@ -163,6 +346,17 @@ class RCTCPDFPageUtil: NSObject {
                     annotaionDict["title"] = signatureAnnotation.userName()
                     annotaionDict["page"] = pageIndex
                     annotaionDict["content"] = signatureAnnotation.contents
+                    
+                    if signatureAnnotation.modificationDate() != nil {
+                        annotaionDict["createDate"] = Int(signatureAnnotation.modificationDate().timeIntervalSince1970 * 1000)
+                    }
+                    let rectDict = [
+                        "bottom": signatureAnnotation.bounds.origin.y,
+                        "left": signatureAnnotation.bounds.origin.x,
+                        "top": signatureAnnotation.bounds.origin.y + signatureAnnotation.bounds.size.height,
+                        "right": signatureAnnotation.bounds.origin.x + signatureAnnotation.bounds.size.width
+                    ]
+                    annotaionDict["rect"] = rectDict
                 }
                     
             default:
@@ -200,13 +394,49 @@ class RCTCPDFPageUtil: NSObject {
                             formDict["type"] = lowertype
                             formDict["title"] = buttonWidget.fieldName()
                             formDict["page"] = pageIndex
-                            if widgetType != "PushButton" {
+                            
+                            if buttonWidget.modificationDate() != nil {
+                                formDict["createDate"] = Int(buttonWidget.modificationDate().timeIntervalSince1970 * 1000)
+                            }
+                            let rectDict = [
+                                "bottom": buttonWidget.bounds.origin.y,
+                                "left": buttonWidget.bounds.origin.x,
+                                "top": buttonWidget.bounds.origin.y + buttonWidget.bounds.size.height,
+                                "right": buttonWidget.bounds.origin.x + buttonWidget.bounds.size.width
+                            ]
+                            formDict["rect"] = rectDict
+                            formDict["borderWidget"] = buttonWidget.borderWidth
+                            formDict["borderColor"] = buttonWidget.borderColor?.toHexString()
+                            formDict["fillColor"] = buttonWidget.backgroundColor?.toHexString()
+
+                            if widgetType == "PushButton" {
+                                formDict["buttonTitle"] = buttonWidget.caption()
+                                var actionDict: [String: Any] = [:]
+                                let action = buttonWidget.action()
+                                if let urlActions = action as? CPDFURLAction {
+                                    actionDict["actionType"] = "uri"
+                                    actionDict["uri"] = urlActions.url()
+                                } else if let gotoAction = action as? CPDFGoToAction {
+                                    actionDict["actionType"] = "goTo"
+                                    actionDict["pageIndex"] = gotoAction.destination()?.pageIndex ?? 0
+                                }
+                                
+                                formDict["action"] = actionDict
+                                formDict["familyName"] = buttonWidget.cFont.familyName
+                                formDict["styleName"] = buttonWidget.cFont.styleName ?? ""
+                                formDict["fontSize"] = buttonWidget.fontSize
+                                formDict["fontColor"] = buttonWidget.fontColor?.toHexString()
+                            } else {
                                 let isOn = buttonWidget.state()
                                 if (isOn != 0) {
                                     formDict["isChecked"] = true
                                 } else {
                                     formDict["isChecked"] = false
                                 }
+                                
+                                let checkStyle = buttonWidget.widgetCheckStyle()
+                                formDict["checkStyle"] = getCheckStyle(checkStyle)
+                                formDict["checkColor"] = buttonWidget.fontColor?.toHexString()
                             }
                         }
                         
@@ -220,6 +450,38 @@ class RCTCPDFPageUtil: NSObject {
                             formDict["title"] = textFieldWidget.fieldName()
                             formDict["page"] = pageIndex
                             formDict["text"] = textFieldWidget.stringValue
+                            
+                            if textFieldWidget.modificationDate() != nil {
+                                formDict["createDate"] = Int(textFieldWidget.modificationDate().timeIntervalSince1970 * 1000)
+                            }
+                            let rectDict = [
+                                "bottom": textFieldWidget.bounds.origin.y,
+                                "left": textFieldWidget.bounds.origin.x,
+                                "top": textFieldWidget.bounds.origin.y + textFieldWidget.bounds.size.height,
+                                "right": textFieldWidget.bounds.origin.x + textFieldWidget.bounds.size.width
+                            ]
+                            formDict["rect"] = rectDict
+                            formDict["borderWidget"] = textFieldWidget.borderWidth
+                            formDict["familyName"] = textFieldWidget.cFont.familyName
+                            formDict["styleName"] = textFieldWidget.cFont.styleName ?? ""
+                            formDict["fontSize"] = textFieldWidget.fontSize
+                            formDict["fontColor"] = textFieldWidget.fontColor?.toHexString()
+                            formDict["borderColor"] = textFieldWidget.borderColor?.toHexString()
+                            formDict["fillColor"] = textFieldWidget.backgroundColor?.toHexString()
+                            formDict["isMultiline"] = textFieldWidget.isMultiline
+                            formDict["text"] = textFieldWidget.stringValue
+                            
+                            let alignment = textFieldWidget.alignment
+                            switch alignment {
+                            case .left:
+                                formDict["alignment"] = "left"
+                            case .center:
+                                formDict["alignment"] = "center"
+                            case .right:
+                                formDict["alignment"] = "right"
+                            default:
+                                formDict["alignment"] = "left"
+                            }
                         }
                         
                     case "ListBox", "ComboBox":
@@ -231,6 +493,38 @@ class RCTCPDFPageUtil: NSObject {
                             formDict["type"] = lowertype
                             formDict["title"] = choiceWidget.fieldName()
                             formDict["page"] = pageIndex
+                            
+                            if choiceWidget.modificationDate() != nil {
+                                formDict["createDate"] = Int(choiceWidget.modificationDate().timeIntervalSince1970 * 1000)
+                            }
+                            let rectDict = [
+                                "bottom": choiceWidget.bounds.origin.y,
+                                "left": choiceWidget.bounds.origin.x,
+                                "top": choiceWidget.bounds.origin.y + choiceWidget.bounds.size.height,
+                                "right": choiceWidget.bounds.origin.x + choiceWidget.bounds.size.width
+                            ]
+                            formDict["rect"] = rectDict
+                            formDict["borderWidget"] = choiceWidget.borderWidth
+                            formDict["familyName"] = choiceWidget.cFont.familyName
+                            formDict["styleName"] = choiceWidget.cFont.styleName ?? ""
+                            formDict["fontSize"] = choiceWidget.fontSize
+                            formDict["fontColor"] = choiceWidget.fontColor?.toHexString()
+                            formDict["borderColor"] = choiceWidget.borderColor?.toHexString()
+                            formDict["fillColor"] = choiceWidget.backgroundColor?.toHexString()
+                            formDict["selectedIndexes"] = [choiceWidget.selectItemAtIndex]
+
+                            let items = choiceWidget.items ?? []
+                            var optionsArray: [[String: String]] = []
+                                                        
+                            for item: CPDFChoiceWidgetItem in items {
+                                let itemDict: [String: String] = [
+                                    "text": item.string,
+                                    "value": item.value
+                                ]
+                                optionsArray.append(itemDict)
+                            }
+                                                        
+                            formDict["options"] = optionsArray
                         }
                         
                     case "SignatureFields":
@@ -241,6 +535,20 @@ class RCTCPDFPageUtil: NSObject {
                             formDict["type"] = "signaturesFields"
                             formDict["title"] = signatureWidget.fieldName()
                             formDict["page"] = pageIndex
+                            
+                            if signatureWidget.modificationDate() != nil {
+                                formDict["createDate"] = Int(signatureWidget.modificationDate().timeIntervalSince1970 * 1000)
+                            }
+                            let rectDict = [
+                                "bottom": signatureWidget.bounds.origin.y,
+                                "left": signatureWidget.bounds.origin.x,
+                                "top": signatureWidget.bounds.origin.y + signatureWidget.bounds.size.height,
+                                "right": signatureWidget.bounds.origin.x + signatureWidget.bounds.size.width
+                            ]
+                            formDict["rect"] = rectDict
+                            formDict["borderWidget"] = signatureWidget.borderWidth
+                            formDict["borderColor"] = signatureWidget.borderColor?.toHexString()
+                            formDict["fillColor"] = signatureWidget.backgroundColor?.toHexString()
                         }
                         
                     default:
@@ -253,6 +561,33 @@ class RCTCPDFPageUtil: NSObject {
         }
     
         return formDicts
+    }
+    
+    func updateAp(uuid: String) {
+        if let widget = self.getForm(formUUID: uuid) {
+            widget.updateAppearanceStream()
+        } else if let annotation = self.getAnnotation(formUUID: uuid) {
+            annotation.updateAppearanceStream()
+        }
+    }
+    
+    
+    // MARK: - Set Annottions Methods
+    
+    func removeAnnotation(uuid: String) {
+        if let annotation = self.getAnnotation(formUUID: uuid) {
+            print("removeAnnotation():page is nil? :\(page == nil)")
+            page?.removeAnnotation(annotation)
+        }
+    }
+    
+    // MARK: - Set Form Methods
+    
+    func removeWidget(uuid: String) {
+        if let widget = self.getForm(formUUID: uuid) {
+            print("removeWidget(): page is nil? :\(page == nil)")
+            page?.removeAnnotation(widget)
+        }
     }
     
     func setWidgetIsChecked(uuid: String, isChecked: Bool) {
@@ -289,16 +624,47 @@ class RCTCPDFPageUtil: NSObject {
         }
     }
     
-    func updateAp(uuid: String) {
-        if let widget = self.getForm(formUUID: uuid) {
-            widget.updateAppearanceStream()
-        } else if let annotation = self.getAnnotation(formUUID: uuid) {
-            annotation.updateAppearanceStream()
+    //MARK: - Private Methods
+    
+    func getCheckStyle(_ checkStyle: CPDFWidgetButtonStyle) -> String {
+        switch checkStyle {
+        case .none:
+            return "none"
+        case .check:
+            return "check"
+        case .cross:
+            return "cross"
+        case .circle:
+            return "circle"
+        case .diamond:
+            return "diamond"
+        case .square:
+            return "square"
+        case .star:
+            return "star"
+        default:
+            return "check"
         }
     }
     
-    //MARK: - Private Methods
-    
+    func getLineStyle(_ lineStyle: CPDFLineStyle) -> String {
+        switch lineStyle {
+        case .none:
+            return "none"
+        case .openArrow:
+            return "openArrow"
+        case .closedArrow:
+            return "closedArrow"
+        case .circle:
+            return "circle"
+        case .square:
+            return "square"
+        case .diamond:
+            return "diamond"
+        default:
+            return "none"
+        }
+    }
     
     func getAnnotation(formUUID uuid: String) -> CPDFAnnotation? {
         let annoations = page?.annotations ?? []
@@ -321,21 +687,23 @@ class RCTCPDFPageUtil: NSObject {
     
     func getForm(formUUID uuid: String) -> CPDFWidgetAnnotation? {
         let annoations = page?.annotations ?? []
-        
+        print(("getForm(): page is nil?: \(page == nil), annotations:\(annoations.count)"))
         for  annoation in annoations {
             let type: String = annoation.type
+            print(("getForm(): type:\(type)"))
             if annoation.type == "Widget" {
                 if let widgetAnnotation = annoation as? CPDFWidgetAnnotation {
                     
                     let _uuid = getMemoryAddress(annoation)
-                    
+                    print(("getForm(): formUUID: \(uuid)"))
                     if _uuid == uuid {
+                        print(("getForm(): return widgetAnnotation----"))
                         return widgetAnnotation
                     }
                 }
             }
         }
-        
+        print(("getForm(): return nil"))
         return nil
     }
 
@@ -352,5 +720,6 @@ class RCTCPDFPageUtil: NSObject {
         let pointer = Unmanaged.passUnretained(object).toOpaque()
         return String(describing: pointer)
     }
+
     
 }

@@ -8,6 +8,8 @@
  */
 
 import { CPDFAnnotationType } from "../configuration/CPDFOptions";
+import { safeParseEnumValue } from "../util/CPDFEnumUtils";
+import { CPDFRectF } from "../util/CPDFRectF";
 
 /**
  * @class CPDFAnnotation
@@ -15,24 +17,38 @@ import { CPDFAnnotationType } from "../configuration/CPDFOptions";
  * @property { title } [title] Annotation title
  * @property { number } [page] The page number where the note is located
  * @property { string } [content] annotation content.
+ * @property { string } [uuid] annotation uuid.
+ * @property { Date } [modifyDate] annotation modify date.
+ * @property { Date } [createDate] annotation create date.
+ * @property { CPDFRectF } [rect] annotation rect.
  */
 export class CPDFAnnotation {
 
     private _viewerRef: any;
 
     type: CPDFAnnotationType;
+
     title: string;
-    page: number;
+    
+    readonly page: number;
+    
     content: string;
-    uuid: string;
+    
+    readonly uuid: string;
+    
+    createDate : Date | null = null;
+    
+    rect : CPDFRectF | null = null;
 
     constructor(viewerRef: any, params: Partial<CPDFAnnotation>) {
-        this.type = CPDFAnnotation.parseType(params.type);
+        this._viewerRef = viewerRef;
+        this.type = safeParseEnumValue(params.type, Object.values(CPDFAnnotationType), CPDFAnnotationType.UNKNOWN);
         this.title = params.title ?? '';
         this.page = params.page ?? 0;
         this.content = params.content ?? "";
         this.uuid = params.uuid ?? "";
-        this._viewerRef = viewerRef;
+        this.createDate = params.createDate != null ? new Date(params.createDate) : null;
+        this.rect = params.rect ?? null;
     }
 
     static fromJson<T extends CPDFAnnotation>(this: new (viewerRef: any, params: Partial<T>) => T, json: any, viewerRef : any): T {
@@ -43,15 +59,17 @@ export class CPDFAnnotation {
         return jsonArray.map(item => new this(viewerRef, item));
     }
 
-    static parseType(type: any): CPDFAnnotationType {
-        if (Object.values(CPDFAnnotationType).includes(type)) {
-            return type as CPDFAnnotationType;
-        }
-        return CPDFAnnotationType.UNKNOWN;
+    private static formatDate(date: Date): string {
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+               `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
     }
 
     toJSON() {
-        const { _viewerRef, ...data } = this;
-        return data;
+        const { _viewerRef, createDate, ...data } = this;
+        return {
+            ...data,
+            createDate: createDate? CPDFAnnotation.formatDate(createDate) : null
+        }
     }
 }

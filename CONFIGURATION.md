@@ -213,24 +213,25 @@ Configure annotation-related settings, such as enabling types displayed in the a
 
 ##### **availableTypes Constants**
 
-| Name      |
-| --------- |
-| note      |
-| highlight |
-| underline |
-| squiggly  |
-| strikeout |
-| ink       |
-| circle    |
-| square    |
-| arrow     |
-| line      |
-| freetext  |
-| signature |
-| stamp     |
-| pictures  |
-| link      |
-| sound     |
+| Name       |
+| ---------- |
+| note       |
+| highlight  |
+| underline  |
+| squiggly   |
+| strikeout  |
+| ink        |
+| ink_eraser |
+| circle     |
+| square     |
+| arrow      |
+| line       |
+| freetext   |
+| signature  |
+| stamp      |
+| pictures   |
+| link       |
+| sound      |
 
 ##### availableTools Constants
 
@@ -366,6 +367,7 @@ Configure annotation-related settings, such as enabling types displayed in the a
       "squiggly",
       "strikeout",
       "ink",
+      "ink_eraser",
       "circle",
       "square",
       "arrow",
@@ -474,7 +476,7 @@ Switch to content editing mode to edit text and images. This configuration optio
 | -------------- | ----- | ------------------------------------------------------------ |
 | availableTypes | Array | Content editing mode, the editing mode displayed at the bottom of the view.<br>Default order: `editorText`, `editorImage` |
 | availableTools | Array | Available tools.<br/>including: `setting`, `undo`,`redo`     |
-| initAttribute  | obj   | 添加文本时的默认属性                                         |
+| initAttribute  | obj   | Default properties when adding text                          |
 
 * text
 
@@ -784,11 +786,13 @@ This section is used to configure the types of forms enabled in the view's botto
 
 ##### Parameters
 
-| Name                    | Type                | Example                      | Description                                                  |
-| ----------------------- | ------------------- | ---------------------------- | ------------------------------------------------------------ |
-| themeMode               | CPDFThemeMode       | light                        | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
-| fileSaveExtraFontSubset | boolean             | true                         | When saving a document, whether to save the used font set together with the document. |
-| watermark               | CPDFWatermarkConfig | {   "saveAsNewFile" : true } | The user can configure the watermark addition popup, allowing them to choose whether to save the watermark directly to the current document or save it to a different directory.<br>**true**: Save to a different directory<br>**false**: Add to the current document directly |
+| Name                    | Type                | Example                                                      | Description                                                  |
+| ----------------------- | ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| themeMode               | CPDFThemeMode       | light                                                        | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
+| fileSaveExtraFontSubset | boolean             | true                                                         | When saving a document, whether to save the used font set together with the document. |
+| watermark               | CPDFWatermarkConfig | {   "saveAsNewFile" : true, <br />"outsideBackgroundColor: ""<br />} | The user can configure the watermark addition popup, allowing them to choose whether to save the watermark directly to the current document or save it to a different directory.<br>**true**: Save to a different directory<br>**false**: Add to the current document directly |
+| signatureType           | String              | manual                                                       | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic |
+| enableExitSaveTips      | boolean             | true \| false                                                | When exiting, check if the document has been modified and prompt to save the document |
 
 ##### themeMode Constants
 
@@ -854,6 +858,7 @@ This section is used to configure the types of forms enabled in the view's botto
       "squiggly",
       "strikeout",
       "ink",
+      "ink_eraser",
       "circle",
       "square",
       "arrow",
@@ -1069,8 +1074,11 @@ This section is used to configure the types of forms enabled in the view's botto
     "themeMode" : "system",
     "fileSaveExtraFontSubset" : true,
     "watermark": {
-      "saveAsNewFile" : true
-    }
+      "saveAsNewFile" : true,
+      "outsideBackgroundColor" :""
+    },
+    "signatureType": "manual",
+    "enableExitSaveTips" : true
   }
 }
 ```

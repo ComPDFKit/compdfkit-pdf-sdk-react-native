@@ -11,12 +11,15 @@ import { CPDFRadiobuttonWidget } from "./CPDFRadiobuttonWidget";
 
 /**
  * Class representing a checkbox form widget, storing basic information about the checkbox form.
+ * 
+ * @class CPDFCheckboxWidget
+ * @memberof CPDFCheckboxWidget
  */
 export class CPDFCheckboxWidget extends CPDFRadiobuttonWidget {
 
+
     constructor(viewerRef : any, params: Partial<CPDFCheckboxWidget>) {
         super(viewerRef, params);
-        this.isChecked = params.isChecked ?? false;
     }
 }
 

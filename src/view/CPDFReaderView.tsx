@@ -12,7 +12,7 @@ import PropTypes, { Requireable, Validator } from 'prop-types';
 import { findNodeHandle, requireNativeComponent, NativeModules,Platform } from 'react-native';
 import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import { CPDFThemes, CPDFViewMode } from '../configuration/CPDFOptions';
-import { CPDFDocument } from '..';
+import { CPDFDocument } from '@compdfkit_pdf_sdk/react_native';
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -35,6 +35,8 @@ const propTypes = {
   password: PropTypes.string,
   onPageChanged : func<(pageIndex: number) => void>(),
   saveDocument : func<() => void>(),
+  onPageEditDialogBackPress : func<() => void>(),
+  onFullScreenChanged : func<(isFullScreen: boolean) => void>(),
   ...ViewPropTypes,
 }
 
@@ -78,15 +80,24 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   }
 
   onChange = (event : any) => {
-    console.log('ComPDFKit onChange:', event.nativeEvent)
-    if (event.nativeEvent.onPageChanged){
+    if (__DEV__) {
+      console.log('ComPDFKit onChange---:', event.nativeEvent)
+    }
+    if ('onPageChanged' in event.nativeEvent){
       if(this.props.onPageChanged){
         this.props.onPageChanged(event.nativeEvent.onPageChanged);
       }
-    } else if(event.nativeEvent.saveDocument){
-      console.log('ComPDFKit onChange: saveDocument----')
+    } else if('saveDocument' in event.nativeEvent){
       if(this.props.saveDocument){
         this.props.saveDocument();
+      }
+    } else if('onPageEditDialogBackPress' in event.nativeEvent){
+      if(this.props.onPageEditDialogBackPress){
+        this.props.onPageEditDialogBackPress();
+      }
+    } else if('onFullScreenChanged' in event.nativeEvent){
+      if(this.props.onFullScreenChanged){
+        this.props.onFullScreenChanged(event.nativeEvent.onFullScreenChanged);
       }
     }
   }
@@ -798,7 +809,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    * Reloads all pages in the readerview.
-   * @returns 
+   * @returns
    */
   reloadPages = () : Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);

@@ -489,6 +489,28 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
     });
   }
 
+  @ReactMethod
+  public void removeAnnotation(int tag, int pageIndex, String uuid, Promise promise) {
+    uiBlock(nativeViewHierarchyManager -> {
+      promise.resolve(mPDFViewInstance.removeAnnotation(tag, pageIndex, uuid));
+    });
+  }
+
+  @ReactMethod
+  public void removeWidget(int tag, int pageIndex, String uuid, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      promise.resolve(mPDFViewInstance.removeWidget(tag, pageIndex, uuid));
+    });
+  }
+
+  @ReactMethod
+  public void insertBlankPage(int tag, int pageIndex, int width, int height, Promise promise){
+    uiBlock(nativeViewHierarchyManager -> {
+      promise.resolve(mPDFViewInstance.insertBlankPage(tag, pageIndex, width, height));
+    });
+  }
+
+
   private void uiBlock(UIBlock uiBlock) {
     UIManagerModule uiManager = getReactApplicationContext().getNativeModule(UIManagerModule.class);
     if (uiManager != null) {

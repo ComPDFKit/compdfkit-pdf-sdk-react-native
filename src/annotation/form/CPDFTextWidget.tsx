@@ -7,6 +7,8 @@
  * This notice may not be removed from this file.
  */
 
+import { CPDFAlignment } from "../../configuration/CPDFOptions";
+import { safeParseEnumValue } from "../../util/CPDFEnumUtils";
 import { CPDFWidget } from "./CPDFWidget";
 import { NativeModules, findNodeHandle } from 'react-native';
 const { CPDFViewManager } = NativeModules;
@@ -18,6 +20,11 @@ const { CPDFViewManager } = NativeModules;
  * @class CPDFTextWidget
  * @memberof CPDFTextWidget
  * @property {string} [text] - The text content of the text field.
+ * @property {boolean} [isMultiline] - Indicates if the text field is multiline (default: false).
+ * @property {string} [fontColor] - The font color of the text field (default: '#000000').
+ * @property {string} [fontName] - The font name of the text field (default: 'Helvetica').
+ * @property {number} [fontSize] - The font size of the text field (default: 0).
+ * @property {CPDFAlignment} [alignment] - The alignment of the text field (default: CPDFAlignment.LEFT).
  */
 export class CPDFTextWidget extends CPDFWidget {
 
@@ -26,9 +33,27 @@ export class CPDFTextWidget extends CPDFWidget {
      */
     text: string;
 
+    isMultiline : boolean;
+
+    fontColor : string;
+
+    familyName : string;
+
+    styleName : string;
+
+    fontSize : number;
+
+    alignment : CPDFAlignment;
+
     constructor(viewerRef: any, params: Partial<CPDFTextWidget>) {
         super(viewerRef, params);
         this.text = params.text ?? '';
+        this.isMultiline = params.isMultiline ?? false;
+        this.fontColor = params.fontColor ?? '#000000';
+        this.familyName = params.familyName ?? '';
+        this.styleName = params.styleName ?? '';
+        this.fontSize = params.fontSize ?? 0;
+        this.alignment = safeParseEnumValue(params.alignment, Object.values(CPDFAlignment), CPDFAlignment.LEFT);
     }
 
     /**

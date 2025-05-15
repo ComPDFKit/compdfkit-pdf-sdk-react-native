@@ -220,6 +220,8 @@ export type CPDFBorderStyle = ValueOf<typeof CPDFBorderStyle>;
  */
 export const CPDFLineType = {
     NONE: 'none',
+    UNKNOWN: 'unknown',
+    ARROW : 'arrow',
     OPEN_ARROW: 'openArrow',
     CLOSE_ARROW: 'closedArrow',
     SQUARE: 'square',
@@ -227,7 +229,6 @@ export const CPDFLineType = {
     DIAMOND: 'diamond'
 }
 export type CPDFLineType = ValueOf<typeof CPDFLineType>;
-
 
 /**
  * text alignment
@@ -408,6 +409,64 @@ export const CPDFDocumentEncryptAlgo = {
 };
 
 export type CPDFDocumentEncryptAlgo = ValueOf<typeof CPDFDocumentEncryptAlgo>;
+
+
+export const CPDFBorderEffectType = {
+    SOLID : 'solid',
+
+    CLOUDY : 'cloudy',
+}
+export type CPDFBorderEffectType = ValueOf<typeof CPDFBorderEffectType>;
+
+export const CPDFActionType = {
+    UNKNOWN: 'unknown',
+    GOTO: 'goTo',
+    GOTOR: 'goToR',
+    GOTOE: 'goToE',
+    LAUNCH: 'launch',
+    THREAD: 'thread',
+    URI: 'uri',
+    SOUND: 'sound',
+    MOVIE: 'movie',
+    HIDE: 'hide',
+    NAMED: 'named',
+    SUBMIT_FORM: 'submitForm',
+    RESET_FORM: 'resetForm',
+    IMPORT_DATA: 'importData',
+    JAVASCRIPT: 'javaScript',
+    SET_OCG_STATE: 'setOCGState',
+    RENDITION: 'rendition',
+    TRANS: 'trans',
+    GOTO_3D_VIEW: 'goTo3DView',
+    UOP: 'uop',
+    ERROR: 'error',
+} as const;
+export type CPDFActionType = ValueOf<typeof CPDFActionType>;
+
+/**
+ * Used to configure the default signing method when signing in the form field of CPDFReaderView,
+ *  including: digital signature, electronic signature, and manual selection
+ */
+export const CPDFSignatureType = {
+
+    /**
+     * Manually select the signature method. 
+     * Configure this method. When you click the signature form field, 
+     * a pop-up window will pop up to select the signature method.
+     */
+    MANUAL : 'manual',
+
+    /**
+     * Enter the digital signature process
+     */
+    DIGITAL : 'digital',
+    
+    /**
+     * Enter the electronic signature process
+     */
+    ELECTRONIC : 'electronic',
+} as const;
+export type CPDFSignatureType = ValueOf<typeof CPDFSignatureType>;
 
 export type AnyCase<T extends string> =
     string extends T ? string :

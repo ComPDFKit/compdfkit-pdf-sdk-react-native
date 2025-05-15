@@ -48,9 +48,6 @@ export default class App extends Component<Props> {
     // Online certification, Fill in your online license
     // Returns true if initialization is successful, otherwise returns false.
 
-    //  var result = await ComPDFKit.initialize('Njc4NzI1OGQ3ZGQyZQ==', 'Njc4NzI1OGQ3ZGQyZQ==')
-    //  console.log("ComPDFKitRN", "initialize:", result)
-
     // Offline authentication, Fill in your offline license
     var result = await ComPDFKit.init_(Platform.OS == "android" ? androidLicense : iosLicense)
     console.log("ComPDFKitRN", "init_:", result)

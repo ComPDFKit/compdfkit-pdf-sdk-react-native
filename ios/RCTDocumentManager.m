@@ -106,79 +106,79 @@ RCT_EXTERN_METHOD(isCropMode:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setPreviewMode:(NSInteger *)tag
+RCT_EXTERN_METHOD(setPreviewMode:(NSInteger)tag
                   withViewMode:(NSString) viewMode)
 
-RCT_EXTERN_METHOD(getPreviewMode:(NSInteger *)tag
+RCT_EXTERN_METHOD(getPreviewMode:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(showThumbnailView:(NSInteger *)tag
+RCT_EXTERN_METHOD(showThumbnailView:(NSInteger)tag
                   withEditMode:(BOOL) editMode)
 
-RCT_EXTERN_METHOD(showBotaView:(NSInteger *)tag)
+RCT_EXTERN_METHOD(showBotaView:(NSInteger)tag)
 
-RCT_EXTERN_METHOD(showAddWatermarkView:(NSInteger *)tag
+RCT_EXTERN_METHOD(showAddWatermarkView:(NSInteger)tag
                   withSaveAsNewFile: (BOOL) saveAsNewFile)
 
-RCT_EXTERN_METHOD(showSecurityView:(NSInteger *)tag)
+RCT_EXTERN_METHOD(showSecurityView:(NSInteger)tag)
 
-RCT_EXTERN_METHOD(showDisplaySettingView:(NSInteger *)tag)
+RCT_EXTERN_METHOD(showDisplaySettingView:(NSInteger)tag)
 
-RCT_EXTERN_METHOD(enterSnipMode:(NSInteger *)tag)
+RCT_EXTERN_METHOD(enterSnipMode:(NSInteger)tag)
 
-RCT_EXTERN_METHOD(exitSnipMode:(NSInteger *)tag)
+RCT_EXTERN_METHOD(exitSnipMode:(NSInteger)tag)
 
-RCT_EXTERN_METHOD(open:(NSInteger *)tag
+RCT_EXTERN_METHOD(open:(NSInteger)tag
                   withDocument:(NSURL *) document
                   withPassword:(NSString *) password
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 
-RCT_EXTERN_METHOD(getFileName:(NSInteger *) tag
+RCT_EXTERN_METHOD(getFileName:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(isEncrypted:(NSInteger *) tag
+RCT_EXTERN_METHOD(isEncrypted:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(isImageDoc:(NSInteger *) tag
+RCT_EXTERN_METHOD(isImageDoc:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getPermissions:(NSInteger *) tag
+RCT_EXTERN_METHOD(getPermissions:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getPageCount:(NSInteger *) tag
+RCT_EXTERN_METHOD(getPageCount:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(checkOwnerUnlocked:(NSInteger *) tag
+RCT_EXTERN_METHOD(checkOwnerUnlocked:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(checkOwnerPassword:(NSInteger *) tag
+RCT_EXTERN_METHOD(checkOwnerPassword:(NSInteger) tag
                   withPassword:(NSString *) password
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(removePassword:(NSInteger *) tag
+RCT_EXTERN_METHOD(removePassword:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setPassword:(NSInteger *) tag
+RCT_EXTERN_METHOD(setPassword:(NSInteger) tag
                   withInfo:(NSDictionary) info
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getEncryptAlgo:(NSInteger *) tag
+RCT_EXTERN_METHOD(getEncryptAlgo:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(printDocument:(NSInteger *)tag)
+RCT_EXTERN_METHOD(printDocument:(NSInteger)tag)
 
 RCT_EXTERN_METHOD(importWidgets:(NSInteger)tag
                   withXfdfFile:(NSURL *)xfdfFile
@@ -189,7 +189,7 @@ RCT_EXTERN_METHOD(exportWidgets:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getDocumentPath:(NSInteger *)tag
+RCT_EXTERN_METHOD(getDocumentPath:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                     withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -215,6 +215,13 @@ RCT_EXTERN_METHOD(importDocument:(NSInteger)tag
 RCT_EXTERN_METHOD(splitDocumentPages:(NSInteger)tag
                   withSavePath:(NSURL *) savePath
                   withPages:(NSArray *) pages
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(insertBlankPage:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withPageWidth:(nonnull NSNumber *) pageWidth
+                  withPageHeight:(nonnull NSNumber *) pageHeight
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -258,6 +265,20 @@ RCT_EXTERN_METHOD(updateAp:(NSInteger)tag
 RCT_EXTERN_METHOD(reloadPages:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeAnnotation:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withAnnotId:(NSString *) uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeWidget:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withWidgetId:(NSString *) uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  
+                  
 
 + (BOOL)requiresMainQueueSetup
 {

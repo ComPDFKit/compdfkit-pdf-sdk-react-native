@@ -9,17 +9,18 @@
 
 import PDFReaderContext, { CPDFRadiobuttonWidget, CPDFReaderView, CPDFSignatureWidget, CPDFTextWidget, CPDFWidget, CPDFWidgetType } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect, useState } from "react";
-import { FlatList, Modal, Platform, StyleSheet, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Image, FlatList, Modal, Platform, StyleSheet, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { launchImageLibrary } from 'react-native-image-picker';
 
 interface CPDFWidgetListScreenProps {
     visible: boolean;
     widgets: CPDFWidget[];
     onClose: () => void;
-    onEditText : (itemIndex : number) => void;
+    onEditText: (itemIndex: number) => void;
+    onDelete: (widget: CPDFWidget) => void;
 }
 
-export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visible, widgets, onClose, onEditText }) => {
+export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visible, widgets, onClose, onEditText, onDelete }) => {
 
     const pdfReader = useContext(PDFReaderContext) as CPDFReaderView | null;
 
@@ -33,7 +34,7 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
         if (!acc[item.page]) {
             acc[item.page] = [];
         }
-        acc[item.page].push(item);
+        acc[item.page]!.push(item);
         return acc;
     }, {} as Record<number, CPDFWidget[]>);
 
@@ -44,84 +45,96 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
         flattenedData.push(...items);
     });
 
-    const widgetItem = (widget: CPDFWidget, index: number, onPress: () => void, onEditText : (itemIndex : number) => void) => {
+    const widgetItem = (widget: CPDFWidget, index: number, onPress: () => void, onEditText: (itemIndex: number) => void, onDelete: (widget: CPDFWidget) => void) => {
         return (
             <TouchableOpacity onPress={async () => {
+                console.log(JSON.stringify(widget, null, 2));
                 onPress();
             }}>
-                <View style={{ width: '100%' ,paddingVertical:12}}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.widgetItem}>Title: </Text>
-                        <Text style={styles.widgetBody}>{widget.title}</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.widgetItem}>Type: </Text>
-                        <Text style={styles.widgetBody}>{widget.type.toUpperCase()}</Text>
-                    </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                    {widget.type === CPDFWidgetType.TEXT_FIELD && (
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={styles.widgetBody}>{(widget as CPDFTextWidget).text}</Text>
-                            <TouchableOpacity style={{ paddingHorizontal: 16 }} onPress={async () => {
-                                if (Platform.OS === 'ios') {
-                                    onClose();
-                                }
-                                onEditText(index -1)
-                            }}>
-                                <Text style={styles.closeButtonText}>Edit</Text>
-                            </TouchableOpacity>
+
+                    <View style={{ flex: 1, paddingVertical: 12 }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.widgetItem}>Title: </Text>
+                            <Text style={styles.widgetBody}>{widget.title}</Text>
                         </View>
-                    )}
-                    {(widget.type === CPDFWidgetType.RADIO_BUTTON || widget.type == CPDFWidgetType.CHECKBOX) && (
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={styles.widgetItem}>Status:</Text>
-                            <Switch
-                                style={{transform:[{scale: 0.8}]}}
-                                thumbColor={(widget as CPDFRadiobuttonWidget).isChecked ? '#1460F3' : 'white'}
-                                trackColor={{ false: '#E0E0E0', true: '#1460F34D' }}
-                                value={(widget as CPDFRadiobuttonWidget).isChecked} onValueChange={async () => {
-                                    const updatedWidgetData = [...widgetData];
-
-                                    if ((widget as CPDFRadiobuttonWidget).type === CPDFWidgetType.RADIO_BUTTON || (widget as CPDFRadiobuttonWidget).type === CPDFWidgetType.CHECKBOX) {
-                                        const updatedWidget = widget as CPDFRadiobuttonWidget;
-                                        const newChecked = !updatedWidget.isChecked;
-
-                                        // ---------------------->
-                                        // change RadioButtonWidget or CPDFCheckboxWidget checked status;
-                                        await updatedWidget.setChecked(newChecked);
-                                        // update appearance
-                                        await updatedWidget.updateAp();
-                                        // <----------------------
-
-                                        updatedWidgetData[index] = { ...widget, isChecked: newChecked };
-                                        setWidgetData(updatedWidgetData);
-                                    }
-                                }} />
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.widgetItem}>Type: </Text>
+                            <Text style={styles.widgetBody}>{widget.type.toUpperCase()}</Text>
                         </View>
-                    )}
-                    {widget.type === CPDFWidgetType.SIGNATURES_FIELDS && (
-                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                            <TouchableOpacity style={{ paddingVertical: 4 }} onPress={async () => {
-                                const signatureWidget = widget as CPDFSignatureWidget;
-                                launchImageLibrary({
-                                    mediaType: 'photo'
-                                }, async res => {
-                                    if (res.didCancel) {
-                                        return false;
-                                    }
-                                    const path = res.assets?.[0]?.uri;
-                                    const signResult = await signatureWidget?.addImageSignature(path!);
-                                    await signatureWidget?.updateAp();
-                                    if (signResult) {
+                        {widget.type === CPDFWidgetType.TEXT_FIELD && (
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={styles.widgetBody}>{(widget as CPDFTextWidget).text}</Text>
+                                <TouchableOpacity style={{ paddingHorizontal: 16 }} onPress={async () => {
+                                    if (Platform.OS === 'ios') {
                                         onClose();
                                     }
-                                    return true;
-                                })
-                            }}>
-                                <Text style={styles.closeButtonText}>Signature</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                                    onEditText(index - 1)
+                                }}>
+                                    <Text style={styles.closeButtonText}>Edit</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {(widget.type === CPDFWidgetType.RADIO_BUTTON || widget.type == CPDFWidgetType.CHECKBOX) && (
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Text style={styles.widgetItem}>Status:</Text>
+                                <Switch
+                                    style={{ transform: [{ scale: 0.8 }] }}
+                                    thumbColor={(widget as CPDFRadiobuttonWidget).isChecked ? '#1460F3' : 'white'}
+                                    trackColor={{ false: '#E0E0E0', true: '#1460F34D' }}
+                                    value={(widget as CPDFRadiobuttonWidget).isChecked} onValueChange={async () => {
+                                        const updatedWidgetData = [...widgetData];
+
+                                        if ((widget as CPDFRadiobuttonWidget).type === CPDFWidgetType.RADIO_BUTTON || (widget as CPDFRadiobuttonWidget).type === CPDFWidgetType.CHECKBOX) {
+                                            const updatedWidget = widget as CPDFRadiobuttonWidget;
+                                            const newChecked = !updatedWidget.isChecked;
+
+                                            // ---------------------->
+                                            // change RadioButtonWidget or CPDFCheckboxWidget checked status;
+                                            await updatedWidget.setChecked(newChecked);
+                                            // update appearance
+                                            await updatedWidget.updateAp();
+                                            // <----------------------
+
+                                            updatedWidgetData[index] = { ...widget, isChecked: newChecked };
+                                            setWidgetData(updatedWidgetData);
+                                        }
+                                    }} />
+                            </View>
+                        )}
+                        {widget.type === CPDFWidgetType.SIGNATURES_FIELDS && (
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                                <TouchableOpacity style={{ paddingVertical: 4 }} onPress={async () => {
+                                    const signatureWidget = widget as CPDFSignatureWidget;
+                                    launchImageLibrary({
+                                        mediaType: 'photo'
+                                    }, async res => {
+                                        if (res.didCancel) {
+                                            return false;
+                                        }
+                                        const path = res.assets?.[0]?.uri;
+                                        const signResult = await signatureWidget?.addImageSignature(path!);
+                                        await signatureWidget?.updateAp();
+                                        if (signResult) {
+                                            onClose();
+                                        }
+                                        return true;
+                                    })
+                                }}>
+                                    <Text style={styles.closeButtonText}>Signature</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
+                    <View style={{ justifyContent: 'center', width: 50 }}>
+                        <TouchableWithoutFeedback onPress={async () => {
+                            onDelete(widget);
+                        }}>
+                            <Image source={require('../../assets/close.png')} style={{ width: 24, height: 24 }} />
+                        </TouchableWithoutFeedback>
+                    </View>
+
                 </View>
             </TouchableOpacity>
         );
@@ -162,7 +175,11 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
                                                 await pdfReader?.setDisplayPageIndex(item.page);
                                                 onClose();
                                             },
-                                            onEditText
+                                            onEditText,
+                                            async (widget) => {
+                                                onDelete(widget);
+                                                onClose();
+                                            }
                                         )
                                 }
                                 keyExtractor={item => 'isTitle' in item ? `title-${item.page}` : (item as CPDFWidget).uuid}

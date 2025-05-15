@@ -547,6 +547,16 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         }
     }
     
+    @objc(insertBlankPage: withPageIndex: withPageWidth: withPageHeight: withResolver: withRejecter:)
+    func insertBlankPage(forCPDFViewTag tag : Int, pageIndex: Int, pageWidth: NSNumber, pageHeight: NSNumber, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.insertBlankPage(forCPDFViewTag: tag, pageIndex: pageIndex, pageWidth: pageWidth.floatValue, pageHeight: pageHeight.floatValue) { success in
+                resolve(success)
+            }
+        }
+    }
+    
     // MARK: - Pages Methods
     
     @objc(getAnnotations: withPageIndex: withResolver: withRejecter:)
@@ -609,6 +619,26 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         DispatchQueue.main.async {
             let reader = self.readerView()
             reader.reloadPages(forCPDFViewTag: tag)
+        }
+    }
+    
+    @objc(removeAnnotation: withPageIndex: withAnnotId: withResolver: withRejecter:)
+    func removeAnnotation(forCPDFViewTag tag : Int, pageIndex: Int, annotId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.removeAnnotation(forCPDFViewTag: tag, pageIndex: pageIndex, annotId: annotId) { success in
+                resolve(success)
+            }
+        }
+    }
+    
+    @objc(removeWidget: withPageIndex: withWidgetId: withResolver: withRejecter:)
+    func removeWidget(forCPDFViewTag tag : Int, pageIndex: Int, widgetId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        DispatchQueue.main.async {
+            let reader = self.readerView()
+            reader.removeWidget(forCPDFViewTag: tag, pageIndex:pageIndex, widgetId: widgetId) { success in
+                resolve(success)
+            }
         }
     }
     

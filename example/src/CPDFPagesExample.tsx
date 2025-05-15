@@ -9,12 +9,11 @@
 
 import React, { useState, useRef } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFPageSize } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import RNFS from 'react-native-fs';
 import { CPDFImportDocumentScreen } from './screens/CPDFImportDocumentScreen';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 
@@ -57,7 +56,8 @@ const CPDFPagesExampleScreen = () => {
     const menuOptions = [
         'Save',
         'Import Document',
-        'Split Document'];
+        'Split Document',
+        'Insert Blank Page'];
 
     const handleMenuItemPress = async (action: string) => {
         switch (action) {
@@ -84,6 +84,10 @@ const CPDFPagesExampleScreen = () => {
                     console.log('ComPDFKitRN splitDocumentPages: Split document saved at:', uniqueFilePath);
                     await pdfReaderRef?.current?._pdfDocument.open(uniqueFilePath);
                 }
+                break;
+            case 'Insert Blank Page':
+                const insertResult = await pdfReaderRef.current?._pdfDocument.insertBlankPage(1, CPDFPageSize.a4);
+                console.log('ComPDFKitRN insertBlankPage:', insertResult);
                 break;
             default:
                 break;

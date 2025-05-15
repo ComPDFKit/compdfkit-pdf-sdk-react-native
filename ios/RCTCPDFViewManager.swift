@@ -15,7 +15,7 @@ import ComPDFKit
 
 @objc(RCTCPDFReaderView)
 class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
-    
+ 
     @objc override static func requiresMainQueueSetup() -> Bool {
         return true
     }
@@ -356,6 +356,13 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         })
     }
     
+    func insertBlankPage(forCPDFViewTag tag : Int, pageIndex: Int, pageWidth: Float, pageHeight: Float, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.insertBlankPage(pageIndex: pageIndex, pageWidth: pageWidth, pageHeight: pageHeight, completionHandler: { success in
+            completionHandler(success)
+        })
+    }
+    
     // MARK: - Pages Methods
     
     func getAnnotations(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping ([Dictionary<String, Any>]) -> Void) {
@@ -427,6 +434,32 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         rtcCPDFView?.pdfViewController?.pdfListView?.layoutDocumentView()
     }
     
+    func removeAnnotation(forCPDFViewTag tag : Int, pageIndex: Int, annotId: String, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        
+        pageUtil.removeAnnotation(uuid: annotId)
+        
+        rtcCPDFView?.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+        
+        completionHandler(true)
+    }
+    
+    func removeWidget(forCPDFViewTag tag : Int, pageIndex: Int, widgetId: String, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let page = rtcCPDFView?.getPage(UInt(pageIndex))
+        let pageUtil = RCTCPDFPageUtil(page: page)
+        pageUtil.pageIndex = pageIndex
+        
+        pageUtil.removeWidget(uuid: widgetId)
+        
+        rtcCPDFView?.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+        
+        completionHandler(true)
+    }
+    
     // MARK: - RCTCPDFViewDelegate
     
     func cpdfViewAttached(_ cpdfView: RCTCPDFView) {
@@ -442,6 +475,18 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int) {
         if let onChange = cpdfView.onChange {
             onChange(["onPageChanged": pageIndex])
+        }
+    }
+    
+    func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView) {
+        if let onChange = cpdfView.onChange {
+            onChange(["onPageEditDialogBackPress": "onPageEditDialogBackPress"])
+        }
+    }
+    
+    func onFullScreenChanged(_ cpdfView: RCTCPDFView, isFull: Bool) {
+        if let onChange = cpdfView.onChange {
+            onChange(["onFullScreenChanged": isFull])
         }
     }
     

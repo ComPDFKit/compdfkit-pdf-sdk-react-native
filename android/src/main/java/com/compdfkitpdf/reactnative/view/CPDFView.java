@@ -22,8 +22,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
+import com.compdfkit.tools.common.pdf.CPDFDocumentFragment.CFillScreenChangeListener;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
+import com.compdfkit.tools.docseditor.pdfpageedit.CPDFPageEditDialogFragment;
+import com.compdfkit.tools.docseditor.pdfpageedit.CPDFPageEditDialogFragment.COnEnterBackPressedListener;
 import com.compdfkit.ui.reader.CPDFReaderView;
 import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
@@ -144,6 +147,16 @@ public class CPDFView extends FrameLayout {
           onReceiveNativeEvent(event);
         }, e -> {
 
+        });
+        documentFragment.setPageEditDialogOnBackListener(() -> {
+          WritableMap params = Arguments.createMap();
+          params.putNull("onPageEditDialogBackPress");
+          onReceiveNativeEvent(params);
+        });
+        documentFragment.setFillScreenChangeListener(isFillScreen -> {
+          WritableMap params = Arguments.createMap();
+          params.putBoolean("onFullScreenChanged", isFillScreen);
+          onReceiveNativeEvent(params);
         });
       });
     }

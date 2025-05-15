@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import { CPDFReaderView, ComPDFKit, CPDFToolbarAction } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFThemeMode, CPDFDisplayMode, CPDFAnnotationType, CPDFConfigTool, CPDFConfiguration } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
@@ -58,20 +58,21 @@ const CPDFReaderViewExampleScreen = () => {
         }
     };
 
+
     return (
         <CPDFReaderView
             ref={pdfReaderRef}
             document={samplePDF}
             configuration={ComPDFKit.getDefaultConfig({
-                toolbarConfig: {
-                    mainToolbarVisible: true,
+                toolbarConfig:{
                     iosLeftBarAvailableActions:[
                         CPDFToolbarAction.THUMBNAIL
-                      ]
+                    ]
                 }
             })}
         />
     );
+
 };
 
 export default CPDFReaderViewExampleScreen;

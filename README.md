@@ -6,6 +6,9 @@
 
 [ComPDFKit for React Native](https://www.compdf.com/react-native) allows you to quickly and seamlessly add PDF functions to any React Native application, elevating your Android and iOS apps with annotations, content editing, conversion, data extraction, etc.
 
+Watch the video here:
+[![image](https://img.youtube.com/vi/2ug2nPkuOy4/maxresdefault.jpg)](https://youtu.be/2ug2nPkuOy4)
+
 ## Related
 
 - [ComPDFKit PDF Library for iOS](https://github.com/ComPDFKit/PDF-SDK-iOS)
@@ -16,6 +19,8 @@
 - [ComPDFKit API](https://api.compdf.com/api/pricing) allows you to get 1000 files processing monthly now! Just [sign up](https://api.compdf.com/signup) for a free trial and enjoy comprehensive PDF functions.
 
 ## Prerequisites
+
+A development environment for running React Native projects using the React Native CLI. If you're using **Expo**, check out our [integration guide docs](./docs/How to Use ComPDFKit PDF SDK for ReactNative with Expo.md) on the topic.
 
 * A license is required for trial. Please contact our [sales team](https://www.compdf.com/contact-sales) to obtain a free trial license.
 * npm or yarn
@@ -115,8 +120,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.3.0.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.3.0.podspec'
++    pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.4.0.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.4.0.podspec'
     # ...
 end
 ```
@@ -126,8 +131,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.3.0'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.3.0'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.0'
     # ...
 end
 ```

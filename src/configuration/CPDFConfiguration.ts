@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { BorderWidth, ColorAlpha, CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode, DashGap, FontSize, HexColor, CPDFThemeMode } from "./CPDFOptions";
+import { BorderWidth, ColorAlpha, CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode, DashGap, FontSize, HexColor, CPDFThemeMode, CPDFSignatureType } from "./CPDFOptions";
 
 /**
  * Configuration information for displaying PDF using the ComPDFKit.openDocument method.
@@ -438,8 +438,11 @@ export class CPDFConfiguration {
         themeMode?: CPDFThemeMode,
         fileSaveExtraFontSubset?: boolean,
         watermark?: {
-          saveAsNewFile?: boolean
-        }
+          saveAsNewFile?: boolean,
+          outsideBackgroundColor? : string | null,
+        },
+        signatureType? : CPDFSignatureType,
+        enableExitSaveTips? : boolean
     }
 };
 

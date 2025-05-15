@@ -19,11 +19,15 @@ import com.compdfkit.core.annotation.form.CPDFWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
 import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.page.CPDFPage;
+import com.compdfkitpdf.reactnative.util.annotation.RCCPDFFreeTextAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFAnnotation;
+import com.compdfkitpdf.reactnative.util.annotation.RCPDFCircleAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFInkAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFLineAnnotation;
+import com.compdfkitpdf.reactnative.util.annotation.RCPDFLinkAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFMarkupAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFNoteAnnotation;
+import com.compdfkitpdf.reactnative.util.annotation.RCPDFSquareAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.RCPDFStampAnnotation;
 import com.compdfkitpdf.reactnative.util.annotation.forms.RCPDFCheckBoxWidget;
 import com.compdfkitpdf.reactnative.util.annotation.forms.RCPDFComboBoxWidget;
@@ -61,12 +65,13 @@ public class CPDFPageUtil {
     map.put(Type.SQUIGGLY, markupAnnotation);
     map.put(Type.STRIKEOUT, markupAnnotation);
     map.put(Type.INK, new RCPDFInkAnnotation());
-    map.put(Type.CIRCLE, markupAnnotation);
-    map.put(Type.SQUARE, markupAnnotation);
+    map.put(Type.CIRCLE, new RCPDFCircleAnnotation());
+    map.put(Type.SQUARE, new RCPDFSquareAnnotation());
     map.put(Type.LINE, new RCPDFLineAnnotation());
     map.put(Type.STAMP, new RCPDFStampAnnotation());
-    map.put(Type.FREETEXT, markupAnnotation);
+    map.put(Type.FREETEXT, new RCCPDFFreeTextAnnotation());
     map.put(Type.SOUND, markupAnnotation);
+    map.put(Type.LINK, new RCPDFLinkAnnotation());
     return map;
   }
 
@@ -99,6 +104,9 @@ public class CPDFPageUtil {
     for (CPDFAnnotation annotation : annotations) {
       RCPDFAnnotation rcpdfAnnotation = annotImpls.get(annotation.getType());
       if (rcpdfAnnotation != null){
+        if (rcpdfAnnotation instanceof RCPDFLinkAnnotation){
+          ((RCPDFLinkAnnotation) rcpdfAnnotation).setDocument(document);
+        }
         WritableMap map = rcpdfAnnotation.getAnnotation(annotation);
         if (map != null){
           array.pushMap(map);
@@ -190,6 +198,17 @@ public class CPDFPageUtil {
       }
     }
     return null;
+  }
+
+
+  public boolean deleteAnnotation(int pageIndex, String annotPtr){
+    CPDFAnnotation annotation = getAnnotation(pageIndex, annotPtr);
+    if (annotation != null){
+      CPDFPage page = document.pageAtIndex(pageIndex);
+      return page.deleteAnnotation(annotation);
+    }else {
+      return false;
+    }
   }
 
 }

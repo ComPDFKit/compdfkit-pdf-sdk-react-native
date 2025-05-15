@@ -7,12 +7,20 @@
  * This notice may not be removed from this file.
  */
 
+import { CPDFCheckStyle } from "../../configuration/CPDFOptions";
+import { safeParseEnumValue } from "../../util/CPDFEnumUtils";
 import { CPDFWidget } from "./CPDFWidget";
 import { NativeModules, findNodeHandle } from 'react-native';
 const { CPDFViewManager } = NativeModules;
 
 /**
  * Class representing a radiobutton form widget, storing basic information about the radiobutton form.
+ * 
+ * @class CPDFRadiobuttonWidget
+ * @memberof CPDFRadiobuttonWidget
+ * @property {boolean} isChecked The state of the radiobutton form widget.
+ * @property {string} checkColor The checked state color of a radio button form widget.
+ * @property {CPDFCheckStyle} checkStyle The style of the radiobutton form widget.
  */
 export class CPDFRadiobuttonWidget extends CPDFWidget {
 
@@ -21,9 +29,15 @@ export class CPDFRadiobuttonWidget extends CPDFWidget {
      */
     isChecked: boolean;
 
+    checkColor : string;
+
+    checkStyle : CPDFCheckStyle;
+
     constructor(viewerRef : any, params: Partial<CPDFRadiobuttonWidget>) {
         super(viewerRef, params);
         this.isChecked = params.isChecked ?? false;
+        this.checkColor = params.checkColor ?? '#000000';
+        this.checkStyle = safeParseEnumValue(params.checkStyle, Object.values(CPDFCheckStyle), CPDFCheckStyle.CHECK);
     }
 
     /**

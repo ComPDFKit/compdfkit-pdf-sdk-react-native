@@ -1091,6 +1091,33 @@ const pages = [0, 1, 2];
 const result = await pdfReaderRef.current?.splitDocumentPages(savePath, pages);
 ```
 
+#### insertBlankPage
+
+Inserts a blank page at the specified index in the document.
+
+This method allows adding a blank page of a specified size at a specific index within the PDF document.
+It is useful for document editing scenarios where page insertion is needed.
+
+Parameters:
+
+| Name      | Type         | Description                                                  |
+| --------- | ------------ | ------------------------------------------------------------ |
+| pageIndex | number       | The index position where the blank page will be inserted. Must be a valid index within the document. |
+| pageSize  | CPDFPageSize | The size of the blank page to insert. Defaults to A4 size if not specified. |
+
+Returns a Promise.
+
+| Name   | Type | Description                                                  |
+| ------ | ---- | ------------------------------------------------------------ |
+| result | bool | A Promise that resolves to a boolean value indicating the success or failure of the blank page insertion. Resolves to `true` if the insertion was successful, `false` otherwise. |
+
+```tsx
+const pageSize = CPDFPageSize.a4;
+// Custom page size
+// const pageSize = new CPDFPageSize(500, 800);
+const result = await pdfRef.current?._pdfDocument.insertBlankPage(0, pageSize);
+```
+
 ### Annotations
 
 #### import Annotations
@@ -1168,6 +1195,34 @@ const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
 
 // Fetch all annotations on the specified page
 const annotations = await page?.getAnnotations();
+```
+
+#### removeAnnotation
+
+Removes the specified annotation from the PDF document
+
+Parameters:
+
+| Name       | Type           | Description                   |
+| ---------- | -------------- | ----------------------------- |
+| annotation | CPDFAnnotation | The annotation to be removed. |
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description                                                 |
+| ------ | ------- | ----------------------------------------------------------- |
+| result | boolean | **true**: remove successful,<br />**false**: remove failed. |
+
+```tsx
+await pdfReaderRef?.current?._pdfDocument.removeAnnotation(annotation);
+// or use
+const pageIndex = 0;
+const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+const widgets = await page?.getWidgets();
+const widgetToRemove = widgets[0];
+await page?.removeWidget(widgetToRemove);
 ```
 
 #### flattenAllPages
@@ -1324,6 +1379,34 @@ await signatureWidget.addImageSignature('content://media/external/images/media/1
 await signatureWidget.addImageSignature('/path/to/image');
 // Refresh the appearance of the signature form
 await signatureWidget.updateAp();
+```
+
+#### removeWidget
+
+Removes the specified widget from the PDF document
+
+Parameters:
+
+| Name   | Type       | Description               |
+| ------ | ---------- | ------------------------- |
+| widget | CPDFWidget | The widget to be removed. |
+
+Returns a Promise.
+
+Promise Parameters:
+
+| Name   | Type    | Description                                                 |
+| ------ | ------- | ----------------------------------------------------------- |
+| result | boolean | **true**: remove successful,<br />**false**: remove failed. |
+
+```tsx
+await pdfReaderRef?.current?._pdfDocument.removeWidget(widget);
+// or use
+const pageIndex = 0;
+const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+const annotations = await page?.getAnnotations();
+const annotationToRemove = annotations[0];
+await page?.removeAnnotation(annotationToRemove);
 ```
 
 ### Security

@@ -16,7 +16,6 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFDisplaySettingsScreen } from './screens/CPDFDisplaySettingsScreen';
 import { CPDFPreviewModeListScreen } from './screens/CPDFPreviewModeListScreen';
-import RNFS from 'react-native-fs';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 
 type RootStackParamList = {
@@ -112,7 +111,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 handleSave();
                 break;
             case 'saveAs':
-                
+
                 const fileUtil = new CPDFFileUtil();
                 const baseName = 'save_as_test';
                 const extension = 'pdf';
@@ -227,6 +226,15 @@ const CPDFReaderViewControllerExampleScreen = () => {
         console.log('ComPDFKitRN saveDocument');
     }
 
+    const onPageEditDialogBackPress = () => {
+        console.log('ComPDFKitRN onPageEditDialogBackPress-----');
+
+    }
+
+    const onFullScreenChanged = (isFullScreen: boolean) => {
+        console.log('ComPDFKitRN onFullScreenChanged-----:', isFullScreen);
+    }
+
     return (
         <PDFReaderContext.Provider value={pdfReaderRef.current}>
             <MenuProvider>
@@ -238,6 +246,8 @@ const CPDFReaderViewControllerExampleScreen = () => {
                             document={samplePDF}
                             onPageChanged={onPageChanged}
                             saveDocument={saveDocument}
+                            onPageEditDialogBackPress={onPageEditDialogBackPress}
+                            onFullScreenChanged={onFullScreenChanged}
                             configuration={ComPDFKit.getDefaultConfig({
                                 toolbarConfig: {
                                     iosLeftBarAvailableActions: [

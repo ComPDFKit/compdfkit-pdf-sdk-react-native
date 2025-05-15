@@ -14,7 +14,6 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import RNFS from 'react-native-fs';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 
 type RootStackParamList = {

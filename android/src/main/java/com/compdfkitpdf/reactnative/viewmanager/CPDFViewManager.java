@@ -33,6 +33,7 @@ import com.compdfkit.core.document.CPDFDocument.PDFDocumentError;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentPermissions;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentSaveType;
 import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
+import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.core.page.CPDFPage.PDFFlattenOption;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
@@ -802,4 +803,39 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     return cpdfView.getCPDFPageUtil().addWidgetImageSignature(pageIndex, uuid, imagePath);
   }
 
+  public boolean removeAnnotation(int tag, int pageIndex, String uuid) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    CPDFPageUtil pageUtil = cpdfView.getCPDFPageUtil();
+    CPDFAnnotation annotation = pageUtil.getAnnotation(pageIndex, uuid);
+    if (annotation == null) {
+      return false;
+    }
+    CPDFPageView pageView = (CPDFPageView) cpdfView.getCPDFReaderView().getChild(pageIndex);
+    if (pageView != null) {
+      CPDFBaseAnnotImpl baseAnnot = pageView.getAnnotImpl(annotation);
+      pageView.deleteAnnotation(baseAnnot);
+      return true;
+    }
+    return false;
+  }
+
+  public boolean removeWidget(int tag, int pageIndex, String uuid) {
+    return removeAnnotation(tag, pageIndex, uuid);
+  }
+
+  public boolean insertBlankPage(int tag, int pageIndex, int width, int height) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+
+    CPDFPage page = document.insertBlankPage(pageIndex, width, height);
+    boolean isValid = page != null && page.isValid();
+    if (isValid){
+      CPDFReaderView readerView = cpdfView.getCPDFReaderView();
+      readerView.reloadPages();
+      CPDFPageIndicatorView indicatorView = cpdfView.documentFragment.pdfView.indicatorView;
+      indicatorView.setTotalPage(document.getPageCount());
+      indicatorView.setCurrentPageIndex(readerView.getPageNum());
+    }
+    return isValid;
+  }
 }

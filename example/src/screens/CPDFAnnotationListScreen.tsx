@@ -7,17 +7,18 @@
  * This notice may not be removed from this file.
  */
 
-import PDFReaderContext, { CPDFAnnotation, CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
+import PDFReaderContext, { CPDFActionType, CPDFAnnotation, CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect } from "react";
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Image, FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 interface CPDFAnnotationListScreenProps {
     visible: boolean;
     annotations: CPDFAnnotation[];
     onClose: () => void;
+    onDelete: (annotation: CPDFAnnotation) => void;
 }
 
-export const CPDFAnnotationListScreen: React.FC<CPDFAnnotationListScreenProps> = ({ visible, annotations, onClose }) => {
+export const CPDFAnnotationListScreen: React.FC<CPDFAnnotationListScreenProps> = ({ visible, annotations, onClose, onDelete }) => {
 
     const pdfReader = useContext(PDFReaderContext) as CPDFReaderView | null;
 
@@ -29,35 +30,47 @@ export const CPDFAnnotationListScreen: React.FC<CPDFAnnotationListScreenProps> =
         if (!acc[item.page]) {
             acc[item.page] = [];
         }
-        acc[item.page].push(item);
+        acc[item.page]!.push(item);
         return acc;
     }, {} as Record<number, CPDFAnnotation[]>);
-    
+
     const flattenedData: (CPDFAnnotation | { isTitle: true, page: number, total: number })[] = [];
-    
+
     Object.entries(groupedAnnotations).forEach(([page, items]) => {
-        flattenedData.push({ isTitle: true, page: Number(page), total: items.length }); 
-        flattenedData.push(...items); 
+        flattenedData.push({ isTitle: true, page: Number(page), total: items.length });
+        flattenedData.push(...items);
     });
 
-    const _item = (annotation: CPDFAnnotation, onPress: () => void) => {
+    const _item = (annotation: CPDFAnnotation, onPress: () => void, onDelete: (annotation: CPDFAnnotation) => void) => {
         return (
             <TouchableOpacity onPress={async () => {
+                console.log(JSON.stringify(annotation, null, 2));
                 onPress();
             }}>
-                <View style={{ width: '100%',paddingVertical:12 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.widgetItem}>Title: </Text>
-                        <Text style={styles.widgetBody}>{annotation.title}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ flex: 1, paddingVertical: 12 }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.widgetItem}>Title: </Text>
+                            <Text style={styles.widgetBody}>{annotation.title}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.widgetItem}>Type: </Text>
+                            <Text style={styles.widgetBody}>{annotation.type.toUpperCase()}</Text>
+                        </View>
+                        {annotation.content != '' && (
+                            <Text style={styles.widgetBody1}>{annotation.content}</Text>
+                        )}
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.widgetItem}>Type: </Text>
-                        <Text style={styles.widgetBody}>{annotation.type.toUpperCase()}</Text>
+                    <View style={{ justifyContent: 'center', width: 50 }}>
+                        <TouchableWithoutFeedback onPress={async () => {
+                            onDelete(annotation);
+                        }}>
+                            <Image source={require('../../assets/close.png')} style={{ width: 24, height: 24 }} />
+                        </TouchableWithoutFeedback>
                     </View>
-                    {annotation.content != '' && (
-                        <Text style={styles.widgetBody1}>{annotation.content}</Text>
-                    )}
+
                 </View>
+
             </TouchableOpacity>
         );
     }
@@ -82,21 +95,24 @@ export const CPDFAnnotationListScreen: React.FC<CPDFAnnotationListScreenProps> =
                                             <View style={styles.pageTitleContainer} >
                                                 <Text style={styles.pageTitle}>Page {item.page + 1}</Text>
                                                 <Text style={{
-                                                            fontSize : 14,
-                                                            color : 'black',
-                                                            fontWeight : 'bold',
-                                                            marginEnd : 8
+                                                    fontSize: 14,
+                                                    color: 'black',
+                                                    fontWeight: 'bold',
+                                                    marginEnd: 8
                                                 }}>{'isTitle' in item ? item.total : 0}</Text>
                                             </View>
                                         )
                                         :
-                                    _item(
-                                        item as CPDFAnnotation,
-                                        async () => {
-                                            await pdfReader?.setDisplayPageIndex(item.page);
-                                            onClose();
-                                        }
-                                    )
+                                        _item(
+                                            item as CPDFAnnotation,
+                                            async () => {
+                                                await pdfReader?.setDisplayPageIndex(item.page);
+                                                onClose();
+                                            },
+                                            async (annotation) => {
+                                                onDelete(annotation);
+                                            }
+                                        )
                                 }
                                 keyExtractor={item => 'isTitle' in item ? `title-${item.page}` : (item as CPDFAnnotation).uuid}
                             />
@@ -175,14 +191,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height:32,
+        height: 32,
         backgroundColor: '#DDE9FF',
-        paddingLeft:4,
+        paddingLeft: 4,
         borderRadius: 4
     },
-    pageTitle : {
-        fontSize : 14,
-        color : 'black',
-        fontWeight : 'bold',
+    pageTitle: {
+        fontSize: 14,
+        color: 'black',
+        fontWeight: 'bold',
     }
 });

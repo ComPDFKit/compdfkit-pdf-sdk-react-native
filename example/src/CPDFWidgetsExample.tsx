@@ -99,7 +99,6 @@ const CPDFWidgetsExampleScreen = () => {
                     if (widgets) {
                         allWidgets = allWidgets.concat(widgets);
                     }
-                    console.log(JSON.stringify(widgets, null, 2));
                 }
                 setWidgetData(allWidgets);
                 setWidgetsModalVisible(true);
@@ -161,6 +160,10 @@ const CPDFWidgetsExampleScreen = () => {
                             setCurrentEditingWidgetIndex(index);
                             setTextEditModalVisible(true);
                         }}
+                        onDelete={async (widget) => {
+                            const removeResult = await pdfReaderRef.current?._pdfDocument.removeWidget(widget)
+                            console.log('ComPDFKitRN removeWidget:', removeResult);
+                        }}
                     />
                     <Modal visible={textEditModalVisible} transparent={true} animationType="fade">
                         <View style={styles.editTextModalContainer}>
@@ -219,7 +222,6 @@ const CPDFWidgetsExampleScreen = () => {
                                         }
                                     }} style={styles.button}>
                                         <Text style={styles.buttonText}>Confirm</Text>
-
                                     </TouchableOpacity>
                                 </View>
                             </View>

@@ -8,6 +8,7 @@
  */
 import { CPDFWidgetType } from "../../configuration/CPDFOptions";
 import { NativeModules, findNodeHandle } from 'react-native';
+import { CPDFRectF } from "../../util/CPDFRectF";
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -19,10 +20,15 @@ const { CPDFViewManager } = NativeModules;
  *
  * @class CPDFWidget
  * @memberof CPDFWidget
- * 
  * @property {CPDFWidgetType} type - The type of the form widget.
  * @property {string} title - The title of the form widget (default: empty string).
  * @property {number} page - The page number where the form widget appears (default: 0).
+ * @property {string} uuid - The unique identifier for the form widget (default: empty string).
+ * @property {Date | null} modifyDate - The date when the form widget was last modified (default: null).
+ * @property {Date | null} createDate - The date when the form widget was created (default: null).
+ * @property {CPDFRectF | null} rect - The rectangular coordinates of the form widget (default: null).
+ * @property {string} borderColor - The border color of the form widget (default: '#000000').
+ * @property {string} fillColor - The fill color of the form widget (default: '#000000').
  */
 export class CPDFWidget {
     
@@ -41,9 +47,17 @@ export class CPDFWidget {
     /**
      * The page number where the form widget appears (default: 0).
      */
-    page: number;
+    readonly page: number;
 
-    uuid: string;
+    readonly uuid: string;
+    
+    createDate : Date | null = null;
+
+    rect : CPDFRectF | null = null;
+
+    borderColor : string;
+
+    fillColor : string;
 
     constructor(viewerRef : any, params: Partial<CPDFWidget>) {
         this.type = CPDFWidget.parseType(params.type);
@@ -51,6 +65,10 @@ export class CPDFWidget {
         this.page = params.page ?? 0;
         this.uuid = params.uuid ?? "";
         this._viewerRef = viewerRef;
+        this.createDate = params.createDate != null ? new Date(params.createDate) : null;
+        this.rect = params.rect ?? null;
+        this.borderColor = params.borderColor ?? '#000000';
+        this.fillColor = params.fillColor ?? '#000000';
     }
 
     static fromJson<T extends CPDFWidget>(this: new (viewerRef : any, params: Partial<T>) => T, json: any,viewerRef : any): T {
@@ -65,9 +83,18 @@ export class CPDFWidget {
         return Object.values(CPDFWidgetType).includes(type) ? type as CPDFWidgetType : CPDFWidgetType.UNKNOWN;
     }
 
+    private static formatDate(date: Date): string {
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+               `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+
     toJSON() {
-        const { _viewerRef, ...data } = this;
-        return data;
+        const { _viewerRef, createDate, ...data } = this;
+        return {
+            ...data,
+            createDate: createDate? CPDFWidget.formatDate(createDate) : null
+        }
     }
 
 
