@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import PDFReaderContext, { CPDFActionType, CPDFAnnotation, CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
+import PDFReaderContext, { CPDFAnnotation, CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect } from "react";
 import { Image, FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 

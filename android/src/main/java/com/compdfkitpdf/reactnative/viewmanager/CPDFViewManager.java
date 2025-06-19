@@ -35,12 +35,15 @@ import com.compdfkit.core.document.CPDFDocument.PDFDocumentSaveType;
 import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
 import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.core.page.CPDFPage.PDFFlattenOption;
+import com.compdfkit.core.undo.CPDFUndoManager;
+import com.compdfkit.core.undo.exception.CPDFUndoFailedException;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.print.CPDFPrintUtils;
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
+import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfview.CPDFPageIndicatorView;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl.COnSaveCallback;
@@ -815,8 +818,9 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       CPDFBaseAnnotImpl baseAnnot = pageView.getAnnotImpl(annotation);
       pageView.deleteAnnotation(baseAnnot);
       return true;
+    } else {
+      return pageUtil.deleteAnnotation(pageIndex, uuid);
     }
-    return false;
   }
 
   public boolean removeWidget(int tag, int pageIndex, String uuid) {
@@ -837,5 +841,71 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       indicatorView.setCurrentPageIndex(readerView.getPageNum());
     }
     return isValid;
+  }
+
+  public void setAnnotationMode(int tag, String mode) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CAnnotationType type;
+    try{
+      type = switch (mode) {
+        case "note" -> CAnnotationType.TEXT;
+        case "pictures" -> CAnnotationType.PIC;
+        default -> CAnnotationType.valueOf(mode.toUpperCase());
+      };
+    } catch (Exception e) {
+      type = CAnnotationType.UNKNOWN;
+    }
+    pdfView.documentFragment.annotationToolbar.switchAnnotationType(type);
+  }
+
+  public String getAnnotationMode(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CAnnotationType annotationType = pdfView.documentFragment.annotationToolbar.toolListAdapter.getCurrentAnnotType();
+    return switch (annotationType) {
+      case TEXT -> "note";
+      case PIC -> "pictures";
+      default -> annotationType.name().toLowerCase();
+    };
+  }
+
+  public boolean annotationCanUndo(int tag){
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFUndoManager manager = readerView.getUndoManager();
+    return manager.canUndo();
+  }
+
+  public boolean annotationCanRedo(int tag){
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFUndoManager manager = readerView.getUndoManager();
+    return manager.canRedo();
+  }
+
+  public void annotationUndo(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFUndoManager manager = readerView.getUndoManager();
+      try {
+        if (manager.canUndo()) {
+          manager.undo();
+        }
+      } catch (Exception e) {
+
+      }
+  }
+
+  public void annotationRedo(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFUndoManager manager = readerView.getUndoManager();
+      try {
+        if (manager.canRedo()) {
+          manager.redo();
+        }
+      } catch (Exception e) {
+
+      }
   }
 }

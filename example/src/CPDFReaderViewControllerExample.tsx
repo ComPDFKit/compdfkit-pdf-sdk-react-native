@@ -164,6 +164,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 break;
             case 'setMargins':
                 await pdfReaderRef.current?.setMargins(10, 20, 10, 20)
+                console.log('ComPDFKitRN setMargins');
                 break;
             case 'removeSignFileList':
                 await ComPDFKit.removeSignFileList();

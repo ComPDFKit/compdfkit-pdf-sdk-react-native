@@ -16,9 +16,8 @@ end
 
 target 'CompdfkitPdfExample' do
   config = use_native_modules!
-  pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.4.0.podspec'
-  pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.4.0.podspec'
-
+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.1/ComPDFKit.podspec'
+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.1/ComPDFKit_Tools.podspec'
 
   use_react_native!(
     :path => config[:reactNativePath],

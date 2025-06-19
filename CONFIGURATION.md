@@ -138,7 +138,8 @@ Configure functions for the top toolbar in the PDF view.
 | iosLeftBarAvailableActions  | Array   | Functions available in the left side of the top toolbar for iOS platform.<br />Defaults: `back`, `thumbnail` |
 | iosRightBarAvailableActions | Array   | Functions available in the right side of the top toolbar for iOS platform.<br />Defaults: `search`, `bota`, `menu` |
 | availableMenus              | Array   | A list of more functions popped up by the `menu` option on the top toolbar. |
-| mainToolbarVisible          | boolean | 是否显示主界面视图顶部工具栏                                 |
+| mainToolbarVisible          | boolean | Whether to display the toolbar at the top of the main interface view. |
+| annotationToolbarVisible    | boolean | Shows or hides the annotation toolbar that appears at the bottom of the view when in annotation mode. |
 
 ##### **Constants**
 
@@ -802,7 +803,242 @@ This section is used to configure the types of forms enabled in the view's botto
 | dark   | The UI is displayed in a dark theme.  |
 | system | Theme follow system settings.         |
 
+#### contextMenuConfig
 
+Used to configure the context menu options that pop up when selecting text, annotations, forms, etc. in different modes.
+
+##### global
+
+Used to configure global context menu items that are not tied to a specific mode (such as annotation, editing, or form mode). Currently, only the screenshot context is supported.
+
+**screenshot**
+
+Defines available actions during screenshot mode (e.g., area capture tools).
+
+```json
+"contextMenuConfig" : {
+  "global": {
+    "screenshot" : [
+      { "key": "exit" },
+      { "key": "share" }
+    ]
+  }
+}
+```
+
+| **Key** | **Description**       |
+| ------- | --------------------- |
+| exit    | Exit screenshot mode. |
+| share   | Share the screenshot. |
+
+> ✅ Note: The order of the items determines how they appear in the menu. If not set, the default menu options will be used.
+
+##### viewMode
+
+Configures context menu options in **View Mode**, which applies to normal reading scenarios. Currently supports the textSelect context when selecting text.
+
+```json
+"contextMenuConfig" : {
+  "viewMode": {
+    "textSelect": [
+      { "key": "copy" }
+    ]
+  }
+}
+```
+
+##### annotationMode
+
+Configures context menu options available in **Annotation Mode**, where different types of annotation targets (e.g., text, markup, stamp) show contextual menu actions.
+
+```json
+"contextMenuConfig" : {
+  "annotationMode": {
+    "textSelect": [
+      { "key": "copy" },
+      { "key": "highlight" },
+      { "key": "underline" },
+      { "key": "strikeout" },
+      { "key": "squiggly" }
+    ],
+    "longPressContent": [
+      { "key": "paste" },
+      { "key": "note" },
+      { "key": "textBox" },
+      { "key": "stamp" },
+      { "key": "image" }
+    ],
+    "markupContent": [
+      { "key": "properties" },
+      { "key": "note" },
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "delete" }
+    ],
+    "soundContent": [
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "play" },
+      { "key": "record" },
+      { "key": "delete" }
+    ],
+    "inkContent": [
+      { "key": "properties" },
+      { "key": "note" },
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "delete" }
+    ],
+    "shapeContent": [
+      { "key": "properties" },
+      { "key": "note" },
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "delete" }
+    ],
+    "freeTextContent": [
+      { "key": "properties" },
+      { "key": "edit" },
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "delete" }
+    ],
+    "signStampContent": [
+      { "key": "signHere" },
+      { "key": "delete" },
+      { "key": "rotate" }
+    ],
+    "stampContent": [
+      { "key": "note" },
+      { "key": "reply" },
+      { "key": "viewReply" },
+      { "key": "delete" },
+      { "key": "rotate" }
+    ],
+    "linkContent": [
+      { "key": "edit" },
+      { "key": "delete" }
+    ]
+  }
+}
+```
+
+##### contentEditorMode
+
+The context menu in content editing mode handles the context menu options that pop up for different operations such as selecting text, images, and long pressing the page.
+
+```json
+"contextMenuConfig" : {
+  "contentEditorMode": {
+    "editTextAreaContent" : [
+      { "key": "properties" },
+      { "key": "edit" },
+      { "key": "cut" },
+      { "key": "copy" },
+      { "key": "delete" }
+    ],
+    "editSelectTextContent": [
+      { "key": "properties" },
+      {
+        "key": "opacity",
+        "subItems": ["25%", "50%", "75%", "100%"]
+      },
+      { "key": "cut" },
+      { "key": "copy" },
+      { "key": "delete" }
+    ],
+    "editTextContent": [
+      { "key": "select" },
+      { "key": "selectAll" },
+      { "key": "paste" }
+    ],
+    "imageAreaContent": [
+      { "key": "properties" },
+      { "key": "rotateLeft" },
+      { "key": "rotateRight" },
+      { "key": "replace" },
+      { "key": "export" },
+      {
+        "key": "opacity",
+        "subItems": ["25%", "50%", "75%", "100%"]
+      },
+      { "key": "flipHorizontal" },
+      { "key": "flipVertical" },
+      { "key": "crop" },
+      { "key": "delete" },
+      { "key": "copy" },
+      { "key": "cut" }
+    ],
+    "imageCropMode": [
+      { "key": "done" },
+      { "key": "cancel" }
+    ],
+    "editPathContent": [
+      { "key": "delete" }
+    ],
+    "longPressWithEditTextMode" : [
+      { "key" : "addText"},
+      { "key" : "paste"},
+      { "key" : "keepSourceFormatingPaste"}
+    ],
+    "longPressWithEditImageMode" : [
+      { "key" : "addImages"},
+      { "key" : "paste"}
+    ],
+    "longPressWithAllMode" : [
+      { "key" : "paste"},
+      { "key" : "keepSourceFormatingPaste"}
+    ],
+    "searchReplace": [
+      { "key": "replace" }
+    ]
+  }
+}
+```
+
+##### formMode
+
+The context menu configuration in form mode displays different context menu options according to the object the user operates on (such as text field, list, radio button, etc.)
+
+```json
+"contextMenuConfig" : {
+  "formMode": {
+    "textField": [
+      { "key": "properties" },
+      { "key": "delete" }
+    ],
+    "checkBox": [
+      { "key": "properties" },
+      { "key": "delete" }
+    ],
+    "radioButton": [
+      { "key": "properties" },
+      { "key": "delete" }
+    ],
+    "listBox": [
+      { "key": "options" },
+      { "key": "properties" },
+      { "key": "delete" }
+    ],
+    "comboBox": [
+      { "key": "options" },
+      { "key": "properties" },
+      { "key": "delete" }
+    ],
+    "signatureField": [
+      { "key": "startToSign" },
+      { "key": "delete" }
+    ],
+    "pushButton" : [
+      { "key": "options"},
+      { "key": "properties"},
+      { "key": "delete"}
+    ]
+  }
+}
+```
+
+## 
 
 ## Json Example
 

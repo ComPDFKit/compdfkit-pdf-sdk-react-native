@@ -148,6 +148,8 @@ export const CPDFAnnotationType = {
 
     INK: 'ink',
 
+    INK_ERASER: 'ink_eraser',
+
     /**
      * only ios platform.
      */
@@ -476,7 +478,7 @@ export type AnyCase<T extends string> =
     T extends `${infer F}${infer R}` ? `${Uppercase<F> | Lowercase<F>}${AnyCase<R>}` :
     "";
 
-type ValueOf<T> = T[keyof T];
+export type ValueOf<T> = T[keyof T];
 
 
 type BuildPowersOf2LengthArrays<N extends number, R extends never[][]> =

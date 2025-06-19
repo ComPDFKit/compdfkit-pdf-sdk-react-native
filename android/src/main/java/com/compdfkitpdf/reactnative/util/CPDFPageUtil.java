@@ -92,15 +92,15 @@ public class CPDFPageUtil {
   }
 
   public WritableArray getAnnotations(int pageIndex){
+    WritableArray array = Arguments.createArray();
     if (document == null) {
-      return null;
+      return array;
     }
     CPDFPage page = document.pageAtIndex(pageIndex);
     List<CPDFAnnotation> annotations = page.getAnnotations();
     if (annotations == null || !page.isValid()){
-      return null;
+      return array;
     }
-    WritableArray array = Arguments.createArray();
     for (CPDFAnnotation annotation : annotations) {
       RCPDFAnnotation rcpdfAnnotation = annotImpls.get(annotation.getType());
       if (rcpdfAnnotation != null){
@@ -117,15 +117,16 @@ public class CPDFPageUtil {
   }
 
   public WritableArray getWidgets(int pageIndex){
+    WritableArray array = Arguments.createArray();
+
     if (document == null) {
-      return null;
+      return array;
     }
     CPDFPage page = document.pageAtIndex(pageIndex);
     List<CPDFAnnotation> annotations = page.getAnnotations();
     if (annotations == null || !page.isValid()){
-      return null;
+      return array;
     }
-    WritableArray array = Arguments.createArray();
     for (CPDFAnnotation annotation : annotations) {
       if (annotation.getType() != Type.WIDGET){
         continue;

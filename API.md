@@ -1250,6 +1250,59 @@ const fontSubset = true;
 const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
 ```
 
+#### getAnnotationMode
+
+Get the type of annotation added to the current touch page. This method is only available in `CPDFViewMode.ANNOTATIONS` mode.
+
+Returns a Promise.
+
+| Name   | Type               | Description                                                |
+| ------ | ------------------ | ---------------------------------------------------------- |
+| result | CPDFAnnotationType | Returns the annotation type currently selected for drawing |
+
+```tsx
+const annotationMode = await pdfReaderRef.current?.getAnnotationMode();
+```
+
+#### setAnnotationMode
+
+Used to add a specified annotation type when touching the page in annotation mode, This method is only available in `CPDFViewMode.ANNOTATIONS` mode.
+
+Parameters:
+
+| Name | Type               | Description                              |
+| ---- | ------------------ | ---------------------------------------- |
+| type | CPDFAnnotationType | type The type of annotation mode to set. |
+
+Returns a Promise.
+
+| Name   | Type | Description |
+| ------ | ---- | ----------- |
+| result | void |             |
+
+```tsx
+await pdfReaderRef.current?.setAnnotationMode(CPDFAnnotationType.HIGHLIGHT);
+```
+
+#### History Manager
+
+Manages the undo and redo history for PDF annotation actions within a viewer component. including checking if undo/redo actions are available and performing those actions. It also allows registering a listener to monitor changes in the annotation history state.
+
+```tsx
+const historyManager = pdfReader._annotationsHistoryManager;
+ historyManager.setOnHistoryStateChangedListener((canUndo, canRedo) => {
+   // Update UI based on undo/redo availability
+ });
+
+await historyManager.canUndo();
+
+await historyManager.canRedo();
+
+await historyManager.undo();
+
+await historyManager.redo();
+```
+
 ### Forms
 
 #### importWidgets

@@ -79,3 +79,4 @@ android/keystores/debug.keystore
 lib/
 .github/
 /example/ios/Podfile.lock
+/example/yarn.lock

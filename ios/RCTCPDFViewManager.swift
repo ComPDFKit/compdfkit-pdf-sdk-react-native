@@ -12,6 +12,7 @@
 
 import UIKit
 import ComPDFKit
+import ComPDFKit_Tools
 
 @objc(RCTCPDFReaderView)
 class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
@@ -460,6 +461,130 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         completionHandler(true)
     }
     
+    // MARK: - Annotation Methods
+    
+    func setAnnotationMode(forCPDFViewTag tag : Int, mode: String) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        var annotationMode: CPDFViewAnnotationMode = .CPDFViewAnnotationModenone
+        switch mode {
+        case "note":
+            annotationMode = .note
+        case "highlight":
+            annotationMode = .highlight
+        case "underline":
+            annotationMode = .underline
+        case "strikeout":
+            annotationMode = .strikeout
+        case "squiggly":
+            annotationMode = .squiggly
+        case "ink":
+            annotationMode = .ink
+        case "ink_eraser":
+            annotationMode = .eraser
+        case "pencil":
+            annotationMode = .pencilDrawing
+        case "circle":
+            annotationMode = .circle
+        case "square":
+            annotationMode = .square
+        case "arrow":
+            annotationMode = .arrow
+        case "line":
+            annotationMode = .line
+        case "freetext":
+            annotationMode = .freeText
+        case "signature":
+            annotationMode = .signature
+        case "stamp":
+            annotationMode = .stamp
+        case "pictures":
+            annotationMode = .image
+        case "link":
+            annotationMode = .link
+        case "sound":
+            annotationMode = .sound
+        case "unknown":
+            annotationMode = .CPDFViewAnnotationModenone
+            default:
+            break
+        }
+            
+        rtcCPDFView?.pdfViewController?.annotationBar?.annotationToolBarSwitch(annotationMode)
+    }
+    
+    func getAnnotationMode(forCPDFViewTag tag : Int, completionHandler: @escaping (String) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        let annotationMode = rtcCPDFView?.pdfViewController?.pdfListView?.annotationMode ?? .CPDFViewAnnotationModenone
+        var mode = "unknown"
+        switch annotationMode {
+        case .note:
+            mode = "note"
+        case .highlight:
+            mode = "highlight"
+        case .underline:
+            mode = "underline"
+        case .strikeout:
+            mode = "strikeout"
+        case .squiggly:
+            mode = "squiggly"
+        case .ink:
+            mode = "ink"
+        case .eraser:
+            mode = "ink_eraser"
+        case .pencilDrawing:
+            mode = "pencil"
+        case .circle:
+            mode = "circle"
+        case .square:
+            mode = "square"
+        case .arrow:
+            mode = "arrow"
+        case .line:
+            mode = "line"
+        case .freeText:
+            mode = "freetext"
+        case .signature:
+            mode = "signature"
+        case .stamp:
+            mode = "stamp"
+        case .image:
+            mode = "pictures"
+        case .link:
+            mode = "link"
+        case .sound:
+            mode = "sound"
+        case .CPDFViewAnnotationModenone:
+            mode = "unknown"
+            default:
+            break
+        }
+        completionHandler(mode)
+    }
+    
+    func annotationCanUndo(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let canUndo = rtcCPDFView?.pdfViewController?.pdfListView?.canUndo() ?? false
+        completionHandler(canUndo)
+    }
+    
+    func annotationCanRedo(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let canRedo:Bool = rtcCPDFView?.pdfViewController?.pdfListView?.canRedo() ?? false
+        completionHandler(canRedo)
+    }
+    
+    func annotationUndo(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.undoPDFManager?.undo()
+    }
+    
+    func annotationRedo(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.undoPDFManager?.redo()
+    }
+    
     // MARK: - RCTCPDFViewDelegate
     
     func cpdfViewAttached(_ cpdfView: RCTCPDFView) {
@@ -490,6 +615,29 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         }
     }
     
+    func onTapMainDocArea(_ cpdfView: RCTCPDFView) {
+        if let onChange = cpdfView.onChange {
+            onChange(["onTapMainDocArea": "onTapMainDocArea"])
+        }
+    }
     
+    func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView) {
+      if let onChange = cpdfView.onChange {
+        let historyState: [String: Bool] = [
+          "canUndo": cpdfView.pdfViewController?.pdfListView?.canUndo() ?? false,
+          "canRedo": cpdfView.pdfViewController?.pdfListView?.canRedo() ?? false
+        ]
+        let eventBody: [String: Any] = [
+          "onAnnotationHistoryChanged": historyState
+        ]
+        onChange(eventBody)
+      }
+    }
+  
+    func onIOSClickBackPressed(_ cpdfView: RCTCPDFView) {
+      if let onChange = cpdfView.onChange {
+        onChange(["onIOSClickBackPressed": "onIOSClickBackPressed"])
+      }
+    }
     
 }

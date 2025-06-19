@@ -7,15 +7,16 @@
  * This notice may not be removed from this file.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFAnnotation } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFAnnotation, CPDFViewMode, CPDFAnnotationType, menus } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DocumentPicker from 'react-native-document-picker';
 import { CPDFAnnotationListScreen } from './screens/CPDFAnnotationListScreen';
+import { CPDFAnnotationToolbar } from './screens/annotation/CPDFAnnotationToolbar';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -29,6 +30,8 @@ type CPDFReaderViewExampleScreenRouteProp = RouteProp<
 const CPDFAnnotationsExampleScreen = () => {
 
     const pdfReaderRef = useRef<CPDFReaderView>(null);
+
+    const [pdfReader, setPdfReader] = useState<CPDFReaderView | null>(null);
 
     const navigation = useNavigation();
 
@@ -139,6 +142,12 @@ const CPDFAnnotationsExampleScreen = () => {
         }
     };
 
+    useEffect(() => {
+    if (pdfReaderRef.current) {
+        setPdfReader(pdfReaderRef.current);
+    }
+}, []);
+
     const handleBack = () => {
         navigation.goBack();
     };
@@ -167,7 +176,7 @@ const CPDFAnnotationsExampleScreen = () => {
     };
 
     return (
-        <PDFReaderContext.Provider value={pdfReaderRef.current}>
+        <PDFReaderContext.Provider value={pdfReader}>
             <MenuProvider>
                 <SafeAreaView style={{ flex: 1 }}>
                     <View style={{ flex: 1 }}>
@@ -175,13 +184,19 @@ const CPDFAnnotationsExampleScreen = () => {
                         <CPDFReaderView
                             ref={pdfReaderRef}
                             document={samplePDF}
+                            onIOSClickBackPressed={() => {
+                                console.log('onIOSClickBackPressed');
+                                navigation.goBack();
+                            }}
                             configuration={ComPDFKit.getDefaultConfig({
+                                modeConfig: {
+                                    initialViewMode: CPDFViewMode.ANNOTATIONS
+                                },
                                 toolbarConfig: {
-                                    iosLeftBarAvailableActions: [
-                                        CPDFToolbarAction.THUMBNAIL
-                                    ]
+                                    annotationToolbarVisible: false
                                 }
                             })} />
+                        <CPDFAnnotationToolbar/>
                         <CPDFAnnotationListScreen
                             visible={annotationModalVisible}
                             annotations={annotationData}

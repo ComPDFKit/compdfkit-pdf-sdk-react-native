@@ -11,8 +11,9 @@ import React, { PureComponent } from 'react';
 import PropTypes, { Requireable, Validator } from 'prop-types';
 import { findNodeHandle, requireNativeComponent, NativeModules,Platform } from 'react-native';
 import { ViewPropTypes } from 'deprecated-react-native-prop-types';
-import { CPDFThemes, CPDFViewMode } from '../configuration/CPDFOptions';
+import { CPDFAnnotationType, CPDFThemes, CPDFViewMode } from '../configuration/CPDFOptions';
 import { CPDFDocument } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFAnnotationHistoryManager } from '../history/CPDFAnnotationHistoryManager';
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -37,6 +38,8 @@ const propTypes = {
   saveDocument : func<() => void>(),
   onPageEditDialogBackPress : func<() => void>(),
   onFullScreenChanged : func<(isFullScreen: boolean) => void>(),
+  onTapMainDocArea: func<() => void>(), 
+  onIOSClickBackPressed: func<() => void>(),// iOS only
   ...ViewPropTypes,
 }
 
@@ -63,6 +66,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   _viewerRef: any;
   _pdfDocument : CPDFDocument;
 
+  _annotationsHistoryManager: CPDFAnnotationHistoryManager;
+
   static propTypes = propTypes;
 
   static defaultProps = {
@@ -72,11 +77,13 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   constructor(props : CPDFReaderViewProps) {
     super(props);
     this._pdfDocument = new CPDFDocument(this._viewerRef);
+    this._annotationsHistoryManager = new CPDFAnnotationHistoryManager(this._viewerRef);
   }
 
   _setNativeRef = (ref: any) => {
     this._viewerRef = ref;
     this._pdfDocument = new CPDFDocument(this._viewerRef);
+    this._annotationsHistoryManager = new CPDFAnnotationHistoryManager(this._viewerRef);
   }
 
   onChange = (event : any) => {
@@ -98,6 +105,18 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     } else if('onFullScreenChanged' in event.nativeEvent){
       if(this.props.onFullScreenChanged){
         this.props.onFullScreenChanged(event.nativeEvent.onFullScreenChanged);
+      }
+    } else if('onTapMainDocArea' in event.nativeEvent){
+      if(this.props.onTapMainDocArea){
+        this.props.onTapMainDocArea();
+      }
+    } else if('onAnnotationHistoryChanged' in event.nativeEvent){
+      if(this._annotationsHistoryManager){
+        this._annotationsHistoryManager.handle(event);
+      }
+    } else if('onIOSClickBackPressed' in event.nativeEvent){
+      if(this.props.onIOSClickBackPressed){
+        this.props.onIOSClickBackPressed();
       }
     }
   }
@@ -680,10 +699,10 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * const mode = await pdfReaderRef.current?.getPreviewMode();
    * @returns
    */
-  getPreviewMode = () : Promise<CPDFViewMode> => {
+  getPreviewMode = async () : Promise<CPDFViewMode> => {
     const tag = findNodeHandle(this._viewerRef);
     if(tag != null){
-      var modeStr = CPDFViewManager.getPreviewMode(tag);
+      var modeStr = await CPDFViewManager.getPreviewMode(tag);
       for (const key in CPDFViewMode) {
         if (CPDFViewMode[key as keyof typeof CPDFViewMode] === modeStr) {
           return Promise.resolve(CPDFViewMode[key as keyof typeof CPDFViewMode]);
@@ -817,6 +836,44 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
       return CPDFViewManager.reloadPages(tag);
     }
     return Promise.resolve();
+  }
+
+  /**
+   * Used to add a specified annotation type when touching the page in annotation mode
+   * This method is only available in [CPDFViewMode.ANNOTATIONS] mode.
+   * @param type The type of annotation mode to set.
+   * 
+   * @example
+   * await pdfReaderRef.current?.setAnnotationMode(CPDFAnnotationType.HIGHLIGHT);
+   * 
+   * @returns 
+   */
+  setAnnotationMode = async (type : CPDFAnnotationType) : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      if(await this.getPreviewMode() != CPDFViewMode.ANNOTATIONS){
+        return Promise.reject('setAnnotationMode() method only support CPDFViewMode.ANNOTATIONS mode');
+      }
+      return CPDFViewManager.setAnnotationMode(tag, type);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Get the type of annotation added to the current touch page.
+   * This method is only available in [CPDFViewMode.ANNOTATIONS] mode.
+   * 
+   * @example
+   * const annotationMode = await pdfReaderRef.current?.getAnnotationMode();
+   * 
+   * @returns 
+   */
+  getAnnotationMode = async () : Promise<CPDFAnnotationType> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag){
+      return CPDFViewManager.getAnnotationMode(tag);
+    }
+    return Promise.resolve(CPDFAnnotationType.UNKNOWN);
   }
 
   render() {

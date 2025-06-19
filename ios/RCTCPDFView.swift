@@ -20,6 +20,9 @@ protocol RCTCPDFViewDelegate: AnyObject {
     func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
     func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView)
     func onFullScreenChanged(_ cpdfView: RCTCPDFView, isFull: Bool)
+    func onTapMainDocArea(_ cpdfView: RCTCPDFView)
+    func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView)
+    func onIOSClickBackPressed(_ cpdfView: RCTCPDFView)
 }
 
 class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
@@ -87,6 +90,8 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         if success {
             document.stopAccessingSecurityScopedResource()
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(annotationsOperationChangeNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFListViewAnnotationsOperationChangeNotification").rawValue), object: nil)
     }
     
     func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: Int) -> Bool {
@@ -807,6 +812,20 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     
     func PDFViewBaseController(_ baseController: CPDFViewBaseController, HiddenState state: Bool) {
         self.delegate?.onFullScreenChanged(self, isFull: state)
+    }
+    
+    func PDFViewBaseControllerTouchEnded(_ baseController: CPDFViewBaseController) {
+        self.delegate?.onTapMainDocArea(self)
+    }
+  
+    public func PDFViewBaseControllerDissmiss(_ baseControllerDelete: CPDFViewBaseController) {
+        self.delegate?.onIOSClickBackPressed(self)
+    }
+    
+    // MARK: - Notification
+    
+    @objc func annotationsOperationChangeNotification(_ notification: Notification) {
+        self.delegate?.onAnnotationHistoryChanged(self)
     }
     
     // MARK: - RCT Methods

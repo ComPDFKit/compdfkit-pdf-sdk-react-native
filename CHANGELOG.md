@@ -1,8 +1,29 @@
 ## Newest Release
 
+### 2.4.1 - 19 Jun. 2025
+
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.1.
+2. Added the features support for ComPDFKit PDF SDK for Android V2.4.1.
+3. Added API to switch between different annotation types in annotation mode.
+4. Added Undo and Redo APIs for annotation actions.
+5. Added configuration option to hide the bottom annotation toolbar in annotation mode.
+6. Added support for context menu configuration.
+7. Added callback for tapping on the PDF page area.
+8. Adapted Android platform to support 16KB page sizes.
+9. Fixed an issue where some APIs became unresponsive, causing blocking behavior.
+10. Fixed an issue where the read-only (`readOnly`) setting had no effect on Android.
+11. Fixed a bug where the `page.removeAnnotation()` API could not delete annotations on Android.
+12. Fixed an issue where `getReadBackgroundColor()` returned the wrong color on iOS.
+
+## Previous Release
+
+### 2.4.1-beta.1 - 03 Jun. 2025
+
+1. Fixed a build failure caused by incorrect package name `com.compdfkitpdf` generated during auto-linking.
+
 ### 2.4.0 - 15 May. 2025
 
-1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.0.  
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.0.
 2. Added the features support for ComPDFKit PDF SDK for Android V2.4.0.
 3. Added configuration options for signature methods in signature form fields on Android.
 4. Added a document save reminder when exiting the interface on Android.
@@ -20,10 +41,6 @@
 16. Fixed blurry display issue after zooming in on text annotations.
 17. Fixed jump behavior of `CPDFReaderView.setScale() `scaling method.
 18. Fixed a font inconsistency issue during content editing when adding text to already selected text with an existing device font.
-
-
-
-## Previous Release
 
 ### 2.3.0 - 21 Mar. 2025
 

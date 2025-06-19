@@ -8,7 +8,7 @@
  */
 
 import { NativeModules } from 'react-native';
-import { CPDFConfiguration } from './configuration/CPDFConfiguration';
+import { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
 import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType,CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
 import React from 'react';
 import { CPDFReaderView } from './view/CPDFReaderView';
@@ -197,7 +197,7 @@ const ComPDFKit = NativeModules.ComPDFKit
 export { ComPDFKit };
 // === Options & Configs ===
 export * from './configuration/CPDFOptions';
-export { CPDFConfiguration } from './configuration/CPDFConfiguration';
+export { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
 
 // === Core Views ===
 export { CPDFReaderView } from './view/CPDFReaderView';
@@ -220,6 +220,7 @@ export { CPDFLinkAnnotation } from './annotation/CPDFLinkAnnotation';
 export { CPDFMarkupAnnotation } from './annotation/CPDFMarkupAnnotation';
 export { CPDFSquareAnnotation } from './annotation/CPDFSquareAnnotation';
 export { CPDFTextAttribute } from './annotation/CPDFTextAttribute';
+export { CPDFAnnotationHistoryManager } from './history/CPDFAnnotationHistoryManager';
 
 // === Form Widgets ===
 export { CPDFWidget } from './annotation/form/CPDFWidget';
@@ -253,6 +254,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
     },
     toolbarConfig: {
       mainToolbarVisible : true,
+      annotationToolbarVisible: true,
       androidAvailableActions: [
         CPDFToolbarAction.THUMBNAIL,
         CPDFToolbarAction.SEARCH,
@@ -290,6 +292,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         CPDFAnnotationType.SQUIGGLY,
         CPDFAnnotationType.STRIKEOUT,
         CPDFAnnotationType.INK,
+        CPDFAnnotationType.INK_ERASER,
         CPDFAnnotationType.CIRCLE,
         CPDFAnnotationType.SQUARE,
         CPDFAnnotationType.ARROW,
@@ -509,11 +512,98 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       },
       signatureType : 'manual',
       enableExitSaveTips: false
+    },
+    contextMenuConfig: {
+      global:{
+        screenshot: menus('exit', 'share')
+      },
+      viewMode: {
+        textSelect: menus('copy'),
+      },
+      annotationMode:{
+        textSelect: menus('copy', 'highlight', 'underline', 'strikeout', 'squiggly'),
+        longPressContent: menus('paste', 'note', 'textBox', 'stamp', 'image'),
+        markupContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
+        soundContent: menus('reply', 'viewReply', 'play', 'record', 'delete'),
+        inkContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
+        shapeContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
+        freeTextContent: menus('properties', 'edit', 'reply', 'viewReply', 'delete'),
+        signStampContent: menus('signHere', 'delete', 'rotate'),
+        stampContent: menus('note', 'reply', 'viewReply', 'delete', 'rotate'),
+        linkContent: menus('edit', 'delete'),
+      },
+      contentEditorMode: {
+        editTextAreaContent : menus('properties', 'edit', 'cut', 'copy', 'delete'),
+        editSelectTextContent: menus(
+          'properties', 
+          { key: 'opacity', subItems:['25%', '50%', '75%', '100%'] },
+          'cut',
+          'copy',
+          'delete'
+        ),
+        editTextContent: menus(
+          'select',
+          'selectAll',
+          'paste'
+        ),
+        imageAreaContent: menus(
+          'properties',
+          'rotateLeft',
+          'rotateRight',
+          'replace',
+          'export',
+          {key: 'opacity', subItems: ['25%', '50%', '75%', '100%']},
+          'flipHorizontal',
+          'flipVertical',
+          'crop',
+          'delete',
+          'copy',
+          'cut'
+        ),
+        imageCropMode: menus('done', 'cancel'),
+        editPathContent: menus('delete'),
+        longPressWithEditTextMode: menus(
+          'addText',
+          'paste',
+          'keepSourceFormatingPaste'
+        ),
+        longPressWithEditImageMode: menus(
+          'addImages',
+          'paste',
+        ),
+        longPressWithAllMode: menus(
+          'paste',
+          'keepSourceFormatingPaste',
+        ),
+        searchReplace: menus(
+          'replace',
+        )
+      },
+
+      formMode: {
+        textField: menus('properties','delete'),
+        checkBox: menus('properties', 'delete'),
+        radioButton: menus('properties', 'delete'),
+        listBox: menus('options','properties', 'delete'),
+        comboBox: menus('options', 'properties', 'delete'),
+        signatureField: menus('startToSign', 'delete'),
+        pushButton: menus('options','properties', 'delete'),
+      }
     }
   }
   return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);
 }
 
+
+export const menus = <
+  T extends string,
+  A extends readonly (T | CPDFContextMenuItem<T>)[]
+>(
+  ...items: A
+): CPDFContextMenuItem<T>[] =>
+  items.map(item =>
+    typeof item === 'string' ? { key: item } : item
+  );
 
 function mergeDeep(defaults: any, overrides: any): any {
   const merged = { ...defaults };

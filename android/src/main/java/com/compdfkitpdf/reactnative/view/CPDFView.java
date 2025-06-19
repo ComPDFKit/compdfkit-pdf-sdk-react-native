@@ -14,7 +14,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -22,11 +21,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
-import com.compdfkit.tools.common.pdf.CPDFDocumentFragment.CFillScreenChangeListener;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
-import com.compdfkit.tools.docseditor.pdfpageedit.CPDFPageEditDialogFragment;
-import com.compdfkit.tools.docseditor.pdfpageedit.CPDFPageEditDialogFragment.COnEnterBackPressedListener;
 import com.compdfkit.ui.reader.CPDFReaderView;
 import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
@@ -138,6 +134,14 @@ public class CPDFView extends FrameLayout {
             params.putInt("onPageChanged", pageIndex);
             onReceiveNativeEvent(params);
           }
+
+          @Override
+          public void onTapMainDocArea() {
+            super.onTapMainDocArea();
+            WritableMap params = Arguments.createMap();
+            params.putNull("onTapMainDocArea");
+            onReceiveNativeEvent(params);
+          }
         });
         documentFragment.pdfView.setSaveCallback((s, uri) -> {
           WritableMap event = Arguments.createMap();
@@ -156,6 +160,14 @@ public class CPDFView extends FrameLayout {
         documentFragment.setFillScreenChangeListener(isFillScreen -> {
           WritableMap params = Arguments.createMap();
           params.putBoolean("onFullScreenChanged", isFillScreen);
+          onReceiveNativeEvent(params);
+        });
+        pdfView.getCPdfReaderView().getUndoManager().addOnUndoHistoryChangeListener((cpdfUndoManager, operation, type) -> {
+          WritableMap historyState = Arguments.createMap();
+          historyState.putBoolean("canUndo", cpdfUndoManager.canUndo());
+          historyState.putBoolean("canRedo", cpdfUndoManager.canRedo());
+          WritableMap params = Arguments.createMap();
+          params.putMap("onAnnotationHistoryChanged", historyState);
           onReceiveNativeEvent(params);
         });
       });
