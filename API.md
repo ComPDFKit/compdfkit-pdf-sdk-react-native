@@ -49,6 +49,33 @@ Returns a Promise.
 ComPDFKit.initialize('android online license', 'ios online license')
 ```
 
+### initWithPath
+
+Initializes the ComPDFKit SDK using a license XML file. This method automatically detects whether to use **offline** or **online** verification.
+
+Parameters:
+
+| Name        | Type   | Description                  |
+| ----------- | ------ | ---------------------------- |
+| licensePath | string | Path to the license XML file |
+
+Returns a Promise.
+
+| Name   | Type    | Description                                                  |
+| ------ | ------- | ------------------------------------------------------------ |
+| result | boolean | Returns ``true`` if initialization is successful, otherwise returns ``false``. |
+
+```tsx
+// Android: Place the XML file under android/app/src/main/assets
+await ComPDFKit.initWithPath('assets://license_key_android.xml')
+
+// iOS: Place the XML file in the iOS root directory (next to AppDelegate)
+await ComPDFKit.initWithPath('license_key_ios.xml')
+
+// Alternatively, use an absolute file path
+await ComPDFKit.initWithPath('/data/data/your.package.name/files/license_key.xml')
+```
+
 ### getVersionCode
 
 Get the version number of the ComPDFKit SDK.
@@ -1047,20 +1074,20 @@ const filePath = 'content://media/external/file/1000045118';
 
 // Specify the pages to import. An empty array [] imports all pages.
 // In this example, only the first page (index 0) is imported.
-const pages = [0]; 
+const pages = [0];
 
 // Define the position to insert the imported pages.
 // 0 means inserting at the beginning of the document.
-const insertPosition = 0; 
+const insertPosition = 0;
 
 // Provide the document password if encrypted. Leave empty if not required.
 const password = '';
 
 // Import the document into the PDF reader.
 const importResult = await pdfReaderRef.current?._pdfDocument.importDocument(
-  filePath, 
-  pages, 
-  insertPosition, 
+  filePath,
+  pages,
+  insertPosition,
   password
 );
 ```
@@ -1087,7 +1114,7 @@ Returns a Promise.
 ```tsx
 const savePath = '/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Document.pdf';
 // Pages to extract from the current document
-const pages = [0, 1, 2]; 
+const pages = [0, 1, 2];
 const result = await pdfReaderRef.current?.splitDocumentPages(savePath, pages);
 ```
 

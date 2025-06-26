@@ -118,7 +118,6 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     CPDFSdk.init(mReactContext, license, true, (code, msg) -> {
       Log.d(TAG, "init_: code:" + code + ", msg:" + msg);
       promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
-      CPDFAbility.checkLicenseAllAbility();
     });
   }
 
@@ -141,6 +140,15 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
     CPDFSdk.init(mReactContext, androidOnlineLicense, false, (code, msg) -> {
       Log.d(TAG, "initialize: code:" + code + ", msg:" + msg);
       promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+    });
+  }
+
+  @ReactMethod
+  public void initWithPath(String licensePath, Promise promise) {
+    CPDFSdk.initWithPath(mReactContext, licensePath, (code, msg) -> {
+      Log.d(TAG, "initWithPath: code:" + code + ", msg:" + msg);
+      promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+      CPDFAbility.checkLicenseAllAbility();
     });
   }
 

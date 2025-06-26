@@ -20,6 +20,7 @@
 		EC4EF3572D36664A00EEA52B /* extraFonts in Resources */ = {isa = PBXBuildFile; fileRef = EC4EF3562D36664A00EEA52B /* extraFonts */; };
 		EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */; };
 		EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30152D7AC832004E62E0 /* test_sign_pic.png */; };
+		ECC155E22E0BD80C007D528F /* license_key_rn_ios.xml in Resources */ = {isa = PBXBuildFile; fileRef = ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
 		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = annot_test.pdf; sourceTree = "<group>"; };
 		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_sign_pic.png; sourceTree = "<group>"; };
+		ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = license_key_rn_ios.xml; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -132,6 +134,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */,
 				C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */,
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
 				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
@@ -264,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */,
+				ECC155E22E0BD80C007D528F /* license_key_rn_ios.xml in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
 				EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */,
@@ -647,7 +651,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -720,7 +727,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

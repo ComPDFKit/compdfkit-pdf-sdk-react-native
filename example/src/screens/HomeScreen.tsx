@@ -85,7 +85,6 @@ class HomeScreen extends Component<Props> {
       );
     }
   }
-
 }
 
 

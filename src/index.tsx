@@ -70,6 +70,25 @@ declare module 'react-native' {
        * ComPDFKit.initialize('your android compdfkit license', 'your ios compdfkit license')
        */
       initialize: (androidOnlineLicense: string, iosOnlineLicense: string) => Promise<boolean>;
+
+      /**
+       * Initialize the ComPDFKit PDF SDK using a license file.
+       * This method is supported only on Android and iOS platforms.
+       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
+       * @param { string } [licensePath] The path to the license file.
+       * - For Android, the path should be in the format: `assets://license_key.xml
+       * - For iOS, the path should be in the format: `license_key.xml`
+       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
+       * 
+       * @example
+       * // For Android
+       * bool result = await ComPDFKit.initWithPath('assets://license_key.xml')
+       * 
+       * // For iOS
+       * bool result = await ComPDFKit.initWithPath('license_key.xml')
+       * 
+       */
+      initWithPath: (licensePath : string) => Promise<boolean>;
       /**
        * Used to present a PDF document.
        * @method openDocument
@@ -133,7 +152,7 @@ declare module 'react-native' {
        * @returns
        */
       removeSignFileList : () => Promise<boolean>;
-      
+
       /**
        * Opens the system file picker to select a PDF document.
        * @returns A promise that resolves to the file path of the selected PDF document.
@@ -141,26 +160,26 @@ declare module 'react-native' {
       pickFile: () => Promise<string>;
 
       /**
-       * Imports font files to support displaying additional languages. 
+       * Imports font files to support displaying additional languages.
        * Imported fonts will appear in the font list for FreeText annotations and text editing.
-       * 
+       *
        * **Note:** Fonts must be imported before initializing the SDK.
-       * 
+       *
        * Steps to import fonts:
        * 1. Copy the fonts you want to import into a custom folder.
        * 2. Call `setImportFontDir` with the folder path as a parameter.
        * 3. Initialize the SDK using `ComPDFKit.init_`.
-       * 
+       *
        * @param {string} fontDir - The path to the folder containing font files to import.
        * @param {boolean} addSysFont - Whether to include system fonts in the font list.
-       * 
+       *
        * @example
        * ComPDFKit.setImportFontDir('fontdir', true);
        * @returns A promise that resolves when the fonts have been successfully imported.
        */
       setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
-      
-      
+
+
       /**
        * This method is supported only on the Android platform. It is used to create a URI for saving a file on the Android device.
        * The file is saved in the `Downloads` directory by default, but you can specify a subdirectory within `Downloads` using the
@@ -185,6 +204,7 @@ interface ComPDFKit {
   getSDKBuildTag(): Promise<string>;
   init_(license: string): Promise<boolean>;
   initialize(androidOnlineLicense: string, iosOnlineLicense: string): Promise<boolean>;
+  initWithPath(licensePath : string): Promise<boolean>;
   openDocument(document: string, password: string, configurationJson: string): void;
   removeSignFileList() : Promise<boolean>;
   pickFile() : Promise<string>;
@@ -535,7 +555,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       contentEditorMode: {
         editTextAreaContent : menus('properties', 'edit', 'cut', 'copy', 'delete'),
         editSelectTextContent: menus(
-          'properties', 
+          'properties',
           { key: 'opacity', subItems:['25%', '50%', '75%', '100%'] },
           'cut',
           'copy',

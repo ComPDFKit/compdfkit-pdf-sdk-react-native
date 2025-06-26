@@ -120,8 +120,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.1/ComPDFKit.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.1/ComPDFKit_Tools.podspec'
++  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.3/ComPDFKit.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.3/ComPDFKit_Tools.podspec'
     # ...
 end
 ```
@@ -131,8 +131,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.1'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.1'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.3'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.3'
     # ...
 end
 ```
@@ -200,7 +200,7 @@ Here is the sample code for `App.tsx`:
 
 import React, { Component } from 'react';
 import {
-    SafeAreaView
+  SafeAreaView
 } from 'react-native';
 import { ComPDFKit, CPDFReaderView } from '@compdfkit_pdf_sdk/react_native';
 import { Platform } from 'react-native';
@@ -209,72 +209,67 @@ type Props = {};
 
 export default class App extends Component<Props> {
 
-    state = {
-        versionCode: ''
-    }
+  state = {
+    versionCode: ''
+  }
 
-    constructor(props: Props) {
-        super(props)
-        this.initialize()
-        this.getVersionCode()
-    }
+  constructor(props: Props) {
+    super(props)
+    this.initialize()
+    this.getVersionCode()
+  }
 
-    async getVersionCode() {
-        // Get the version code of ComPDFKit SDK
-        var version = await ComPDFKit.getVersionCode()
-        this.setState({
-            versionCode: version
-        })
-    }
+  async getVersionCode() {
+    // Get the version code of ComPDFKit SDK
+    var version = await ComPDFKit.getVersionCode()
+    this.setState({
+      versionCode: version
+    })
+  }
 
-    async initialize() {
-        // Online certification, Fill in your online license
-        // Returns true if initialization is successful, otherwise returns false.
-        // var result = await ComPDFKit.initialize('compdfkit android license', 'compdfkit ios license')
-        // console.log("ComPDFKitRN", "initialize:", result)
+  async initialize() {
+    // use license file
+    var result = await ComPDFKit.initWithPath(Platform.OS == "android" ? "assets://license_key_rn_android.xml" : "license_key_rn_ios.xml")
+    console.log("ComPDFKitRN", "init_:", result)
+  }
 
-        // Offline authentication, Fill in your offline license
-        var result = await ComPDFKit.init_('compdfkit license')
-        console.log("ComPDFKitRN", "init_:", result)
-    }
-
-    /**
+  /**
      * Open the sample document embedded in Android or iOS project.
      */
-    openSample() {
-        var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
-        // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
-        var config = ComPDFKit.getDefaultConfig({
+  openSample() {
+    var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
+    // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
+    var config = ComPDFKit.getDefaultConfig({
 
-        })
-        ComPDFKit.openDocument(samplePDF, '', config)
-    }
+    })
+    ComPDFKit.openDocument(samplePDF, '', config)
+  }
 
-    samplePDF = Platform.OS === 'android'
-        ? 'file:///android_asset/PDF_Document.pdf'
-        : 'PDF_Document.pdf';
+  samplePDF = Platform.OS === 'android'
+  ? 'file:///android_asset/PDF_Document.pdf'
+  : 'PDF_Document.pdf';
 
-    const onPageChanged = (pageIndex : number) =>{
-        // console.log('ComPDFKitRN --- onPageChanged:', pageIndex);
-    }
+  const onPageChanged = (pageIndex : number) =>{
+    // console.log('ComPDFKitRN --- onPageChanged:', pageIndex);
+  }
 
-    const saveDocument = () => {
-        console.log('ComPDFKitRN saveDocument');
-    }
+  const saveDocument = () => {
+    console.log('ComPDFKitRN saveDocument');
+  }
 
-    render() {
-        return (
-            <SafeAreaView style={{ flex: 1 }}>
-                <CPDFReaderView
-                    document={this.samplePDF}
-                  	onPageChanged={onPageChanged}
-                    saveDocument={saveDocument}
-                    configuration={ComPDFKit.getDefaultConfig({})}
-                    style={{ flex: 1 }}
-                />
-            </SafeAreaView>
-        );
-    }
+  render() {
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <CPDFReaderView
+          document={this.samplePDF}
+          onPageChanged={onPageChanged}
+          saveDocument={saveDocument}
+          configuration={ComPDFKit.getDefaultConfig({})}
+          style={{ flex: 1 }}
+          />
+      </SafeAreaView>
+    );
+  }
 }
 ```
 

@@ -26,6 +26,11 @@ RCT_EXTERN_METHOD(initialize:(NSString *)androidOnlineLicense
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(initWithPath:(NSString *)license
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  
+
 RCT_EXTERN_METHOD(openDocument:(NSURL *)document
                   password:(NSString *)password
                   configurationJson:(NSString *)configurationJson)
