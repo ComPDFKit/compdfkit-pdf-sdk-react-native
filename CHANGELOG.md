@@ -1,5 +1,11 @@
 ## Newest Release
 
+### 2.4.4 - 27 Jun. 2025
+
+1. Fixed the “Super expression must either be null or a function” error caused by incorrect class inheritance when using the Hermes engine.
+
+## Previous Release
+
 ### 2.4.3 - 26 Jun. 2025
 
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.3.  
@@ -11,8 +17,6 @@
 7. Improved the page navigation logic during annotation undo and redo operations
 
 
-
-## Previous Release
 
 ### 2.4.1 - 19 Jun. 2025
 

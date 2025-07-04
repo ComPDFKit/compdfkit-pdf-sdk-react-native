@@ -217,7 +217,7 @@ const ComPDFKit = NativeModules.ComPDFKit
 export { ComPDFKit };
 // === Options & Configs ===
 export * from './configuration/CPDFOptions';
-export { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
+export type { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
 
 // === Core Views ===
 export { CPDFReaderView } from './view/CPDFReaderView';
@@ -254,8 +254,7 @@ export { CPDFTextWidget } from './annotation/form/CPDFTextWidget';
 export { CPDFWidgetItem } from './annotation/form/CPDFWidgetItem';
 
 // === Utils ===
-export { CPDFRectF } from './util/CPDFRectF';
-
+export type { CPDFRectF } from './util/CPDFRectF';
 
 ComPDFKit.getDefaultConfig = getDefaultConfig
 

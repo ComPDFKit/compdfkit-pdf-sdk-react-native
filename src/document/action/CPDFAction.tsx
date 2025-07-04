@@ -9,8 +9,6 @@
 
 import { CPDFActionType } from "../../configuration/CPDFOptions";
 import { safeParseEnumValue } from "../../util/CPDFEnumUtils";
-import { CPDFGoToAction } from "./CPDFGoToAction";
-import { CPDFUriAction } from "./CPDFUriAction";
 
 
 export class CPDFAction {
@@ -25,8 +23,10 @@ export class CPDFAction {
         const actionType = safeParseEnumValue(json.actionType, Object.values(CPDFActionType), CPDFActionType.UNKNOWN);
         switch(actionType){
             case 'goTo':
+                const { CPDFGoToAction } = require("./CPDFGoToAction");
                 return CPDFGoToAction.fromJson(json);
             case 'uri':
+                const { CPDFUriAction } = require("./CPDFUriAction");
                 return CPDFUriAction.fromJson(json);
             default:
                 return new CPDFAction(json);
