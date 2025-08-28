@@ -84,6 +84,8 @@ export class CPDFConfiguration {
      * Set whether to display the annotation toolbar
      */
     annotationToolbarVisible?: boolean;
+
+    showInkToggleButton?: boolean;
     /**
      * Top toolbar actions for Android platform
      *
@@ -457,6 +459,9 @@ export class CPDFConfiguration {
      * only android platform.
      */
     pageSameWidth?: boolean;
+    
+
+
   };
 
   global?: {
@@ -468,6 +473,12 @@ export class CPDFConfiguration {
     };
     signatureType?: CPDFSignatureType;
     enableExitSaveTips?: boolean;
+    thumbnail?: {
+      title?: string;
+      backgroundColor?: string | null;
+      editMode?: boolean;
+    };
+    enableErrorTips?: boolean;
   };
 
   /**

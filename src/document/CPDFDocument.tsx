@@ -12,14 +12,26 @@ import { CPDFDocumentEncryptAlgo, CPDFDocumentPermissions } from '../configurati
 import { CPDFPage, CPDFPageSize } from '../page/CPDFPage';
 import { CPDFAnnotation } from '../annotation/CPDFAnnotation';
 import { CPDFWidget } from '../annotation/form/CPDFWidget';
+import { CPDFTextSearcher } from '../page/CPDFTextSearcher';
 const { CPDFViewManager } = NativeModules;
 
 export class CPDFDocument {
 
     private _viewerRef: any;
 
+    private _textSearcher: CPDFTextSearcher;
+
     constructor(viewerRef: any) {
         this._viewerRef = viewerRef;
+        this._textSearcher = new CPDFTextSearcher(this._viewerRef);
+    }
+
+    /**
+     * Get the text searcher for the current document.
+     * @returns The text searcher instance for the current document.
+     */
+    get textSearcher() {
+        return this._textSearcher;
     }
 
     /**

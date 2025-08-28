@@ -9,8 +9,6 @@
 package com.compdfkitpdf.reactnative.util.annotation.forms;
 
 import com.compdfkit.core.annotation.CPDFAnnotation;
-import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 

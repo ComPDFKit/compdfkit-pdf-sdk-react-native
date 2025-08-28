@@ -108,6 +108,14 @@ const uiConpomentExamples = [
             component.props.navigation.navigate('CPDFPagesExample');
         }
     },
+    {
+        key: 'item10',
+        title: 'SearchText Example',
+        description: 'This example demonstrates text searching functionality in the PDF document.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFSearchTextExample');
+        }
+    },
 ];
 
 export const examples = [

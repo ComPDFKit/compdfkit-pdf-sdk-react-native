@@ -9,14 +9,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Image, Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFDisplaySettingsScreen } from './screens/CPDFDisplaySettingsScreen';
 import { CPDFPreviewModeListScreen } from './screens/CPDFPreviewModeListScreen';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -239,7 +239,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
     return (
         <PDFReaderContext.Provider value={pdfReaderRef.current}>
             <MenuProvider>
-                <SafeAreaView style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#FAFCFF' }}>
                     <View style={{ flex: 1 }}>
                         {renderToolbar()}
                         <CPDFReaderView
@@ -247,15 +247,10 @@ const CPDFReaderViewControllerExampleScreen = () => {
                             document={samplePDF}
                             onPageChanged={onPageChanged}
                             saveDocument={saveDocument}
+                            onIOSClickBackPressed={handleBack}
                             onPageEditDialogBackPress={onPageEditDialogBackPress}
                             onFullScreenChanged={onFullScreenChanged}
-                            configuration={ComPDFKit.getDefaultConfig({
-                                toolbarConfig: {
-                                    iosLeftBarAvailableActions: [
-                                        CPDFToolbarAction.THUMBNAIL
-                                    ]
-                                }
-                            })} />
+                            configuration={ComPDFKit.getDefaultConfig({})} />
                         <CPDFDisplaySettingsScreen
                             visible={displaySettingModalVisible}
                             onClose={() => setDisplaySettingModalVisible(false)}

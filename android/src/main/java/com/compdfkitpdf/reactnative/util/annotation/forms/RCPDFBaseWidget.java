@@ -9,20 +9,14 @@
 package com.compdfkitpdf.reactnative.util.annotation.forms;
 
 
-
 import android.graphics.RectF;
 import com.compdfkit.core.annotation.CPDFAnnotation;
-import com.compdfkit.core.annotation.CPDFAnnotation.Type;
 import com.compdfkit.core.annotation.form.CPDFWidget;
-import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
 import com.compdfkit.core.common.CPDFDate;
-import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.tools.common.utils.date.CDateUtil;
 import com.compdfkitpdf.reactnative.util.CAppUtils;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import java.util.List;
 
 public abstract class RCPDFBaseWidget implements RCPDFWidget {
 

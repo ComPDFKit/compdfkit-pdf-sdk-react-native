@@ -1,8 +1,6 @@
 package com.compdfkitpdf.reactnative.util.annotation.forms;
 
 import android.text.TextUtils;
-import com.compdfkit.core.annotation.CPDFAnnotation;
-import com.compdfkit.core.annotation.form.CPDFCheckboxWidget;
 import com.compdfkit.core.annotation.form.CPDFPushbuttonWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget;
 import com.compdfkit.core.document.CPDFDestination;
@@ -12,13 +10,10 @@ import com.compdfkit.core.document.action.CPDFAction.ActionType;
 import com.compdfkit.core.document.action.CPDFGoToAction;
 import com.compdfkit.core.document.action.CPDFUriAction;
 import com.compdfkit.core.font.CPDFFont;
-import com.compdfkit.core.page.CPDFPage;
 import com.compdfkitpdf.reactnative.util.CAppUtils;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class RCPDFPushbuttonWidget extends RCPDFBaseWidget {

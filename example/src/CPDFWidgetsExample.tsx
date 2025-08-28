@@ -9,13 +9,13 @@
 
 import React, { useState, useRef } from 'react';
 import { Image, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFWidgetType, CPDFTextWidget, CPDFWidget } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFWidgetType, CPDFTextWidget, CPDFWidget } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import DocumentPicker from 'react-native-document-picker';
+import { keepLocalCopy, pick, types } from '@react-native-documents/picker';
 import { CPDFWidgetListScreen } from './screens/CPDFWidgetListScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
 type RootStackParamList = {
     CPDFWidgetExample: { document?: string };
 };
@@ -65,25 +65,31 @@ const CPDFWidgetsExampleScreen = () => {
                 }
                 break;
             case 'Import Widgets':
-                const pickerResult = DocumentPicker.pick({
-                    type: [DocumentPicker.types.allFiles],
-                    copyTo: 'cachesDirectory'
-                });
-                pickerResult.then(async (res) => {
-                    const file = res[0];
 
-                    console.log('fileUri:', file?.uri);
-                    console.log('fileCopyUri:', file?.fileCopyUri);
-                    console.log('fileType:', file?.type);
-                    const path = file!!.fileCopyUri!!
-                    if (!path?.endsWith('xml') && !path?.endsWith('xfdf')) {
-                        console.log('ComPDFKitRN please select xfdf format file');
-                        return;
-                    }
-                    console.log('ComPDFKitRN importWidget, filePath:', path);
-                    const importWidgetResult = await pdfReaderRef.current?._pdfDocument.importWidgets(path);
-                    console.log('ComPDFKitRN importWidget:', importWidgetResult);
+                const [xfdfFile] = await pick({
+                    mode: 'open',
+                    type: [types.allFiles],
+                    allowMultiSelection: false,
                 })
+                const [copyResult] = await keepLocalCopy({
+                    files: [
+                        {
+                            uri: xfdfFile!.uri,
+                            fileName: xfdfFile!.name ?? 'fallback-name',
+                        },
+                    ],
+                    destination: 'documentDirectory',
+                })
+                if (copyResult.status === 'success') {
+                    console.log(copyResult.localUri);
+                    const uri = copyResult.localUri;
+                    if ((uri.endsWith('.xfdf') || uri.endsWith('.xml'))) {
+                        const importWidgetResult = await pdfReaderRef.current?._pdfDocument.importWidgets(uri);
+                        console.log('ComPDFKitRN importWidget:', importWidgetResult);
+                    } else {
+                        console.log('ComPDFKitRN Please select a valid xfdf or xml file');
+                    }
+                }
 
                 break;
             case 'Export Widgets':
@@ -137,19 +143,14 @@ const CPDFWidgetsExampleScreen = () => {
     return (
         <PDFReaderContext.Provider value={pdfReaderRef.current}>
             <MenuProvider>
-                <SafeAreaView style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#FAFCFF' }}>
                     <View style={{ flex: 1 }}>
                         {renderToolbar()}
                         <CPDFReaderView
                             ref={pdfReaderRef}
                             document={samplePDF}
-                            configuration={ComPDFKit.getDefaultConfig({
-                                toolbarConfig: {
-                                    iosLeftBarAvailableActions: [
-                                        CPDFToolbarAction.THUMBNAIL
-                                    ]
-                                }
-                            })} />
+                            configuration={ComPDFKit.getDefaultConfig({})}
+                            onIOSClickBackPressed={handleBack} />
                     </View>
                     <CPDFWidgetListScreen
                         visible={widgetsModalVisible}

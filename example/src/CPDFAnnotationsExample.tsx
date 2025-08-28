@@ -9,14 +9,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFAnnotation, CPDFViewMode, CPDFAnnotationType, menus } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFAnnotation, CPDFViewMode } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import DocumentPicker from 'react-native-document-picker';
+import { keepLocalCopy, pick, types } from '@react-native-documents/picker';
 import { CPDFAnnotationListScreen } from './screens/CPDFAnnotationListScreen';
 import { CPDFAnnotationToolbar } from './screens/annotation/CPDFAnnotationToolbar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -80,26 +80,32 @@ const CPDFAnnotationsExampleScreen = () => {
             case 'Import Annotations 1':
                 try {
                     // Select an xfdf file from the public directory and import it into the current document
-                    const pickerResult = DocumentPicker.pick({
-                        type: [DocumentPicker.types.allFiles],
-                        copyTo: 'cachesDirectory'
-                    });
-                    pickerResult.then(async (res) => {
-                        const file = res[0];
-
-                        console.log('fileUri:', file?.uri);
-                        console.log('fileCopyUri:', file?.fileCopyUri);
-                        console.log('fileType:', file?.type);
-                        const path = file!!.fileCopyUri!!
-                        if (!path?.endsWith('xml') && !path?.endsWith('xfdf')) {
-                            console.log('ComPDFKitRN please select xfdf format file');
-                            return;
-                        }
-
-                        const importResult = await pdfReaderRef.current?._pdfDocument.importAnnotations(path);
-                        console.log('ComPDFKitRN importAnnotations:', importResult);
+                    const [xfdfFile] = await pick({
+                        mode: 'open',
+                        type: [types.allFiles],
+                        allowMultiSelection: false,
                     })
+                    const [copyResult] = await keepLocalCopy({
+                        files: [
+                            {
+                                uri: xfdfFile!.uri,
+                                fileName: xfdfFile!.name ?? 'fallback-name',
+                            },
+                        ],
+                        destination: 'documentDirectory',
+                    })
+                    if (copyResult.status === 'success') {
+                        console.log(copyResult.localUri);
+                        const uri = copyResult.localUri;
+                        if ((uri.endsWith('.xfdf') || uri.endsWith('.xml'))) {
+                            const importResult = await pdfReaderRef.current?._pdfDocument.importAnnotations(uri);
+                            console.log('ComPDFKitRN importAnnotations:', importResult);
+                        } else {
+                            console.log('ComPDFKitRN Please select a valid xfdf or xml file');
+                        }
+                    }
                 } catch (err) {
+
                 }
                 break;
             case 'Import Annotations 2':
@@ -143,12 +149,22 @@ const CPDFAnnotationsExampleScreen = () => {
     };
 
     useEffect(() => {
-    if (pdfReaderRef.current) {
-        setPdfReader(pdfReaderRef.current);
-    }
-}, []);
+        if (pdfReaderRef.current) {
+            setPdfReader(pdfReaderRef.current);
+        }
+    }, []);
 
-    const handleBack = () => {
+    useEffect(() => {
+            const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+                e.preventDefault();
+                // Save document changes
+                handleSave();
+                navigation.dispatch(e.data.action);
+            });
+            return unsubscribe;
+        }, [navigation]);
+
+    const handleBack = async () => {
         navigation.goBack();
     };
 
@@ -178,7 +194,7 @@ const CPDFAnnotationsExampleScreen = () => {
     return (
         <PDFReaderContext.Provider value={pdfReader}>
             <MenuProvider>
-                <SafeAreaView style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1 , backgroundColor: '#FAFCFF'}}>
                     <View style={{ flex: 1 }}>
                         {renderToolbar()}
                         <CPDFReaderView
@@ -190,13 +206,14 @@ const CPDFAnnotationsExampleScreen = () => {
                             }}
                             configuration={ComPDFKit.getDefaultConfig({
                                 modeConfig: {
-                                    initialViewMode: CPDFViewMode.ANNOTATIONS
+                                    initialViewMode: CPDFViewMode.ANNOTATIONS,
+                                    readerOnly: true
                                 },
                                 toolbarConfig: {
                                     annotationToolbarVisible: false
                                 }
                             })} />
-                        <CPDFAnnotationToolbar/>
+                        <CPDFAnnotationToolbar />
                         <CPDFAnnotationListScreen
                             visible={annotationModalVisible}
                             annotations={annotationData}

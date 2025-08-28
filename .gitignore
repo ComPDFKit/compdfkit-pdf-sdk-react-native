@@ -39,7 +39,7 @@ project.xcworkspace
 .settings
 local.properties
 android.iml
-
+.kotlin/
 # Cocoapods
 #
 example/ios/Pods
@@ -79,3 +79,5 @@ android/keystores/debug.keystore
 lib/
 .github/
 /example/ios/Podfile.lock
+/example/ios/.xcode.env.local
+/example/ios/.xcode.env

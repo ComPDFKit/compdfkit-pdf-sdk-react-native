@@ -1,12 +1,10 @@
 package com.compdfkitpdf.reactnative.util.annotation.forms;
 
 import android.text.TextUtils;
-import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.annotation.form.CPDFListboxWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget;
 import com.compdfkit.core.annotation.form.CPDFWidgetItem;
 import com.compdfkit.core.font.CPDFFont;
-import com.compdfkit.core.page.CPDFPage;
 import com.compdfkitpdf.reactnative.util.CAppUtils;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;

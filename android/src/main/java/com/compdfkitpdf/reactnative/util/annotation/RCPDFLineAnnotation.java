@@ -4,7 +4,6 @@ package com.compdfkitpdf.reactnative.util.annotation;
 import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.annotation.CPDFLineAnnotation;
 import com.compdfkit.core.annotation.CPDFLineAnnotation.LineType;
-import com.compdfkit.core.page.CPDFPage;
 import com.compdfkitpdf.reactnative.util.CAppUtils;
 import com.facebook.react.bridge.WritableMap;
 

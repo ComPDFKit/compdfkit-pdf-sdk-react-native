@@ -1,14 +1,42 @@
 ## Newest Release
 
+### 2.4.6 - 29 Aug. 2025
+
+1. Updated iOS ComPDFKit PDF SDK to version 2.4.6.
+2. Updated Android ComPDFKit PDF SDK to version 2.4.6.
+3. Added compatibility for Android 15 and Android 16.
+4. Optimized page layout and zoom logic for an improved reading experience.
+5. Added pinch-to-zoom and page dragging while drawing annotations.
+6. Added support for filling out forms in annotation mode on Android.
+7. Introduced a new API for text search.
+8. Optimized the bottom toolbar UI in signature mode on iOS.
+9. Added JSON configuration to enable/disable error prompts and adjusted the display logic for scan document prompts on iOS.
+10. Added JSON configuration to enable/disable Ink drawing drag and mode-switch buttons.
+11. Unified setting of background color of blank area in theme.
+12. Added API for setting component background color.
+13. Removed the dependency on the prop-types library.
+14. Fixed a crash caused by entering Emoji characters on Android.
+15. Resolved crashes when verifying digital signatures in certain documents on Android.
+16. Fixed an issue where adding digital signatures failed in some documents on Android.
+17. Fixed an issue where pages always aligned to the left after setting horizontal margins on Android.
+18. Fixed page jumping issues in vertical scrolling mode when horizontal margins were set on Android.
+19. Fixed an issue where FreeText annotations did not fully display after being saved on Android.
+20. Resolved a crash caused by `InitOutFont` during SDK initialization on Android.
+21. Fixed an issue where `save()` did not save ongoing Ink and Pencil annotations on iOS.
+22. Fixed an issue where the top text was not vertically centered on iOS.
+23. Fixed flickering when opening a document multiple times on iOS.
+24. Fixed lagging when scrolling in content editing mode on iOS.
+
+## Previous Release
+
 ### 2.4.4 - 27 Jun. 2025
 
 1. Fixed the “Super expression must either be null or a function” error caused by incorrect class inheritance when using the Hermes engine.
 
-## Previous Release
 
 ### 2.4.3 - 26 Jun. 2025
 
-1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.3.  
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.3.
 2. Added the features support for ComPDFKit PDF SDK for Android V2.4.3.
 3. Fixed a crash issue when exporting annotation files in certain documents
 4. Fixed an issue where selecting an annotation would unexpectedly switch the current drawing annotation type

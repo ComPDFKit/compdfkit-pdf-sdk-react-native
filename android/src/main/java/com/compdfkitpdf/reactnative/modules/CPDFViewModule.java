@@ -11,7 +11,6 @@ package com.compdfkitpdf.reactnative.modules;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkitpdf.reactnative.viewmanager.CPDFViewManager;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -19,8 +18,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.uimanager.UIBlock;
-import com.facebook.react.uimanager.UIManagerModule;
 
 
 public class CPDFViewModule extends ReactContextBaseJavaModule {
@@ -152,10 +149,23 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void setBackgroundColor(int tag, String color, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      try{
+        mPDFViewInstance.setWidgetBackgroundColor(tag, color);
+        promise.resolve(null);
+      }catch (Exception e){
+        promise.resolve(null);
+      }
+    });
+  }
+
+  @ReactMethod
   public void setReadBackgroundColor(int tag, ReadableMap array, Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(() ->{
       String color = array.getString("color");
-      mPDFViewInstance.setReadBackgroundColor(tag, color);
+      String displayMode = array.getString("displayMode");
+      mPDFViewInstance.setReadBackgroundColor(tag, color, displayMode);
       promise.resolve(null);
     });
   }
@@ -622,6 +632,47 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
     getReactApplicationContext().runOnUiQueueThread(() -> {
       mPDFViewInstance.annotationRedo(tag);
       promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void searchText(int tag, String keywords, int searchOptions, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.searchText(tag, keywords, searchOptions));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void clearSearch(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.clearSearchResult(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void selection(int tag, ReadableMap map, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      int pageIndex = map.getInt("pageIndex");
+      int textRangeIndex = map.getInt("textRangeIndex");
+      mPDFViewInstance.selectionText(tag, pageIndex, textRangeIndex);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void getSearchText(int tag, int pageIndex, int location, int length, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        String text = mPDFViewInstance.getSearchText(tag, pageIndex, location, length);
+        promise.resolve(text);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
     });
   }
 

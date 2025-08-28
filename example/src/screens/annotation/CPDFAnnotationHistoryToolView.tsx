@@ -82,7 +82,6 @@ export const CPDFAnnotationHistoryToolView: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#FAFCFF',
-        elevation: 4,
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'flex-start',

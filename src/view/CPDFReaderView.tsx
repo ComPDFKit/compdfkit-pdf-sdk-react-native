@@ -8,12 +8,11 @@
  */
 
 import React, { PureComponent } from 'react';
-import PropTypes, { Requireable, Validator } from 'prop-types';
 import { findNodeHandle, requireNativeComponent, NativeModules,Platform } from 'react-native';
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import { CPDFAnnotationType, CPDFThemes, CPDFViewMode } from '../configuration/CPDFOptions';
 import { CPDFDocument } from '@compdfkit_pdf_sdk/react_native';
 import { CPDFAnnotationHistoryManager } from '../history/CPDFAnnotationHistoryManager';
+import { normalizeColorToARGB } from '../util/CPDFEnumUtils';
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -30,36 +29,19 @@ const { CPDFViewManager } = NativeModules;
  *  />
  */
 
-const propTypes = {
-  configuration: PropTypes.string.isRequired,
-  document: PropTypes.string.isRequired,
-  password: PropTypes.string,
-  onPageChanged : func<(pageIndex: number) => void>(),
-  saveDocument : func<() => void>(),
-  onPageEditDialogBackPress : func<() => void>(),
-  onFullScreenChanged : func<(isFullScreen: boolean) => void>(),
-  onTapMainDocArea: func<() => void>(), 
-  onIOSClickBackPressed: func<() => void>(),// iOS only
-  ...ViewPropTypes,
+export interface CPDFReaderViewProps {
+  configuration: string;
+  document: string;
+  password?: string;
+  onPageChanged?: (pageIndex: number) => void;
+  saveDocument?: () => void;
+  onPageEditDialogBackPress?: () => void;
+  onFullScreenChanged?: (isFullScreen: boolean) => void;
+  onTapMainDocArea?: () => void;
+  onIOSClickBackPressed?: () => void; // iOS only
+  onChange?: (event: any) => void;
+  style?: any;
 }
-
-// Generates the prop types for TypeScript users, from PropTypes.
-type CPDFReaderViewProps = PropTypes.InferProps<typeof propTypes>;
-
-function func<T>(): Requireable<T> {
-
-  let validator: Validator<T> = function (props: { [key: string]: any }, propName: string, componentName: string): Error | null {
-    if (typeof props[propName] !== "function" && typeof props[propName] !== "undefined") {
-      return new Error(`Invalid prop \`${propName}\` of type \`${typeof props[propName]}\` supplied to \`${componentName}\`, expected a function.`);
-    }
-    return null;
-  }
-
-  const t: Requireable<T> = validator as Requireable<T>;
-  t.isRequired = validator as Validator<NonNullable<T>>;
-  return t;
-}
-
 
 export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
@@ -67,8 +49,6 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   _pdfDocument : CPDFDocument;
 
   _annotationsHistoryManager: CPDFAnnotationHistoryManager;
-
-  static propTypes = propTypes;
 
   static defaultProps = {
     password: ''
@@ -363,6 +343,23 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
           'displayMode' : theme,
           'color' : color
       });
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Set the background color of the reader.
+   * @param color The background color to set (in hex format).
+   * @example
+   * await pdfReaderRef.current?.setBackgroundColor('#285BA8FF');
+   * @returns
+   */
+  setBackgroundColor = (color : string) : Promise<void> => {
+
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      const argbColor = normalizeColorToARGB(color);
+      return CPDFViewManager.setBackgroundColor(tag, argbColor);
     }
     return Promise.resolve();
   }
@@ -879,7 +876,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   render() {
     return (
       <RCTCPDFReaderView
-        ref={(ref) => {this._setNativeRef(ref)}}
+        ref={this._setNativeRef}
         style={{ flex: 1 }}
         onChange={this.onChange}
         {...this.props}

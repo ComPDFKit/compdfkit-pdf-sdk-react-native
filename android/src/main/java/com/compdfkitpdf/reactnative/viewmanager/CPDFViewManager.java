@@ -15,7 +15,6 @@ import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.CONTENT_SCHEME;
 import static com.compdfkitpdf.reactnative.util.CPDFDocumentUtil.FILE_SCHEME;
 
 import android.app.Activity;
-
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -23,8 +22,8 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.common.CPDFDocumentException;
 import com.compdfkit.core.document.CPDFDocument;
@@ -36,13 +35,11 @@ import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
 import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.core.page.CPDFPage.PDFFlattenOption;
 import com.compdfkit.core.undo.CPDFUndoManager;
-import com.compdfkit.core.undo.exception.CPDFUndoFailedException;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.print.CPDFPrintUtils;
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
-import com.compdfkit.tools.common.utils.viewutils.CViewUtils;
 import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfview.CPDFPageIndicatorView;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl;
@@ -53,8 +50,10 @@ import com.compdfkit.ui.proxy.CPDFBaseAnnotImpl;
 import com.compdfkit.ui.proxy.form.CPDFSignatureWidgetImpl;
 import com.compdfkit.ui.reader.CPDFPageView;
 import com.compdfkit.ui.reader.CPDFReaderView;
-import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
+import com.compdfkit.ui.textsearch.ITextSearcher;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
+import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
+import com.compdfkitpdf.reactnative.util.CPDFSearchUtil;
 import com.compdfkitpdf.reactnative.view.CPDFView;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -260,11 +259,33 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     pdfView.getCPDFReaderView().setCanScale(canScale);
   }
 
-  public void setReadBackgroundColor(int tag, String color) {
+  public void setWidgetBackgroundColor(int tag, String color) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    pdfView.documentFragment.pdfView.setBackgroundColor(Color.parseColor(color));
+  }
+
+  public void setReadBackgroundColor(int tag, String color, String displayMode) {
     CPDFView pdfView = mDocumentViews.get(tag);
     pdfView.getCPDFReaderView().setReadBackgroundColor(Color.parseColor(color));
-    pdfView.getCPDFReaderView().setBackgroundColor(
-      CViewUtils.getColor(Color.parseColor(color), 190));
+    CPDFViewCtrl cpdfViewCtrl = pdfView.documentFragment.pdfView;
+    switch (displayMode) {
+      case "light":
+        cpdfViewCtrl.setBackgroundColor(ContextCompat.getColor(reactContext,
+          com.compdfkit.tools.R.color.tools_pdf_view_ctrl_background_color));
+        break;
+      case "dark":
+        cpdfViewCtrl.setBackgroundColor(ContextCompat.getColor(reactContext,
+          com.compdfkit.tools.R.color.tools_pdf_view_ctrl_background_color_dark));
+        break;
+      case "sepia":
+        cpdfViewCtrl.setBackgroundColor(ContextCompat.getColor(reactContext,
+          com.compdfkit.tools.R.color.tools_pdf_view_ctrl_background_color_sepia));
+        break;
+      case "reseda":
+        cpdfViewCtrl.setBackgroundColor(ContextCompat.getColor(reactContext,
+          com.compdfkit.tools.R.color.tools_pdf_view_ctrl_background_color_reseda));
+        break;
+    }
   }
 
   public String getReadBackgroundColor(int tag) {
@@ -296,7 +317,9 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
   public void setVerticalMode(int tag, boolean isVerticalMode) {
     CPDFView pdfView = mDocumentViews.get(tag);
-    pdfView.getCPDFReaderView().setVerticalMode(isVerticalMode);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    readerView.setVerticalMode(isVerticalMode);
+    pdfView.documentFragment.pdfView.updateScaleForLayout();
   }
 
   public boolean isVerticalMode(int tag) {
@@ -313,6 +336,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   public void setContinueMode(int tag, boolean isContinueMode) {
     CPDFView pdfView = mDocumentViews.get(tag);
     pdfView.getCPDFReaderView().setContinueMode(isContinueMode);
+    pdfView.documentFragment.pdfView.updateScaleForLayout();
   }
 
   public boolean isContinueMode(int tag) {
@@ -324,6 +348,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     CPDFView pdfView = mDocumentViews.get(tag);
     pdfView.getCPDFReaderView().setDoublePageMode(isDoublePageMode);
     pdfView.getCPDFReaderView().setCoverPageMode(false);
+    pdfView.documentFragment.pdfView.updateScaleForLayout();
   }
 
   public boolean isDoublePageMode(int tag) {
@@ -335,6 +360,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     CPDFView pdfView = mDocumentViews.get(tag);
     pdfView.getCPDFReaderView().setDoublePageMode(isCoverPageMode);
     pdfView.getCPDFReaderView().setCoverPageMode(isCoverPageMode);
+    pdfView.documentFragment.pdfView.updateScaleForLayout();
   }
 
   public boolean isCoverPageMode(int tag) {
@@ -380,7 +406,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
   public void showThumbnailView(int tag, boolean editMode) {
     CPDFView pdfView = mDocumentViews.get(tag);
-    pdfView.documentFragment.showPageEdit(editMode);
+    pdfView.documentFragment.showPageEdit(false, editMode);
   }
 
   public void showBotaView(int tag) {
@@ -701,10 +727,8 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       }
       boolean importResult = document.importPages(importDocument, pages, insertPosition);
       promise.resolve(importResult);
-      CPDFPageIndicatorView indicatorView = cpdfView.documentFragment.pdfView.indicatorView;
       cpdfView.getCPDFReaderView().reloadPages();
-      indicatorView.setTotalPage(document.getPageCount());
-      indicatorView.setCurrentPageIndex(cpdfView.getCPDFReaderView().getPageNum());
+      updatePageIndicatorView(document, cpdfView.documentFragment.pdfView);
     } catch (Exception e) {
       promise.reject("IMPORT_DOCUMENT_FAIL", "error:" + e.getMessage());
     }
@@ -836,16 +860,13 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     if (isValid){
       CPDFReaderView readerView = cpdfView.getCPDFReaderView();
       readerView.reloadPages();
-      CPDFPageIndicatorView indicatorView = cpdfView.documentFragment.pdfView.indicatorView;
-      indicatorView.setTotalPage(document.getPageCount());
-      indicatorView.setCurrentPageIndex(readerView.getPageNum());
+      updatePageIndicatorView(document, cpdfView.documentFragment.pdfView);
     }
     return isValid;
   }
 
   public void setAnnotationMode(int tag, String mode) {
     CPDFView pdfView = mDocumentViews.get(tag);
-    CPDFReaderView readerView = pdfView.getCPDFReaderView();
     CAnnotationType type;
     try{
       type = switch (mode) {
@@ -908,4 +929,41 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
 
       }
   }
+
+  private void updatePageIndicatorView(CPDFDocument document, CPDFViewCtrl pdfView) {
+    if (pdfView != null) {
+      CPDFPageIndicatorView indicatorView = pdfView.indicatorView;
+      indicatorView.setTotalPage(document.getPageCount());
+      indicatorView.setCurrentPageIndex(pdfView.getCPdfReaderView().getPageNum());
+      pdfView.slideBar.setPageCount(document.getPageCount());
+      pdfView.slideBar.requestLayout();
+    }
+  }
+
+  public WritableArray searchText(int tag, String keywords, int searchOptions){
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    ITextSearcher iTextSearcher = readerView.getTextSearcher();
+    return CPDFSearchUtil.search(readerView.getPDFDocument(), iTextSearcher, keywords, searchOptions);
+  }
+
+  public void clearSearchResult(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFSearchUtil.clearSearch(reactContext, pdfView.documentFragment.pdfView, readerView.getPDFDocument());
+  }
+
+  public void selectionText(int tag, int pageIndex, int textRangeIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFSearchUtil.selection(reactContext, pdfView.documentFragment.pdfView, readerView.getPDFDocument(), pageIndex, textRangeIndex);
+  }
+
+  public String getSearchText(int tag, int pageIndex, int location, int length) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    return CPDFSearchUtil.getText(readerView.getPDFDocument(), pageIndex, location, length);
+  }
+
+
 }

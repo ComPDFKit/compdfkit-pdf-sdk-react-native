@@ -224,6 +224,9 @@ export { CPDFReaderView } from './view/CPDFReaderView';
 // === Document & Pages ===
 export { CPDFDocument } from './document/CPDFDocument';
 export * from './page/CPDFPage';
+export * from './page/CPDFSearchOptions';
+export * from './page/CPDFTextRange';
+export * from './page/CPDFTextSearcher';
 
 // === Actions ===
 export * from './document/action/CPDFAction';
@@ -274,6 +277,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
     toolbarConfig: {
       mainToolbarVisible : true,
       annotationToolbarVisible: true,
+      showInkToggleButton: true,
       androidAvailableActions: [
         CPDFToolbarAction.THUMBNAIL,
         CPDFToolbarAction.SEARCH,
@@ -530,7 +534,11 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         saveAsNewFile: true,
       },
       signatureType : 'manual',
-      enableExitSaveTips: false
+      enableExitSaveTips: false,
+      thumbnail: {
+        editMode: true
+      },
+      enableErrorTips: true
     },
     contextMenuConfig: {
       global:{

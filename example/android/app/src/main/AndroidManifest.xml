@@ -13,7 +13,8 @@
       android:allowBackup="false"
       android:requestLegacyExternalStorage="true"
       android:largeHeap="true"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+      android:supportsRtl="true">
 
       <activity
         android:name=".MainActivity"

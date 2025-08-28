@@ -1,40 +1,68 @@
 # ComPDFKit React-Native PDF Library
 
-## Overview
+## About
 
-[ComPDFKit PDF SDK](https://www.compdf.com) seamlessly operates on [Web](https://www.compdf.com/web), [Windows](https://www.compdf.com/windows), [Android](https://www.compdf.com/android), [iOS](https://www.compdf.com/ios), [Mac](https://www.compdf.com/contact-sales), and [Server](https://www.compdf.com/server), with support for cross-platform frameworks such as [React Native](https://www.compdf.com/react-native), [Flutter](https://www.compdf.com/flutter), etc.
+[ComPDFKit for React Native](https://www.compdf.com/react-native), developed by [ComPDF](https://www.compdf.com/), enables developers to quickly and seamlessly integrate advanced PDF features, such as viewing, annotating, editing, and signing PDFs, into any iOS and Android application. And we provide a 30-day free trial license to test your projects
 
-[ComPDFKit for React Native](https://www.compdf.com/react-native) allows you to quickly and seamlessly add PDF functions to any React Native application, elevating your Android and iOS apps with annotations, content editing, conversion, data extraction, etc.
+For more information, please visit our [developer guides](https://www.compdf.com/guides/pdf-sdk/react-native/requirements).
 
-Watch the video here:
-[![image](https://img.youtube.com/vi/2ug2nPkuOy4/maxresdefault.jpg)](https://youtu.be/2ug2nPkuOy4)
 
-## Related
+## Contents
 
-- [ComPDFKit PDF Library for iOS](https://github.com/ComPDFKit/PDF-SDK-iOS)
-- [ComPDFKit PDF Library for Android](https://github.com/ComPDFKit/PDF-SDK-Android)
-- ComPDFKit PDF SDK - [Flutter Library](https://pub.dev/packages/compdfkit_flutter)
-- [How to Build a React Native PDF Viewer](https://www.compdf.com/blog/build-a-react-native-pdf-viewer)
-- Recognize and extract data from PDFs with our online [Extract Demo](https://www.compdf.com/pdf-extract/demo)
-- [ComPDFKit API](https://api.compdf.com/api/pricing) allows you to get 1000 files processing monthly now! Just [sign up](https://api.compdf.com/signup) for a free trial and enjoy comprehensive PDF functions.
+- [Prerequisites](#prerequisites)
+- [Steps to Build a React Native PDF Viewer with ComPDFKit PDF SDK](#steps-to-build-a-react-native-pdf-viewer-with-compdfkit-pdf-sdk)
+- [Usage Example](#usage-example)
+- [API](#api)
+- [Support](#support)
 
 ## Prerequisites
 
-A development environment for running React Native projects using the React Native CLI. If you're using **Expo**, check out our [integration guide docs](./docs/How to Use ComPDFKit PDF SDK for ReactNative with Expo.md) on the topic.
+Before starting the integration, please ensure the following prerequisites are met:
 
-* A license is required for trial. Please contact our [sales team](https://www.compdf.com/contact-sales) to obtain a free trial license.
-* npm or yarn
-* ComPDFKit SDK => 2.0.1
-* react-native => 0.71.0
-* Android `minSdkVersion` of `21` or higher
-* Android `targetSdkVersion` of `30` or higher
-* iOS 12 or higher
+### Get ComPDFKit License Key
 
-## Installation
+ComPDF offers a [30-day free trial license](https://www.compdf.com/pricing) for testing your project. Get one online without contacting sales.
 
-First, please follow the official [React Native environment setup guide](https://reactnative.dev/docs/environment-setup), configure [iOS and Android environments](https://reactnative.dev/docs/environment-setup), and create a [React Native project](https://reactnative.dev/docs/environment-setup).
+If you require advanced PDF features beyond the free trial license, please [contact us](https://www.compdf.com/contact-sales) to obtain a commercial license.
 
-If you have already created a React Native project, you can skip directly to [Installing the ComPDFKit Dependency](#Installing-the-ComPDFKit-Dependency).
+
+### Download the PDF SDK
+
+Download the ComPDFKit ReactNative PDF SDK from [Github](https://github.com/ComPDFKit/compdfkit-pdf-sdk-android) or [NPM](https://www.npmjs.com/package/@compdfkit_pdf_sdk/react_native).
+
+### System Requirements
+
+#### Android
+
+Please install the following required packages:
+
+- A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
+- The [latest stable version of Android Studio](https://developer.android.com/studio)
+- The [Android NDK](Android%20NDK)
+- An [Android Virtual Device](https://developer.android.com/studio/run/managing-avds.html) or a hardware device
+
+Operating Environment Requirements:
+
+- Android minSdkVersion of 21 or higher.
+- ComPDFKit SDK 2.0.1 or higher.
+
+#### iOS
+
+Please install the following required packages:
+
+- A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
+- The [latest stable version of Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+- The [latest stable version of CocoaPods](https://github.com/CocoaPods/CocoaPods/releases). Follow the [CocoaPods installation guide](https://guides.cocoapods.org/using/getting-started.html#installation) to install it.
+
+Operating Environment Requirements:
+
+- ComPDFKit SDK 2.0.1 or higher.
+- React Native dependency to version 3.0.0 or higher.
+- iOS 12.0 or higher.
+
+## Build a React Native PDF Viewer with ComPDFKit PDF SDK
+
+[![image](https://img.youtube.com/vi/2ug2nPkuOy4/maxresdefault.jpg)](https://youtu.be/2ug2nPkuOy4)
 
 ### Creating a New Project
 
@@ -55,6 +83,10 @@ Let's create a simple app that integrates ComPDFKit for React Native.
    ```bash
    cd MyApp
    ```
+
+#### Expo
+
+If you’re using Expo, refer to the guides post that explains [how to use ComPDFKit ReactNative SDK with Expo](https://www.compdf.com/guides/pdf-sdk/react-native/how-to-use-compdfkit-react-native-sdk-with-expo).
 
 ### Installing-the-ComPDFKit-Dependency
 
@@ -120,8 +152,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.3/ComPDFKit.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.3/ComPDFKit_Tools.podspec'
++  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.6/ComPDFKit.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.6/ComPDFKit_Tools.podspec'
     # ...
 end
 ```
@@ -131,8 +163,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.3'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.3'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.6'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.6'
     # ...
 end
 ```
@@ -176,9 +208,55 @@ end
 
 ### Apply the License Key
 
-Contact [ComPDFKit&#39;s sales team](https://www.compdf.com/contact-sales) to get a free 30-day license to test the project, and [apply the license key](https://www.compdf.com/guides/pdf-sdk/react-native/apply-the-license-key) following the guides.
+If you haven't get a license key, please check out [how to obtain a license key](/guides/pdf-sdk/react-native/requirements).
 
-ComPDFKit for React Native is a commercial SDK, which requires a license to grant developer permission to release their apps. Each license is only valid for one `bundle ID` or `applicationId` in development mode. Other flexible licensing options are also supported, please contact [our marketing team](mailto:support@compdf.com) to know more.
+ComPDFKit PDF SDK currently supports two authentication methods to verify license keys: online authentication and offline authentication.
+
+*Learn about:* 
+
+*[What is the authentication mechanism of ComPDFKit's license?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license)*
+
+*[What are the differences between Online Authentication and Offline Authentication?](https://www.compdf.com/faq/the-differences-between-online-authentication-and-offline-authentication)*
+
+Accurately obtaining the license key is crucial for the application of the license.
+
+**Android**
+
+1. In the email you received, locate the `XML` file containing the license key.
+
+2. Copy the `license_key_rn.xml` file into the following directory:`android/app/src/main/assets/`
+
+<img src="./screenshots/guides_rn_2.4_1.png" style="zoom:50%;" />
+
+3. Initialize the SDK:
+
+```tsx
+ComPDFKit.initWithPath('assets://license_key_rn.xml');
+```
+
+**iOS**
+
+1. Use Xcode to copy the `license_key_rn.xml`file into your project’s` ios/`directory.
+
+<img src="./screenshots/guides_rn_2.4_2.png" style="zoom:50%;" />
+
+2. Initialize the SDK:
+
+```tsx
+// Copy the license_key_rn_ios.xml file into your iOS project directory (or a readable location):
+ComPDFKit.initWithPath('license_key_rn.xml');
+```
+
+**Alternative Method**
+
+You can also store the License file in the device’s local storage and initialize the SDK using its file path:
+
+```tsx
+// Obtain the License file through the local storage path of the device for initialization
+ComPDFKit.initWithPath('/data/data/0/your_packages/files/license_key_rn.xml');
+```
+
+
 
 ## Usage-Example
 
@@ -229,7 +307,7 @@ export default class App extends Component<Props> {
 
   async initialize() {
     // use license file
-    var result = await ComPDFKit.initWithPath(Platform.OS == "android" ? "assets://license_key_rn_android.xml" : "license_key_rn_ios.xml")
+    var result = await ComPDFKit.initWithPath(Platform.OS == "android" ? "assets://license_key_rn.xml" : "license_key_rn.xml")
     console.log("ComPDFKitRN", "init_:", result)
   }
 
@@ -407,10 +485,5 @@ APIs are available on the [API](API.md)
 - For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support).
 - To get more details and an accurate quote, please contact our [Sales Team](https://compdf.com/contact-us).
 
-## Note
-
-We are glad to announce that you can register a ComPDFKit API account for a [free trial](https://api.compdf.com/api/pricing) to process 1000 documents per month for free.
-
-Thanks,
-
-The ComPDFKit Team
+Thanks for reading
+The [ComPDF](https://www.compdf.com/) Team

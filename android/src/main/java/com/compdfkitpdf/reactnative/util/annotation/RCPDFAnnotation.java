@@ -11,7 +11,6 @@ package com.compdfkitpdf.reactnative.util.annotation;
 
 
 import com.compdfkit.core.annotation.CPDFAnnotation;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 public interface RCPDFAnnotation {

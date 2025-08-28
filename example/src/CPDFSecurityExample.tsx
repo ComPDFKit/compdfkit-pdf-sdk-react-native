@@ -9,12 +9,12 @@
 
 import React, { useState, useRef } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFDocumentEncryptAlgo } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFReaderView, ComPDFKit, CPDFDocumentEncryptAlgo } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -124,19 +124,14 @@ const CPDFSecurityExampleScreen = () => {
 
     return (
         <MenuProvider>
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 , backgroundColor: '#FAFCFF' }}>
                 <View style={{ flex: 1 }}>
                     {renderToolbar()}
                     <CPDFReaderView
                         ref={pdfReaderRef}
                         document={samplePDF}
-                        configuration={ComPDFKit.getDefaultConfig({
-                            toolbarConfig: {
-                                iosLeftBarAvailableActions: [
-                                    CPDFToolbarAction.THUMBNAIL
-                                ]
-                            }
-                        })} />
+                        configuration={ComPDFKit.getDefaultConfig({})}
+                        onIOSClickBackPressed={handleBack} />
                 </View>
             </SafeAreaView>
         </MenuProvider>

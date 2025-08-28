@@ -9,7 +9,7 @@
 import PDFReaderContext, { CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect, useState } from "react";
 import { Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
+import { pick, types,DocumentPickerResponse } from '@react-native-documents/picker';
 
 interface CPDFImportDocumentScreenProps {
     visible: boolean;
@@ -107,11 +107,11 @@ export const CPDFImportDocumentScreen: React.FC<CPDFImportDocumentScreenProps> =
                                                 break;
                                         }
                                         console.log('InsertDocumentInfo:', {
-                                            'document': document?.fileCopyUri,
+                                            'document': document?.uri,
                                             'pages': pages,
                                             'insertPosition': insertPosition
                                         })
-                                        onImport(document?.fileCopyUri!, pages, insertPosition)
+                                        onImport(document?.uri!, pages, insertPosition)
 
                                     }}>
                                     <Text style={{
@@ -127,20 +127,20 @@ export const CPDFImportDocumentScreen: React.FC<CPDFImportDocumentScreenProps> =
                             <ScrollView keyboardShouldPersistTaps="handled">
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 56, alignItems: 'center', marginTop: 8 }}>
                                     <Text style={styles.titleMedium}>File Name</Text>
-                                    <TouchableOpacity onPress={() => {
-                                        const pickerResult = DocumentPicker.pick({
-                                            type: [DocumentPicker.types.pdf],
-                                            copyTo: 'cachesDirectory'
-                                        });
-                                        pickerResult.then(async (res) => {
-                                            const file = res[0];
-                                            const path = file!!.fileCopyUri!!
-                                            if (!path?.endsWith('pdf')) {
-                                                console.log('ComPDFKitRN please select pdf format file');
-                                                return;
-                                            }
-                                            setDocument(file);
+                                    <TouchableOpacity onPress={async () => {
+                                        const [pdfFile] = await pick({
+                                            type: [types.pdf],
+                                            allowMultiSelection: false
                                         })
+                                        if (!pdfFile) {
+                                            console.log('ComPDFKitRN please select pdf format file');
+                                            return;
+                                        }
+                                        if (!pdfFile.uri?.endsWith('pdf')) {
+                                            console.log('ComPDFKitRN please select pdf format file');
+                                            return;
+                                        }
+                                        setDocument(pdfFile);
                                     }}>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <Text style={styles.subTextMedium}>{document != null ? document.name : 'Select File'}</Text>

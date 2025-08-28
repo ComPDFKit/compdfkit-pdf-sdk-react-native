@@ -100,6 +100,11 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
             completionHandler(success)
         })
     }
+  
+    func setBackgroundColor(forCPDFViewTag tag : Int, color : String) {
+      let rtcCPDFView = cpdfViews[tag]
+      rtcCPDFView?.setBackgroundColor(hexColor: color)
+    }
     
     func setReadBackgroundColor(forCPDFViewTag tag : Int, displayMode : NSString) {
         let rtcCPDFView = cpdfViews[tag]
@@ -584,6 +589,38 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         let rtcCPDFView = cpdfViews[tag]
         rtcCPDFView?.pdfViewController?.pdfListView?.undoPDFManager?.redo()
     }
+  
+  func searchText(forCPDFViewTag tag : Int, text: String, searchOption: Int, completionHandler: @escaping ([[String: Any]]) -> Void) {
+    let rtcCPDFView = cpdfViews[tag]
+    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+    let searchResults = CPDFSearchUtil.searchText(from: pdfListView?.document, keywords: text, options:  CPDFSearchOptions(rawValue: searchOption))
+    completionHandler(searchResults)
+  }
+  
+  func selection(forCPDFViewTag tag : Int, dictionary: NSDictionary, completionHandler: @escaping (Bool) -> Void){
+    let rtcCPDFView = cpdfViews[tag]
+    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+    let selection = CPDFSearchUtil.selection(from: pdfListView?.document, info: dictionary)
+    if let selection = selection {
+      pdfListView?.go(to: selection.bounds, on: selection.page, offsetY: CGFloat(88), animated: false)
+      pdfListView?.setHighlightedSelection(selection, animated: true)
+      completionHandler(true)
+    }else {
+      completionHandler(false)
+    }
+  }
+  
+  func clearSearch(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+    let rtcCPDFView = cpdfViews[tag]
+    rtcCPDFView?.pdfViewController?.pdfListView?.setHighlightedSelection(nil, animated: false)
+  }
+  
+  func getSearchText(forCPDFViewTag tag : Int, pageIndex: Int, location: Int, length: Int, completionHandler: @escaping (String) -> Void) {
+    let rtcCPDFView = cpdfViews[tag]
+    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+    let text = CPDFSearchUtil.getSearchText(from: pdfListView?.document, pageIndex: pageIndex, location: location, length: length)
+    completionHandler(text ?? "")
+  }
     
     // MARK: - RCTCPDFViewDelegate
     

@@ -9,18 +9,18 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* CompdfkitPdfExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* CompdfkitPdfExampleTests.m */; };
 		0C80B921A6F3F58F76C31292 /* libPods-CompdfkitPdfExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CompdfkitPdfExample.a */; settings = {ATTRIBUTES = (Required, ); }; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		0D02A4A0614F01AAFFEF391F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */ = {isa = PBXBuildFile; fileRef = C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */; };
 		C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FCF5E12C475A9100CEFDBB /* Localizable.strings */; };
 		EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */ = {isa = PBXBuildFile; fileRef = EC09D8202D3DE886001B2CB3 /* test.xfdf */; };
 		EC4EF3572D36664A00EEA52B /* extraFonts in Resources */ = {isa = PBXBuildFile; fileRef = EC4EF3562D36664A00EEA52B /* extraFonts */; };
+		EC9311762E389CE900F89503 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9311742E389CE900F89503 /* AppDelegate.swift */; };
 		EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */; };
 		EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30152D7AC832004E62E0 /* test_sign_pic.png */; };
-		ECC155E22E0BD80C007D528F /* license_key_rn_ios.xml in Resources */ = {isa = PBXBuildFile; fileRef = ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */; };
+		ECC155E22E0BD80C007D528F /* license_key_rn.xml in Resources */ = {isa = PBXBuildFile; fileRef = ECC155E12E0BD80C007D528F /* license_key_rn.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,11 +38,8 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* CompdfkitPdfExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CompdfkitPdfExampleTests.m; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ComPDFKit_RN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComPDFKit_RN.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = CompdfkitPdfExample/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = CompdfkitPdfExample/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CompdfkitPdfExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CompdfkitPdfExample/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CompdfkitPdfExample/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = CompdfkitPdfExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-CompdfkitPdfExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample.debug.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -56,9 +53,11 @@
 		C9FCF5E42C475AB600CEFDBB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xfdf; sourceTree = "<group>"; };
 		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
+		EC9311742E389CE900F89503 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CompdfkitPdfExample/AppDelegate.swift; sourceTree = "<group>"; };
+		EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CompdfkitPdfExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = annot_test.pdf; sourceTree = "<group>"; };
 		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_sign_pic.png; sourceTree = "<group>"; };
-		ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = license_key_rn_ios.xml; sourceTree = "<group>"; };
+		ECC155E12E0BD80C007D528F /* license_key_rn.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = license_key_rn.xml; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -102,12 +101,11 @@
 		13B07FAE1A68108700A75B9A /* CompdfkitPdfExample */ = {
 			isa = PBXGroup;
 			children = (
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */,
+				EC9311742E389CE900F89503 /* AppDelegate.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				C9FCF5E12C475A9100CEFDBB /* Localizable.strings */,
 			);
@@ -134,7 +132,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				ECC155E12E0BD80C007D528F /* license_key_rn_ios.xml */,
+				ECC155E12E0BD80C007D528F /* license_key_rn.xml */,
 				C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */,
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
 				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
@@ -230,7 +228,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1630;
 					};
 				};
 			};
@@ -267,7 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */,
-				ECC155E22E0BD80C007D528F /* license_key_rn_ios.xml in Resources */,
+				ECC155E22E0BD80C007D528F /* license_key_rn.xml in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
 				EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */,
@@ -275,6 +273,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */,
 				EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */,
+				0D02A4A0614F01AAFFEF391F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,8 +423,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				EC9311762E389CE900F89503 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,7 +505,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-CompdfkitPdfExample.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -522,18 +519,19 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.4;
+				MARKETING_VERSION = 2.4.6;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.flutter.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
 				PRODUCT_NAME = ComPDFKit_RN;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "CompdfkitPdfExample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -545,7 +543,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-CompdfkitPdfExample.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -559,18 +556,19 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.4;
+				MARKETING_VERSION = 2.4.6;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.flutter.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.compdfkit.reactnative.example;
 				PRODUCT_NAME = ComPDFKit_RN;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "CompdfkitPdfExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -651,9 +649,13 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				USE_HERMES = true;
 			};
 			name = Debug;
@@ -724,7 +726,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

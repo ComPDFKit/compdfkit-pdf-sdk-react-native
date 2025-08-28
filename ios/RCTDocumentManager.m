@@ -61,6 +61,11 @@ RCT_EXTERN_METHOD(setReadBackgroundColor:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setBackgroundColor: (NSInteger)tag
+                  withBackgroundColor:(NSString *) backgroundColor
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getReadBackgroundColor:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -350,6 +355,29 @@ RCT_EXTERN_METHOD(annotationRedo:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(searchText: (NSInteger)tag
+                  withText:(NSString *) text
+                  withSearchOption : (NSInteger) searchOption
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(selection: (NSInteger)tag
+                  range:(NSDictionary)range
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(clearSearch: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getSearchText: (NSInteger)tag
+                   withPageIndex: (NSInteger) pageIndex
+                   withLocation: (NSInteger) location
+                   withLength: (NSInteger) length
+                   withResolver:(RCTPromiseResolveBlock)resolve
+                   withRejecter:(RCTPromiseRejectBlock)reject)
+                  
+                  
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

@@ -22,6 +22,8 @@ import CPDFAnnotationsExampleScreen from './src/CPDFAnnotationsExample';
 import CPDFSecurityExampleScreen from './src/CPDFSecurityExample';
 import CPDFPagesExampleScreen from './src/CPDFPagesExample';
 import CPDFWidgetsExampleScreen from './src/CPDFWidgetsExample';
+import CPDFSearchTextExampleScreen from './src/CPDFSearchTextExample';
+import CPDFSearchTextListScreen from './src/screens/CPDFSearchTextListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +44,7 @@ export default class App extends Component<Props> {
     console.log('ComPDFKitRN', "fontDir:", fontDir)
     await ComPDFKit.setImportFontDir(fontDir, true);
 
-    var result = await ComPDFKit.initWithPath(Platform.OS == "android" ? "assets://license_key_rn_android.xml" : "license_key_rn_ios.xml")
+    var result = await ComPDFKit.initWithPath(Platform.OS == "android" ? "assets://license_key_rn.xml" : "license_key_rn.xml")
     console.log("ComPDFKitRN", "init_:", result)
   }
 
@@ -105,6 +107,13 @@ export default class App extends Component<Props> {
           <Stack.Screen
             name='CPDFWidgetsExample'
             component={CPDFWidgetsExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFSearchTextExample'
+            component={CPDFSearchTextExampleScreen}
             options={() => ({
                   headerShown: false,
               })}

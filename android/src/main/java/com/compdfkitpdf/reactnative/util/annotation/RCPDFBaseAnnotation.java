@@ -3,17 +3,10 @@ package com.compdfkitpdf.reactnative.util.annotation;
 
 import android.graphics.RectF;
 import com.compdfkit.core.annotation.CPDFAnnotation;
-import com.compdfkit.core.annotation.CPDFAnnotation.Type;
-import com.compdfkit.core.annotation.CPDFMarkupAnnotation;
 import com.compdfkit.core.common.CPDFDate;
-import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.tools.common.utils.date.CDateUtil;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public abstract class RCPDFBaseAnnotation implements RCPDFAnnotation{
 

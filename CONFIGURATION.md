@@ -140,6 +140,7 @@ Configure functions for the top toolbar in the PDF view.
 | availableMenus              | Array   | A list of more functions popped up by the `menu` option on the top toolbar. |
 | mainToolbarVisible          | boolean | Whether to display the toolbar at the top of the main interface view. |
 | annotationToolbarVisible    | boolean | Shows or hides the annotation toolbar that appears at the bottom of the view when in annotation mode. |
+| showInkToggleButton         | boolean | Whether to display the toggle/slide and drawing state buttons in the upper-left corner when drawing ink annotations. |
 
 ##### **Constants**
 
@@ -794,6 +795,7 @@ This section is used to configure the types of forms enabled in the view's botto
 | watermark               | CPDFWatermarkConfig | {   "saveAsNewFile" : true, <br />"outsideBackgroundColor: ""<br />} | The user can configure the watermark addition popup, allowing them to choose whether to save the watermark directly to the current document or save it to a different directory.<br>**true**: Save to a different directory<br>**false**: Add to the current document directly |
 | signatureType           | String              | manual                                                       | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic |
 | enableExitSaveTips      | boolean             | true \| false                                                | When exiting, check if the document has been modified and prompt to save the document |
+| thumbnail               | CPDFThumbnail       | {   "title" : "",   <br />"backgroundColor": "",  <br /> "editMode" : true <br />} |                                                              |
 
 ##### themeMode Constants
 
@@ -1038,7 +1040,7 @@ The context menu configuration in form mode displays different context menu opti
 }
 ```
 
-## 
+
 
 ## Json Example
 
@@ -1057,6 +1059,8 @@ The context menu configuration in form mode displays different context menu opti
   },
   "toolbarConfig": {
     "mainToolbarVisible" : true,
+    "annotationToolbarVisible" : true,
+    "showInkToggleButton": true,
     "androidAvailableActions": [
       "thumbnail",
       "search",
@@ -1076,10 +1080,10 @@ The context menu configuration in form mode displays different context menu opti
       "viewSettings",
       "documentEditor",
       "documentInfo",
+      "save",
       "watermark",
       "security",
       "flattened",
-      "save",
       "share",
       "openDocument",
       "snip"
@@ -1145,7 +1149,8 @@ The context menu configuration in form mode displays different context menu opti
         "borderStyle": {
           "style": "solid",
           "dashGap": 0.0
-        }
+        },
+        "bordEffectType":"solid"
       },
       "circle": {
         "fillColor": "#1460F3",
@@ -1155,7 +1160,8 @@ The context menu configuration in form mode displays different context menu opti
         "borderStyle": {
           "style": "solid",
           "dashGap": 0.0
-        }
+        },
+        "bordEffectType":"solid"
       },
       "line": {
         "borderColor": "#1460F3",
@@ -1205,7 +1211,7 @@ The context menu configuration in form mode displays different context menu opti
         "fontSize": 30,
         "isBold": false,
         "isItalic": false,
-        "typeface": "Times-Roman",
+        "typeface": "Helvetica",
         "alignment": "left"
       }
     }
@@ -1304,17 +1310,200 @@ The context menu configuration in form mode displays different context menu opti
     "pageSpacing": 10,
     "margins" : [0,0,0,0],
     "pageScale": 1.0,
-    "pageSameWidth":true
+    "pageSameWidth": true
   },
   "global" : {
     "themeMode" : "system",
     "fileSaveExtraFontSubset" : true,
     "watermark": {
       "saveAsNewFile" : true,
-      "outsideBackgroundColor" :""
+      "outsideBackgroundColor" : ""
     },
     "signatureType": "manual",
-    "enableExitSaveTips" : true
+    "enableExitSaveTips" : true,
+    "thumbnail": {
+      "title" : "",
+      "backgroundColor": "",
+      "editMode" : true
+    },
+    "enableErrorTips" : true
+  },
+  "contextMenuConfig" : {
+    "global": {
+      "screenshot" : [
+        { "key": "exit" },
+        { "key": "share" }
+      ]
+    },
+    "viewMode": {
+      "textSelect": [
+        { "key": "copy" }
+      ]
+    },
+    "annotationMode": {
+      "textSelect": [
+        { "key": "copy" },
+        { "key": "highlight" },
+        { "key": "underline" },
+        { "key": "strikeout" },
+        { "key": "squiggly" }
+      ],
+      "longPressContent": [
+        { "key": "paste" },
+        { "key": "note" },
+        { "key": "textBox" },
+        { "key": "stamp" },
+        { "key": "image" }
+      ],
+      "markupContent": [
+        { "key": "properties" },
+        { "key": "note" },
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "delete" }
+      ],
+      "soundContent": [
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "play" },
+        { "key": "record" },
+        { "key": "delete" }
+      ],
+      "inkContent": [
+        { "key": "properties" },
+        { "key": "note" },
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "delete" }
+      ],
+      "shapeContent": [
+        { "key": "properties" },
+        { "key": "note" },
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "delete" }
+      ],
+      "freeTextContent": [
+        { "key": "properties" },
+        { "key": "edit" },
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "delete" }
+      ],
+      "signStampContent": [
+        { "key": "signHere" },
+        { "key": "delete" },
+        { "key": "rotate" }
+      ],
+      "stampContent": [
+        { "key": "note" },
+        { "key": "reply" },
+        { "key": "viewReply" },
+        { "key": "delete" },
+        { "key": "rotate" }
+      ],
+      "linkContent": [
+        { "key": "edit" },
+        { "key": "delete" }
+      ]
+    },
+    "contentEditorMode": {
+      "editTextAreaContent" : [
+        { "key": "properties" },
+        { "key": "edit" },
+        { "key": "cut" },
+        { "key": "copy" },
+        { "key": "delete" }
+      ],
+      "editSelectTextContent": [
+        { "key": "properties" },
+        {
+          "key": "opacity",
+          "subItems": ["25%", "50%", "75%", "100%"]
+        },
+        { "key": "cut" },
+        { "key": "copy" },
+        { "key": "delete" }
+      ],
+      "editTextContent": [
+        { "key": "select" },
+        { "key": "selectAll" },
+        { "key": "paste" }
+      ],
+      "imageAreaContent": [
+        { "key": "properties" },
+        { "key": "rotateLeft" },
+        { "key": "rotateRight" },
+        { "key": "replace" },
+        { "key": "export" },
+        {
+          "key": "opacity",
+          "subItems": ["25%", "50%", "75%", "100%"]
+        },
+        { "key": "flipHorizontal" },
+        { "key": "flipVertical" },
+        { "key": "crop" },
+        { "key": "delete" },
+        { "key": "copy" },
+        { "key": "cut" }
+      ],
+      "imageCropMode": [
+        { "key": "done" },
+        { "key": "cancel" }
+      ],
+      "editPathContent": [
+        { "key": "delete" }
+      ],
+      "longPressWithEditTextMode" : [
+        { "key" : "addText"},
+        { "key" : "paste"},
+        { "key" : "keepSourceFormatingPaste"}
+      ],
+      "longPressWithEditImageMode" : [
+        { "key" : "addImages"},
+        { "key" : "paste"}
+      ],
+      "longPressWithAllMode" : [
+        { "key" : "paste"},
+        { "key" : "keepSourceFormatingPaste"}
+      ],
+      "searchReplace": [
+        { "key": "replace" }
+      ]
+    },
+    "formMode": {
+      "textField": [
+        { "key": "properties" },
+        { "key": "delete" }
+      ],
+      "checkBox": [
+        { "key": "properties" },
+        { "key": "delete" }
+      ],
+      "radioButton": [
+        { "key": "properties" },
+        { "key": "delete" }
+      ],
+      "listBox": [
+        { "key": "options" },
+        { "key": "properties" },
+        { "key": "delete" }
+      ],
+      "comboBox": [
+        { "key": "options" },
+        { "key": "properties" },
+        { "key": "delete" }
+      ],
+      "signatureField": [
+        { "key": "startToSign" },
+        { "key": "delete" }
+      ],
+      "pushButton" : [
+        { "key": "options"},
+        { "key": "properties"},
+        { "key": "delete"}
+      ]
+    }
   }
 }
 ```

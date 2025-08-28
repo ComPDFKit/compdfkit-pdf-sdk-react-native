@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import { CPDFReaderView, ComPDFKit, CPDFToolbarAction, CPDFThemeMode, CPDFDisplayMode, CPDFAnnotationType, CPDFConfigTool, CPDFConfiguration } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFReaderView, ComPDFKit} from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
@@ -63,13 +63,8 @@ const CPDFReaderViewExampleScreen = () => {
         <CPDFReaderView
             ref={pdfReaderRef}
             document={samplePDF}
-            configuration={ComPDFKit.getDefaultConfig({
-                toolbarConfig:{
-                    iosLeftBarAvailableActions:[
-                        CPDFToolbarAction.THUMBNAIL
-                    ]
-                }
-            })}
+            onIOSClickBackPressed={() => navigation.goBack()}
+            configuration={ComPDFKit.getDefaultConfig({})}
         />
     );
 

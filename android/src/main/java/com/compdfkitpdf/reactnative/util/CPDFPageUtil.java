@@ -14,7 +14,6 @@ import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.annotation.CPDFAnnotation.Type;
 import com.compdfkit.core.annotation.form.CPDFCheckboxWidget;
 import com.compdfkit.core.annotation.form.CPDFRadiobuttonWidget;
-import com.compdfkit.core.annotation.form.CPDFTextWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
 import com.compdfkit.core.document.CPDFDocument;
