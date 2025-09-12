@@ -1,10 +1,3 @@
-/*
-  Localizable.strings
-  PDFViewer-Swift
-/*
-  Localizable.strings
-  PDFViewer
-
  //  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  //
  //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
@@ -12,8 +5,16 @@
  //  UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
  //  This notice may not be removed from this file.
  //
-  
-*/
+
+"Do you really want to reset the form?" = "Do you really want to reset the form?";
+"Start to Sign" = "Start to Sign";
+"Rotate Left" = "Rotate Left";
+"Rotate Right" = "Rotate Right";
+
+"The current document has been changed, do you want to keep the changes after exiting?" = "The current document has been changed, do you want to keep the changes after exiting?";
+"Yes" = "Yes";
+"No" = "No";
+"Keep editing" = "Keep editing";
 
 "Close" = "Close";
 "Settings" = "Settings";
@@ -153,7 +154,7 @@
 "Pages:" = "Pages:";
 "Creator" = "Creator";
 "Creation Date:" = "Creation Date:";
-"Modification Date:" = "Modification Dat:e";
+"Modification Date:" = "Modification Date:";
 "Access Permissions:" = "Access Permissions:";
 "Printing:" = "Printing:";
 "Content Copying:" = "Content Copying:";

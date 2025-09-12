@@ -1,7 +1,3 @@
-/*
-  Localizable.strings
-  PDFViewer
-
  //  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
  //
  //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
@@ -9,8 +5,16 @@
  //  UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
  //  This notice may not be removed from this file.
  //
-  
-*/
+
+"Do you really want to reset the form?" = "您确定要重置Form表单吗？";
+"Start to Sign" = "开始签名";
+"Rotate Left" = "左旋转";
+"Rotate Right" = "右旋转";
+
+"The current document has been changed, do you want to keep the changes after exiting?" = "当前文档已被修改，退出后是否保留更改？";
+"Yes" = "是";
+"No" = "否";
+"Keep editing" = "继续编辑";
 
 "Close" = "关闭";
 "Settings" = "设置";

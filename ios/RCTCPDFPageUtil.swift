@@ -412,7 +412,7 @@ class RCTCPDFPageUtil: NSObject {
                             if widgetType == "PushButton" {
                                 formDict["buttonTitle"] = buttonWidget.caption()
                                 var actionDict: [String: Any] = [:]
-                                let action = buttonWidget.action()
+                                let action = buttonWidget.action
                                 if let urlActions = action as? CPDFURLAction {
                                     actionDict["actionType"] = "uri"
                                     actionDict["uri"] = urlActions.url()

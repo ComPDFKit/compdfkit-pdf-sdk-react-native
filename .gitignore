@@ -79,5 +79,3 @@ android/keystores/debug.keystore
 lib/
 .github/
 /example/ios/Podfile.lock
-/example/ios/.xcode.env.local
-/example/ios/.xcode.env

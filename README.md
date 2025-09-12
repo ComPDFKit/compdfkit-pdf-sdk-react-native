@@ -152,8 +152,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.6/ComPDFKit.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.6/ComPDFKit_Tools.podspec'
++  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.7/ComPDFKit.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.4.7/ComPDFKit_Tools.podspec'
     # ...
 end
 ```
@@ -163,8 +163,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.6'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.6'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.7'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.4.7'
     # ...
 end
 ```
@@ -212,7 +212,7 @@ If you haven't get a license key, please check out [how to obtain a license key]
 
 ComPDFKit PDF SDK currently supports two authentication methods to verify license keys: online authentication and offline authentication.
 
-*Learn about:* 
+*Learn about:*
 
 *[What is the authentication mechanism of ComPDFKit's license?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license)*
 
