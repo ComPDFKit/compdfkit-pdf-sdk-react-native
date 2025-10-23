@@ -61,8 +61,8 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                    |
+| ------ | ------- | ------------------------------------------------------------------------------ |
 | result | boolean | Returns ``true`` if initialization is successful, otherwise returns ``false``. |
 
 ```tsx
@@ -281,8 +281,8 @@ The [fileName] parameter is required to specify the name of the file (e.g., `tes
 
 Parameters:
 
-| Name               | Type   | Description                                                 |
-| ------------------ | ------ | ----------------------------------------------------------- |
+| Name               | Type   | Description                                                   |
+| ------------------ | ------ | ------------------------------------------------------------- |
 | fileName           | string | specifies the name of the file, for example `test.pdf`.     |
 | childDirectoryName | string | specifies a subdirectory within the `Downloads` folder.     |
 | mimeType           | string | the MIME type of the file, defaulting to `application/pdf`. |
@@ -373,6 +373,68 @@ Used to pass configuration parameters when rendering a PDF file to customize UI 
   />
 ```
 
+#### onViewCreated
+Used to callback when the `CPDFReaderView` component has been created and is now in a usable state.
+**Usage Examples:**
+```tsx
+<CPDFReaderView
+  document={samplePDF}
+  configuration={ComPDFKit.getDefaultConfig({})}
+  style={{flex:1}}
+  onViewCreated={()=>{
+    // you can use pdfReaderRef to call API methods
+  }}
+  />
+```
+
+#### onIOSClickBackPressed
+
+Invoked when the user taps the back button located on the left side of the top navigation bar.
+
+```tsx
+<CPDFReaderView
+  document={samplePDF}
+  configuration={ComPDFKit.getDefaultConfig({})}
+  style={{flex:1}}
+  onIOSClickBackPressed={()=>{
+    // handle back button press
+  }}
+  />
+```
+
+#### onTapMainDocArea
+
+Invoked when the user taps the main document area.
+When `uiVisibilityMode` is set to `automatic`, this callback can be used to toggle the visibility of the top and bottom toolbars.
+
+```tsx
+<CPDFReaderView
+  document={samplePDF}
+  configuration={ComPDFKit.getDefaultConfig({})}
+  style={{flex:1}}
+  onTapMainDocArea={()=>{
+    // handle tap on main document area
+  }}
+  />
+```
+
+#### onFullScreenChanged
+
+Invoked when the full-screen mode is toggled.
+
+```tsx
+<CPDFReaderView
+  document={samplePDF}
+  configuration={ComPDFKit.getDefaultConfig({})}
+  style={{flex:1}}
+  onFullScreenChanged={(isFullScreen:boolean)=>{
+    // handle full-screen mode change
+  }}
+  />
+```
+
+
+
 ### Document
 
 #### open
@@ -404,8 +466,8 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name      | Type    | Description                                                                                     |
-| --------- | ------- | ----------------------------------------------------------------------------------------------- |
+| Name      | Type    | Description                                                                                |
+| --------- | ------- | ------------------------------------------------------------------------------------------ |
 | hasChange | boolean | `true`: The document has been modified,   `false`: The document has not been modified. |
 
 ```tsx
@@ -420,8 +482,8 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                                            |
-| ------ | ------- | ---------------------------------------------------------------------- |
+| Name   | Type    | Description                                                     |
+| ------ | ------- | --------------------------------------------------------------- |
 | result | boolean | **true**: Save successful,``**false**: Save failed. |
 
 ```js
@@ -434,16 +496,16 @@ Saves the document to the specified directory.
 
 Parameters:
 
-| Name           | Type    | Description                                                  |
-| -------------- | ------- | ------------------------------------------------------------ |
-| savePath       | string  | Specifies the path where the document should be saved.       |
-| removeSecurity | boolean | Whether to remove the document's password.                   |
-| fontSubset     | boolean | Whether to embed font subsets into PDF. Defaults to **true**. |
+| Name           | Type    | Description                                                        |
+| -------------- | ------- | ------------------------------------------------------------------ |
+| savePath       | string  | Specifies the path where the document should be saved.             |
+| removeSecurity | boolean | Whether to remove the document's password.                         |
+| fontSubset     | boolean | Whether to embed font subsets into PDF. Defaults to**true**. |
 
 Returns a Promise.
 
-| Name   | Type | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
+| Name   | Type | Description                                                                  |
+| ------ | ---- | ---------------------------------------------------------------------------- |
 | result | bool | Returns `true` if the document is saved successfully, otherwise `false`. |
 
 ```tsx
@@ -979,6 +1041,55 @@ Invokes the system's print service to print the current document.
 await pdfReaderRef.current?._pdfDocument.printDocument();
 ```
 
+#### renderPage
+
+Renders the specified page to a base64-encoded image string.
+
+Parameters:
+
+| Name            | Type   | Description                                                  |
+| --------------- | ------ | ------------------------------------------------------------ |
+| pageIndex       | number | the index of the page to render                              |
+| width           | number | the width of the rendered image                              |
+| height          | number | the height of the rendered image                             |
+| backgroundColor | string | the background color of the rendered page. **only Android Platform support.** |
+| drawAnnot       | bool   | whether to draw annotations. **only Android Platform support.** |
+| drawForm        | bool   | whether to draw forms. **only Android Platform support.**    |
+
+```tsx
+// get pageSize
+const pageSize =await pdfReaderRef.current?._pdfDocument.getPageSize(pageIndex);
+const base64Image = await pdfReaderRef.current?._pdfDocument.renderPage(0, pageSize.width, pageSize.height, '#FFFFFF', true, true);
+
+<Image
+    style={{width: '100%', height: '100%'}}
+    source={{uri: CPDFImageUtil.base64ToUri(base64Image)}}/>
+```
+
+#### dismissContextMenu
+
+Dismiss the context menu if it is displayed.
+
+```tsx
+await pdfReaderRef.current?.dismissContextMenu();
+```
+
+#### showSearchTextView
+
+Displays the text search view, allowing users to search for text within the document.
+
+```tsx
+await pdfReaderRef.current?.showSearchTextView();
+```
+
+#### hideSearchTextView
+
+Hides the text search view if it is currently displayed.
+
+```tsx
+await pdfReaderRef.current?.hideSearchTextView();
+```
+
 ### Page
 
 #### setDisplayPageIndex
@@ -987,12 +1098,18 @@ Jump to the index page.
 
 Parameters:
 
-| Name      | Type | Description         |
-| --------- | ---- | ------------------- |
-| pageIndex | int  | Jump to page number |
+| Name      | Type        | Description                                                  |
+| --------- | ----------- | ------------------------------------------------------------ |
+| pageIndex | int         | Jump to page number                                          |
+| rectList  | CPDFRectF[] | The rects to be visible in the page. The rect is in PDF coordinate system. |
 
 ```tsx
 await pdfReaderRef.current?.setDisplayPageIndex(1);
+
+// jump to page number 1, and display the specified area of the page
+const rectList = [new CPDFRectF(0,0,100,100)];
+// Clear the rectangles drawn on the page
+await pdfReaderRef.current?.clearDisplayRect();
 ```
 
 #### getCurrentPageIndex
@@ -1046,24 +1163,40 @@ Promise Parameters:
 const pageCount = await pdfReaderRef.current?._pdfDocument.getPageCount();
 ```
 
+#### getPageSize
+
+Get the size of the specified page.
+
+Parameters:
+
+| Name      | Type   | Description           |
+| --------- | ------ | --------------------- |
+| pageIndex | number | specified page index. |
+
+```tsx
+const pageSize = await pdfReaderRef.current?._pdfDocument.getPageSize(0);
+```
+
+
+
 #### importDocument
 
 Imports another PDF document and inserts it at a specified position in the current document.
 
 Parameters:
 
-| Name           | Type          | Description                                                  |
-| -------------- | ------------- | ------------------------------------------------------------ |
-| filePath       | string        | The path of the PDF document to import. Must be a valid, accessible path on the device. |
-| pages          | Array[number] | The collection of pages to import, represented as an array of integers. If `null` or an empty array is passed, the entire document will be imported. |
+| Name           | Type          | Description                                                                                                                                                                              |
+| -------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| filePath       | string        | The path of the PDF document to import. Must be a valid, accessible path on the device.                                                                                                  |
+| pages          | Array[number] | The collection of pages to import, represented as an array of integers. If `null` or an empty array is passed, the entire document will be imported.                                   |
 | insertPosition | number        | The position to insert the external document into the current document. This value must be provided. If not specified, the document will be inserted at the end of the current document. |
-| password       | string        | The password for the document, if it is encrypted. If the document is not encrypted, an empty string `''` can be passed. |
+| password       | string        | The password for the document, if it is encrypted. If the document is not encrypted, an empty string `''` can be passed.                                                               |
 
 Returns a Promise.
 
-| Name   | Type | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
-| result | bool | Returns a `Promise<boolean>` indicating whether the document import was successful.<br>\- `true` indicates success<br>\- `false` or an error indicates failure |
+| Name   | Type | Description                                                                                                                                                                  |
+| ------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| result | bool | Returns a `Promise<boolean>` indicating whether the document import was successful.`<br>`\- `true` indicates success`<br>`\- `false` or an error indicates failure |
 
 ```tsx
 // Define the file path of the document to import
@@ -1107,8 +1240,8 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
+| Name   | Type | Description                                                                                   |
+| ------ | ---- | --------------------------------------------------------------------------------------------- |
 | result | bool | A Promise that resolves to `true` if the operation is successful, or `false` if it fails. |
 
 ```tsx
@@ -1127,15 +1260,15 @@ It is useful for document editing scenarios where page insertion is needed.
 
 Parameters:
 
-| Name      | Type         | Description                                                  |
-| --------- | ------------ | ------------------------------------------------------------ |
+| Name      | Type         | Description                                                                                          |
+| --------- | ------------ | ---------------------------------------------------------------------------------------------------- |
 | pageIndex | number       | The index position where the blank page will be inserted. Must be a valid index within the document. |
-| pageSize  | CPDFPageSize | The size of the blank page to insert. Defaults to A4 size if not specified. |
+| pageSize  | CPDFPageSize | The size of the blank page to insert. Defaults to A4 size if not specified.                          |
 
 Returns a Promise.
 
-| Name   | Type | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
+| Name   | Type | Description                                                                                                                                                                          |
+| ------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | result | bool | A Promise that resolves to a boolean value indicating the success or failure of the blank page insertion. Resolves to `true` if the insertion was successful, `false` otherwise. |
 
 ```tsx
@@ -1153,16 +1286,16 @@ Imports annotations from the specified XFDF file into the current PDF document.
 
 Parameters:
 
-| Name     | Type   | Description                                                                                                                                                                                                                                                    |
-| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name     | Type   | Description                                                                                                                                                                                                                  |
+| -------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | xfdfFile | string | Path of the XFDF file to be imported.``The Android platform supports the following paths：``- **assets file**:'file:///android_assets/test.xfdf'``- **file path**: '/data/xxx.xfdf'``- **Uri**: 'content://xxxx' |
 
 Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                                                |
-| ------ | ------- | -------------------------------------------------------------------------- |
+| Name   | Type    | Description                                                         |
+| ------ | ------- | ------------------------------------------------------------------- |
 | result | boolean | **true**: import successful,``**false**: import failed. |
 
 ```tsx
@@ -1209,8 +1342,8 @@ This method fetches all annotations present on the current page of the PDF docum
 
 Promise Parameters:
 
-| Name        | Type             | Description                                                  |
-| ----------- | ---------------- | ------------------------------------------------------------ |
+| Name        | Type             | Description                                                                                             |
+| ----------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
 | annotations | CPDFAnnotation[] | A promise that resolves with all annotations on the current page, or an empty array if retrieval fails. |
 
 ```tsx
@@ -1238,8 +1371,8 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                                 |
-| ------ | ------- | ----------------------------------------------------------- |
+| Name   | Type    | Description                                                             |
+| ------ | ------- | ----------------------------------------------------------------------- |
 | result | boolean | **true**: remove successful,<br />**false**: remove failed. |
 
 ```tsx
@@ -1258,15 +1391,15 @@ Flatten all pages of the current document.
 
 Parameters:
 
-| Name       | Type    | Description                                                  |
-| ---------- | ------- | ------------------------------------------------------------ |
+| Name       | Type    | Description                                                              |
+| ---------- | ------- | ------------------------------------------------------------------------ |
 | savePath   | string  | The path to save the flattened document. On Android, you can pass a Uri. |
-| fontSubset | boolean | Whether to include the font subset when saving.              |
+| fontSubset | boolean | Whether to include the font subset when saving.                          |
 
 Returns a Promise.
 
-| Name   | Type    | Description                                                  |
-| ------ | ------- | ------------------------------------------------------------ |
+| Name   | Type    | Description                                                                        |
+| ------ | ------- | ---------------------------------------------------------------------------------- |
 | result | boolean | Returns 'true' if the flattened document is saved successfully, otherwise 'false'. |
 
 ```tsx
@@ -1330,7 +1463,59 @@ await historyManager.undo();
 await historyManager.redo();
 ```
 
+#### saveCurrentInk
+
+Saves the current ink annotation being drawn on the page.
+
+Returns a Promise.
+
+```tsx
+await pdfReaderRef.current?.saveCurrentInk();
+```
+
+#### saveCurrentPencil
+
+Saves the current pencil annotation being drawn on the page.
+
+Returns a Promise.
+
+```tsx
+await pdfReaderRef.current?.saveCurrentPencil();
+```
+
 ### Forms
+
+#### setFormCreationMode
+
+Sets the form creation mode for adding form fields to the PDF document. This method is only available in `CPDFViewMode.FORMS` mode.
+
+Parameters:
+
+| Name | Type           | Description                       |
+| ---- | -------------- | --------------------------------- |
+| type | CPDFWidgetType | The type of form field to create. |
+
+```tsx
+await pdfReaderRef.current?.setFormCreationMode(CPDFWidgetType.CHECKBOX);
+```
+
+#### getFormCreationMode
+
+Gets the current form creation mode. This method is only available in `CPDFViewMode.FORMS` mode.
+
+Returns a Promise.
+
+```tsx
+const formCreationMode = await pdfReaderRef.current?.getFormCreationMode();
+```
+
+#### exitFormCreationMode
+
+Exits the form creation mode. This method is only available in `CPDFViewMode.FORMS` mode.
+
+```tsx
+await pdfReaderRef.current?.exitFormCreationMode();
+```
 
 #### importWidgets
 
@@ -1340,16 +1525,16 @@ The API only imports form data and modifies the form content through the corresp
 
 Parameters:
 
-| Name     | Type   | Description                                                  |
-| -------- | ------ | ------------------------------------------------------------ |
-| xfdfFile | string | Path of the XFDF file to be imported.The Android platform supports the following paths：<br>- **assets file**:'file:///android_assets/test.xfdf'<br>- **file path**: '/data/xxx.xfdf'<br>- **Uri**: 'content://xxxx' |
+| Name     | Type   | Description                                                                                                                                                                                                                                        |
+| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| xfdfFile | string | Path of the XFDF file to be imported.The Android platform supports the following paths：`<br>`- **assets file**:'file:///android_assets/test.xfdf'`<br>`- **file path**: '/data/xxx.xfdf'`<br>`- **Uri**: 'content://xxxx' |
 
 Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                             |
-| ------ | ------- | ------------------------------------------------------- |
+| Name   | Type    | Description                                                         |
+| ------ | ------- | ------------------------------------------------------------------- |
 | result | boolean | **true**: import successful,``**false**: import failed. |
 
 ```tsx
@@ -1364,8 +1549,8 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name     | Type   | Description                                                  |
-| -------- | ------ | ------------------------------------------------------------ |
+| Name     | Type   | Description                                                                             |
+| -------- | ------ | --------------------------------------------------------------------------------------- |
 | xfdfPath | string | The path of the XFDF file if export is successful; an empty string if the export fails. |
 
 ```tsx
@@ -1382,8 +1567,8 @@ Returns a Promise.
 
 **Promise Parameters:**
 
-| Name    | Type         | Description                                             |
-| ------- | ------------ | ------------------------------------------------------- |
+| Name    | Type         | Description                                                         |
+| ------- | ------------ | ------------------------------------------------------------------- |
 | widgets | CPDFWidget[] | **true**: import successful,``**false**: import failed. |
 
 ```tsx
@@ -1412,11 +1597,8 @@ ComPDFKit supports programmatically filling form fields in a PDF document.
 The steps to fill in form fields using code are as follows:
 
 1. Get the page object of the form to be filled in from CPDFDocument.
-
 2. Retrieve all forms from the page object.
-
 3. Traverse all forms to find the one to be filled in.
-
 4. Modify the form field contents as needed.
 
 This example shows how to fill in form fields:
@@ -1475,8 +1657,8 @@ Returns a Promise.
 
 Promise Parameters:
 
-| Name   | Type    | Description                                                 |
-| ------ | ------- | ----------------------------------------------------------- |
+| Name   | Type    | Description                                                             |
+| ------ | ------- | ----------------------------------------------------------------------- |
 | result | boolean | **true**: remove successful,<br />**false**: remove failed. |
 
 ```tsx
@@ -1617,3 +1799,73 @@ Returns a Promise.
 const encryptAlgo = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
 ```
 
+#### verifyDigitalSignatureStatus
+
+Verifies the status of all digital signatures in the document. If the document contains a digital signature, a status bar will be displayed at the top of the document.
+
+```tsx
+await pdfReaderRef.current?.verifyDigitalSignatureStatus();
+```
+
+#### hideDigitalSignStatusView
+
+Hides the digital signature status bar if it is currently displayed.
+
+```tsx
+await pdfReaderRef.current?.hideDigitalSignStatusView();
+```
+
+### ContentEditor
+
+#### changeEditType
+
+Changes the type of content editing to be performed on the PDF document.
+
+Parameters:
+
+| Name      | Type           | Description                                                  |
+| --------- | -------------- | ------------------------------------------------------------ |
+| editTypes | CPDFEditType[] | An array of `CPDFEditType` values representing the desired editing modes. |
+
+```tsx
+const manager = pdfReaderRef.current._editManager;
+// only edit text
+await manager.changeEditType([CPDFEditType.TEXT]);
+
+// only edit image
+await manager.changeEditType([CPDFEditType.IMAGE]);
+
+// only edit path.
+await manager.changeEditType([CPDFEditType.PATH]);
+
+// edit text, image, path
+await manager.changeEditType([CPDFEditType.TEXT, CPDFEditType.IMAGE, CPDFEditType.PATH]);
+
+// none
+await manager.changeEditType([CPDFEditType.NONE]);
+```
+
+#### CPDFEditorHistoryManager
+
+Manages the undo and redo history for PDF content editing actions within a viewer component. including checking if undo/redo actions are available and performing those actions. It also allows registering a listener to monitor changes in the content editing history state.
+
+```tsx
+// Get the content editor manager from the PDF reader
+const editManager = pdfReaderRef.current._editManager;
+const historyManager = editManager.historyManager;
+
+// Set a listener to monitor changes in the undo/redo state
+historyManager.setOnHistoryStateChangedListener((pageIndex, canUndo, canRedo) => {
+});
+
+// Check if undo is possible
+const canUndo = await historyManager.canUndo();
+
+// Check if redo is possible
+const canRedo = await historyManager.canRedo();
+
+// Perform an undo operation
+await historyManager.undo();
+
+// Perform a redo operation
+await historyManager.redo();

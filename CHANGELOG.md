@@ -1,5 +1,40 @@
 ## Newest Release
 
+### 2.5.0 - 23 Oct. 2025
+New Features
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.5.0.
+2. Added the features support for ComPDFKit PDF SDK for Android V2.5.0.
+3. Added Spanish language support.
+4. Added API to render PDF pages as images
+5. Added API for creating forms
+6. Added watermark configuration options
+7. Added configurable border color for search results
+8. Added configurable highlight color for search results
+9. Added rectangle drawing when jumping to a page
+10. Added API to set content editing types
+11. Added configuration for page editing menu options
+12. Added UI mode configuration
+13. Added bottom toolbar UI configuration
+14. Added BOTA interface configuration
+15. Added control for showing and hiding the search view
+16. Added API to save ongoing Ink annotations
+17. Added API to hide the context menu
+18. Added theme mode configuration on iOS
+19. Added signature method configuration on iOS
+20. Added Pencil annotation toolbar configuration on iOS
+
+Issues Addressed
+1. Fixed crash on Android caused by empty arrays in shape annotation properties
+2. Fixed issue where FreeText input was not properly centered on Android
+3. Fixed inconsistency between FreeText font size and the configured value on Android
+4. Fixed an issue where some documents crashed when opened on Android.
+5. Fixed an issue where content edits were not saved correctly on Android.
+6.  Fixed issue where imported FreeText annotations might not display on iOS
+7. Fixed issue where the watermark toolbar would not appear when the top toolbar was hidden on iOS
+
+
+## Previous Release
+
 ### 2.4.7 - 12 Sep. 2025
 New Features
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.7.
@@ -11,11 +46,7 @@ New Features
 7. Fixed an issue where some documents failed to correctly trigger callbacks for the first or last page.
 
 
-
-## Previous Release
-
 ### 2.4.6 - 29 Aug. 2025
-
 1. Updated iOS ComPDFKit PDF SDK to version 2.4.6.
 2. Updated Android ComPDFKit PDF SDK to version 2.4.6.
 3. Added compatibility for Android 15 and Android 16.

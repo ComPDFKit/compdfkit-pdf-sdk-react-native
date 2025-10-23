@@ -20,6 +20,7 @@
 		EC9311762E389CE900F89503 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9311742E389CE900F89503 /* AppDelegate.swift */; };
 		EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */; };
 		EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30152D7AC832004E62E0 /* test_sign_pic.png */; };
+		ECBEE6F32E9E46B4002D0414 /* ic_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = ECBEE6F22E9E46B4002D0414 /* ic_logo.png */; };
 		ECC155E22E0BD80C007D528F /* license_key_rn.xml in Resources */ = {isa = PBXBuildFile; fileRef = ECC155E12E0BD80C007D528F /* license_key_rn.xml */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CompdfkitPdfExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PDF_Document.pdf; sourceTree = "<group>"; };
+		C980F8612E9F3E720056266F /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C9FCF5E22C475A9100CEFDBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9FCF5E42C475AB600CEFDBB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xfdf; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CompdfkitPdfExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = annot_test.pdf; sourceTree = "<group>"; };
 		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_sign_pic.png; sourceTree = "<group>"; };
+		ECBEE6F22E9E46B4002D0414 /* ic_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_logo.png; sourceTree = "<group>"; };
 		ECC155E12E0BD80C007D528F /* license_key_rn.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = license_key_rn.xml; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -132,6 +135,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				ECBEE6F22E9E46B4002D0414 /* ic_logo.png */,
 				ECC155E12E0BD80C007D528F /* license_key_rn.xml */,
 				C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */,
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
@@ -240,6 +244,7 @@
 				en,
 				Base,
 				"zh-Hans",
+				"es-419",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -270,6 +275,7 @@
 				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
 				EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */,
 				C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */,
+				ECBEE6F32E9E46B4002D0414 /* ic_logo.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */,
 				EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */,
@@ -304,13 +310,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -369,13 +371,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -390,13 +388,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -411,13 +405,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -459,6 +449,7 @@
 			children = (
 				C9FCF5E22C475A9100CEFDBB /* en */,
 				C9FCF5E42C475AB600CEFDBB /* zh-Hans */,
+				C980F8612E9F3E720056266F /* es-419 */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -535,7 +526,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.7;
+				MARKETING_VERSION = 2.5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -572,7 +563,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.7;
+				MARKETING_VERSION = 2.5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -665,7 +656,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -739,7 +733,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

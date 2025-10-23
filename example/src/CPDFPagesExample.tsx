@@ -16,6 +16,7 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import { CPDFImportDocumentScreen } from './screens/CPDFImportDocumentScreen';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CPDFRenderPageScreen } from './screens/CPDFRenderPageScreen';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -35,6 +36,8 @@ const CPDFPagesExampleScreen = () => {
     const route = useRoute<CPDFPagesExampleScreenRouteProp>();
 
     const [importModalVisible, setImportModalVisible] = useState(false);
+
+    const [renderPageModalVisible, setRenderPageModalVisible] = useState(false);
 
     const [samplePDF] = useState(
         route.params?.document || (Platform.OS === 'android'
@@ -57,7 +60,9 @@ const CPDFPagesExampleScreen = () => {
         'Save',
         'Import Document',
         'Split Document',
-        'Insert Blank Page'];
+        'Insert Blank Page',
+        'Render Page'
+    ];
 
     const handleMenuItemPress = async (action: string) => {
         switch (action) {
@@ -89,6 +94,9 @@ const CPDFPagesExampleScreen = () => {
                 const insertResult = await pdfReaderRef.current?._pdfDocument.insertBlankPage(1, CPDFPageSize.a4);
                 console.log('ComPDFKitRN insertBlankPage:', insertResult);
                 break;
+            case 'Render Page':
+                setRenderPageModalVisible(true);
+                break;    
             default:
                 break;
         }
@@ -145,6 +153,12 @@ const CPDFPagesExampleScreen = () => {
                                 });
                                 console.log('ComPDFKitRN importDocument:', importResult);
                             }} />
+                        <CPDFRenderPageScreen
+                            visible={renderPageModalVisible}
+                            onClose={() => {
+                                setRenderPageModalVisible(false);
+                            }}/>
+
                     </View>
                 </SafeAreaView>
             </MenuProvider>

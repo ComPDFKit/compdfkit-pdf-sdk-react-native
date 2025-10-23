@@ -8,9 +8,11 @@
 
 package com.compdfkitpdf.reactnative.modules;
 
+import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.compdfkit.tools.common.pdf.config.CPDFWatermarkConfig;
 import com.compdfkitpdf.reactnative.viewmanager.CPDFViewManager;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -18,6 +20,13 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 
 public class CPDFViewModule extends ReactContextBaseJavaModule {
@@ -107,9 +116,9 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setDisplayPageIndex(int tag, int pageIndex,Promise promise) {
+  public void setDisplayPageIndex(int tag, int pageIndex, ReadableArray array, Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(() -> {
-      mPDFViewInstance.setDisplayPageIndex(tag, pageIndex);
+      mPDFViewInstance.setDisplayPageIndex(tag, pageIndex, array);
       promise.resolve(null);
     });
   }
@@ -328,9 +337,10 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void showAddWatermarkView(int tag, boolean saveAsNewFile, Promise promise) {
+  public void showAddWatermarkView(int tag, ReadableMap map, Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(() -> {
-      mPDFViewInstance.showAddWatermarkView(tag, saveAsNewFile);
+      HashMap<String, Object> hashMap = map.toHashMap();
+      mPDFViewInstance.showAddWatermarkView(tag, CPDFWatermarkConfig.fromMap(hashMap));
       promise.resolve(null);
     });
   }
@@ -673,6 +683,134 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
       } catch (Exception e) {
         promise.reject(e);
       }
+    });
+  }
+
+  @ReactMethod
+  public void getPageSize(int tag, int pageIndex, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      WritableMap map = mPDFViewInstance.getPageSize(tag, pageIndex);
+      if (map != null){
+        promise.resolve(map);
+      }else {
+        promise.reject(new Throwable("Get page size failed."));
+      }
+    });
+  }
+
+  @ReactMethod
+  public void renderPage(int tag, int pageIndex, int width, int height, String backgroundColor, boolean drawAnnot, boolean drawForm,String pageCompression,  Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.renderPage(tag, pageIndex, width, height, backgroundColor, drawAnnot, drawForm, pageCompression, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void changeEditType(int tag, ReadableArray editTypes, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        int editType = 0;
+        for (int i = 0; i < editTypes.size(); i++) {
+          int type  = editTypes.getInt(i);
+          editType = type | editType;
+        }
+        mPDFViewInstance.changeEditType(tag, editType, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void editorCanUndo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> promise.resolve(mPDFViewInstance.editorCanUndo(tag)));
+  }
+
+  @ReactMethod
+  public void editorCanRedo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> promise.resolve(mPDFViewInstance.editorCanRedo(tag)));
+  }
+
+  @ReactMethod
+  public void editorUndo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> promise.resolve(mPDFViewInstance.editorUndo(tag)));
+  }
+
+  @ReactMethod
+  public void editorRedo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> promise.resolve(mPDFViewInstance.editorRedo(tag)));
+  }
+
+  @ReactMethod
+  public void setFormCreationMode(int tag, String formType, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()-> {
+      mPDFViewInstance.setFormCreationMode(tag, formType);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void getFormCreationMode(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(() -> promise.resolve(mPDFViewInstance.getFormCreationMode(tag)));
+  }
+
+  @ReactMethod
+  public void verifyDigitalSignatureStatus(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.verifyDigitalSignatureStatus(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void hideDigitalSignStatusView(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.hideDigitalSignatureView(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void clearDisplayRect(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.clearDisplayRect(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void dismissContextMenu(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.dismissContextMenu(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void showSearchTextView(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.showSearchTextView(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void hideSearchTextView(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.hideSearchTextView(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void saveCurrentInk(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.saveCurrentInk(tag);
+      promise.resolve(null);
     });
   }
 

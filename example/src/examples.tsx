@@ -94,6 +94,14 @@ const uiConpomentExamples = [
     },
     {
         key: 'item8',
+        title: 'Form Creation Example',
+        description: 'Demonstrate form creation functionality in CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFFormCreationExample');
+        }
+    },
+    {
+        key: 'item9',
         title: 'Security Example',
         description: 'This example shows how to set passwords, watermarks, etc.',
         action: (component: any)  => {
@@ -101,7 +109,7 @@ const uiConpomentExamples = [
         }
     },
     {
-        key: 'item9',
+        key: 'item10',
         title: 'Pages Example',
         description: 'This example demonstrates PDF page related operations, such as inserting and splitting PDF documents.',
         action: (component: any)  => {
@@ -109,11 +117,19 @@ const uiConpomentExamples = [
         }
     },
     {
-        key: 'item10',
+        key: 'item11',
         title: 'SearchText Example',
         description: 'This example demonstrates text searching functionality in the PDF document.',
         action: (component: any)  => {
             component.props.navigation.navigate('CPDFSearchTextExample');
+        }
+    },
+    {
+        key: 'item12',
+        title: 'Content Editing',
+        description: 'Switch between different content editing modes using API.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFContentEditorExample');
         }
     },
 ];

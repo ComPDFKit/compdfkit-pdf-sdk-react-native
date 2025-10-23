@@ -8,11 +8,12 @@
  */
 
 import { NativeModules, findNodeHandle } from 'react-native';
-import { CPDFDocumentEncryptAlgo, CPDFDocumentPermissions } from '../configuration/CPDFOptions';
+import { CPDFDocumentEncryptAlgo, CPDFDocumentPermissions, CPDFPageCompression, HexColor } from '../configuration/CPDFOptions';
 import { CPDFPage, CPDFPageSize } from '../page/CPDFPage';
 import { CPDFAnnotation } from '../annotation/CPDFAnnotation';
 import { CPDFWidget } from '../annotation/form/CPDFWidget';
 import { CPDFTextSearcher } from '../page/CPDFTextSearcher';
+import { normalizeColorToARGB } from '../util/CPDFEnumUtils';
 const { CPDFViewManager } = NativeModules;
 
 export class CPDFDocument {
@@ -592,7 +593,91 @@ export class CPDFDocument {
         return Promise.reject(new Error('Unable to find the native view reference'));
     }
 
+    /**
+     * Gets the size of the specified page.
+     * @example
+     * const size = await pdfReaderRef?.current?._pdfDocument.getPageSize(pageIndex);
+     * @param pageIndex The index of the page (0-based).
+     * @returns The size of the specified page as a `CPDFPageSize` object.
+     * @throws Error If the native view reference cannot be found.
+     * @remarks This method retrieves the dimensions of a specific page in the PDF document.
+     * @since 2.5.0
+     * @platform Android | iOS
+     */
+    getPageSize = async (pageIndex : number) : Promise<CPDFPageSize> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            const size = await CPDFViewManager.getPageSize(tag, pageIndex);
+            return Promise.resolve(CPDFPageSize.custom(size.width, size.height));
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Renders a PDF page into a base64-encoded image string.
+     * 
+     * Converts the specified page of the currently loaded PDF document into an image
+     * with the given dimensions, background color, and optional annotations or form fields.
+     * Useful for generating page thumbnails or exporting a page snapshot.
+     * 
+     * @example
+     * ```ts
+     * const size = await pdfReaderRef.current?._pdfDocument.getPageSize(pageIndex);
+     * const image = await pdfReaderRef.current?._pdfDocument.renderPage({
+     *   pageIndex,
+     *   width: size.width,
+     *   height: size.height,
+     *   backgroundColor: '#FFFFFF',
+     *   drawAnnot: true,
+     *   drawForm: true,
+     * });
+     * console.log(image); // iVBORw0KGgo...
+     * ```
+     * 
+     * @param pageIndex The index of the page to render (0-based).
+     * @param width The width of the rendered image in pixels.
+     * @param height The height of the rendered image in pixels.
+     * @param backgroundColor The background color of the rendered page.  
+     * **Only supported on Android.**
+     * @param drawAnnot Whether to draw annotations on the page.  
+     * **Only supported on Android.**
+     * @param drawForm Whether to draw form fields on the page.  
+     * **Only supported on Android.**
+     * @param pageCompression The compression format used for rendering (e.g., PNG or JPEG).
+     * 
+     * @returns A Promise that resolves to a base64-encoded image string.
+     * 
+     * @throws Error If the native view reference cannot be found.
+     * 
+     * @remarks 
+     * - Rendering is performed on the native thread.  
+     * - For iOS, only the basic rendering parameters are supported.  
+     * 
+     * @since 2.5.0
+     * @platform Android | iOS
+     */
+    renderPage({
+        pageIndex,
+        width,
+        height,
+        backgroundColor = '#FFFFFF',
+        drawAnnot = true,
+        drawForm = true,
+        pageCompression = CPDFPageCompression.PNG
+    } : {
+        pageIndex: number,
+        width: number,
+        height: number,
+        backgroundColor?: HexColor,
+        drawAnnot?: boolean,
+        drawForm?: boolean,
+        pageCompression?: CPDFPageCompression
+    }) : Promise<string> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.renderPage(tag, pageIndex, width, height, normalizeColorToARGB(backgroundColor), drawAnnot, drawForm, pageCompression);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
 }
-
-
-// export default CPDFDocument;

@@ -16,7 +16,7 @@ import ComPDFKit_Tools
 
 @objc(RCTCPDFReaderView)
 class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
- 
+    
     @objc override static func requiresMainQueueSetup() -> Bool {
         return true
     }
@@ -70,9 +70,9 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         })
     }
     
-    func setDisplayPageIndex(forCPDFViewTag tag : Int, pageIndex : Int) {
+    func setDisplayPageIndex(forCPDFViewTag tag : Int, pageIndex : Int, withRectList rectList: [[String: Any]]) {
         let rtcCPDFView = cpdfViews[tag]
-        rtcCPDFView?.setDisplayPageIndex(pageIndex: pageIndex)
+        rtcCPDFView?.setDisplayPageIndex(pageIndex: pageIndex, rectList: rectList)
     }
     
     func getCurrentPageIndex(forCPDFViewTag tag: Int, completionHandler: @escaping (Int) -> Void) {
@@ -100,10 +100,10 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
             completionHandler(success)
         })
     }
-  
+    
     func setBackgroundColor(forCPDFViewTag tag : Int, color : String) {
-      let rtcCPDFView = cpdfViews[tag]
-      rtcCPDFView?.setBackgroundColor(hexColor: color)
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.setBackgroundColor(hexColor: color)
     }
     
     func setReadBackgroundColor(forCPDFViewTag tag : Int, displayMode : NSString) {
@@ -222,9 +222,9 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         rtcCPDFView?.showBotaView()
     }
     
-    func showAddWatermarkView(forCPDFViewTag tag : Int, saveAsNewFile : Bool) {
+    func showAddWatermarkView(forCPDFViewTag tag : Int, config : [String: Any]) {
         let rtcCPDFView = cpdfViews[tag]
-        rtcCPDFView?.showAddWatermarkView(saveAsNewFile: saveAsNewFile)
+        rtcCPDFView?.showAddWatermarkView(config: config)
     }
     
     func showSecurityView(forCPDFViewTag tag : Int) {
@@ -410,7 +410,7 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         
         pageUtil.setTextWidgetText(uuid: uuid, text: text)
     }
-
+    
     func addWidgetImageSignature(forCPDFViewTag tag :Int, pageIndex: Int, uuid: String, imagePath: URL, completionHandler: @escaping (Bool) -> Void) {
         let rtcCPDFView = cpdfViews[tag]
         let page = rtcCPDFView?.getPage(UInt(pageIndex))
@@ -435,7 +435,7 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     
     func reloadPages(forCPDFViewTag tag : Int) {
         let rtcCPDFView = cpdfViews[tag]
-    
+        
         rtcCPDFView?.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
         rtcCPDFView?.pdfViewController?.pdfListView?.layoutDocumentView()
     }
@@ -511,10 +511,10 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
             annotationMode = .sound
         case "unknown":
             annotationMode = .CPDFViewAnnotationModenone
-            default:
+        default:
             break
         }
-            
+        
         rtcCPDFView?.pdfViewController?.annotationBar?.annotationToolBarSwitch(annotationMode)
     }
     
@@ -562,7 +562,7 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
             mode = "sound"
         case .CPDFViewAnnotationModenone:
             mode = "unknown"
-            default:
+        default:
             break
         }
         completionHandler(mode)
@@ -589,38 +589,231 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         let rtcCPDFView = cpdfViews[tag]
         rtcCPDFView?.pdfViewController?.pdfListView?.undoPDFManager?.redo()
     }
-  
-  func searchText(forCPDFViewTag tag : Int, text: String, searchOption: Int, completionHandler: @escaping ([[String: Any]]) -> Void) {
-    let rtcCPDFView = cpdfViews[tag]
-    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
-    let searchResults = CPDFSearchUtil.searchText(from: pdfListView?.document, keywords: text, options:  CPDFSearchOptions(rawValue: searchOption))
-    completionHandler(searchResults)
-  }
-  
-  func selection(forCPDFViewTag tag : Int, dictionary: NSDictionary, completionHandler: @escaping (Bool) -> Void){
-    let rtcCPDFView = cpdfViews[tag]
-    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
-    let selection = CPDFSearchUtil.selection(from: pdfListView?.document, info: dictionary)
-    if let selection = selection {
-      pdfListView?.go(to: selection.bounds, on: selection.page, offsetY: CGFloat(88), animated: false)
-      pdfListView?.setHighlightedSelection(selection, animated: true)
-      completionHandler(true)
-    }else {
-      completionHandler(false)
+    
+    func setFormCreationMode(forCPDFViewTag tag : Int, mode: String) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        var annotationMode: CPDFViewAnnotationMode = .CPDFViewAnnotationModenone
+        switch mode {
+        case "textField":
+            annotationMode = .formModeText
+        case "checkBox":
+            annotationMode = .formModeCheckBox
+        case "radioButton":
+            annotationMode = .formModeRadioButton
+        case "comboBox":
+            annotationMode = .formModeCombox
+        case "listBox":
+            annotationMode = .formModeList
+        case "pushButton":
+            annotationMode = .formModeButton
+        case "signaturesFields":
+            annotationMode = .formModeSign
+        case "unknown":
+            annotationMode = .CPDFViewAnnotationModenone
+        default:
+            annotationMode = .CPDFViewAnnotationModenone
+        }
+        rtcCPDFView?.pdfViewController?.formBar?.formToolBarSwitch(annotationMode)
+        if annotationMode == .CPDFViewAnnotationModenone {
+            rtcCPDFView?.pdfViewController?.pdfListView?.scrollEnabled = true
+        }
     }
-  }
-  
-  func clearSearch(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
-    let rtcCPDFView = cpdfViews[tag]
-    rtcCPDFView?.pdfViewController?.pdfListView?.setHighlightedSelection(nil, animated: false)
-  }
-  
-  func getSearchText(forCPDFViewTag tag : Int, pageIndex: Int, location: Int, length: Int, completionHandler: @escaping (String) -> Void) {
-    let rtcCPDFView = cpdfViews[tag]
-    let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
-    let text = CPDFSearchUtil.getSearchText(from: pdfListView?.document, pageIndex: pageIndex, location: location, length: length)
-    completionHandler(text ?? "")
-  }
+    
+    func getFormCreationMode(forCPDFViewTag tag : Int, completionHandler: @escaping (String) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        
+        let annotationMode = rtcCPDFView?.pdfViewController?.pdfListView?.annotationMode ?? .CPDFViewAnnotationModenone
+        var mode = "unknown"
+        switch annotationMode {
+        case .formModeText:
+            mode = "textField"
+        case .formModeCheckBox:
+            mode = "checkBox"
+        case .formModeRadioButton:
+            mode = "radioButton"
+        case .formModeCombox:
+            mode = "comboBox"
+        case .formModeList:
+            mode = "listBox"
+        case .formModeButton:
+            mode = "pushButton"
+        case .formModeSign:
+            mode = "signaturesFields"
+        case .CPDFViewAnnotationModenone:
+            mode = "unknown"
+            default:
+            break
+        }
+        completionHandler(mode)
+    }
+    
+    func verifyDigitalSignatureStatus(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.verifySignature()
+    }
+    
+    func hideDigitalSignStatusView(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.hideVerifySignatureView()
+    }
+    
+    func clearDisplayRect(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.removeAllSquareAreas()
+    }
+    
+    func dismissContextMenu(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.becomeFirstResponder()
+    }
+    
+    func showSearchTextView(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.buttonItemClicked_Search(nil)
+    }
+
+    func hideSearchTextView(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.buttonItemClicked_searchBack(nil)
+    }
+    
+    func saveCurrentInk(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.annotationBar?.inkCommitDrawing()
+    }
+    
+    func saveCurrentPencil(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.annotationBar?.inkCommitDrawing()
+    }
+    
+    func changeEditType(forCPDFViewTag tag : Int, withEditTypes types: [Int]) {
+        let rtcCPDFView = cpdfViews[tag]
+        var editTypes: CEditingLoadType = []
+        for type in types {
+            if type == 0 {
+                editTypes = []
+            } else if type == 1 {
+                editTypes.insert(.text)
+            } else if type == 2 {
+                editTypes.insert(.image)
+            } else if type == 4 {
+                editTypes.insert(.path)
+            }
+        }
+        rtcCPDFView?.pdfViewController?.changeEditModeType(editTypes)
+    }
+    
+    func editorCanUndo(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let canUndo = rtcCPDFView?.pdfViewController?.pdfListView?.canEditTextUndo() ?? false
+        completionHandler(canUndo)
+    }
+    
+    func editorCanRedo(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let canRedo = rtcCPDFView?.pdfViewController?.pdfListView?.canEditTextRedo() ?? false
+        
+        completionHandler(canRedo)
+    }
+     
+    func editorUndo(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.editTextUndo()
+    }
+    
+    func editorRedo(forCPDFViewTag tag : Int) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.editTextRedo()
+    }
+    
+    func searchText(forCPDFViewTag tag : Int, text: String, searchOption: Int, completionHandler: @escaping ([[String: Any]]) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+        let searchResults = CPDFSearchUtil.searchText(from: pdfListView?.document, keywords: text, options:  CPDFSearchOptions(rawValue: searchOption))
+        completionHandler(searchResults)
+    }
+    
+    func selection(forCPDFViewTag tag : Int, dictionary: NSDictionary, completionHandler: @escaping (Bool) -> Void){
+        let rtcCPDFView = cpdfViews[tag]
+        let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+        let selection = CPDFSearchUtil.selection(from: pdfListView?.document, info: dictionary)
+        if let selection = selection {
+            pdfListView?.go(to: selection.bounds, on: selection.page, offsetY: CGFloat(88), animated: false)
+            pdfListView?.setHighlightedSelection(selection, animated: true)
+            completionHandler(true)
+        }else {
+            completionHandler(false)
+        }
+    }
+    
+    func clearSearch(forCPDFViewTag tag : Int, completionHandler: @escaping (Bool) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        rtcCPDFView?.pdfViewController?.pdfListView?.setHighlightedSelection(nil, animated: false)
+    }
+    
+    func getSearchText(forCPDFViewTag tag : Int, pageIndex: Int, location: Int, length: Int, completionHandler: @escaping (String) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+        let text = CPDFSearchUtil.getSearchText(from: pdfListView?.document, pageIndex: pageIndex, location: location, length: length)
+        completionHandler(text ?? "")
+    }
+    
+    func getPageSize(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping (NSDictionary) -> Void) {
+        guard let rtcCPDFView = cpdfViews[tag],
+              let pdfListView = rtcCPDFView.pdfViewController?.pdfListView,
+              let document = pdfListView.document else {
+            completionHandler([:])
+            return
+        }
+        
+        guard let page = document.page(at: UInt(pageIndex)) else {
+            completionHandler([:])
+            return
+        }
+        
+        let size = page.bounds(for: .mediaBox).size
+        let pageSize: [String: CGFloat] = [
+            "width": size.width,
+            "height": size.height
+        ]
+        
+        completionHandler(pageSize as NSDictionary)
+    }
+    
+    func renderPage(forCPDFViewTag tag : Int, pageIndex: Int, width: Int, height: Int,backgroundColor: String, drawAnnot: Bool, drawForm: Bool, pageCompression: String, completionHandler: @escaping (String?) -> Void) {
+        let rtcCPDFView = cpdfViews[tag]
+        let pdfListView = rtcCPDFView?.pdfViewController?.pdfListView;
+        let document = pdfListView?.document;
+        guard let page = document?.page(at: UInt(pageIndex)) else {
+            completionHandler(nil)
+            return
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let thumbnailSize = CGSize(width: width, height: height)
+            page.thumbnail(of: thumbnailSize, needReset: true) { image in
+                DispatchQueue.main.async {
+                    if(image == nil) {
+                        completionHandler(nil)
+                        return;
+                    }
+                    var data: Data
+                    switch(pageCompression) {
+                    case "png":
+                        data = image!.pngData()!
+                    case "jpeg":
+                        data = image!.jpegData(compressionQuality: 0.85)!
+                    default:
+                        data = image!.pngData()!
+                    }
+                    
+                    completionHandler(data.base64EncodedString())
+                }
+            }
+        }
+    }
     
     // MARK: - RCTCPDFViewDelegate
     
@@ -658,23 +851,43 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
         }
     }
     
-    func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView) {
-      if let onChange = cpdfView.onChange {
-        let historyState: [String: Bool] = [
-          "canUndo": cpdfView.pdfViewController?.pdfListView?.canUndo() ?? false,
-          "canRedo": cpdfView.pdfViewController?.pdfListView?.canRedo() ?? false
-        ]
-        let eventBody: [String: Any] = [
-          "onAnnotationHistoryChanged": historyState
-        ]
-        onChange(eventBody)
-      }
+    func onDocumentIsReady(_ cpdfView: RCTCPDFView) {
+        if let onChange = cpdfView.onChange {
+            onChange(["onDocumentIsReady": "onDocumentIsReady"])
+        }
     }
-  
+    
+    func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView) {
+        if let onChange = cpdfView.onChange {
+            let historyState: [String: Bool] = [
+                "canUndo": cpdfView.pdfViewController?.pdfListView?.canUndo() ?? false,
+                "canRedo": cpdfView.pdfViewController?.pdfListView?.canRedo() ?? false
+            ]
+            let eventBody: [String: Any] = [
+                "onAnnotationHistoryChanged": historyState
+            ]
+            onChange(eventBody)
+        }
+    }
+    
+    func onContentEditorHistoryChanged(_ cpdfView: RCTCPDFView, pageIndex: Int) {
+        if let onChange = cpdfView.onChange {
+            let historyState: [String: Any] = [
+                "pageIndex": pageIndex,
+                "canUndo": cpdfView.pdfViewController?.pdfListView?.canEditTextUndo() ?? false,
+                "canRedo": cpdfView.pdfViewController?.pdfListView?.canEditTextRedo() ?? false
+            ]
+            let eventBody: [String: Any] = [
+                "onContentEditorHistoryChanged": historyState
+            ]
+            onChange(eventBody)
+        }
+    }
+    
     func onIOSClickBackPressed(_ cpdfView: RCTCPDFView) {
-      if let onChange = cpdfView.onChange {
-        onChange(["onIOSClickBackPressed": "onIOSClickBackPressed"])
-      }
+        if let onChange = cpdfView.onChange {
+            onChange(["onIOSClickBackPressed": "onIOSClickBackPressed"])
+        }
     }
     
 }

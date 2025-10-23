@@ -30,6 +30,8 @@ import {
   CPDFThemeMode,
   CPDFSignatureType,
   CPDFWidgetType,
+  CPDFUiVisibilityMode,
+  CPDFBotaTabs,
 } from "./CPDFOptions";
 
 /**
@@ -62,7 +64,12 @@ export class CPDFConfiguration {
      */
     initialViewMode?: CPDFViewMode;
 
-    readerOnly?: boolean;
+    /**
+     * UI display mode, full screen, normal, or minimal mode.
+     * Default: {@link CPDFUiVisibilityMode.AUTOMATIC}
+     */
+    uiVisibilityMode?: CPDFUiVisibilityMode;
+
     /**
      * Configure supported modes
      */
@@ -84,6 +91,12 @@ export class CPDFConfiguration {
      * Set whether to display the annotation toolbar
      */
     annotationToolbarVisible?: boolean;
+
+    contentEditorToolbarVisible?: boolean;
+
+    formToolbarVisible?: boolean;
+
+    signatureToolbarVisible?: boolean;
 
     showInkToggleButton?: boolean;
     /**
@@ -467,10 +480,7 @@ export class CPDFConfiguration {
   global?: {
     themeMode?: CPDFThemeMode;
     fileSaveExtraFontSubset?: boolean;
-    watermark?: {
-      saveAsNewFile?: boolean;
-      outsideBackgroundColor?: string | null;
-    };
+    watermark?: CPDFWatermarkConfig;
     signatureType?: CPDFSignatureType;
     enableExitSaveTips?: boolean;
     thumbnail?: {
@@ -479,6 +489,29 @@ export class CPDFConfiguration {
       editMode?: boolean;
     };
     enableErrorTips?: boolean;
+    bota?: {
+      tabs?: CPDFBotaTabs[];
+      menus?: {
+        annotations?: {
+          global?: CPDFBotaMenuItem<'importAnnotation' | 'exportAnnotation' | 'removeAllAnnotation' | 'removeAllReply'>[];
+          item?: CPDFBotaMenuItem<'reviewStatus' | 'markedStatus' | 'more'>[];
+        }
+      }
+    },
+    search?: {
+      normalKeyword?: {
+        borderColor?: HexColor;
+        fillColor?: HexColor;
+      };
+      focusKeyword?: {
+        borderColor?: HexColor;
+        fillColor?: HexColor;
+      };
+    },
+    pageEditor?: {
+      menus?: ('insertPage' | 'replacePage' | 'extractPage' | 'copyPage' | 'rotatePage' | 'deletePage')[];
+    },
+    pencilMenus?: ('touch' | 'discard' | 'save')[];
   };
 
   /**
@@ -815,6 +848,11 @@ export type CPDFContextMenuItem<T extends string = string> = {
   subItems?: string[];
 };
 
+export type CPDFBotaMenuItem<T extends string = string> = {
+  id: T;
+  subMenus?: string[];
+};
+
 /**
  * @param { HexColor } [fillColor] HEX color: #1460F3
  * @param { HexColor } [borderColor] HEX color: #1460F3
@@ -846,3 +884,19 @@ export class ListBoxAttr {
 }
 
 export class ComboBoxAttr extends ListBoxAttr {}
+
+
+export class CPDFWatermarkConfig {
+  types?: ('text' | 'image')[] = ['text', 'image'];
+  saveAsNewFile?: boolean = false;
+  outsideBackgroundColor?: string | null = null;
+  text?: string = 'Watermark';
+  image?: string = '';
+  textSize?: FontSize = 40;
+  textColor?: HexColor = '#000000';
+  scale?: number = 1.0;
+  rotation?: number = -45;
+  opacity?: ColorAlpha = 255;
+  isFront?: boolean = false;
+  isTilePage?: boolean = false;
+}

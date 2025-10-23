@@ -9,7 +9,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFAnnotation, CPDFViewMode } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit, CPDFAnnotation, CPDFViewMode, botaMenus } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
@@ -65,7 +65,9 @@ const CPDFAnnotationsExampleScreen = () => {
         'Import Annotations 1',
         'Import Annotations 2',
         'Export Annotations',
-        'Get Annotations'
+        'Get Annotations',
+        'Clear Rects',
+        'SaveCurrentInk'
     ];
 
     const handleMenuItemPress = async (action: string) => {
@@ -143,6 +145,13 @@ const CPDFAnnotationsExampleScreen = () => {
                 setAnnotationData(allAnnotations);
                 setAnnotationModalVisible(true);
                 break;
+            case 'Clear Rects':
+                await pdfReaderRef.current?.clearDisplayRect();
+                break;  
+            case 'SaveCurrentInk':
+                const saveInkResult = await pdfReaderRef.current?.saveCurrentInk();
+                console.log('ComPDFKitRN saveCurrentInk:', saveInkResult);
+                break;      
             default:
                 break;
         }
@@ -207,7 +216,7 @@ const CPDFAnnotationsExampleScreen = () => {
                             configuration={ComPDFKit.getDefaultConfig({
                                 modeConfig: {
                                     initialViewMode: CPDFViewMode.ANNOTATIONS,
-                                    readerOnly: true
+                                    uiVisibilityMode: 'automatic'
                                 },
                                 toolbarConfig: {
                                     annotationToolbarVisible: false

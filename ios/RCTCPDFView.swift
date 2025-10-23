@@ -15,881 +15,1027 @@ import ComPDFKit_Tools
 import ComPDFKit
 
 protocol RCTCPDFViewDelegate: AnyObject {
-  func cpdfViewAttached(_ cpdfView: RCTCPDFView)
-  func saveDocumentChange(_ cpdfView: RCTCPDFView)
-  func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
-  func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView)
-  func onFullScreenChanged(_ cpdfView: RCTCPDFView, isFull: Bool)
-  func onTapMainDocArea(_ cpdfView: RCTCPDFView)
-  func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView)
-  func onIOSClickBackPressed(_ cpdfView: RCTCPDFView)
+    func cpdfViewAttached(_ cpdfView: RCTCPDFView)
+    func saveDocumentChange(_ cpdfView: RCTCPDFView)
+    func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
+    func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView)
+    func onFullScreenChanged(_ cpdfView: RCTCPDFView, isFull: Bool)
+    func onDocumentIsReady(_ cpdfView: RCTCPDFView)
+    func onTapMainDocArea(_ cpdfView: RCTCPDFView)
+    func onAnnotationHistoryChanged(_ cpdfView: RCTCPDFView)
+    func onContentEditorHistoryChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
+    func onIOSClickBackPressed(_ cpdfView: RCTCPDFView)
+}
+
+extension Bundle {
+    func findImageURL(for name: String) -> URL? {
+        let imageFormats = ["png", "jpg", "jpeg", "gif", "bmp", "tiff", "heic", "webp"]
+                
+        for format in imageFormats {
+            if let url = Bundle.main.url(forResource: name, withExtension: format) {
+                return url
+            }
+        }
+        
+        return nil
+    }
 }
 
 class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
-  
-  weak var delegate: RCTCPDFViewDelegate?
-  
-  public var pdfViewController : CPDFViewController?
-  
-  private var navigationController : CNavigationController?
-  
-  init() {
-    super.init(frame: CGRect(x: 0, y: 0, width: 500, height: 400))
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  // MARK: - Private Methods
-  
-  private func createCPDFView() {
-    var documentPath = document.path
-    var success = false
     
-    let homeDiectory = NSHomeDirectory()
-    let bundlePath = Bundle.main.bundlePath
+    weak var delegate: RCTCPDFViewDelegate?
     
-    if (documentPath.hasPrefix(homeDiectory) || documentPath.hasPrefix(bundlePath)) {
-      let documentHome = homeDiectory.appending("/Documents")
-      if documentPath.hasPrefix(homeDiectory) && documentPath.hasPrefix(documentHome) {
-        
-      } else {
-        let fileManager = FileManager.default
-        let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
-        let fileName = document.lastPathComponent
-        let docsFilePath = samplesFilePath + "/" + fileName
-        
-        if !fileManager.fileExists(atPath: samplesFilePath) {
-          try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
-        }
-        
-        try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
-        
-        documentPath = docsFilePath
-      }
-    } else {
-      success = document.startAccessingSecurityScopedResource()
+    public var pdfViewController : CPDFViewController?
+    
+    private var navigationController : CNavigationController?
+    
+    init() {
+        super.init(frame: CGRect(x: 0, y: 0, width: 500, height: 400))
     }
     
-    let jsonData = CPDFJSONDataParse(String: configuration)
-    let configurations = jsonData.configuration ?? CPDFConfiguration()
-    print("password:\(password)")
-    pdfViewController = CPDFViewController(filePath: documentPath, password: password, configuration: configurations)
-    pdfViewController?.delegate = self
-    navigationController = CNavigationController(rootViewController: pdfViewController!)
-    navigationController?.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    navigationController?.view.frame = self.frame
-    
-    navigationController?.setViewControllers([pdfViewController!], animated: true)
-    
-    addSubview(navigationController?.view ?? UIView())
-    
-    self.delegate?.cpdfViewAttached(self)
-    
-    if success {
-      document.stopAccessingSecurityScopedResource()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    NotificationCenter.default.addObserver(self, selector: #selector(annotationsOperationChangeNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFListViewAnnotationsOperationChangeNotification").rawValue), object: nil)
-  }
-  
-  func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: Int) -> Bool {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      var _index = index
-      if index < 0 || index > pdfListView.document.pageCount {
-        if Int(index) == -1 {
-          _index = Int(pdfListView.document.pageCount)
+    // MARK: - Private Methods
+    
+    private func createCPDFView() {
+        var documentPath = document.path
+        var success = false
+        
+        let homeDiectory = NSHomeDirectory()
+        let bundlePath = Bundle.main.bundlePath
+        
+        if (documentPath.hasPrefix(homeDiectory) || documentPath.hasPrefix(bundlePath)) {
+            let documentHome = homeDiectory.appending("/Documents")
+            if documentPath.hasPrefix(homeDiectory) && documentPath.hasPrefix(documentHome) {
+                
+            } else {
+                let fileManager = FileManager.default
+                let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
+                let fileName = document.lastPathComponent
+                let docsFilePath = samplesFilePath + "/" + fileName
+                
+                if !fileManager.fileExists(atPath: samplesFilePath) {
+                    try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
+                }
+                
+                try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
+                
+                documentPath = docsFilePath
+            }
         } else {
-          return false
-        }
-      }
-      
-      var indexSet = IndexSet()
-      for page in pages {
-        indexSet.insert(IndexSet.Element(page))
-      }
-      
-      let success = pdfListView.document.importPages(indexSet, from: document, at: UInt(_index))
-      pdfListView.layoutDocumentView()
-      
-      return success
-    } else {
-      return false
-    }
-  }
-  
-  func extractPDFDocument(_ savePath: URL, Pages pages: [Int]) -> Bool {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      var indexSet = IndexSet()
-      for page in pages {
-        indexSet.insert(page)
-      }
-      
-      let document = CPDFDocument()
-      document?.importPages(indexSet, from: pdfListView.document, at: 0)
-      
-      let success = document?.write(to: savePath, isSaveFontSubset: true) ?? false
-      
-      return success
-    } else {
-      return false
-    }
-  }
-  
-  func getValue<T>(from info: [String: Any]?, key: String, defaultValue: T) -> T {
-    guard let value = info?[key] as? T else {
-      return defaultValue
-    }
-    return value
-  }
-  
-  // MARK: - Page Public Methods
-  
-  func getPage(_ index: UInt) -> CPDFPage {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let page = pdfListView.document.page(at: index) ?? CPDFPage()
-      return page
-    } else {
-      return CPDFPage()
-    }
-  }
-  
-  // MARK: - Document Public Methods
-  
-  func saveDocument(completionHandler: @escaping (Bool) -> Void) {
-    self.pdfViewController?.pdfListView?.exitDrawing()
-    self.pdfViewController?.pdfListView?.becomeFirstResponder()
-    if (self.pdfViewController?.pdfListView?.isEditing() == true && self.pdfViewController?.pdfListView?.isEdited() == true) {
-      DispatchQueue.global(qos: .default).async {
-        if self.pdfViewController?.pdfListView?.isEdited() == true {
-          self.pdfViewController?.pdfListView?.commitEditing()
+            success = document.startAccessingSecurityScopedResource()
         }
         
-        DispatchQueue.main.async {
-          
-          if self.pdfViewController?.pdfListView?.document.isModified() == true {
-            let document = self.pdfViewController?.pdfListView?.document
-            let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
-            completionHandler(success)
-          } else {
+        let jsonData = CPDFJSONDataParse(String: configuration)
+        let configurations = jsonData.configuration ?? CPDFConfiguration()
+        print("password:\(password)")
+        
+        let imageName = configurations.watermarkMode.imageName
+        if !imageName.isEmpty {
+            if FileManager.default.fileExists(atPath: imageName) {
+                if let image = UIImage(contentsOfFile: imageName) {
+                    configurations.watermarkMode.image = image
+                }
+            } else {
+                if let url = Bundle.main.findImageURL(for: imageName) {
+                    if let image = UIImage(contentsOfFile: url.path) {
+                        configurations.watermarkMode.image = image
+                    }
+                }
+            }
+        }
+        
+        pdfViewController = CPDFViewController(filePath: documentPath, password: password, configuration: configurations)
+        pdfViewController?.delegate = self
+        navigationController = CNavigationController(rootViewController: pdfViewController!)
+        navigationController?.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        navigationController?.view.frame = self.frame
+        
+        navigationController?.setViewControllers([pdfViewController!], animated: true)
+        
+        addSubview(navigationController?.view ?? UIView())
+        
+        self.delegate?.cpdfViewAttached(self)
+        
+        if success {
+            document.stopAccessingSecurityScopedResource()
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(annotationsOperationChangeNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFListViewAnnotationsOperationChangeNotification").rawValue), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(pageChangedNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFViewPageChangedNotification").rawValue), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(pageEditingDidChanged(_:)), name: NSNotification.Name(NSNotification.Name("CPDFPageEditingDidChangedNotification").rawValue), object: nil)
+    }
+    
+    func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: Int) -> Bool {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var _index = index
+            if index < 0 || index > pdfListView.document.pageCount {
+                if Int(index) == -1 {
+                    _index = Int(pdfListView.document.pageCount)
+                } else {
+                    return false
+                }
+            }
+            
+            var indexSet = IndexSet()
+            for page in pages {
+                indexSet.insert(IndexSet.Element(page))
+            }
+            
+            let success = pdfListView.document.importPages(indexSet, from: document, at: UInt(_index))
+            pdfListView.layoutDocumentView()
+            
+            return success
+        } else {
+            return false
+        }
+    }
+    
+    func extractPDFDocument(_ savePath: URL, Pages pages: [Int]) -> Bool {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var indexSet = IndexSet()
+            for page in pages {
+                indexSet.insert(page)
+            }
+            
+            let document = CPDFDocument()
+            document?.importPages(indexSet, from: pdfListView.document, at: 0)
+            
+            let success = document?.write(to: savePath, isSaveFontSubset: true) ?? false
+            
+            return success
+        } else {
+            return false
+        }
+    }
+    
+    func getValue<T>(from info: [String: Any]?, key: String, defaultValue: T) -> T {
+        guard let value = info?[key] as? T else {
+            return defaultValue
+        }
+        return value
+    }
+    
+    // MARK: - Page Public Methods
+    
+    func getPage(_ index: UInt) -> CPDFPage {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let page = pdfListView.document.page(at: index) ?? CPDFPage()
+            return page
+        } else {
+            return CPDFPage()
+        }
+    }
+    
+    // MARK: - Document Public Methods
+    
+    func saveDocument(completionHandler: @escaping (Bool) -> Void) {
+        self.pdfViewController?.pdfListView?.exitDrawing()
+        self.pdfViewController?.pdfListView?.becomeFirstResponder()
+        if (self.pdfViewController?.pdfListView?.isEditing() == true && self.pdfViewController?.pdfListView?.isEdited() == true) {
+            DispatchQueue.global(qos: .default).async {
+                if self.pdfViewController?.pdfListView?.isEdited() == true {
+                    self.pdfViewController?.pdfListView?.commitEditing()
+                }
+                
+                DispatchQueue.main.async {
+                    
+                    if self.pdfViewController?.pdfListView?.document.isModified() == true {
+                        let document = self.pdfViewController?.pdfListView?.document
+                        let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
+                        completionHandler(success)
+                    } else {
+                        completionHandler(true)
+                    }
+                }
+            }
+        } else {
+            if self.pdfViewController?.pdfListView?.document.isModified() == true {
+                let document = self.pdfViewController?.pdfListView?.document
+                let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
+                completionHandler(success)
+            } else {
+                completionHandler(true)
+            }
+        }
+    }
+    
+    func setMargins(left : Int, top : Int, right : Int, bottom : Int) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.pageBreakMargins = .init(top: CGFloat(top), left: CGFloat(left), bottom: CGFloat(bottom), right: CGFloat(right))
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func removeAllAnnotations(completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let pageCount = pdfListView.document?.pageCount ?? 0
+            for i in 0..<pageCount {
+                let page = pdfListView.document?.page(at: i)
+                page?.removeAllAnnotations()
+            }
+            self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+            self.pdfViewController?.pdfListView?.updateActiveAnnotations([])
             completionHandler(true)
-          }
-        }
-      }
-    } else {
-      if self.pdfViewController?.pdfListView?.document.isModified() == true {
-        let document = self.pdfViewController?.pdfListView?.document
-        let success = document?.write(to: document?.documentURL ?? URL(fileURLWithPath: ""), isSaveFontSubset: true) ?? false
-        completionHandler(success)
-      } else {
-        completionHandler(true)
-      }
-    }
-  }
-  
-  func setMargins(left : Int, top : Int, right : Int, bottom : Int) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.pageBreakMargins = .init(top: CGFloat(top), left: CGFloat(left), bottom: CGFloat(bottom), right: CGFloat(right))
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func removeAllAnnotations(completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let pageCount = pdfListView.document?.pageCount ?? 0
-      for i in 0..<pageCount {
-        let page = pdfListView.document?.page(at: i)
-        page?.removeAllAnnotations()
-      }
-      self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
-      self.pdfViewController?.pdfListView?.updateActiveAnnotations([])
-      completionHandler(true)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func importAnnotations(xfdfFile : URL, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      let documentFolder = NSHomeDirectory().appending("/Documents/Files")
-      if !FileManager.default.fileExists(atPath: documentFolder) {
-        try? FileManager.default.createDirectory(at: URL(fileURLWithPath: documentFolder), withIntermediateDirectories: true, attributes: nil)
-      }
-      
-      let documentPath = documentFolder + "/\(xfdfFile.lastPathComponent)"
-      try? FileManager.default.copyItem(atPath: xfdfFile.path, toPath: documentPath)
-      
-      if !FileManager.default.fileExists(atPath: documentPath) {
-        print("fail")
-      }
-      
-      let success = pdfListView.document?.importAnnotation(fromXFDFPath: documentPath) ?? false
-      if success {
-        self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
-      }
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func exportAnnotations(completionHandler: @escaping (String) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let fileNameWithExtension = pdfListView.document?.documentURL.lastPathComponent ?? ""
-      let fileName = (fileNameWithExtension as NSString).deletingPathExtension
-      let documentFolder = NSHomeDirectory().appending("/Documents/\(fileName)_xfdf.xfdf")
-      let succes = pdfListView.document?.exportAnnotation(toXFDFPath: documentFolder) ?? false
-      
-      if succes {
-        completionHandler(documentFolder)
-      } else {
-        completionHandler("")
-      }
-    } else {
-      completionHandler("")
-    }
-  }
-  
-  func setDisplayPageIndex(pageIndex : Int) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.go(toPageIndex: pageIndex, animated: false)
-    }
-  }
-  
-  func getCurrentPageIndex(completionHandler: @escaping (Int) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.currentPageIndex)
-    } else {
-      completionHandler(0)
-    }
-  }
-  
-  func hasChange(completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let success = pdfListView.document?.isModified() ?? false
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func setScale(scale : NSNumber){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.setScaleFactor(CGFloat(truncating: scale), animated: true)
-    }
-  }
-  
-  func getScale(completionHandler: @escaping (NSNumber) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(NSNumber(value: pdfListView.scaleFactor))
-    } else {
-      completionHandler(1.0)
-    }
-  }
-  
-  func setBackgroundColor(hexColor : String){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.backgroundColor = ColorHelper.colorWithHexString(hex: hexColor)
-    }
-  }
-  
-  func setReadBackgroundColor(displayMode : NSString) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      switch displayMode {
-      case "light":
-        pdfListView.displayMode = .normal
-      case "dark":
-        pdfListView.displayMode = .night
-      case "sepia":
-        pdfListView.displayMode = .soft
-      case "reseda":
-        pdfListView.displayMode = .green
-      default:
-        pdfListView.displayMode = .normal
-      }
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func getReadbackgroundColor(completionHandler: @escaping (NSString) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let dispalyMode = pdfListView.displayMode
-      switch dispalyMode {
-      case .normal:
-        completionHandler("#FFFFFF")
-      case .night:
-        completionHandler("#000000")
-      case .soft:
-        completionHandler("#FFFFFF")
-      case .green:
-        completionHandler("#FFEFBE")
-      case .custom:
-        completionHandler("#CDE6D0")
-      @unknown default:
-        completionHandler("#FFFFFF")
-      }
-    } else {
-      completionHandler("#FFFFFF")
-    }
-  }
-  
-  func setFormFieldHighlight(formFieldHighlight : Bool){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      CPDFKitConfig.sharedInstance().setEnableFormFieldHighlight(formFieldHighlight)
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isFormFieldHighlight(completionHandler: @escaping (Bool) -> Void){
-    completionHandler(CPDFKitConfig.sharedInstance().enableFormFieldHighlight())
-  }
-  
-  func setLinkHighlight(linkHighlight : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      CPDFKitConfig.sharedInstance().setEnableLinkFieldHighlight(linkHighlight)
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isLinkHighlight(completionHandler: @escaping (Bool) -> Void){
-    completionHandler(CPDFKitConfig.sharedInstance().enableLinkFieldHighlight())
-  }
-  
-  func setVerticalMode(isVerticalMode : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.displayDirection = isVerticalMode ? .vertical : .horizontal
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isVerticalMode(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.displayDirection == .vertical)
-    } else {
-      completionHandler(true)
-    }
-  }
-  
-  func setContinueMode(isContinueMode : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.isContinueMode = isContinueMode
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isContinueMode(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.isContinueMode)
-    }else {
-      completionHandler(true)
-    }
-  }
-  
-  func setDoublePageMode(isDoublePageMode : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.displayTwoUp = isDoublePageMode
-      pdfListView.displaysAsBook = false
-      if(pdfListView.displayDirection == .horizontal){
-        pdfListView.isContinueMode = false
-      }
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isDoublePageMode(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.displayTwoUp)
-    }else {
-      completionHandler(true)
-    }
-  }
-  
-  func setCoverPageMode(isCoverPageMode : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.displayTwoUp = isCoverPageMode
-      pdfListView.displaysAsBook = isCoverPageMode
-      if(pdfListView.displayDirection == .horizontal){
-        pdfListView.isContinueMode = false
-      }
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isCoverPageMode(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.displaysAsBook)
-    }else {
-      completionHandler(true)
-    }
-  }
-  
-  func setCropMode(isCropMode : Bool) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      pdfListView.displayCrop = isCropMode
-      pdfListView.layoutDocumentView()
-    }
-  }
-  
-  func isCropMode(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.displayCrop)
-    }else {
-      completionHandler(true)
-    }
-  }
-  
-  func setPreviewMode(viewMode : String) {
-    switch viewMode {
-    case "viewer":
-      self.pdfViewController?.enterViewerMode()
-    case "annotations":
-      self.pdfViewController?.enterAnnotationMode()
-    case "contentEditor":
-      self.pdfViewController?.enterEditMode()
-    case "forms":
-      self.pdfViewController?.enterFormMode()
-    case "signatures":
-      self.pdfViewController?.enterSignatureMode()
-    default:
-      self.pdfViewController?.enterViewerMode()
-    }
-  }
-  
-  func getPreviewMode(completionHandler: @escaping (String) -> Void) {
-    let state = self.pdfViewController?.functionTypeState ?? .viewer
-    switch state {
-    case .viewer:
-      completionHandler("viewer")
-    case .edit:
-      completionHandler("contentEditor")
-    case .annotation:
-      completionHandler("annotations")
-    case .form:
-      completionHandler("forms")
-    case .signature:
-      completionHandler("signatures")
-    default:
-      completionHandler("viewer")
-    }
-  }
-  
-  func showThumbnailView(isEditMode : Bool) {
-    if isEditMode {
-      self.pdfViewController?.enterThumbnail(false)
-    } else {
-      self.pdfViewController?.enterThumbnail(true)
-    }
-  }
-  
-  func showBotaView() {
-    self.pdfViewController?.buttonItemClicked_Bota(UIButton(frame: .zero))
-  }
-  
-  func showAddWatermarkView(saveAsNewFile : Bool) {
-    self.pdfViewController?.enterPDFWatermark(isSaveAs: saveAsNewFile)
-  }
-  
-  func showSecurityView() {
-    self.pdfViewController?.enterPDFSecurity()
-  }
-  
-  func showDisplaySettingView() {
-    self.pdfViewController?.enterPDFSetting()
-  }
-  
-  func enterSnipMode() {
-    self.pdfViewController?.enterPDFSnipImageMode()
-  }
-  
-  func exitSnipMode() {
-    self.pdfViewController?.exitPDFSnipImageMode()
-  }
-  
-  func open(document : URL, password : String, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let newDocument = CPDFDocument(url: document)
-      if(newDocument?.isLocked == true){
-        newDocument?.unlock(withPassword: password)
-      }
-      pdfListView.document = newDocument
-      self.pdfViewController?.filePath = newDocument?.documentURL.path
-      pdfListView.setNeedsDisplay()
-      completionHandler(true)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func getFileName(completionHandler: @escaping (String) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.documentURL.lastPathComponent)
-    }else {
-      completionHandler("")
-    }
-  }
-  
-  func isEncrypted(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.isEncrypted)
-    }else {
-      completionHandler(false)
-    }
-  }
-  
-  func isImageDoc(completionHandler: @escaping (Bool) -> Void){
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.isImageDocument())
-    }else {
-      completionHandler(false)
-    }
-  }
-  
-  func getPermissions(completionHandler: @escaping (NSNumber) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let permissions = pdfListView.document?.permissionsStatus ?? .none
-      switch permissions {
-      case .none:
-        completionHandler(0)
-      case .user:
-        completionHandler(1)
-      case .owner:
-        completionHandler(2)
-      default:
-        completionHandler(0)
-      }
-    }else {
-      completionHandler(0)
-    }
-  }
-  
-  func getPageCount(completionHandler: @escaping (NSNumber) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.pageCount as NSNumber)
-    }else {
-      completionHandler(0)
-    }
-  }
-  
-  func checkOwnerUnlocked(completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.isCheckOwnerUnlocked())
-    }else {
-      completionHandler(false)
-    }
-  }
-  
-  func checkOwnerPassword(password : String, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      completionHandler(pdfListView.document.checkOwnerPassword(password))
-    }else {
-      completionHandler(false)
-    }
-  }
-  
-  func removePassword(completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let newDocument = pdfListView.document
-      let url = newDocument?.documentURL
-      
-      let success = newDocument?.writeDecrypt(to: url, isSaveFontSubset: true) ?? false
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func setPassword(info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      let _info = info as? [String: Any]
-      
-      let userPassword : String = self.getValue(from: _info, key: "user_password", defaultValue: "")
-      let ownerPassword : String = self.getValue(from: _info, key: "owner_password", defaultValue: "")
-      let allowsPrinting : Bool = self.getValue(from: _info, key: "allows_printing", defaultValue: true)
-      let allowsCopying : Bool = self.getValue(from: _info, key: "allows_copying", defaultValue: true)
-      
-      let encryptAlgo : String = self.getValue(from: _info, key: "encrypt_algo", defaultValue: "rc4")
-      
-      var level: Int = 0
-      // Encryption mode, the type passed in is：rc4, aes128, aes256, noEncryptAlgo
-      switch encryptAlgo {
-      case "rc4":
-        level = 0
-      case "aes128":
-        level = 1
-      case "aes256":
-        level = 2
-      case "noEncryptAlgo":
-        level = 3
-      default:
-        level = 3
-      }
-      
-      var options:[CPDFDocumentWriteOption: Any] = [:]
-      options[CPDFDocumentWriteOption.userPasswordOption] = userPassword
-      
-      options[CPDFDocumentWriteOption.ownerPasswordOption] = ownerPassword
-      
-      options[CPDFDocumentWriteOption.allowsPrintingOption] = allowsPrinting
-      
-      options[CPDFDocumentWriteOption.allowsCopyingOption] = allowsCopying
-      
-      options[CPDFDocumentWriteOption.encryptionLevelOption] = NSNumber(value: level)
-      
-      let newDocument = pdfListView.document
-      let url = newDocument?.documentURL
-      
-      let success = newDocument?.write(to: url, withOptions: options, isSaveFontSubset: true) ?? false
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func getEncryptAlgo(completionHandler: @escaping (String) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let encryptAlgo = pdfListView.document.encryptionLevel
-      switch encryptAlgo {
-      case .RC4:
-        completionHandler("rc4")
-      case .AES128:
-        completionHandler("aes128")
-      case .AES256:
-        completionHandler("aes256")
-      case .noEncryptAlgo:
-        completionHandler("noEncryptAlgo")
-      default:
-        completionHandler("noEncryptAlgo")
-      }
-    }else {
-      completionHandler("noEncryptAlgo")
-    }
-  }
-  
-  func printDocument() {
-    self.pdfViewController?.enterPrintState();
-  }
-  
-  func importWidgets(xfdfFile : URL, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      let documentFolder = NSHomeDirectory().appending("/Documents/Files")
-      if !FileManager.default.fileExists(atPath: documentFolder) {
-        try? FileManager.default.createDirectory(at: URL(fileURLWithPath: documentFolder), withIntermediateDirectories: true, attributes: nil)
-      }
-      
-      let documentPath = documentFolder + "/\(xfdfFile.lastPathComponent)"
-      try? FileManager.default.copyItem(atPath: xfdfFile.path, toPath: documentPath)
-      
-      if !FileManager.default.fileExists(atPath: documentPath) {
-        print("fail")
-      }
-      
-      let success = pdfListView.document?.importForm(fromXFDFPath: documentPath) ?? false
-      if success {
-        self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
-      }
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func getDocumentPath(completionHandler: @escaping (String) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let documentPath = pdfListView.document.documentURL.path
-      completionHandler(documentPath)
-    }
-  }
-  
-  func exportWidgets(completionHandler: @escaping (String) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let fileNameWithExtension = pdfListView.document?.documentURL.lastPathComponent ?? ""
-      let fileName = (fileNameWithExtension as NSString).deletingPathExtension
-      let documentFolder = NSHomeDirectory().appending("/Documents/\(fileName)_xfdf.xfdf")
-      let succes = pdfListView.document?.export(toXFDFPath: documentFolder) ?? false
-      
-      if succes {
-        completionHandler(documentFolder)
-      } else {
-        completionHandler("")
-      }
-    } else {
-      completionHandler("")
-    }
-  }
-  
-  func flattenAllPages(savePath: URL, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      let success = pdfListView.document.writeFlatten(to: savePath, isSaveFontSubset: fontSubset)
-      
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func saveAs(savePath: URL, removeSecurity: Bool, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      var success: Bool = false
-      if removeSecurity {
-        success = pdfListView.document.writeDecrypt(to: savePath, isSaveFontSubset: fontSubset)
-      } else {
-        success = pdfListView.document.write(to: savePath, isSaveFontSubset: fontSubset)
-      }
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func importDocument(_ filePath:URL, _ info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let _info = info as? [String: Any]
-      
-      let password: String = self.getValue(from: _info, key: "password", defaultValue: "")
-      let pages: [Int] = self.getValue(from: _info, key: "pages", defaultValue: [])
-      let insert_position: Int = self.getValue(from: _info, key: "insert_position", defaultValue: 0)
-      
-      let _document = CPDFDocument(url: filePath)
-      
-      if _document?.isLocked == true {
-        _document?.unlock(withPassword: password)
-      }
-      
-      let success = self.insertPDFDocument(_document!, Pages: pages, Position: insert_position)
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func splitDocumentPages(savePath: URL, pages: [Int], completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      
-      let success = self.extractPDFDocument(savePath, Pages: pages)
-      
-      completionHandler(success)
-    } else {
-      completionHandler(false)
-    }
-  }
-  
-  func insertBlankPage(pageIndex: Int, pageWidth: Float, pageHeight: Float, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      var _index = pageIndex
-      if pageIndex < 0 || pageIndex > pdfListView.document.pageCount {
-        if pageIndex == -1 {
-          _index = Int(pdfListView.document.pageCount)
         } else {
-          completionHandler(false)
+            completionHandler(false)
         }
-      }
-      
-      let size = CGSize(width: Double(pageWidth), height: Double(pageHeight))
-      let success = pdfListView.document.insertPage(size, at: UInt(_index))
-      self.pdfViewController?.pdfListView?.layoutDocumentView()
-      
-      completionHandler(success)
-    } else {
-      completionHandler(false)
     }
-  }
-
-  
-  func selection(dictionary : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
-    if let pdfListView = self.pdfViewController?.pdfListView {
-      let selection = CPDFSearchUtil.selection(from: pdfListView.document, info: dictionary)
-      if let selection = selection {
-        pdfListView.go(to: selection.bounds, on: selection.page, offsetY: CGFloat(88), animated: false)
-        pdfListView.setHighlightedSelection(selection, animated: true)
-        completionHandler(true)
-      }else {
-        completionHandler(false)
-      }
-    } else {
-      completionHandler(false)
+    
+    func importAnnotations(xfdfFile : URL, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let documentFolder = NSHomeDirectory().appending("/Documents/Files")
+            if !FileManager.default.fileExists(atPath: documentFolder) {
+                try? FileManager.default.createDirectory(at: URL(fileURLWithPath: documentFolder), withIntermediateDirectories: true, attributes: nil)
+            }
+            
+            let documentPath = documentFolder + "/\(xfdfFile.lastPathComponent)"
+            try? FileManager.default.copyItem(atPath: xfdfFile.path, toPath: documentPath)
+            
+            if !FileManager.default.fileExists(atPath: documentPath) {
+                print("fail")
+            }
+            
+            let success = pdfListView.document?.importAnnotation(fromXFDFPath: documentPath) ?? false
+            if success {
+                self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+            }
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
     }
-  }
-  
-  
-  // MARK: - CPDFViewBaseControllerDelete
-  
-  func PDFViewBaseController(_ baseController: CPDFViewBaseController, SaveState success: Bool) {
-    self.delegate?.saveDocumentChange(self)
-  }
-  
-  func PDFViewBaseController(_ baseController: CPDFViewBaseController, currentPageIndex index: Int) {
-    self.delegate?.onPageChanged(self, pageIndex: index)
-  }
-  
-  func PDFViewBaseControllerPageEditBack(_ baseController: CPDFViewBaseController) {
-    self.delegate?.onPageEditDialogBackPress(self)
-  }
-  
-  func PDFViewBaseController(_ baseController: CPDFViewBaseController, HiddenState state: Bool) {
-    self.delegate?.onFullScreenChanged(self, isFull: state)
-  }
-  
-  func PDFViewBaseControllerTouchEnded(_ baseController: CPDFViewBaseController) {
-    self.delegate?.onTapMainDocArea(self)
-  }
-  
-  public func PDFViewBaseControllerDissmiss(_ baseControllerDelete: CPDFViewBaseController) {
-    self.delegate?.onIOSClickBackPressed(self)
-  }
-  
-  // MARK: - Notification
-  
-  @objc func annotationsOperationChangeNotification(_ notification: Notification) {
-    self.delegate?.onAnnotationHistoryChanged(self)
-  }
-  
-  // MARK: - RCT Methods
-  
-  private var configuration: String = ""
-  private var document: URL = URL(fileURLWithPath: "")
-  private var password: String = ""
-  
-  private var isDocumentSet = false
-  private var isConfigurationSet = false
-  private var isPasswordSet = false
-  private var hasCreatedView = false
-  
-  @objc func setConfiguration(_ newSection: String) {
-    configuration = newSection
+    
+    func exportAnnotations(completionHandler: @escaping (String) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let fileNameWithExtension = pdfListView.document?.documentURL.lastPathComponent ?? ""
+            let fileName = (fileNameWithExtension as NSString).deletingPathExtension
+            let documentFolder = NSHomeDirectory().appending("/Documents/\(fileName)_xfdf.xfdf")
+            let succes = pdfListView.document?.exportAnnotation(toXFDFPath: documentFolder) ?? false
+            
+            if succes {
+                completionHandler(documentFolder)
+            } else {
+                completionHandler("")
+            }
+        } else {
+            completionHandler("")
+        }
+    }
+    
+    func setDisplayPageIndex(pageIndex : Int, rectList: [[String: Any]]) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.go(toPageIndex: pageIndex, animated: false)
+            var m_left:CGFloat = 0.0
+            var m_top:CGFloat = 0.0
+            var m_right:CGFloat = 0.0
+            var m_bottom:CGFloat = 0.0
+            
+            var areasDict: [NSNumber: [NSValue]] = [:]
+            for rect in rectList {
+                var rectValues:[NSValue] = []
+                for (key, value) in rect {
+                    if key == "left"  {
+                        m_left = value as? CGFloat ?? 0
+                    } else if key == "top" {
+                        m_top = value as? CGFloat ?? 0
+                    } else if key == "right" {
+                        m_right = value as? CGFloat ?? 0
+                    } else if key == "bottom" {
+                        m_bottom = value as? CGFloat ?? 0
+                    }
+                }
+                rectValues.append(NSValue(cgRect: CGRect(x: m_left, y: m_top, width: m_right - m_left, height: m_bottom - m_top)))
+                areasDict[NSNumber(value: UInt(truncating: pageIndex as NSNumber))] = rectValues
+            }
+            
+            let borderColor = ColorHelper.colorWithHexString(hex: "#1460F3")
+            let fillColor = ColorHelper.colorWithHexString(hex: "#4D1460F3")
+            pdfListView.setSquareAreas(areasDict, borderColor: borderColor, borderOpacity: 1.0, fill: fillColor, fillOpacity: 77.0/255.0)
+        }
+    }
+    
+    func getCurrentPageIndex(completionHandler: @escaping (Int) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.currentPageIndex)
+        } else {
+            completionHandler(0)
+        }
+    }
+    
+    func hasChange(completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let success = pdfListView.document?.isModified() ?? false
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func setScale(scale : NSNumber){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.setScaleFactor(CGFloat(truncating: scale), animated: true)
+        }
+    }
+    
+    func getScale(completionHandler: @escaping (NSNumber) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(NSNumber(value: pdfListView.scaleFactor))
+        } else {
+            completionHandler(1.0)
+        }
+    }
+    
+    func setBackgroundColor(hexColor : String){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.backgroundColor = ColorHelper.colorWithHexString(hex: hexColor)
+        }
+    }
+    
+    func setReadBackgroundColor(displayMode : NSString) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            switch displayMode {
+            case "light":
+                pdfListView.displayMode = .normal
+            case "dark":
+                pdfListView.displayMode = .night
+            case "sepia":
+                pdfListView.displayMode = .soft
+            case "reseda":
+                pdfListView.displayMode = .green
+            default:
+                pdfListView.displayMode = .normal
+            }
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func getReadbackgroundColor(completionHandler: @escaping (NSString) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let dispalyMode = pdfListView.displayMode
+            switch dispalyMode {
+            case .normal:
+                completionHandler("#FFFFFF")
+            case .night:
+                completionHandler("#000000")
+            case .soft:
+                completionHandler("#FFFFFF")
+            case .green:
+                completionHandler("#FFEFBE")
+            case .custom:
+                completionHandler("#CDE6D0")
+            @unknown default:
+                completionHandler("#FFFFFF")
+            }
+        } else {
+            completionHandler("#FFFFFF")
+        }
+    }
+    
+    func setFormFieldHighlight(formFieldHighlight : Bool){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            CPDFKitConfig.sharedInstance().setEnableFormFieldHighlight(formFieldHighlight)
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isFormFieldHighlight(completionHandler: @escaping (Bool) -> Void){
+        completionHandler(CPDFKitConfig.sharedInstance().enableFormFieldHighlight())
+    }
+    
+    func setLinkHighlight(linkHighlight : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            CPDFKitConfig.sharedInstance().setEnableLinkFieldHighlight(linkHighlight)
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isLinkHighlight(completionHandler: @escaping (Bool) -> Void){
+        completionHandler(CPDFKitConfig.sharedInstance().enableLinkFieldHighlight())
+    }
+    
+    func setVerticalMode(isVerticalMode : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.displayDirection = isVerticalMode ? .vertical : .horizontal
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isVerticalMode(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.displayDirection == .vertical)
+        } else {
+            completionHandler(true)
+        }
+    }
+    
+    func setContinueMode(isContinueMode : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.isContinueMode = isContinueMode
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isContinueMode(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.isContinueMode)
+        }else {
+            completionHandler(true)
+        }
+    }
+    
+    func setDoublePageMode(isDoublePageMode : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.displayTwoUp = isDoublePageMode
+            pdfListView.displaysAsBook = false
+            if(pdfListView.displayDirection == .horizontal){
+                pdfListView.isContinueMode = false
+            }
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isDoublePageMode(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.displayTwoUp)
+        }else {
+            completionHandler(true)
+        }
+    }
+    
+    func setCoverPageMode(isCoverPageMode : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.displayTwoUp = isCoverPageMode
+            pdfListView.displaysAsBook = isCoverPageMode
+            if(pdfListView.displayDirection == .horizontal){
+                pdfListView.isContinueMode = false
+            }
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isCoverPageMode(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.displaysAsBook)
+        }else {
+            completionHandler(true)
+        }
+    }
+    
+    func setCropMode(isCropMode : Bool) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            pdfListView.displayCrop = isCropMode
+            pdfListView.layoutDocumentView()
+        }
+    }
+    
+    func isCropMode(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.displayCrop)
+        }else {
+            completionHandler(true)
+        }
+    }
+    
+    func setPreviewMode(viewMode : String) {
+        switch viewMode {
+        case "viewer":
+            self.pdfViewController?.enterViewerMode()
+        case "annotations":
+            self.pdfViewController?.enterAnnotationMode()
+        case "contentEditor":
+            self.pdfViewController?.enterEditMode()
+        case "forms":
+            self.pdfViewController?.enterFormMode()
+        case "signatures":
+            self.pdfViewController?.enterSignatureMode()
+        default:
+            self.pdfViewController?.enterViewerMode()
+        }
+    }
+    
+    func getPreviewMode(completionHandler: @escaping (String) -> Void) {
+        let state = self.pdfViewController?.functionTypeState ?? .viewer
+        switch state {
+        case .viewer:
+            completionHandler("viewer")
+        case .edit:
+            completionHandler("contentEditor")
+        case .annotation:
+            completionHandler("annotations")
+        case .form:
+            completionHandler("forms")
+        case .signature:
+            completionHandler("signatures")
+        default:
+            completionHandler("viewer")
+        }
+    }
+    
+    func showThumbnailView(isEditMode : Bool) {
+        if isEditMode {
+            self.pdfViewController?.enterThumbnail(false)
+        } else {
+            self.pdfViewController?.enterThumbnail(true)
+        }
+    }
+    
+    func showBotaView() {
+        self.pdfViewController?.buttonItemClicked_Bota(UIButton(frame: .zero))
+    }
+    
+    func showAddWatermarkView(config: [String: Any]) {
+        var isWatermarkSaveAs:Bool = true
+        for (configKey, configValue) in config {
+            if configKey == "saveAsNewFile" {
+                isWatermarkSaveAs = configValue as? Bool ?? true
+            } else if configKey == "outsideBackgroundColor" {
+                let string = configValue as? String ?? ""
+                if !string.isEmpty {
+                    let color = ColorHelper.colorWithHexString(hex: string)
+                    
+                    let userDefaults = UserDefaults.standard
+                    userDefaults.setPDFListViewColor(color, forKey: "CWatermarkBackgroundColor")
+                    userDefaults.synchronize()
+                }
+            } else if configKey == "text" {
+                self.pdfViewController?.configuration?.watermarkMode.text = configValue as? String ?? ""
+            } else if configKey == "image" {
+                let imageName = configValue as? String ?? ""
+                self.pdfViewController?.configuration?.watermarkMode.imageName = imageName
+                if !imageName.isEmpty {
+                    if FileManager.default.fileExists(atPath: imageName) {
+                        if let image = UIImage(contentsOfFile: imageName) {
+                            self.pdfViewController?.configuration?.watermarkMode.image = image
+                        }
+                    } else {
+                        if let url = Bundle.main.findImageURL(for: imageName) {
+                            if let image = UIImage(contentsOfFile: url.path) {
+                                self.pdfViewController?.configuration?.watermarkMode.image = image
+                            }
+                        }
+                    }
+                }
+            } else if configKey == "textSize" {
+                let textSize = configValue as? CGFloat ?? 0
+                self.pdfViewController?.configuration?.watermarkMode.fontSize = textSize
+            } else if configKey == "scale" {
+                let scale = configValue as? CGFloat ?? 0
+                self.pdfViewController?.configuration?.watermarkMode.watermarkScale = scale
+            } else if configKey == "textColor" {
+                    let string = configValue as? String ?? ""
+                    let color = ColorHelper.colorWithHexString(hex: string)
+                self.pdfViewController?.configuration?.watermarkMode.textColor = color
+            } else if configKey == "rotation" {
+                let rotation = configValue as? CGFloat ?? 0
+                self.pdfViewController?.configuration?.watermarkMode.watermarkRotation = rotation
+            } else if configKey == "opacity" {
+                let opacity = configValue as? CGFloat ?? 255.0
+                self.pdfViewController?.configuration?.watermarkMode.watermarkOpacity = opacity/255.0
+            } else if configKey == "isTilePage" {
+                let isTiled = configValue as? Bool ?? true
+                self.pdfViewController?.configuration?.watermarkMode.isTile = isTiled
+            } else if configKey == "isFront" {
+                let isFront = configValue as? Bool ?? true
+                self.pdfViewController?.configuration?.watermarkMode.isFront = isFront
+            } else if configKey == "types" {
+                let types = configValue as? [String] ?? []
+                
+                var waterType: [CPDFWatermarkToolType] = []
+                for type in types {
+                    if type == "text" {
+                        waterType.append(.text)
+                    } else if type == "image" {
+                        waterType.append(.image)
+                    }
+                }
+                self.pdfViewController?.configuration?.watermarkTypes = waterType
+            }
+        }
+        self.pdfViewController?.enterPDFWatermark(isSaveAs: isWatermarkSaveAs)
+    }
+    
+    func showSecurityView() {
+        self.pdfViewController?.enterPDFSecurity()
+    }
+    
+    func showDisplaySettingView() {
+        self.pdfViewController?.enterPDFSetting()
+    }
+    
+    func enterSnipMode() {
+        self.pdfViewController?.enterPDFSnipImageMode()
+    }
+    
+    func exitSnipMode() {
+        self.pdfViewController?.exitPDFSnipImageMode()
+    }
+    
+    func open(document : URL, password : String, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let newDocument = CPDFDocument(url: document)
+            if(newDocument?.isLocked == true){
+                newDocument?.unlock(withPassword: password)
+            }
+            pdfListView.document = newDocument
+            self.pdfViewController?.filePath = newDocument?.documentURL.path
+            pdfListView.setNeedsDisplay()
+            completionHandler(true)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func getFileName(completionHandler: @escaping (String) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.documentURL.lastPathComponent)
+        }else {
+            completionHandler("")
+        }
+    }
+    
+    func isEncrypted(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.isEncrypted)
+        }else {
+            completionHandler(false)
+        }
+    }
+    
+    func isImageDoc(completionHandler: @escaping (Bool) -> Void){
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.isImageDocument())
+        }else {
+            completionHandler(false)
+        }
+    }
+    
+    func getPermissions(completionHandler: @escaping (NSNumber) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let permissions = pdfListView.document?.permissionsStatus ?? .none
+            switch permissions {
+            case .none:
+                completionHandler(0)
+            case .user:
+                completionHandler(1)
+            case .owner:
+                completionHandler(2)
+            default:
+                completionHandler(0)
+            }
+        }else {
+            completionHandler(0)
+        }
+    }
+    
+    func getPageCount(completionHandler: @escaping (NSNumber) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.pageCount as NSNumber)
+        }else {
+            completionHandler(0)
+        }
+    }
+    
+    func checkOwnerUnlocked(completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.isCheckOwnerUnlocked())
+        }else {
+            completionHandler(false)
+        }
+    }
+    
+    func checkOwnerPassword(password : String, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            completionHandler(pdfListView.document.checkOwnerPassword(password))
+        }else {
+            completionHandler(false)
+        }
+    }
+    
+    func removePassword(completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let newDocument = pdfListView.document
+            let url = newDocument?.documentURL
+            
+            let success = newDocument?.writeDecrypt(to: url, isSaveFontSubset: true) ?? false
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func setPassword(info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let _info = info as? [String: Any]
+            
+            let userPassword : String = self.getValue(from: _info, key: "user_password", defaultValue: "")
+            let ownerPassword : String = self.getValue(from: _info, key: "owner_password", defaultValue: "")
+            let allowsPrinting : Bool = self.getValue(from: _info, key: "allows_printing", defaultValue: true)
+            let allowsCopying : Bool = self.getValue(from: _info, key: "allows_copying", defaultValue: true)
+            
+            let encryptAlgo : String = self.getValue(from: _info, key: "encrypt_algo", defaultValue: "rc4")
+            
+            var level: Int = 0
+            // Encryption mode, the type passed in is：rc4, aes128, aes256, noEncryptAlgo
+            switch encryptAlgo {
+            case "rc4":
+                level = 0
+            case "aes128":
+                level = 1
+            case "aes256":
+                level = 2
+            case "noEncryptAlgo":
+                level = 3
+            default:
+                level = 3
+            }
+            
+            var options:[CPDFDocumentWriteOption: Any] = [:]
+            options[CPDFDocumentWriteOption.userPasswordOption] = userPassword
+            
+            options[CPDFDocumentWriteOption.ownerPasswordOption] = ownerPassword
+            
+            options[CPDFDocumentWriteOption.allowsPrintingOption] = allowsPrinting
+            
+            options[CPDFDocumentWriteOption.allowsCopyingOption] = allowsCopying
+            
+            options[CPDFDocumentWriteOption.encryptionLevelOption] = NSNumber(value: level)
+            
+            let newDocument = pdfListView.document
+            let url = newDocument?.documentURL
+            
+            let success = newDocument?.write(to: url, withOptions: options, isSaveFontSubset: true) ?? false
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func getEncryptAlgo(completionHandler: @escaping (String) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let encryptAlgo = pdfListView.document.encryptionLevel
+            switch encryptAlgo {
+            case .RC4:
+                completionHandler("rc4")
+            case .AES128:
+                completionHandler("aes128")
+            case .AES256:
+                completionHandler("aes256")
+            case .noEncryptAlgo:
+                completionHandler("noEncryptAlgo")
+            default:
+                completionHandler("noEncryptAlgo")
+            }
+        }else {
+            completionHandler("noEncryptAlgo")
+        }
+    }
+    
+    func printDocument() {
+        self.pdfViewController?.enterPrintState();
+    }
+    
+    func importWidgets(xfdfFile : URL, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let documentFolder = NSHomeDirectory().appending("/Documents/Files")
+            if !FileManager.default.fileExists(atPath: documentFolder) {
+                try? FileManager.default.createDirectory(at: URL(fileURLWithPath: documentFolder), withIntermediateDirectories: true, attributes: nil)
+            }
+            
+            let documentPath = documentFolder + "/\(xfdfFile.lastPathComponent)"
+            try? FileManager.default.copyItem(atPath: xfdfFile.path, toPath: documentPath)
+            
+            if !FileManager.default.fileExists(atPath: documentPath) {
+                print("fail")
+            }
+            
+            let success = pdfListView.document?.importForm(fromXFDFPath: documentPath) ?? false
+            if success {
+                self.pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
+            }
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func getDocumentPath(completionHandler: @escaping (String) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let documentPath = pdfListView.document.documentURL.path
+            completionHandler(documentPath)
+        }
+    }
+    
+    func exportWidgets(completionHandler: @escaping (String) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let fileNameWithExtension = pdfListView.document?.documentURL.lastPathComponent ?? ""
+            let fileName = (fileNameWithExtension as NSString).deletingPathExtension
+            let documentFolder = NSHomeDirectory().appending("/Documents/\(fileName)_xfdf.xfdf")
+            let succes = pdfListView.document?.export(toXFDFPath: documentFolder) ?? false
+            
+            if succes {
+                completionHandler(documentFolder)
+            } else {
+                completionHandler("")
+            }
+        } else {
+            completionHandler("")
+        }
+    }
+    
+    func flattenAllPages(savePath: URL, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let success = pdfListView.document.writeFlatten(to: savePath, isSaveFontSubset: fontSubset)
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func saveAs(savePath: URL, removeSecurity: Bool, fontSubset: Bool, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            var success: Bool = false
+            if removeSecurity {
+                success = pdfListView.document.writeDecrypt(to: savePath, isSaveFontSubset: fontSubset)
+            } else {
+                success = pdfListView.document.write(to: savePath, isSaveFontSubset: fontSubset)
+            }
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func importDocument(_ filePath:URL, _ info : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let _info = info as? [String: Any]
+            
+            let password: String = self.getValue(from: _info, key: "password", defaultValue: "")
+            let pages: [Int] = self.getValue(from: _info, key: "pages", defaultValue: [])
+            let insert_position: Int = self.getValue(from: _info, key: "insert_position", defaultValue: 0)
+            
+            let _document = CPDFDocument(url: filePath)
+            
+            if _document?.isLocked == true {
+                _document?.unlock(withPassword: password)
+            }
+            
+            let success = self.insertPDFDocument(_document!, Pages: pages, Position: insert_position)
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func splitDocumentPages(savePath: URL, pages: [Int], completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            
+            let success = self.extractPDFDocument(savePath, Pages: pages)
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    func insertBlankPage(pageIndex: Int, pageWidth: Float, pageHeight: Float, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            var _index = pageIndex
+            if pageIndex < 0 || pageIndex > pdfListView.document.pageCount {
+                if pageIndex == -1 {
+                    _index = Int(pdfListView.document.pageCount)
+                } else {
+                    completionHandler(false)
+                }
+            }
+            
+            let size = CGSize(width: Double(pageWidth), height: Double(pageHeight))
+            let success = pdfListView.document.insertPage(size, at: UInt(_index))
+            self.pdfViewController?.pdfListView?.layoutDocumentView()
+            
+            completionHandler(success)
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    
+    func selection(dictionary : NSDictionary, completionHandler: @escaping (Bool) -> Void) {
+        if let pdfListView = self.pdfViewController?.pdfListView {
+            let selection = CPDFSearchUtil.selection(from: pdfListView.document, info: dictionary)
+            if let selection = selection {
+                pdfListView.go(to: selection.bounds, on: selection.page, offsetY: CGFloat(88), animated: false)
+                pdfListView.setHighlightedSelection(selection, animated: true)
+                completionHandler(true)
+            }else {
+                completionHandler(false)
+            }
+        } else {
+            completionHandler(false)
+        }
+    }
+    
+    
+    // MARK: - CPDFViewBaseControllerDelete
+    
+    func PDFViewBaseController(_ baseController: CPDFViewBaseController, SaveState success: Bool) {
+        self.delegate?.saveDocumentChange(self)
+    }
+    
+    func PDFViewBaseController(_ baseController: CPDFViewBaseController, currentPageIndex index: Int) {
+        self.delegate?.onPageChanged(self, pageIndex: index)
+    }
+    
+    func PDFViewBaseControllerPageEditBack(_ baseController: CPDFViewBaseController) {
+        self.delegate?.onPageEditDialogBackPress(self)
+    }
+    
+    func PDFViewBaseController(_ baseController: CPDFViewBaseController, HiddenState state: Bool) {
+        self.delegate?.onFullScreenChanged(self, isFull: state)
+    }
+    
+    func PDFViewBaseController(_ baseController: CPDFViewBaseController, LoadState success: Bool) {
+        if success {
+            self.delegate?.onDocumentIsReady(self)
+        }
+    }
+    
+    func PDFViewBaseControllerTouchEnded(_ baseController: CPDFViewBaseController) {
+        self.delegate?.onTapMainDocArea(self)
+    }
+    
+    public func PDFViewBaseControllerDissmiss(_ baseControllerDelete: CPDFViewBaseController) {
+        self.delegate?.onIOSClickBackPressed(self)
+    }
+    
+    // MARK: - Notification
+    
+    @objc func annotationsOperationChangeNotification(_ notification: Notification) {
+        self.delegate?.onAnnotationHistoryChanged(self)
+    }
+    
+    @objc func pageChangedNotification(_ notification: Notification) {
+        let pageIndex = self.pdfViewController?.pdfListView?.currentPageIndex ?? 0
+        self.delegate?.onContentEditorHistoryChanged(self, pageIndex: pageIndex)
+    }
+    
+    @objc func pageEditingDidChanged(_ notification: Notification) {
+        guard let page = notification.object as? CPDFPage else {
+            return
+        }
+        let pageIndex = page.pageIndexInteger
+        self.delegate?.onContentEditorHistoryChanged(self, pageIndex: Int(pageIndex))
+    }
+    
+    // MARK: - RCT Methods
+    
+    private var configuration: String = ""
+    private var document: URL = URL(fileURLWithPath: "")
+    private var password: String = ""
+    
+    private var isDocumentSet = false
+    private var isConfigurationSet = false
+    private var isPasswordSet = false
+    private var hasCreatedView = false
+    
+    @objc func setConfiguration(_ newSection: String) {
+        configuration = newSection
         isConfigurationSet = !configuration.isEmpty
         tryCreateCPDFViewIfReady()
-  }
-  
-
-  @objc func setDocument(_ newSection: URL) {
-    document = newSection
-    isDocumentSet = !document.path.isEmpty
-    tryCreateCPDFViewIfReady()
-  }
-  
-
-  @objc func setPassword(_ newSection: String) {
-    password = newSection
-    isPasswordSet = true
-    tryCreateCPDFViewIfReady()
-  }
-  
-  private func tryCreateCPDFViewIfReady() {
-      guard !hasCreatedView else { return }
-      if isDocumentSet && isConfigurationSet && isPasswordSet {
-          hasCreatedView = true
-          createCPDFView()
-      }
-  }
-  
-  public var onChange: RCTBubblingEventBlock?
-  @objc func setOnChange(_ newSection: @escaping RCTBubblingEventBlock) {
-    onChange = newSection
-  }
+    }
+    
+    
+    @objc func setDocument(_ newSection: URL) {
+        document = newSection
+        isDocumentSet = !document.path.isEmpty
+        tryCreateCPDFViewIfReady()
+    }
+    
+    
+    @objc func setPassword(_ newSection: String) {
+        password = newSection
+        isPasswordSet = true
+        tryCreateCPDFViewIfReady()
+    }
+    
+    private func tryCreateCPDFViewIfReady() {
+        guard !hasCreatedView else { return }
+        if isDocumentSet && isConfigurationSet && isPasswordSet {
+            hasCreatedView = true
+            createCPDFView()
+        }
+    }
+    
+    public var onChange: RCTBubblingEventBlock?
+    @objc func setOnChange(_ newSection: @escaping RCTBubblingEventBlock) {
+        onChange = newSection
+    }
 }

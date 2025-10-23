@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Image, Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
+import PDFReaderContext, { CPDFReaderView, CPDFThemeMode, CPDFViewMode, ComPDFKit, botaMenus } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
@@ -97,7 +97,11 @@ const CPDFReaderViewControllerExampleScreen = () => {
             'setFixedScroll',
             'isPageInScreen',
         ] : [],
-        'print'];
+        'print',
+        'Dismiss Context Menu',
+        'Show Search Text View',
+        'Hide Search Text View',
+    ];
 
     const handleMenuItemPress = async (action: string) => {
         switch (action) {
@@ -141,7 +145,14 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 await pdfReaderRef.current?.showBotaView();
                 break;
             case 'showAddWatermarkView':
-                await pdfReaderRef.current?.showAddWatermarkView(false);
+                await pdfReaderRef.current?.showAddWatermarkView({
+                    saveAsNewFile: false,
+                    types: ['text', 'image'],
+                    text: 'ComPDFKit RN',
+                    rotation: -45,
+                    image: 'tools_logo',
+                    opacity: 255,
+                });
                 break;
             case 'showSecurityView':
                 await pdfReaderRef.current?.showSecurityView();
@@ -190,6 +201,15 @@ const CPDFReaderViewControllerExampleScreen = () => {
             case 'print':
                 await pdfReaderRef.current?._pdfDocument.printDocument();
                 break;
+            case 'Dismiss Context Menu':
+                await pdfReaderRef.current?.dismissContextMenu();
+                break;
+            case 'Show Search Text View':
+                await pdfReaderRef.current?.showSearchTextView();
+                break;
+            case 'Hide Search Text View':
+                await pdfReaderRef.current?.hideSearchTextView();
+                break;
             default:
                 break;
         }
@@ -236,6 +256,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
         console.log('ComPDFKitRN onFullScreenChanged-----:', isFullScreen);
     }
 
+
     return (
         <PDFReaderContext.Provider value={pdfReaderRef.current}>
             <MenuProvider>
@@ -250,7 +271,8 @@ const CPDFReaderViewControllerExampleScreen = () => {
                             onIOSClickBackPressed={handleBack}
                             onPageEditDialogBackPress={onPageEditDialogBackPress}
                             onFullScreenChanged={onFullScreenChanged}
-                            configuration={ComPDFKit.getDefaultConfig({})} />
+                            configuration={ComPDFKit.getDefaultConfig({
+                            })} />
                         <CPDFDisplaySettingsScreen
                             visible={displaySettingModalVisible}
                             onClose={() => setDisplaySettingModalVisible(false)}

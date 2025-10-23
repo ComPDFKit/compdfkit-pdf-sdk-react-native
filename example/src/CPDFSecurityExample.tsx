@@ -44,7 +44,9 @@ const CPDFSecurityExampleScreen = () => {
         'Remove Password',
         'Flatten All Pages',
         'Check Owner Password',
-        'Document Info'];
+        'Document Info',
+        'Verify Digital Signature',
+        'Hide Verify Status View',];
 
     const handleMenuItemPress = async (action: string) => {
         const document = pdfReaderRef.current?._pdfDocument;
@@ -91,6 +93,12 @@ const CPDFSecurityExampleScreen = () => {
                 console.log('ComPDFKit-RN getEncryptAlgo:', await document?.getEncryptAlgo());
                 console.log('ComPDFKit-RN checkOwnerUnlocked:', await document?.checkOwnerUnlocked());
                 break;
+            case 'Verify Digital Signature':
+                await pdfReaderRef.current?.verifyDigitalSignatureStatus();
+                break;    
+            case 'Hide Verify Status View':
+                await pdfReaderRef.current?.hideDigitalSignStatusView();
+                break;    
             default:
                 break;
         }

@@ -17,7 +17,7 @@ RCT_EXTERN_METHOD(save:(NSInteger)tag
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setMargins:(NSInteger)tag
-                  withEdges:(NSArray)edges
+                  withEdges:(NSArray *)edges
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -36,6 +36,7 @@ RCT_EXTERN_METHOD(exportAnnotations:(NSInteger)tag
 
 RCT_EXTERN_METHOD(setDisplayPageIndex:(NSInteger)tag
                   withPageIndex:(NSInteger)pageIndex
+                  withRectList:(NSArray *)rectList
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -152,7 +153,7 @@ RCT_EXTERN_METHOD(showBotaView:(NSInteger)tag
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(showAddWatermarkView:(NSInteger)tag
-                  withSaveAsNewFile: (BOOL) saveAsNewFile
+                  withConfig: (NSDictionary) config
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -355,6 +356,68 @@ RCT_EXTERN_METHOD(annotationRedo:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setFormCreationMode: (NSInteger)tag
+                  withMode:(NSString *) mode
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getFormCreationMode: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(verifyDigitalSignatureStatus: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(hideDigitalSignStatusView: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(clearDisplayRect: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(dismissContextMenu: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(showSearchTextView: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(hideSearchTextView: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(saveCurrentInk: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(saveCurrentPencil: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(changeEditType: (NSInteger)tag
+                  withEditTypes:(NSArray *) editTypes
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(editorCanUndo:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(editorCanRedo:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(editorUndo:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(editorRedo:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(searchText: (NSInteger)tag
                   withText:(NSString *) text
                   withSearchOption : (NSInteger) searchOption
@@ -376,6 +439,22 @@ RCT_EXTERN_METHOD(getSearchText: (NSInteger)tag
                    withLength: (NSInteger) length
                    withResolver:(RCTPromiseResolveBlock)resolve
                    withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPageSize : (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(renderPage: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withWidth: (NSInteger) width
+                  withHeight: (NSInteger) height
+                  withBackgroundColor: (NSString *) backgroundColor
+                  withDrawAnnot: (BOOL) drawAnnot
+                  withDrawForm: (BOOL) drawForm
+                  withPageCompression: (NSString *) pageCompression
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
                   
                   
 + (BOOL)requiresMainQueueSetup

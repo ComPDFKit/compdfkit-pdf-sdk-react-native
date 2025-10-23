@@ -11,6 +11,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import { CPDFReaderView, ComPDFKit} from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -60,12 +61,16 @@ const CPDFReaderViewExampleScreen = () => {
 
 
     return (
-        <CPDFReaderView
-            ref={pdfReaderRef}
-            document={samplePDF}
-            onIOSClickBackPressed={() => navigation.goBack()}
-            configuration={ComPDFKit.getDefaultConfig({})}
-        />
+            <CPDFReaderView
+                ref={pdfReaderRef}
+                document={samplePDF}
+                onIOSClickBackPressed={() => navigation.goBack()}
+                configuration={ComPDFKit.getDefaultConfig({})}
+                onViewCreated={() => {
+                    console.log('ComPDFKitRN onViewCreated');
+                }}
+            />
+
     );
 
 };

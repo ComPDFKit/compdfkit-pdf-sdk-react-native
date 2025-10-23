@@ -106,7 +106,7 @@ export const CPDFAnnotationListScreen: React.FC<CPDFAnnotationListScreenProps> =
                                         _item(
                                             item as CPDFAnnotation,
                                             async () => {
-                                                await pdfReader?.setDisplayPageIndex(item.page);
+                                                await pdfReader?.setDisplayPageIndex(item.page, { rectList: [item.rect!]});
                                                 onClose();
                                             },
                                             async (annotation) => {

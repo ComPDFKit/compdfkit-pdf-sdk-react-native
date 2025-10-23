@@ -20,6 +20,8 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import com.compdfkit.core.edit.CPDFEditManager;
+import com.compdfkit.core.edit.OnEditStatusChangeListener;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
@@ -31,6 +33,8 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CPDFView extends FrameLayout {
@@ -121,10 +125,14 @@ public class CPDFView extends FrameLayout {
       View fragmentView = documentFragment.getView();
       addView(fragmentView, ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT);
-      documentFragment.setInitListener((pdfView)->{
+      documentFragment.setInitListener((pdfView) -> {
         try {
           documentFragment.pdfView.indicatorView.setRNMeasureLayout(true);
-        }catch (Exception e){
+          WritableMap params = Arguments.createMap();
+          params.putNull("onDocumentIsReady");
+          onReceiveNativeEvent(params);
+          Log.i("ComPDFKit", "CPDFView-onDocumentIsReady()");
+        } catch (Exception e) {
         }
         documentFragment.pdfView.addReaderViewCallback(new CPDFIReaderViewCallback() {
           @Override
@@ -162,13 +170,36 @@ public class CPDFView extends FrameLayout {
           params.putBoolean("onFullScreenChanged", isFillScreen);
           onReceiveNativeEvent(params);
         });
-        pdfView.getCPdfReaderView().getUndoManager().addOnUndoHistoryChangeListener((cpdfUndoManager, operation, type) -> {
-          WritableMap historyState = Arguments.createMap();
-          historyState.putBoolean("canUndo", cpdfUndoManager.canUndo());
-          historyState.putBoolean("canRedo", cpdfUndoManager.canRedo());
-          WritableMap params = Arguments.createMap();
-          params.putMap("onAnnotationHistoryChanged", historyState);
-          onReceiveNativeEvent(params);
+        pdfView.getCPdfReaderView().getUndoManager()
+          .addOnUndoHistoryChangeListener((cpdfUndoManager, operation, type) -> {
+            WritableMap historyState = Arguments.createMap();
+            historyState.putBoolean("canUndo", cpdfUndoManager.canUndo());
+            historyState.putBoolean("canRedo", cpdfUndoManager.canRedo());
+            WritableMap params = Arguments.createMap();
+            params.putMap("onAnnotationHistoryChanged", historyState);
+            onReceiveNativeEvent(params);
+          });
+        pdfView.addEditStatusChangeListener(new OnEditStatusChangeListener() {
+          @Override
+          public void onBegin(int i) {
+
+          }
+
+          @Override
+          public void onUndoRedo(int pageIndex, boolean canUndo, boolean canRedo) {
+            WritableMap historyState = Arguments.createMap();
+            historyState.putBoolean("canUndo", canUndo);
+            historyState.putBoolean("canRedo", canRedo);
+            historyState.putInt("pageIndex", pageIndex);
+            WritableMap params = Arguments.createMap();
+            params.putMap("onContentEditorHistoryChanged", historyState);
+            onReceiveNativeEvent(params);
+          }
+
+          @Override
+          public void onExit() {
+
+          }
         });
       });
     }
@@ -195,7 +226,7 @@ public class CPDFView extends FrameLayout {
     getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
   }
 
-  public CPDFPageUtil getCPDFPageUtil(){
+  public CPDFPageUtil getCPDFPageUtil() {
     pageUtil.setDocument(getCPDFReaderView().getPDFDocument());
     return pageUtil;
   }
@@ -246,7 +277,7 @@ public class CPDFView extends FrameLayout {
     ReactContext reactContext = (ReactContext) getContext();
     WritableMap event = Arguments.createMap();
     event.putString(key, message);
-    reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+    themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
       getId(),
       "topChange",
       event);

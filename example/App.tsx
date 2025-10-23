@@ -23,7 +23,8 @@ import CPDFSecurityExampleScreen from './src/CPDFSecurityExample';
 import CPDFPagesExampleScreen from './src/CPDFPagesExample';
 import CPDFWidgetsExampleScreen from './src/CPDFWidgetsExample';
 import CPDFSearchTextExampleScreen from './src/CPDFSearchTextExample';
-import CPDFSearchTextListScreen from './src/screens/CPDFSearchTextListScreen';
+import CPDFContentEditorExampleScreen from './src/CPDFContentEditorExample';
+import CPDFFormCreationExampleScreen from './src/CPDFFormCreationExample';
 
 const Stack = createNativeStackNavigator();
 
@@ -114,6 +115,20 @@ export default class App extends Component<Props> {
           <Stack.Screen
             name='CPDFSearchTextExample'
             component={CPDFSearchTextExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFContentEditorExample'
+            component={CPDFContentEditorExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFFormCreationExample'
+            component={CPDFFormCreationExampleScreen}
             options={() => ({
                   headerShown: false,
               })}

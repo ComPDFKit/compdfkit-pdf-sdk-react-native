@@ -94,11 +94,11 @@ Used to configure the initial display mode and supported modes when displaying a
 
 ##### **Parameters**
 
-| Name               | Type    | Description                                                  |
-| ------------------ | ------- | ------------------------------------------------------------ |
-| initialViewMode    | string  | Default mode to display when opening the PDF View, default is `viewer` |
-| availableViewModes | string  | Configure supported modes                                    |
-| readerOnly         | boolean | View only PDF documents, hiding all top and bottom toolbars.<br />**ComPDFKit SDK for Flutter Version:** => 2.0.2 |
+| Name               | Type   | Description                                                  |
+| ------------------ | ------ | ------------------------------------------------------------ |
+| initialViewMode    | string | Default mode to display when opening the PDF View, default is `viewer` |
+| availableViewModes | string | Configure supported modes                                    |
+| uiVisibilityMode   | string | Used to set the UI visibility mode<br/>**automatic**: Toolbars at the top and bottom are automatically shown or hidden when tapping on the PDF page<br/>**always**: Toolbars are always visible <br/>**never**: Toolbars are never displayed |
 
 ##### **Constants**
 
@@ -114,7 +114,7 @@ Used to configure the initial display mode and supported modes when displaying a
 {
   "modeConfig": {
     "initialViewMode": "viewer",
-    "readerOnly": false,
+    "uiVisibilityMode": "automatic",
     "availableViewModes": [
       "viewer",
       "annotations",
@@ -141,6 +141,10 @@ Configure functions for the top toolbar in the PDF view.
 | mainToolbarVisible          | boolean | Whether to display the toolbar at the top of the main interface view. |
 | annotationToolbarVisible    | boolean | Shows or hides the annotation toolbar that appears at the bottom of the view when in annotation mode. |
 | showInkToggleButton         | boolean | Whether to display the toggle/slide and drawing state buttons in the upper-left corner when drawing ink annotations. |
+| contentEditorToolbarVisible | boolean | Show or hide the bottom toolbar in content editing mode      |
+| formToolbarVisible          | boolean | Show or hide the bottom toolbar in form mode                 |
+| signatureToolbarVisible     | boolean | Show or hide the bottom toolbar in signature mode            |
+|                             |         |                                                              |
 
 ##### **Constants**
 
@@ -153,22 +157,27 @@ Configure functions for the top toolbar in the PDF view.
 
 ##### **availableMenus Constants**
 
-| Name           | Description                                                |
-| -------------- | ---------------------------------------------------------- |
+| Name           | Description                                                  |
+| -------------- | ------------------------------------------------------------ |
 | viewSetting    | Settings related to PDF viewing, such as scroll direction and theme. |
 | documentEditor | Displays a list of PDF document thumbnails and allows page manipulation such as addition and deletion. |
-| documentInfo   | Displays information related to the PDF document.           |
+| documentInfo   | Displays information related to the PDF document.            |
 | watermark      | Adds text or image watermark to the document, saving it as a new document. |
-| security       | Sets viewing and permission passwords for the document.     |
+| security       | Sets viewing and permission passwords for the document.      |
 | flattened      | Flattens annotations and other content within the document, making annotations uneditable. |
-| save           | Saves the document.                                         |
-| share          | Shares the PDF document.                                    |
+| save           | Saves the document.                                          |
+| share          | Shares the PDF document.                                     |
 | openDocument   | Opens the system file selector to choose and open a PDF document. |
 | snip           | The PDF capture function allows you to capture an area in the PDF document and convert it into an image. |
 ```json
 {
    "toolbarConfig": {
     "mainToolbarVisible" : true,
+    "contentEditorToolbarVisible" : true,
+    "annotationToolbarVisible" : true,
+    "formToolbarVisible" : true,
+    "signatureToolbarVisible" : true,
+    "showInkToggleButton": true,
     "androidAvailableActions": [
       "thumbnail",
       "search",
@@ -792,10 +801,11 @@ This section is used to configure the types of forms enabled in the view's botto
 | ----------------------- | ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | themeMode               | CPDFThemeMode       | light                                                        | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
 | fileSaveExtraFontSubset | boolean             | true                                                         | When saving a document, whether to save the used font set together with the document. |
-| watermark               | CPDFWatermarkConfig | {   "saveAsNewFile" : true, <br />"outsideBackgroundColor: ""<br />} | The user can configure the watermark addition popup, allowing them to choose whether to save the watermark directly to the current document or save it to a different directory.<br>**true**: Save to a different directory<br>**false**: Add to the current document directly |
-| signatureType           | String              | manual                                                       | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic |
-| enableExitSaveTips      | boolean             | true \| false                                                | When exiting, check if the document has been modified and prompt to save the document |
+| watermark               | CPDFWatermarkConfig |                                                              | Watermark configuration when opening the Add Watermark view  |
 | thumbnail               | CPDFThumbnail       | {   "title" : "",   <br />"backgroundColor": "",  <br /> "editMode" : true <br />} |                                                              |
+| enableErrorTips         | boolean             | true \| false                                                | Whether to enable error prompts. For example, if a page cannot add a highlight annotation, setting this to false will prevent the prompt message from appearing. |
+| signatureType           | String              | manual                                                       | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic |
+| bota                    | CPDFBotaConfig      |                                                              | Used to configure the enabled feature types and menu options in the BOTA interface |
 
 ##### themeMode Constants
 
@@ -1040,15 +1050,13 @@ The context menu configuration in form mode displays different context menu opti
 }
 ```
 
-
-
 ## Json Example
 
 ```json
 {
   "modeConfig": {
     "initialViewMode": "viewer",
-    "readerOnly": false,
+    "uiVisibilityMode": "automatic",
     "availableViewModes": [
       "viewer",
       "annotations",
@@ -1059,7 +1067,10 @@ The context menu configuration in form mode displays different context menu opti
   },
   "toolbarConfig": {
     "mainToolbarVisible" : true,
+    "contentEditorToolbarVisible" : true,
     "annotationToolbarVisible" : true,
+    "formToolbarVisible" : true,
+    "signatureToolbarVisible" : true,
     "showInkToggleButton": true,
     "androidAvailableActions": [
       "thumbnail",
@@ -1310,23 +1321,87 @@ The context menu configuration in form mode displays different context menu opti
     "pageSpacing": 10,
     "margins" : [0,0,0,0],
     "pageScale": 1.0,
-    "pageSameWidth": true
+    "pageSameWidth": true,
+    "enableMinScale": true
   },
   "global" : {
     "themeMode" : "system",
     "fileSaveExtraFontSubset" : true,
     "watermark": {
-      "saveAsNewFile" : true,
-      "outsideBackgroundColor" : ""
+      "types" : [ "text" , "image" ],
+      "saveAsNewFile" : false,
+      "outsideBackgroundColor" : "",
+      "text" : "",
+      "image" : "tools_logo",
+      "textSize" : 40,
+      "textColor" : "#FF000000",
+      "scale" : 1.5,
+      "rotation" : 0,
+      "opacity" : 255,
+      "isFront" : false,
+      "isTilePage" : false
     },
-    "signatureType": "manual",
-    "enableExitSaveTips" : true,
     "thumbnail": {
       "title" : "",
       "backgroundColor": "",
       "editMode" : true
     },
-    "enableErrorTips" : true
+    "bota": {
+      "tabs": ["outline", "bookmark", "annotations"],
+      "menus": {
+        "annotations": {
+          "global": [
+            { "id": "importAnnotation" },
+            { "id": "exportAnnotation" },
+            { "id": "removeAllAnnotation" },
+            { "id": "removeAllReply" }
+          ],
+          "item": [
+            { "id": "reviewStatus",
+              "subMenus": [
+                "accepted",
+                "rejected",
+                "cancelled",
+                "completed",
+                "none"
+              ]
+            },
+            { "id": "markedStatus" },
+            {
+              "id": "more",
+              "subMenus": [
+                "addReply",
+                "viewReply",
+                "delete"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "signatureType": "manual",
+    "enableExitSaveTips" : true,
+    "enableErrorTips" : true,
+    "search": {
+      "normalKeyword": {
+        "borderColor": "#00000000",
+        "fillColor": "#77FFFF00"
+      },
+      "focusKeyword": {
+        "borderColor": "#00000000",
+        "fillColor": "#CCFD7338"
+      }
+    },
+    "pageEditor": {
+      "menus": [
+        "insertPage",
+        "replacePage",
+        "extractPage",
+        "copyPage",
+        "rotatePage",
+        "deletePage"
+      ]
+    }
   },
   "contextMenuConfig" : {
     "global": {

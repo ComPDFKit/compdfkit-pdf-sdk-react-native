@@ -470,6 +470,58 @@ export const CPDFSignatureType = {
 } as const;
 export type CPDFSignatureType = ValueOf<typeof CPDFSignatureType>;
 
+
+export const CPDFUiVisibilityMode  = {
+
+    /**
+     * Always show UI
+     */
+    ALWAYS: 'always',
+
+    /**
+     * Auto hide UI, tap to show
+     */
+    AUTOMATIC: 'automatic',
+
+    /**
+     * Always hide UI, use gestures to show
+     */
+    NEVER: 'never'
+} as const;
+export type CPDFUiVisibilityMode = ValueOf<typeof CPDFUiVisibilityMode>;
+
+
+export const CPDFBotaTabs = {
+
+    BOOKMARKS: 'bookmark',
+
+    OUTLINE: 'outline',
+
+    ANNOTATIONS: 'annotations'
+} as const;
+export type CPDFBotaTabs = ValueOf<typeof CPDFBotaTabs>;
+
+export const CPDFPageCompression = {
+
+    JPEG: 'jpeg',
+
+    PNG: 'png',
+} as const;
+export type CPDFPageCompression = ValueOf<typeof CPDFPageCompression>;
+
+
+export const CPDFEditType = {
+    NONE: 0,
+
+    TEXT: 1,
+    
+    IMAGE: 2,
+
+    PATH: 4
+} as const;
+export type CPDFEditType = ValueOf<typeof CPDFEditType>;
+
+
 export type AnyCase<T extends string> =
     string extends T ? string :
     T extends `${infer F1}${infer F2}${infer R}` ? (

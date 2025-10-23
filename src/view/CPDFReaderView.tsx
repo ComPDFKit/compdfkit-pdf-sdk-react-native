@@ -9,10 +9,11 @@
 
 import React, { PureComponent } from 'react';
 import { findNodeHandle, requireNativeComponent, NativeModules,Platform } from 'react-native';
-import { CPDFAnnotationType, CPDFThemes, CPDFViewMode } from '../configuration/CPDFOptions';
-import { CPDFDocument } from '@compdfkit_pdf_sdk/react_native';
+import { CPDFAnnotationType, CPDFThemes, CPDFViewMode, CPDFWidgetType } from '../configuration/CPDFOptions';
+import { CPDFDocument, CPDFEditManager, CPDFRectF } from '@compdfkit_pdf_sdk/react_native';
 import { CPDFAnnotationHistoryManager } from '../history/CPDFAnnotationHistoryManager';
 import { normalizeColorToARGB } from '../util/CPDFEnumUtils';
+import { CPDFWatermarkConfig } from '../configuration/CPDFConfiguration';
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -40,15 +41,19 @@ export interface CPDFReaderViewProps {
   onTapMainDocArea?: () => void;
   onIOSClickBackPressed?: () => void; // iOS only
   onChange?: (event: any) => void;
+  onViewCreated?: () => void;
   style?: any;
 }
 
 export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   _viewerRef: any;
+
   _pdfDocument : CPDFDocument;
 
   _annotationsHistoryManager: CPDFAnnotationHistoryManager;
+
+  _editManager: CPDFEditManager;
 
   static defaultProps = {
     password: ''
@@ -58,12 +63,14 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     super(props);
     this._pdfDocument = new CPDFDocument(this._viewerRef);
     this._annotationsHistoryManager = new CPDFAnnotationHistoryManager(this._viewerRef);
+    this._editManager = new CPDFEditManager(this._viewerRef);
   }
 
   _setNativeRef = (ref: any) => {
     this._viewerRef = ref;
     this._pdfDocument = new CPDFDocument(this._viewerRef);
     this._annotationsHistoryManager = new CPDFAnnotationHistoryManager(this._viewerRef);
+    this._editManager = new CPDFEditManager(this._viewerRef);
   }
 
   onChange = (event : any) => {
@@ -97,6 +104,14 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     } else if('onIOSClickBackPressed' in event.nativeEvent){
       if(this.props.onIOSClickBackPressed){
         this.props.onIOSClickBackPressed();
+      }
+    } else if('onDocumentIsReady' in event.nativeEvent){
+      if(this.props.onViewCreated){
+        this.props.onViewCreated();
+      }
+    } else if('onContentEditorHistoryChanged' in event.nativeEvent) {
+      if(this._editManager){
+        this._editManager.historyManager.handle(event);
       }
     }
   }
@@ -211,12 +226,14 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * await pdfReaderRef.current?.setDisplayPageIndex(1);
    *
    * @param pageIndex The index of the page to jump.
+   * @param rectList The rects to be visible in the page. The rect is in PDF coordinate system.
    * @returns
    */
-  setDisplayPageIndex = (pageIndex : number) : Promise<void> => {
+  setDisplayPageIndex = (pageIndex : number, options: { rectList?: CPDFRectF[] } = {}) : Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
-    if(tag != null){
-      return CPDFViewManager.setDisplayPageIndex(tag, pageIndex);
+    if (tag != null) {
+      const { rectList = [] } = options;
+      return CPDFViewManager.setDisplayPageIndex(tag, pageIndex, rectList);
     }
     return Promise.resolve();
   }
@@ -751,10 +768,11 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @returns
    */
-  showAddWatermarkView = (saveAsNewFile : boolean = true) : Promise<void> => {
+  showAddWatermarkView = (config? : CPDFWatermarkConfig) : Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if(tag != null){
-      return CPDFViewManager.showAddWatermarkView(tag, saveAsNewFile);
+      const defaultConfig = new CPDFWatermarkConfig();
+      return CPDFViewManager.showAddWatermarkView(tag, { ...defaultConfig, ...config });
     }
     return Promise.resolve();
   }
@@ -873,6 +891,158 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     return Promise.resolve(CPDFAnnotationType.UNKNOWN);
   }
 
+  /**
+   * set current form creation mode.
+   * This method is only available in [CPDFViewMode.FORMS] mode.
+   * @example
+   * await pdfReaderRef.current?.setFormCreationMode(CPDFWidgetType.TEXT_FIELD);
+   * @param type The type of form field to create.
+   * @returns 
+   */
+  setFormCreationMode = async (type : CPDFWidgetType) : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      if(await this.getPreviewMode() != CPDFViewMode.FORMS){
+        return Promise.reject('setFormCreationMode() method only support CPDFViewMode.FORMS mode');
+      }
+      return CPDFViewManager.setFormCreationMode(tag, type);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * get current form creation mode.
+   * This method is only available in [CPDFViewMode.FORMS] mode.
+   * @example
+   * const formCreationMode = await pdfReaderRef.current?.getFormCreationMode();
+   * @returns get current form creation mode.
+   */
+  getFormCreationMode = () : Promise<CPDFWidgetType> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag){
+      return CPDFViewManager.getFormCreationMode(tag);
+    }
+    return Promise.resolve(CPDFWidgetType.UNKNOWN);
+  }
+
+  /**
+   * Exits form creation mode.
+   * This method is only available in [CPDFViewMode.FORMS] mode.
+   * @example
+   * await pdfReaderRef.current?.exitFormCreationMode();
+   * @returns 
+   */
+  exitFormCreationMode = () : Promise<void> => {
+    return this.setFormCreationMode(CPDFWidgetType.UNKNOWN);
+  }
+
+  /**
+   * Verify the digital signature status of the document.
+   * If the document contains a digital signature, a status bar will be displayed at the top of the document.
+   * @example
+   * await pdfReaderRef.current?.verifyDigitalSignatureStatus();
+   * @returns 
+   */
+  verifyDigitalSignatureStatus = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.verifyDigitalSignatureStatus(tag);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Hide the digital signature status view.
+   * @example
+   * await pdfReaderRef.current?.hideDigitalSignStatusView();
+   * @returns 
+   */
+  hideDigitalSignStatusView = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.hideDigitalSignStatusView(tag);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Clear the display area, making it completely white without displaying any content.
+   * @example
+   * await pdfReaderRef.current?.clearDisplayRect();
+   * @returns 
+   */
+  clearDisplayRect = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.clearDisplayRect(tag);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Dismiss the context menu if it is displayed.
+   * @example
+   * await pdfReaderRef.current?.dismissContextMenu();
+   * @returns Dismiss the context menu if it is displayed.
+   */
+  dismissContextMenu = () : Promise<void> => {
+    if(Platform.OS === 'ios') {
+      return Promise.reject('This method is not supported on iOS, only supported on Android');
+    }
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.dismissContextMenu(tag);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Show the search text view.
+   * @example
+   * await pdfReaderRef.current?.showSearchTextView();
+   * @returns Show the search text view.
+   */
+  showSearchTextView = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.showSearchTextView(tag);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Hide the search text view.
+   * @example
+   * await pdfReaderRef.current?.hideSearchTextView();
+   * @returns Hide the search text view.
+   */
+  hideSearchTextView = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.hideSearchTextView(tag);
+    }
+    return Promise.resolve();
+  }
+
+  saveCurrentInk = () : Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.saveCurrentInk(tag);
+    }
+    return Promise.resolve();
+  }
+
+  saveCurrentPencil() : Promise<void> {
+    if(Platform.OS === 'android'){
+      return Promise.reject('saveCurrentPencil() method only support iOS platform.')
+    }
+    const tag = findNodeHandle(this._viewerRef);
+    if(tag != null){
+      return CPDFViewManager.saveCurrentPencil(tag);
+    }
+    return Promise.resolve();
+  }
+  
   render() {
     return (
       <RCTCPDFReaderView

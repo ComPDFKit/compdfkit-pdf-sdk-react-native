@@ -8,15 +8,16 @@
  */
 
 import { NativeModules } from 'react-native';
-import { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
-import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType,CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
+import { CPDFBotaMenuItem, CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
+import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
 import React from 'react';
 import { CPDFReaderView } from './view/CPDFReaderView';
+import { normalizeColorToARGB } from './util/CPDFEnumUtils';
 
 declare module 'react-native' {
   interface NativeModulesStatic {
     ComPDFKit: {
-      getDefaultConfig(overrides : Partial<CPDFConfiguration>) : string;
+      getDefaultConfig(overrides: Partial<CPDFConfiguration>): string;
       /**
        * Get the version number of the ComPDFKit SDK.
        * For example : '2.0.0'
@@ -88,7 +89,7 @@ declare module 'react-native' {
        * bool result = await ComPDFKit.initWithPath('license_key.xml')
        * 
        */
-      initWithPath: (licensePath : string) => Promise<boolean>;
+      initWithPath: (licensePath: string) => Promise<boolean>;
       /**
        * Used to present a PDF document.
        * @method openDocument
@@ -151,7 +152,7 @@ declare module 'react-native' {
        *
        * @returns
        */
-      removeSignFileList : () => Promise<boolean>;
+      removeSignFileList: () => Promise<boolean>;
 
       /**
        * Opens the system file picker to select a PDF document.
@@ -193,7 +194,7 @@ declare module 'react-native' {
        * @param { string } childDirectoryName (optional): specifies a subdirectory within the `Downloads` folder.
        * @param { string } mimeType (optional): the MIME type of the file, defaulting to `application/pdf`.
        */
-      createUri : (fileName : string, childDirectoryName : string | null, mimeType : string) => Promise<string>;
+      createUri: (fileName: string, childDirectoryName: string | null, mimeType: string) => Promise<string>;
     };
   }
 }
@@ -204,12 +205,12 @@ interface ComPDFKit {
   getSDKBuildTag(): Promise<string>;
   init_(license: string): Promise<boolean>;
   initialize(androidOnlineLicense: string, iosOnlineLicense: string): Promise<boolean>;
-  initWithPath(licensePath : string): Promise<boolean>;
+  initWithPath(licensePath: string): Promise<boolean>;
   openDocument(document: string, password: string, configurationJson: string): void;
-  removeSignFileList() : Promise<boolean>;
-  pickFile() : Promise<string>;
+  removeSignFileList(): Promise<boolean>;
+  pickFile(): Promise<string>;
   setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
-  createUri : (fileName : string, childDIrectoryName : string | null, mimeType : string) => Promise<string>;
+  createUri: (fileName: string, childDIrectoryName: string | null, mimeType: string) => Promise<string>;
 }
 
 const ComPDFKit = NativeModules.ComPDFKit
@@ -258,14 +259,18 @@ export { CPDFWidgetItem } from './annotation/form/CPDFWidgetItem';
 
 // === Utils ===
 export type { CPDFRectF } from './util/CPDFRectF';
+export { CPDFImageUtil } from './util/CPDFImageUtil';
+
+// === Editor ===
+export { CPDFEditManager } from './edit/CPDFEditManager';
 
 ComPDFKit.getDefaultConfig = getDefaultConfig
 
-function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string {
-  const defaultConfig : CPDFConfiguration = {
-    modeConfig:{
+function getDefaultConfig(overrides: Partial<CPDFConfiguration> = {}): string {
+  const defaultConfig: CPDFConfiguration = {
+    modeConfig: {
       initialViewMode: CPDFViewMode.VIEWER,
-      readerOnly: false,
+      uiVisibilityMode: 'automatic',
       availableViewModes: [
         CPDFViewMode.VIEWER,
         CPDFViewMode.ANNOTATIONS,
@@ -275,7 +280,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       ]
     },
     toolbarConfig: {
-      mainToolbarVisible : true,
+      mainToolbarVisible: true,
       annotationToolbarVisible: true,
       showInkToggleButton: true,
       androidAvailableActions: [
@@ -284,7 +289,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         CPDFToolbarAction.BOTA,
         CPDFToolbarAction.MENU,
       ],
-      iosLeftBarAvailableActions:[
+      iosLeftBarAvailableActions: [
         CPDFToolbarAction.BACK,
         CPDFToolbarAction.THUMBNAIL
       ],
@@ -361,7 +366,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         square: {
           fillColor: '#1460F3',
           borderColor: '#000000',
-          colorAlpha : 128,
+          colorAlpha: 128,
           borderWidth: 2,
           borderStyle: {
             style: CPDFBorderStyle.SOLID,
@@ -371,7 +376,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         circle: {
           fillColor: '#1460F3',
           borderColor: '#000000',
-          colorAlpha : 128,
+          colorAlpha: 128,
           borderWidth: 2,
           borderStyle: {
             style: CPDFBorderStyle.SOLID,
@@ -410,26 +415,26 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       }
     },
     contentEditorConfig: {
-        availableTypes: [
-          CPDFContentEditorType.EDITOR_TEXT,
-          CPDFContentEditorType.EDITOR_IMAGE
-        ],
-        availableTools: [
-          CPDFConfigTool.SETTING,
-          CPDFConfigTool.UNDO,
-          CPDFConfigTool.REDO
-        ],
-        initAttribute: {
-          text: {
-            fontColor: '#000000',
-            fontColorAlpha: 255,
-            fontSize: 30,
-            isBold: false,
-            isItalic: false,
-            typeface: CPDFTypeface.HELVETICA,
-            alignment: CPDFAlignment.LEFT
-          }
+      availableTypes: [
+        CPDFContentEditorType.EDITOR_TEXT,
+        CPDFContentEditorType.EDITOR_IMAGE
+      ],
+      availableTools: [
+        CPDFConfigTool.SETTING,
+        CPDFConfigTool.UNDO,
+        CPDFConfigTool.REDO
+      ],
+      initAttribute: {
+        text: {
+          fontColor: '#000000',
+          fontColorAlpha: 255,
+          fontSize: 30,
+          isBold: false,
+          isItalic: false,
+          typeface: CPDFTypeface.HELVETICA,
+          alignment: CPDFAlignment.LEFT
         }
+      }
     },
     formsConfig: {
       availableTypes: [
@@ -523,7 +528,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       enableSliderBar: true,
       enablePageIndicator: true,
       pageScale: 1.0,
-      margins: [0,0,0,0],
+      margins: [0, 0, 0, 0],
       pageSpacing: 10,
       pageSameWidth: true
     },
@@ -531,23 +536,57 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       themeMode: CPDFThemeMode.SYSTEM,
       fileSaveExtraFontSubset: true,
       watermark: {
+        types: ['text', 'image'],
         saveAsNewFile: true,
+        text: 'Watermark',
+        textSize: 40,
+        textColor: '#000000',
+        opacity: 255,
+        rotation: -45,
+        isFront: false,
+        isTilePage: false
       },
-      signatureType : 'manual',
+      signatureType: 'manual',
       enableExitSaveTips: false,
       thumbnail: {
         editMode: true
       },
-      enableErrorTips: true
+      enableErrorTips: true,
+      bota: {
+        tabs: ['outline', 'bookmarks', 'annotations'],
+        menus: {
+          annotations: {
+            global: botaMenus('importAnnotation', 'exportAnnotation', 'removeAllAnnotation', 'removeAllReply'),
+            item: botaMenus(
+              { id: 'reviewStatus', subMenus: ['accepted', 'rejected', 'cancelled', 'completed', 'none'] },
+              'markedStatus',
+              { id: 'more', subMenus: ['addReply', 'viewReply', 'delete'] })
+          }
+        }
+      },
+      search: {
+        normalKeyword: {
+          borderColor: '#00000000',
+          fillColor: '#FFFF0077'
+        },
+        focusKeyword: {
+          borderColor: '#00000000',
+          fillColor: '#FD7338CC'
+        }
+      },
+      pageEditor: {
+        menus: [ 'insertPage', 'replacePage', 'extractPage', 'copyPage' , 'rotatePage', 'deletePage' ]
+      },
+      pencilMenus: ['touch', 'discard', 'save']
     },
     contextMenuConfig: {
-      global:{
+      global: {
         screenshot: menus('exit', 'share')
       },
       viewMode: {
         textSelect: menus('copy'),
       },
-      annotationMode:{
+      annotationMode: {
         textSelect: menus('copy', 'highlight', 'underline', 'strikeout', 'squiggly'),
         longPressContent: menus('paste', 'note', 'textBox', 'stamp', 'image'),
         markupContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
@@ -560,10 +599,10 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
         linkContent: menus('edit', 'delete'),
       },
       contentEditorMode: {
-        editTextAreaContent : menus('properties', 'edit', 'cut', 'copy', 'delete'),
+        editTextAreaContent: menus('properties', 'edit', 'cut', 'copy', 'delete'),
         editSelectTextContent: menus(
           'properties',
-          { key: 'opacity', subItems:['25%', '50%', '75%', '100%'] },
+          { key: 'opacity', subItems: ['25%', '50%', '75%', '100%'] },
           'cut',
           'copy',
           'delete'
@@ -579,7 +618,7 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
           'rotateRight',
           'replace',
           'export',
-          {key: 'opacity', subItems: ['25%', '50%', '75%', '100%']},
+          { key: 'opacity', subItems: ['25%', '50%', '75%', '100%'] },
           'flipHorizontal',
           'flipVertical',
           'crop',
@@ -608,13 +647,13 @@ function getDefaultConfig(overrides : Partial<CPDFConfiguration> = {}) : string 
       },
 
       formMode: {
-        textField: menus('properties','delete'),
+        textField: menus('properties', 'delete'),
         checkBox: menus('properties', 'delete'),
         radioButton: menus('properties', 'delete'),
-        listBox: menus('options','properties', 'delete'),
+        listBox: menus('options', 'properties', 'delete'),
         comboBox: menus('options', 'properties', 'delete'),
         signatureField: menus('startToSign', 'delete'),
-        pushButton: menus('options','properties', 'delete'),
+        pushButton: menus('options', 'properties', 'delete'),
       }
     }
   }
@@ -632,17 +671,56 @@ export const menus = <
     typeof item === 'string' ? { key: item } : item
   );
 
-function mergeDeep(defaults: any, overrides: any): any {
-  const merged = { ...defaults };
+export const botaMenus = <
+  T extends string,
+  A extends readonly (T | CPDFBotaMenuItem<T>)[]
+>(
+  ...items: A
+): CPDFBotaMenuItem<T>[] =>
+  items.map(item =>
+    typeof item === 'string' ? { id: item } : item
+  );
 
-  for (const key in overrides) {
-      if (Array.isArray(overrides[key]) && Array.isArray(defaults[key])) {
-          merged[key] = [...overrides[key]];
-      } else if (overrides[key] instanceof Object && key in defaults) {
-          merged[key] = mergeDeep(defaults[key], overrides[key]);
+
+// 匹配 #RGB、#RGBA、#RRGGBB、#RRGGBBAA 格式的颜色
+const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
+
+function mergeDeep(defaults: any, overrides: any): any {
+  const merged: any = {};
+
+  const keys = new Set([...Object.keys(defaults || {}), ...Object.keys(overrides || {})]);
+
+  for (const key of keys) {
+    const defaultValue = defaults?.[key];
+    const overrideValue = overrides?.[key];
+
+    let value: any;
+
+    if (overrideValue !== undefined) {
+      if (Array.isArray(overrideValue)) {
+        value = [...overrideValue];
+      } else if (overrideValue && typeof overrideValue === 'object') {
+        value = mergeDeep(defaultValue || {}, overrideValue);
       } else {
-          merged[key] = overrides[key];
+        value = overrideValue;
       }
+    } else {
+      if (Array.isArray(defaultValue)) {
+        value = [...defaultValue];
+      } else if (defaultValue && typeof defaultValue === 'object') {
+        value = mergeDeep(defaultValue, {});
+      } else {
+        value = defaultValue;
+      }
+    }
+
+    if (typeof value === 'string' && HEX_COLOR_REGEX.test(value)) {
+      try {
+        value = normalizeColorToARGB(value);
+      } catch {
+      }
+    }
+    merged[key] = value;
   }
 
   return merged;
