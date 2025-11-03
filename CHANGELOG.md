@@ -1,5 +1,12 @@
 ## Newest Release
 
+### 2.5.2-1 - 03 Nov. 2025
+
+New Features
+1. Fixed the issue where adding a signature could not be saved.
+
+## Previous Release
+
 ### 2.5.1 - 03 Nov. 2025
 
 New Features
@@ -10,7 +17,6 @@ New Features
 4. Added API for page rotation
 5. Android: Fixed crash issue when searching text containing special characters
 
-## Previous Release
 
 ### 2.5.0 - 23 Oct. 2025
 
