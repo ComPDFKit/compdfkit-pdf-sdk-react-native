@@ -942,7 +942,28 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
             completionHandler(false)
         }
     }
+  
+  func getPageRotation(pageIndex : Int, completionHandler: @escaping (NSNumber) -> Void) {
+    if let pdfListView = self.pdfViewController?.pdfListView {
+      let page = pdfListView.document.page(at: UInt(pageIndex))
+      let rotation = page?.rotation ?? 0
+      completionHandler(NSNumber(value: rotation))
+    } else {
+      completionHandler(0)
+    }
     
+  }
+  
+  func setPageRotation(pageIndex : Int, rotation : Int, completionHandler: @escaping (Bool) -> Void) {
+    if let pdfListView = self.pdfViewController?.pdfListView {
+      let page = pdfListView.document.page(at: UInt(pageIndex))
+      page?.rotation = rotation
+      completionHandler(true)
+    }else {
+      completionHandler(false)
+    }
+  }
+      
     
     // MARK: - CPDFViewBaseControllerDelete
     

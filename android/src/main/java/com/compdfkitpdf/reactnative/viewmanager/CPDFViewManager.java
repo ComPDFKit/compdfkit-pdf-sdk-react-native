@@ -1215,5 +1215,29 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     readerView.getInkDrawHelper().onSave();
   }
 
+  public void setPageRotation(int tag, int pageIndex, int rotation, Promise promise){
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    CPDFPage cpdfPage = document.pageAtIndex(pageIndex);
+    if (cpdfPage == null) {
+      promise.reject("SET_PAGE_ROTATION_FAIL",  "Page not found at index: " + pageIndex);
+      return;
+    }
+    boolean setRotationResult = cpdfPage.setRotation(rotation);
+    promise.resolve(setRotationResult);
+  }
+
+  public int getPageRotation(int tag, int pageIndex){
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    CPDFPage cpdfPage = document.pageAtIndex(pageIndex);
+    if (cpdfPage == null) {
+      return 0;
+    }
+    return cpdfPage.getRotation();
+  }
+
 
 }

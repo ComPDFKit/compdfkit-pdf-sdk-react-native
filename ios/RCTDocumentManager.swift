@@ -942,6 +942,26 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
             }
         }
     }
+  
+  @objc(getPageRotation: withPageIndex: withResolver: withRejecter:)
+  func getPageRotation(forCPDFViewTag tag: Int, pageIndex: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    DispatchQueue.main.async {
+      let reader = self.readerView()
+      reader.getPageRotation(forCPDFViewTag: tag, pageIndex: pageIndex) { rotation in
+        resolve(rotation)
+      }
+    }
+  }
+  
+  @objc(setPageRotation: withPageIndex: withRotation: withResolver: withRejecter:)
+  func setPageRotation(forCPDFViewTag tag: Int, pageIndex: Int, rotation: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    DispatchQueue.main.async {
+      let reader = self.readerView()
+      reader.setPageRotation(forCPDFViewTag: tag, pageIndex: pageIndex, rotation: rotation) { success in
+        resolve(success)
+      }
+    }
+  }
     
     
     

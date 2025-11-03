@@ -137,6 +137,46 @@ export class CPDFPage {
         }
         return Promise.reject(new Error('Unable to find the native view reference'));
     }
+
+    /**
+     * Gets the rotation angle of the current page.
+     * @example
+     * const pageIndex = 0;
+     * const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+     * const rotation = await page?.getRotation();
+     * @returns 
+     */
+    getRotation(): Promise<number> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            return CPDFViewManager.getPageRotation(tag, this.pageIndex);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Sets the rotation angle of the current page.
+     * @example
+     * const pageIndex = 0;
+     * const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
+     * const success = await page?.setRotation(90);
+     * @param rotation The rotation angle in degrees (0, 90, 180, 270). 360 is treated as 0.
+     * @returns 
+     */
+    setRotation(rotation: number): Promise<boolean> {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            const validRotations = [0, 90, 180, 270];
+            if (rotation == 360) {
+                rotation = 0;
+            }
+            if (!validRotations.includes(rotation)) {
+                return Promise.reject(new Error('Invalid rotation value. Valid values are 0, 90, 180, 270.'));
+            }
+            return CPDFViewManager.setPageRotation(tag, this.pageIndex, rotation);
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
 }
 
 

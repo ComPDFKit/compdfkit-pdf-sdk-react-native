@@ -61,7 +61,8 @@ const CPDFPagesExampleScreen = () => {
         'Import Document',
         'Split Document',
         'Insert Blank Page',
-        'Render Page'
+        'Render Page',
+        'Rotate Page',
     ];
 
     const handleMenuItemPress = async (action: string) => {
@@ -97,6 +98,15 @@ const CPDFPagesExampleScreen = () => {
             case 'Render Page':
                 setRenderPageModalVisible(true);
                 break;    
+            case 'Rotate Page':
+                const page = await pdfReaderRef.current?._pdfDocument.pageAtIndex(0);
+                const rotation = await page?.getRotation();
+                console.log('ComPDFKitRN current page rotation:', rotation);
+                const result = await page?.setRotation(rotation! + 90);
+                if(result){
+                    await pdfReaderRef.current?.reloadPages();
+                }
+            break;
             default:
                 break;
         }

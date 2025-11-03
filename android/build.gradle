@@ -76,6 +76,8 @@ android {
 repositories {
   mavenCentral()
   google()
+  maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+
 }
 
 
@@ -83,7 +85,7 @@ dependencies {
   compileOnly fileTree(include: ['*.jar','*.aar'], dir: 'libs')
   implementation "com.facebook.react:react-native:+"
 
-  api "com.compdf:compdfkit-tools:2.5.0"
+  api "com.compdf:compdfkit-tools:2.5.1"
   api 'com.github.bumptech.glide:glide:4.15.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
   api 'androidx.documentfile:documentfile:1.0.1'

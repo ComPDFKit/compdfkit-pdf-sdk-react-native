@@ -455,6 +455,17 @@ RCT_EXTERN_METHOD(renderPage: (NSInteger)tag
                   withPageCompression: (NSString *) pageCompression
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPageRotation: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setPageRotation: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withRotation: (NSInteger) rotation
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
                   
                   
 + (BOOL)requiresMainQueueSetup

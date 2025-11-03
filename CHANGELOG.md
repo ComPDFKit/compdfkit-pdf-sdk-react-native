@@ -1,7 +1,21 @@
 ## Newest Release
 
-### 2.5.0 - 23 Oct. 2025
+### 2.5.1 - 03 Nov. 2025
+
 New Features
+
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.5.1.
+2. Added the features support for ComPDFKit PDF SDK for Android V2.5.1.
+3. Adapted to Androidx Material version 1.13.0
+4. Added API for page rotation
+5. Android: Fixed crash issue when searching text containing special characters
+
+## Previous Release
+
+### 2.5.0 - 23 Oct. 2025
+
+New Features
+
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.5.0.
 2. Added the features support for ComPDFKit PDF SDK for Android V2.5.0.
 3. Added Spanish language support.
@@ -24,19 +38,19 @@ New Features
 20. Added Pencil annotation toolbar configuration on iOS
 
 Issues Addressed
+
 1. Fixed crash on Android caused by empty arrays in shape annotation properties
 2. Fixed issue where FreeText input was not properly centered on Android
 3. Fixed inconsistency between FreeText font size and the configured value on Android
 4. Fixed an issue where some documents crashed when opened on Android.
 5. Fixed an issue where content edits were not saved correctly on Android.
-6.  Fixed issue where imported FreeText annotations might not display on iOS
+6. Fixed issue where imported FreeText annotations might not display on iOS
 7. Fixed issue where the watermark toolbar would not appear when the top toolbar was hidden on iOS
 
-
-## Previous Release
-
 ### 2.4.7 - 12 Sep. 2025
+
 New Features
+
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.7.
 2. Added the features support for ComPDFKit PDF SDK for Android V2.4.7.
 3. Automatically hide the quick scroll bar when the document contains only one page.
@@ -45,8 +59,8 @@ New Features
 6. Fixed a potential crash when modifying properties of circle and line annotations on the Android platform.
 7. Fixed an issue where some documents failed to correctly trigger callbacks for the first or last page.
 
-
 ### 2.4.6 - 29 Aug. 2025
+
 1. Updated iOS ComPDFKit PDF SDK to version 2.4.6.
 2. Updated Android ComPDFKit PDF SDK to version 2.4.6.
 3. Added compatibility for Android 15 and Android 16.
@@ -76,7 +90,6 @@ New Features
 
 1. Fixed the “Super expression must either be null or a function” error caused by incorrect class inheritance when using the Hermes engine.
 
-
 ### 2.4.3 - 26 Jun. 2025
 
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.4.3.
@@ -86,8 +99,6 @@ New Features
 5. Fixed an issue where deleted text content in some documents was not saved properly
 6. Optimized the flickering issue when jumping to a specific page
 7. Improved the page navigation logic during annotation undo and redo operations
-
-
 
 ### 2.4.1 - 19 Jun. 2025
 

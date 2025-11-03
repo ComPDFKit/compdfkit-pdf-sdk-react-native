@@ -814,6 +814,17 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
             }
         }
     }
+  
+  func getPageRotation(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping (NSNumber) -> Void) {
+    let rtcCPDFView = cpdfViews[tag]
+    rtcCPDFView?.getPageRotation(pageIndex: pageIndex, completionHandler: completionHandler)
+  }
+  
+  func setPageRotation(forCPDFViewTag tag : Int, pageIndex: Int, rotation: Int, completionHandler: @escaping (Bool) -> Void) {
+    let rtcCPDFView = cpdfViews[tag]
+    rtcCPDFView?.setPageRotation(pageIndex: pageIndex, rotation: rotation, completionHandler: completionHandler)
+  }
+        
     
     // MARK: - RCTCPDFViewDelegate
     

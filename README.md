@@ -6,7 +6,6 @@
 
 For more information, please visit our [developer guides](https://www.compdf.com/guides/pdf-sdk/react-native/requirements).
 
-
 ## Contents
 
 - [Prerequisites](#prerequisites)
@@ -24,7 +23,6 @@ Before starting the integration, please ensure the following prerequisites are m
 ComPDF offers a [30-day free trial license](https://www.compdf.com/pricing) for testing your project. Get one online without contacting sales.
 
 If you require advanced PDF features beyond the free trial license, please [contact us](https://www.compdf.com/contact-sales) to obtain a commercial license.
-
 
 ### Download the PDF SDK
 
@@ -152,8 +150,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.5.0/ComPDFKit.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.5.0/ComPDFKit_Tools.podspec'
++  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.5.1/ComPDFKit.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.5.1/ComPDFKit_Tools.podspec'
     # ...
 end
 ```
@@ -163,8 +161,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.5.0'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.5.0'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.5.1'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.5.1'
     # ...
 end
 ```
@@ -214,7 +212,7 @@ ComPDFKit PDF SDK currently supports two authentication methods to verify licens
 
 *Learn about:*
 
-*[What is the authentication mechanism of ComPDFKit's license?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license)*
+*[What is the authentication mechanism of ComPDFKit&#39;s license?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license)*
 
 *[What are the differences between Online Authentication and Offline Authentication?](https://www.compdf.com/faq/the-differences-between-online-authentication-and-offline-authentication)*
 
@@ -223,7 +221,6 @@ Accurately obtaining the license key is crucial for the application of the licen
 **Android**
 
 1. In the email you received, locate the `XML` file containing the license key.
-
 2. Copy the `license_key_rn.xml` file into the following directory:`android/app/src/main/assets/`
 
 <img src="./screenshots/guides_rn_2.4_1.png" style="zoom:50%;" />
@@ -236,7 +233,7 @@ ComPDFKit.initWithPath('assets://license_key_rn.xml');
 
 **iOS**
 
-1. Use Xcode to copy the `license_key_rn.xml`file into your project’s` ios/`directory.
+1. Use Xcode to copy the `license_key_rn.xml`file into your project’s ` ios/`directory.
 
 <img src="./screenshots/guides_rn_2.4_2.png" style="zoom:50%;" />
 
@@ -255,8 +252,6 @@ You can also store the License file in the device’s local storage and initiali
 // Obtain the License file through the local storage path of the device for initialization
 ComPDFKit.initWithPath('/data/data/0/your_packages/files/license_key_rn.xml');
 ```
-
-
 
 ## Usage-Example
 

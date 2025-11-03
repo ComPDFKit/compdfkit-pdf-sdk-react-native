@@ -814,4 +814,18 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
     });
   }
 
+  @ReactMethod
+  public void setPageRotation(int tag, int pageIndex, int rotation, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.setPageRotation(tag, pageIndex, rotation, promise);
+    });
+  }
+
+  @ReactMethod
+  public void getPageRotation(int tag, int pageIndex, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      promise.resolve(mPDFViewInstance.getPageRotation(tag, pageIndex));
+    });
+  }
+
 }
