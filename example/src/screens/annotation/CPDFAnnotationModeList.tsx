@@ -111,6 +111,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 4,
     },
     iconWrapperSelected: {
-        backgroundColor: '#145EF393', // macOS/iOS蓝色
+        backgroundColor: '#145EF393', 
     },
 });

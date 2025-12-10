@@ -682,7 +682,6 @@ export const botaMenus = <
   );
 
 
-// 匹配 #RGB、#RGBA、#RRGGBB、#RRGGBBAA 格式的颜色
 const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
 
 function mergeDeep(defaults: any, overrides: any): any {

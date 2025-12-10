@@ -121,7 +121,6 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
         return
       }
       
-      // 验证许可证
       CPDFKit.verify(withPath: validLicensePath) { code, message in
         print("Code: \(code), Message: \(String(describing: message))")
         resolve(code == CPDFKitOnlineLicenseCode.success)

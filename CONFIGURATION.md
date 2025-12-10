@@ -94,20 +94,20 @@ Used to configure the initial display mode and supported modes when displaying a
 
 ##### **Parameters**
 
-| Name               | Type   | Description                                                  |
-| ------------------ | ------ | ------------------------------------------------------------ |
-| initialViewMode    | string | Default mode to display when opening the PDF View, default is `viewer` |
-| availableViewModes | string | Configure supported modes                                    |
-| uiVisibilityMode   | string | Used to set the UI visibility mode<br/>**automatic**: Toolbars at the top and bottom are automatically shown or hidden when tapping on the PDF page<br/>**always**: Toolbars are always visible <br/>**never**: Toolbars are never displayed |
+| Name               | Type   | Description                                                                                                                                                                                                                                                                |
+| ------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| initialViewMode    | string | Default mode to display when opening the PDF View, default is `viewer`                                                                                                                                                                                                   |
+| availableViewModes | string | Configure supported modes                                                                                                                                                                                                                                                  |
+| uiVisibilityMode   | string | Used to set the UI visibility mode``**automatic**: Toolbars at the top and bottom are automatically shown or hidden when tapping on the PDF page``**always**: Toolbars are always visible ``**never**: Toolbars are never displayed |
 
 ##### **Constants**
 
-| Name          | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| viewer        | View PDF documents only.                                     |
-| annotations   | Enables annotation editing mode, allowing addition, deletion, and modification of annotations. |
-| contentEditor | content editing mode, enabling editing of text and image content within the PDF. |
-| forms         | form filling mode, allowing addition and editing of form fields. |
+| Name          | Description                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| viewer        | View PDF documents only.                                                                                   |
+| annotations   | Enables annotation editing mode, allowing addition, deletion, and modification of annotations.             |
+| contentEditor | content editing mode, enabling editing of text and image content within the PDF.                           |
+| forms         | form filling mode, allowing addition and editing of form fields.                                           |
 | signautres    | signature mode, allowing electronic and digital signatures, as well as verification of digital signatures. |
 
 ```json
@@ -132,43 +132,44 @@ Configure functions for the top toolbar in the PDF view.
 
 ##### **Parameters**
 
-| Name                        | Type    | Description                                                  |
-| --------------------------- | ------- | ------------------------------------------------------------ |
+| Name                        | Type    | Description                                                                                                               |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
 | androidAvailableActions     | Array   | Functions available in the top toolbar for Android platform.<br />Defaults: `thumbnail`, `search`, `bota`, `menu` |
-| iosLeftBarAvailableActions  | Array   | Functions available in the left side of the top toolbar for iOS platform.<br />Defaults: `back`, `thumbnail` |
-| iosRightBarAvailableActions | Array   | Functions available in the right side of the top toolbar for iOS platform.<br />Defaults: `search`, `bota`, `menu` |
-| availableMenus              | Array   | A list of more functions popped up by the `menu` option on the top toolbar. |
-| mainToolbarVisible          | boolean | Whether to display the toolbar at the top of the main interface view. |
-| annotationToolbarVisible    | boolean | Shows or hides the annotation toolbar that appears at the bottom of the view when in annotation mode. |
-| showInkToggleButton         | boolean | Whether to display the toggle/slide and drawing state buttons in the upper-left corner when drawing ink annotations. |
-| contentEditorToolbarVisible | boolean | Show or hide the bottom toolbar in content editing mode      |
-| formToolbarVisible          | boolean | Show or hide the bottom toolbar in form mode                 |
-| signatureToolbarVisible     | boolean | Show or hide the bottom toolbar in signature mode            |
-|                             |         |                                                              |
+| iosLeftBarAvailableActions  | Array   | Functions available in the left side of the top toolbar for iOS platform.<br />Defaults: `back`, `thumbnail`          |
+| iosRightBarAvailableActions | Array   | Functions available in the right side of the top toolbar for iOS platform.<br />Defaults: `search`, `bota`, `menu`  |
+| availableMenus              | Array   | A list of more functions popped up by the `menu` option on the top toolbar.                                             |
+| mainToolbarVisible          | boolean | Whether to display the toolbar at the top of the main interface view.                                                     |
+| annotationToolbarVisible    | boolean | Shows or hides the annotation toolbar that appears at the bottom of the view when in annotation mode.                     |
+| showInkToggleButton         | boolean | Whether to display the toggle/slide and drawing state buttons in the upper-left corner when drawing ink annotations.      |
+| contentEditorToolbarVisible | boolean | Show or hide the bottom toolbar in content editing mode                                                                   |
+| formToolbarVisible          | boolean | Show or hide the bottom toolbar in form mode                                                                              |
+| signatureToolbarVisible     | boolean | Show or hide the bottom toolbar in signature mode                                                                         |
+|                             |         |                                                                                                                           |
 
 ##### **Constants**
 
-| Name      | Description                                                  |
-| --------- | ------------------------------------------------------------ |
+| Name      | Description                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | back      | Exit the PDF view.<br />On Android platform, this is always displayed at the far left, regardless of the order of configuration. |
-| thumbnail | Displays a list of PDF thumbnails and allows page manipulation such as addition and deletion. |
-| bota      | Displays PDF outline, bookmarks, and annotations list.       |
-| menu      | More options menu.                                           |
+| thumbnail | Displays a list of PDF thumbnails and allows page manipulation such as addition and deletion.                                    |
+| bota      | Displays PDF outline, bookmarks, and annotations list.                                                                           |
+| menu      | More options menu.                                                                                                               |
 
 ##### **availableMenus Constants**
 
-| Name           | Description                                                  |
-| -------------- | ------------------------------------------------------------ |
-| viewSetting    | Settings related to PDF viewing, such as scroll direction and theme. |
-| documentEditor | Displays a list of PDF document thumbnails and allows page manipulation such as addition and deletion. |
-| documentInfo   | Displays information related to the PDF document.            |
-| watermark      | Adds text or image watermark to the document, saving it as a new document. |
-| security       | Sets viewing and permission passwords for the document.      |
-| flattened      | Flattens annotations and other content within the document, making annotations uneditable. |
-| save           | Saves the document.                                          |
-| share          | Shares the PDF document.                                     |
-| openDocument   | Opens the system file selector to choose and open a PDF document. |
+| Name           | Description                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| viewSetting    | Settings related to PDF viewing, such as scroll direction and theme.                                     |
+| documentEditor | Displays a list of PDF document thumbnails and allows page manipulation such as addition and deletion.   |
+| documentInfo   | Displays information related to the PDF document.                                                        |
+| watermark      | Adds text or image watermark to the document, saving it as a new document.                               |
+| security       | Sets viewing and permission passwords for the document.                                                  |
+| flattened      | Flattens annotations and other content within the document, making annotations uneditable.               |
+| save           | Saves the document.                                                                                      |
+| share          | Shares the PDF document.                                                                                 |
+| openDocument   | Opens the system file selector to choose and open a PDF document.                                        |
 | snip           | The PDF capture function allows you to capture an area in the PDF document and convert it into an image. |
+
 ```json
 {
    "toolbarConfig": {
@@ -216,9 +217,9 @@ Configure annotation-related settings, such as enabling types displayed in the a
 ##### **Parameters**
 
 | Name             | Type   | Description                                                              |
-| ---------------- | ------ |--------------------------------------------------------------------------|
+| ---------------- | ------ | ------------------------------------------------------------------------ |
 | availableTypes   | Array  | The types of annotations enabled in the toolbar at the bottom.           |
-| availableTools   | Array  | Annotation tools, including `Setting`, `Undo`, and `Redo`.               |
+| availableTools   | Array  | Annotation tools, including `Setting`, `Undo`, and `Redo`.         |
 | initAttribute    | Array  | Set default attributes for annotations.                                  |
 | annotationAuthor | String | Set the author name when adding annotations and replying to annotations. |
 
@@ -246,11 +247,11 @@ Configure annotation-related settings, such as enabling types displayed in the a
 
 ##### availableTools Constants
 
-| Name    | Description                                                  |
-| ------- | ------------------------------------------------------------ |
+| Name    | Description                                                                                                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | setting | When a specific annotation type is selected from the list, the `setting` button becomes clickable, allowing for setting default attributes for the corresponding annotation. |
-| undo    | Undo the annotation operation.                               |
-| redo    | Redo the annotation operation.                               |
+| undo    | Undo the annotation operation.                                                                                                                                                 |
+| redo    | Redo the annotation operation.                                                                                                                                                 |
 
 ##### **initAttribute**
 
@@ -299,51 +300,51 @@ Configure annotation-related settings, such as enabling types displayed in the a
 
 * square
 
-| Name        | Type   | Example                                               | Description                                                  |
-| ----------- | ------ | ----------------------------------------------------- | ------------------------------------------------------------ |
-| fillColor   | string | "#1460F3"                                             | Fill color of the square                                     |
-| borderColor | string | "#000000"                                             | Border color of the square                                   |
-| colorAlpha  | int    | 128                                                   | Opacity of the fill color and border color<br />Range: 0~255 |
-| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                   |
-| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style: `dashed` or `solid`                            |
-| style       | string | solid                                                 | `dashed`，`solid`                                            |
+| Name        | Type   | Example                                               | Description                                                          |
+| ----------- | ------ | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| fillColor   | string | "#1460F3"                                             | Fill color of the square                                             |
+| borderColor | string | "#000000"                                             | Border color of the square                                           |
+| colorAlpha  | int    | 128                                                   | Opacity of the fill color and border color<br />Range: 0~255         |
+| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                           |
+| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style:`dashed` or `solid`                                 |
+| style       | string | solid                                                 | `dashed`，`solid`                                                |
 | dashGap     | double | 8.0                                                   | Dashed gap, only style=`dashed` is valid.<br />value range:0.0~8.0 |
 
 * circle
 
-| Name        | Type   | Example                                               | Description                                                  |
-| ----------- | ------ | ----------------------------------------------------- | ------------------------------------------------------------ |
-| fillColor   | string | "#1460F3"                                             | Fill color of the circle                                     |
-| borderColor | string | "#000000"                                             | Border color of the circle                                   |
-| colorAlpha  | int    | 128                                                   | Opacity of the fill color and border color<br />Range: 0~255 |
-| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                   |
-| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style: `dashed` or `solid`                            |
-| style       | string | solid                                                 | `dashed`,`solid`                                             |
+| Name        | Type   | Example                                               | Description                                                          |
+| ----------- | ------ | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| fillColor   | string | "#1460F3"                                             | Fill color of the circle                                             |
+| borderColor | string | "#000000"                                             | Border color of the circle                                           |
+| colorAlpha  | int    | 128                                                   | Opacity of the fill color and border color<br />Range: 0~255         |
+| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                           |
+| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style:`dashed` or `solid`                                 |
+| style       | string | solid                                                 | `dashed`,`solid`                                                 |
 | dashGap     | double | 8.0                                                   | Dashed gap, only style=`dashed` is valid.<br />value range:0.0~8.0 |
 
 * line
 
-| Name        | Type   | Example                                               | Description                                                  |
-| ----------- | ------ | ----------------------------------------------------- | ------------------------------------------------------------ |
-| borderColor | string | "#000000"                                             | line color                                                   |
-| borderAlpha | int    | 128                                                   | line color opacity<br />Range: 0~255                         |
-| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                   |
-| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style: `dashed` or `solid`                            |
-| style       | string | solid                                                 | `dashed`,`solid`                                             |
+| Name        | Type   | Example                                               | Description                                                          |
+| ----------- | ------ | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| borderColor | string | "#000000"                                             | line color                                                           |
+| borderAlpha | int    | 128                                                   | line color opacity<br />Range: 0~255                                 |
+| borderWidth | int    | 2                                                     | Width of the border<br />Value range: 1~10                           |
+| borderStyle | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style:`dashed` or `solid`                                 |
+| style       | string | solid                                                 | `dashed`,`solid`                                                 |
 | dashGap     | double | 8.0                                                   | Dashed gap, only style=`dashed` is valid.<br />value range:0.0~8.0 |
 
 * arrow
 
-| Name          | Type   | Example                                               | Description                                                  |
-| ------------- | ------ | ----------------------------------------------------- | ------------------------------------------------------------ |
-| borderColor   | string | "#000000"                                             | arrow color                                                  |
-| borderAlpha   | int    | 128                                                   | line color opacity<br />Range: 0~255                         |
-| borderWidth   | int    | 2                                                     | Width of the border<br />Value range: 1~10                   |
-| borderStyle   | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style: `dashed` or `solid`                            |
-| style         | string | solid                                                 | `dashed`,`solid`                                             |
+| Name          | Type   | Example                                               | Description                                                          |
+| ------------- | ------ | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| borderColor   | string | "#000000"                                             | arrow color                                                          |
+| borderAlpha   | int    | 128                                                   | line color opacity<br />Range: 0~255                                 |
+| borderWidth   | int    | 2                                                     | Width of the border<br />Value range: 1~10                           |
+| borderStyle   | obj    | {<br /> "style": "solid",<br /> "dashGap": 8.0<br />} | Border style:`dashed` or `solid`                                 |
+| style         | string | solid                                                 | `dashed`,`solid`                                                 |
 | dashGap       | double | 8.0                                                   | Dashed gap, only style=`dashed` is valid.<br />value range:0.0~8.0 |
-| startLineType | string | openArrow                                             | Arrow starting position shape.                               |
-| tailLineType  | string | none                                                  | Arrow tail position shape.                                   |
+| startLineType | string | openArrow                                             | Arrow starting position shape.                                       |
+| tailLineType  | string | none                                                  | Arrow tail position shape.                                           |
 
 **LineType Constants**
 
@@ -358,15 +359,15 @@ Configure annotation-related settings, such as enabling types displayed in the a
 
 * freeText
 
-| Name           | Type    | Example   | Description                                                  |
-| -------------- | ------- | --------- | ------------------------------------------------------------ |
-| fontColor      | string  | "#1460F3" | text color                                                   |
-| fontColorAlpha | int     | 255       | text color opacity.<br />value range：0~255                  |
-| fontSize       | int     | 30        | font size<br>value range:1~100                               |
-| isBold         | boolean | false     | Whether the font is bold.                                    |
-| isItalic       | boolean | false     | Is the font italicized.                                      |
-| alignment      | string  | left      | Text alignment.<br />`left`,`center`,`right`                 |
-| typeface       | string  | Helvetica | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
+| Name           | Type    | Example   | Description                                                                               |
+| -------------- | ------- | --------- | ----------------------------------------------------------------------------------------- |
+| fontColor      | string  | "#1460F3" | text color                                                                                |
+| fontColorAlpha | int     | 255       | text color opacity.<br />value range：0~255                                               |
+| fontSize       | int     | 30        | font size`<br>`value range:1~100                                                        |
+| isBold         | boolean | false     | Whether the font is bold.                                                                 |
+| isItalic       | boolean | false     | Is the font italicized.                                                                   |
+| alignment      | string  | left      | Text alignment.<br />`left`,`center`,`right`                                        |
+| typeface       | string  | Helvetica | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
 
 ```json
 {
@@ -475,31 +476,29 @@ Configure annotation-related settings, such as enabling types displayed in the a
 }
 ```
 
-
-
 #### contentEditorConfig
 
 Switch to content editing mode to edit text and images. This configuration option allows you to specify the enabled editing types, such as enabling text editing only. You can also set the default attributes for adding text.
 
 ##### Parameters
 
-| Name           | Type  | Description                                                  |
-| -------------- | ----- | ------------------------------------------------------------ |
-| availableTypes | Array | Content editing mode, the editing mode displayed at the bottom of the view.<br>Default order: `editorText`, `editorImage` |
-| availableTools | Array | Available tools.<br/>including: `setting`, `undo`,`redo`     |
-| initAttribute  | obj   | Default properties when adding text                          |
+| Name           | Type  | Description                                                                                                                       |
+| -------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------- |
+| availableTypes | Array | Content editing mode, the editing mode displayed at the bottom of the view.`<br>`Default order: `editorText`, `editorImage` |
+| availableTools | Array | Available tools.``including: `setting`, `undo`,`redo`                                                                |
+| initAttribute  | obj   | Default properties when adding text                                                                                               |
 
 * text
 
-| Name           | Type    | Example   | Description                                                  |
-| -------------- | ------- | --------- | ------------------------------------------------------------ |
-| fontColor      | string  | "#1460F3" | text color                                                   |
-| fontColorAlpha | int     | 255       | text color opacity.<br />value range：0~255                  |
-| fontSize       | int     | 30        | font size<br>value range:1~100                               |
-| isBold         | boolean | false     | Whether the font is bold.                                    |
-| isItalic       | boolean | false     | Is the font italicized.                                      |
-| alignment      | string  | left      | Text alignment.<br />`left`,`center`,`right`                 |
-| typeface       | string  | Helvetica | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
+| Name           | Type    | Example   | Description                                                                               |
+| -------------- | ------- | --------- | ----------------------------------------------------------------------------------------- |
+| fontColor      | string  | "#1460F3" | text color                                                                                |
+| fontColorAlpha | int     | 255       | text color opacity.<br />value range：0~255                                               |
+| fontSize       | int     | 30        | font size`<br>`value range:1~100                                                        |
+| isBold         | boolean | false     | Whether the font is bold.                                                                 |
+| isItalic       | boolean | false     | Is the font italicized.                                                                   |
+| alignment      | string  | left      | Text alignment.<br />`left`,`center`,`right`                                        |
+| typeface       | string  | Helvetica | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
 
 ```json
 {
@@ -527,8 +526,6 @@ Switch to content editing mode to edit text and images. This configuration optio
   }
 }
 ```
-
-
 
 #### formsConfig
 
@@ -565,29 +562,29 @@ This section is used to configure the types of forms enabled in the view's botto
 
 * textField
 
-| Name        | Type    | Example   | Description                                                  |
-| ----------- | ------- | --------- | ------------------------------------------------------------ |
-| fillColor   | string  | "#DDE9FF" | Text field fill color.                                       |
-| borderColor | string  | "#DDE9FF" | Text field border color                                      |
-| borderWidth | int     | 2         | Text field border width<br>value range: 1~10                 |
-| fontColor   | string  | "#000000" | font color                                                   |
-| fontSize    | int     | 20        | font size<br>value range:1~100                               |
-| isBold      | boolean | false     | Whether the font is bold.                                    |
-| isItalic    | boolean | false     | Is the font italicized.                                      |
-| alignment   | string  | left      | Text alignment.<br />`left`,`center`,`right`                 |
-| multiline   | boolean | true      | 是否多行显示                                                 |
-| typeface    | string  | Helvetica | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
+| Name        | Type    | Example   | Description                                                                 |
+| ----------- | ------- | --------- | --------------------------------------------------------------------------- |
+| fillColor   | string  | "#DDE9FF" | Text field fill color.                                                      |
+| borderColor | string  | "#DDE9FF" | Text field border color                                                     |
+| borderWidth | int     | 2         | Text field border width `<br>`value range: 1~10                           |
+| fontColor   | string  | "#000000" | font color                                                                  |
+| fontSize    | int     | 20        | font size `<br>`value range:1~100                                         |
+| isBold      | boolean | false     | Whether the font is bold.                                                   |
+| isItalic    | boolean | false     | Is the font italicized.                                                     |
+| alignment   | string  | left      | Text alignment.<br />`left`,`center`,`right`                          |
+| multiline   | boolean | true      | Should it be displayed on multiple lines?                                   |
+| typeface    | string  | Helvetica | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
 
 * checkBox
 
-| Name         | Type    | Example   | Description                                                  |
-| ------------ | ------- | --------- | ------------------------------------------------------------ |
-| fillColor    | string  | "#DDE9FF" | checkBox fill color.                                         |
-| borderColor  | string  | "#1460F3" | checkBox border Color.                                       |
-| borderWidth  | int     | 2         | checkBox border width.<br/>value range: 1~10                 |
-| checkedColor | string  | "#1460F3" | checkBox color.                                              |
+| Name         | Type    | Example   | Description                                                   |
+| ------------ | ------- | --------- | ------------------------------------------------------------- |
+| fillColor    | string  | "#DDE9FF" | checkBox fill color.                                          |
+| borderColor  | string  | "#1460F3" | checkBox border Color.                                        |
+| borderWidth  | int     | 2         | checkBox border width.``value range: 1~10              |
+| checkedColor | string  | "#1460F3" | checkBox color.                                               |
 | isChecked    | boolean | false     | When creating a checkBox, is it directly checked by default?. |
-| checkedStyle | string  | "check"   | checkBox style.                                              |
+| checkedStyle | string  | "check"   | checkBox style.                                               |
 
 **checkedStyle Constants**
 
@@ -602,14 +599,14 @@ This section is used to configure the types of forms enabled in the view's botto
 
 * radioButton
 
-| Name         | Type    | Example   | Description                                                  |
-| ------------ | ------- | --------- | ------------------------------------------------------------ |
-| fillColor    | string  | "#DDE9FF" | radio Button fill color.                                     |
-| borderColor  | string  | "#1460F3" | radio Button border Color.                                   |
-| borderWidth  | int     | 2         | radio Button border width.<br/>value range: 1~10             |
-| checkedColor | string  | "#1460F3" | radioButton color.                                           |
+| Name         | Type    | Example   | Description                                                                  |
+| ------------ | ------- | --------- | ---------------------------------------------------------------------------- |
+| fillColor    | string  | "#DDE9FF" | radio Button fill color.                                                     |
+| borderColor  | string  | "#1460F3" | radio Button border Color.                                                   |
+| borderWidth  | int     | 2         | radio Button border width.``value range: 1~10                         |
+| checkedColor | string  | "#1460F3" | radioButton color.                                                           |
 | isChecked    | boolean | false     | When creating radio button, whether to check the status directly by default. |
-| checkedStyle | string  | "check"   | radio button style.                                          |
+| checkedStyle | string  | "check"   | radio button style.                                                          |
 
 **checkedStyle Constants**
 
@@ -624,51 +621,51 @@ This section is used to configure the types of forms enabled in the view's botto
 
 * listBox
 
-| Name        | Type    | Example   | Description                                                  |
-| ----------- | ------- | --------- | ------------------------------------------------------------ |
-| fillColor   | string  | "#DDE9FF" | list box fill color.                                         |
-| borderColor | string  | "#1460F3" | list box border Color.                                       |
-| borderWidth | int     | 2         | list box border width.<br/>value range: 1~10                 |
-| fontColor   | string  | "#000000" | text color.                                                  |
-| fontSize    | int     | 20        | font size<br/>value range:1~100                              |
-| typeface    | string  | Helvetica | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
-| isBold      | boolean | false     | Whether the font is bold.                                    |
-| isItalic    | boolean | false     | Is the font italicized.                                      |
+| Name        | Type    | Example   | Description                                                                               |
+| ----------- | ------- | --------- | ----------------------------------------------------------------------------------------- |
+| fillColor   | string  | "#DDE9FF" | list box fill color.                                                                      |
+| borderColor | string  | "#1460F3" | list box border Color.                                                                    |
+| borderWidth | int     | 2         | list box border width.``value range: 1~10                                          |
+| fontColor   | string  | "#000000" | text color.                                                                               |
+| fontSize    | int     | 20        | font size``value range:1~100                                                       |
+| typeface    | string  | Helvetica | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
+| isBold      | boolean | false     | Whether the font is bold.                                                                 |
+| isItalic    | boolean | false     | Is the font italicized.                                                                   |
 
 * comboBox
 
-| Name        | Type    | Example     | Description                                                  |
-| ----------- | ------- | ----------- | ------------------------------------------------------------ |
-| fillColor   | string  | "#DDE9FF"   | combo box fill color.                                        |
-| borderColor | string  | "#1460F3"   | combo box border Color.                                      |
-| borderWidth | int     | 2           | combo box border width.<br/>value range: 1~10                |
-| fontColor   | string  | "#000000"   | text color.                                                  |
-| fontSize    | int     | 20          | font size<br/>value range:1~100                              |
-| typeface    | string  | "Helvetica" | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
-| isBold      | boolean | false       | Whether the font is bold.                                    |
-| isItalic    | boolean | false       | Is the font italicized.                                      |
+| Name        | Type    | Example     | Description                                                                               |
+| ----------- | ------- | ----------- | ----------------------------------------------------------------------------------------- |
+| fillColor   | string  | "#DDE9FF"   | combo box fill color.                                                                     |
+| borderColor | string  | "#1460F3"   | combo box border Color.                                                                   |
+| borderWidth | int     | 2           | combo box border width.``value range: 1~10                                         |
+| fontColor   | string  | "#000000"   | text color.                                                                               |
+| fontSize    | int     | 20          | font size``value range:1~100                                                       |
+| typeface    | string  | "Helvetica" | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
+| isBold      | boolean | false       | Whether the font is bold.                                                                 |
+| isItalic    | boolean | false       | Is the font italicized.                                                                   |
 
 * pushButton
 
-| Name        | Type    | Example     | Description                                                  |
-| ----------- | ------- | ----------- | ------------------------------------------------------------ |
-| fillColor   | string  | "#DDE9FF"   | combo box fill color.                                        |
-| borderColor | string  | "#1460F3"   | combo box border Color.                                      |
-| borderWidth | int     | 2           | combo box border width.<br/>value range: 1~10                |
-| fontColor   | string  | "#000000"   | text color.                                                  |
-| fontSize    | int     | 20          | font size<br/>value range:1~100                              |
-| typeface    | string  | "Helvetica" | The font used by default for text.<br />`Courier`<br/>`Helvetica`<br/>`Times-Roman` |
-| isBold      | boolean | false       | Whether the font is bold.                                    |
-| isItalic    | boolean | false       | Is the font italicized.                                      |
-| title       | string  | "Button"    | push button 创建时默认的按钮标题                             |
+| Name        | Type    | Example     | Description                                                                 |
+| ----------- | ------- | ----------- | --------------------------------------------------------------------------- |
+| fillColor   | string  | "#DDE9FF"   | combo box fill color.                                                       |
+| borderColor | string  | "#1460F3"   | combo box border Color.                                                     |
+| borderWidth | int     | 2           | combo box border width.``value range: 1~10                                  |
+| fontColor   | string  | "#000000"   | text color.                                                                 |
+| fontSize    | int     | 20          | font size``value range:1~100                                                |
+| typeface    | string  | "Helvetica" | The font used by default for text.<br />`Courier``Helvetica``Times-Roman` |
+| isBold      | boolean | false       | Whether the font is bold.                                                   |
+| isItalic    | boolean | false       | Is the font italicized.                                                     |
+| title       | string  | "Button"    | The default button title when creating a push button.                       |
 
 * signaturesFields
 
-| Name        | Type   | Example   | Description                                   |
-| ----------- | ------ | --------- | --------------------------------------------- |
-| fillColor   | string | "#DDE9FF" | combo box fill color.                         |
-| borderColor | string | "#1460F3" | combo box border Color.                       |
-| borderWidth | int    | 2         | combo box border width.<br/>value range: 1~10 |
+| Name        | Type   | Example   | Description                                       |
+| ----------- | ------ | --------- | ------------------------------------------------- |
+| fillColor   | string | "#DDE9FF" | combo box fill color.                             |
+| borderColor | string | "#1460F3" | combo box border Color.                           |
+| borderWidth | int    | 2         | combo box border width.``value range: 1~10 |
 
 ```json
 {
@@ -760,21 +757,21 @@ This section is used to configure the types of forms enabled in the view's botto
 
 ##### Parameters
 
-| Name                | Type    | Example      | Description                                                  |
-| ------------------- | ------- | ------------ | ------------------------------------------------------------ |
-| linkHighlight       | boolean | true         | Sets whether hyperlinks in the PDF document annotations are highlighted. |
-| formFieldHighlight  | boolean | true         | Sets whether form fields in the PDF document are highlighted. |
-| displayMode         | string  | "singlePage" | Display mode of the PDF document, single page, double page, or book mode. |
-| continueMode        | boolean | false        | Whether PDF page flipping is continuous scrolling.           |
-| verticalMode        | boolean | true         | Whether scrolling is in vertical direction.<br/>`true`: Vertical scrolling, `false`: Horizontal scrolling.<br/>Default: `true` |
-| cropMode            | boolean | false        | Cropping mode. Whether to crop blank areas of PDF pages      |
-| themes              | string  | light        | Theme color.<br/>Default: `light`                            |
-| enableSliderBar     | boolean | true         | Whether to display the sidebar quick scroll bar.             |
-| enablePageIndicator | boolean | true         | Whether to display the bottom page indicator.                |
-| pageSpacing         | int     | 10           | Spacing between each page of the PDF.<br/>default `10px`.    |
-| pageScale           | double  | 1.0          | Page scale value, default 1.0.<br/>value range:1.0~5.0       |
-| pageSameWidth       | boolean | true         | only android platform.                                       |
-| margins             | Array   | [0,0,0,0]    | Set the outer spacing of the PDF area. The setting order is: left, top, right, bottom. |
+| Name                | Type    | Example      | Description                                                                                                                              |
+| ------------------- | ------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| linkHighlight       | boolean | true         | Sets whether hyperlinks in the PDF document annotations are highlighted.                                                                 |
+| formFieldHighlight  | boolean | true         | Sets whether form fields in the PDF document are highlighted.                                                                            |
+| displayMode         | string  | "singlePage" | Display mode of the PDF document, single page, double page, or book mode.                                                                |
+| continueMode        | boolean | false        | Whether PDF page flipping is continuous scrolling.                                                                                       |
+| verticalMode        | boolean | true         | Whether scrolling is in vertical direction.`true`: Vertical scrolling, `false`: Horizontal scrolling.``Default: `true` |
+| cropMode            | boolean | false        | Cropping mode. Whether to crop blank areas of PDF pages                                                                                  |
+| themes              | string  | light        | Theme color.``Default: `light`                                                                                                  |
+| enableSliderBar     | boolean | true         | Whether to display the sidebar quick scroll bar.                                                                                         |
+| enablePageIndicator | boolean | true         | Whether to display the bottom page indicator.                                                                                            |
+| pageSpacing         | int     | 10           | Spacing between each page of the PDF.``default `10px`.                                                                          |
+| pageScale           | double  | 1.0          | Page scale value, default 1.0.``value range:1.0~5.0                                                                               |
+| pageSameWidth       | boolean | true         | only android platform.                                                                                                                   |
+| margins             | Array   | [0,0,0,0]    | Set the outer spacing of the PDF area. The setting order is: left, top, right, bottom.                                                   |
 
 ##### displayMode Constants
 
@@ -797,15 +794,15 @@ This section is used to configure the types of forms enabled in the view's botto
 
 ##### Parameters
 
-| Name                    | Type                | Example                                                      | Description                                                  |
-| ----------------------- | ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| themeMode               | CPDFThemeMode       | light                                                        | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
-| fileSaveExtraFontSubset | boolean             | true                                                         | When saving a document, whether to save the used font set together with the document. |
-| watermark               | CPDFWatermarkConfig |                                                              | Watermark configuration when opening the Add Watermark view  |
-| thumbnail               | CPDFThumbnail       | {   "title" : "",   <br />"backgroundColor": "",  <br /> "editMode" : true <br />} |                                                              |
-| enableErrorTips         | boolean             | true \| false                                                | Whether to enable error prompts. For example, if a page cannot add a highlight annotation, setting this to false will prevent the prompt message from appearing. |
-| signatureType           | String              | manual                                                       | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic |
-| bota                    | CPDFBotaConfig      |                                                              | Used to configure the enabled feature types and menu options in the BOTA interface |
+| Name                    | Type                | Example                                                                         | Description                                                                                                                                                                      |
+| ----------------------- | ------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| themeMode               | CPDFThemeMode       | light                                                                           | Set the view theme style, support `light`, `dark`, `system`, the default is `light` theme<br />**ComPDFKit SDK for Flutter:** => 2.0.2<br />Only Android Platform. |
+| fileSaveExtraFontSubset | boolean             | true                                                                            | When saving a document, whether to save the used font set together with the document.                                                                                            |
+| watermark               | CPDFWatermarkConfig |                                                                                 | Watermark configuration when opening the Add Watermark view                                                                                                                      |
+| thumbnail               | CPDFThumbnail       | {   "title" : "",<br />"backgroundColor": "",  <br /> "editMode" : true <br />} |                                                                                                                                                                                  |
+| enableErrorTips         | boolean             | true\| false                                                                    | Whether to enable error prompts. For example, if a page cannot add a highlight annotation, setting this to false will prevent the prompt message from appearing.                 |
+| signatureType           | String              | manual                                                                          | Used to configure the default signing method when signing in the form field of CPDFReaderView.<br />Type:<br />* manual<br />* digital<br />* electronic                         |
+| bota                    | CPDFBotaConfig      |                                                                                 | Used to configure the enabled feature types and menu options in the BOTA interface                                                                                               |
 
 ##### themeMode Constants
 
@@ -838,10 +835,10 @@ Defines available actions during screenshot mode (e.g., area capture tools).
 }
 ```
 
-| **Key** | **Description**       |
-| ------- | --------------------- |
-| exit    | Exit screenshot mode. |
-| share   | Share the screenshot. |
+| **Key** | **Description** |
+| ------------- | --------------------- |
+| exit          | Exit screenshot mode. |
+| share         | Share the screenshot. |
 
 > ✅ Note: The order of the items determines how they appear in the menu. If not set, the default menu options will be used.
 
@@ -1582,4 +1579,3 @@ The context menu configuration in form mode displays different context menu opti
   }
 }
 ```
-

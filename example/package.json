@@ -1,7 +1,7 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native-example",
-  "version": "2.5.2-1",
-  "versionCode": "25",
+  "version": "2.5.3",
+  "versionCode": "26",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

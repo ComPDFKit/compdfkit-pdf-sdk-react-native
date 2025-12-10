@@ -1,16 +1,32 @@
 ## Newest Release
 
-### 2.5.2-1 - 03 Nov. 2025
-
+### 2.5.3 - 10 Dec. 2025
 New Features
-1. Fixed the issue where adding a signature could not be saved.
+1. Added the features support for ComPDFKit PDF SDK for iOS V2.5.3.
+2. Added the features support for ComPDFKit PDF SDK for Android V2.5.3.
+3. Added support for displaying 3D annotations.
+
+Issues Addressed
+1. Fixed a null pointer exception when calling CPDFPage.getEditPage() on Android.
+2. Fixed inconsistent color retrieval between FreeText annotations and content editing text on Android.
+3. Fixed a memory leak issue in CPDFPageView on Android.
+4. Fixed an italic text display issue in content editing mode on Android.
+5. Fixed an issue where the font size became smaller after changing the text color in content editing mode on Android.
+6. Fixed an appearance refresh issue when initializing Push Button widgets on iOS.
+7. Fixed an issue where ink annotations were not saved when exiting directly on iOS.
+8. Fixed an issue where cross-page search highlights were not displayed on iOS.
+9. Fixed an issue where setting the mainToolbarVisible property caused the bottom toolbar to be hidden on iOS.
+
 
 ## Previous Release
 
-### 2.5.1 - 03 Nov. 2025
-
+### 2.5.2-1 - 03 Nov. 2025
 New Features
+1. Fixed the issue where adding a signature could not be saved.
 
+
+### 2.5.1 - 03 Nov. 2025
+New Features
 1. Added the features support for ComPDFKit PDF SDK for iOS V2.5.1.
 2. Added the features support for ComPDFKit PDF SDK for Android V2.5.1.
 3. Adapted to Androidx Material version 1.13.0

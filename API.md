@@ -374,8 +374,10 @@ Used to pass configuration parameters when rendering a PDF file to customize UI 
 ```
 
 #### onViewCreated
+
 Used to callback when the `CPDFReaderView` component has been created and is now in a usable state.
 **Usage Examples:**
+
 ```tsx
 <CPDFReaderView
   document={samplePDF}
@@ -432,8 +434,6 @@ Invoked when the full-screen mode is toggled.
   }}
   />
 ```
-
-
 
 ### Document
 
@@ -715,9 +715,9 @@ Whether to display highlight Form Field.
 
 Returns a Promise.
 
-| Name   | Type    | Description        |
-| ------ | ------- | ------------------ |
-| result | boolean | 当前是否高亮表单域 |
+| Name   | Type    | Description                              |
+| ------ | ------- | ---------------------------------------- |
+| result | boolean | Is the form field currently highlighted? |
 
 ```tsx
 const isFormFieldHighlight = await pdfReaderRef.current?.isFormFieldHighlight();
@@ -1047,14 +1047,14 @@ Renders the specified page to a base64-encoded image string.
 
 Parameters:
 
-| Name            | Type   | Description                                                  |
-| --------------- | ------ | ------------------------------------------------------------ |
-| pageIndex       | number | the index of the page to render                              |
-| width           | number | the width of the rendered image                              |
-| height          | number | the height of the rendered image                             |
-| backgroundColor | string | the background color of the rendered page. **only Android Platform support.** |
-| drawAnnot       | bool   | whether to draw annotations. **only Android Platform support.** |
-| drawForm        | bool   | whether to draw forms. **only Android Platform support.**    |
+| Name            | Type   | Description                                                                        |
+| --------------- | ------ | ---------------------------------------------------------------------------------- |
+| pageIndex       | number | the index of the page to render                                                    |
+| width           | number | the width of the rendered image                                                    |
+| height          | number | the height of the rendered image                                                   |
+| backgroundColor | string | the background color of the rendered page.**only Android Platform support.** |
+| drawAnnot       | bool   | whether to draw annotations.**only Android Platform support.**               |
+| drawForm        | bool   | whether to draw forms.**only Android Platform support.**                     |
 
 ```tsx
 // get pageSize
@@ -1098,9 +1098,9 @@ Jump to the index page.
 
 Parameters:
 
-| Name      | Type        | Description                                                  |
-| --------- | ----------- | ------------------------------------------------------------ |
-| pageIndex | int         | Jump to page number                                          |
+| Name      | Type        | Description                                                                |
+| --------- | ----------- | -------------------------------------------------------------------------- |
+| pageIndex | int         | Jump to page number                                                        |
 | rectList  | CPDFRectF[] | The rects to be visible in the page. The rect is in PDF coordinate system. |
 
 ```tsx
@@ -1177,8 +1177,6 @@ Parameters:
 const pageSize = await pdfReaderRef.current?._pdfDocument.getPageSize(0);
 ```
 
-
-
 #### importDocument
 
 Imports another PDF document and inserts it at a specified position in the current document.
@@ -1194,9 +1192,9 @@ Parameters:
 
 Returns a Promise.
 
-| Name   | Type | Description                                                                                                                                                                  |
-| ------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| result | bool | Returns a `Promise<boolean>` indicating whether the document import was successful.`<br>`\- `true` indicates success`<br>`\- `false` or an error indicates failure |
+| Name   | Type | Description                                                                                                                                                                   |
+| ------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| result | bool | Returns a `Promise<boolean>` indicating whether the document import was successful.`<br>`\- `true` indicates success `<br>`\- `false` or an error indicates failure |
 
 ```tsx
 // Define the file path of the document to import
@@ -1823,8 +1821,8 @@ Changes the type of content editing to be performed on the PDF document.
 
 Parameters:
 
-| Name      | Type           | Description                                                  |
-| --------- | -------------- | ------------------------------------------------------------ |
+| Name      | Type           | Description                                                                 |
+| --------- | -------------- | --------------------------------------------------------------------------- |
 | editTypes | CPDFEditType[] | An array of `CPDFEditType` values representing the desired editing modes. |
 
 ```tsx
@@ -1869,3 +1867,4 @@ await historyManager.undo();
 
 // Perform a redo operation
 await historyManager.redo();
+```

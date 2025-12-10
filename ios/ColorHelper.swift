@@ -15,12 +15,10 @@ class ColorHelper {
     static func colorWithHexString (hex:String) -> UIColor {
         var hexString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
-        // 检查颜色字符串是否有效
         if hexString.hasPrefix("#") {
             hexString.remove(at: hexString.startIndex)
         }
         
-        // 确保字符串长度是8（包括透明度部分）
         if hexString.count == 8 {
             var rgba: UInt64 = 0
             Scanner(string: hexString).scanHexInt64(&rgba)
@@ -32,7 +30,6 @@ class ColorHelper {
             
             return UIColor(red: r, green: g, blue: b, alpha: a)
         } else {
-            // 如果不是合法的8位Hex，返回透明的颜色或其他默认值
             return UIColor(white: 0.0, alpha: 0.0)
         }
     }
