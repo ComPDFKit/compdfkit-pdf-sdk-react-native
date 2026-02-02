@@ -12,3 +12,15 @@
 -keep class com.compdfkit.core.** {*;}
 -keep class com.compdfkit.tools.** {*;}
 -keep class com.compdfkit.reactnative.** {*;}
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-keep class **.R$drawable {
+    *;
+}
+
+-keep class com.compdfkit.reactnative.example.R$drawable {
+    *;
+}
+

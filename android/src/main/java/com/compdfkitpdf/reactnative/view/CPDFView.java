@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  * <p>
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -12,6 +12,7 @@ package com.compdfkitpdf.reactnative.view;
 import android.content.Context;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,27 +20,40 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
-import com.compdfkit.core.edit.CPDFEditManager;
+import com.compdfkit.core.annotation.CPDFAnnotation;
+import com.compdfkit.core.annotation.CPDFAnnotation.Type;
+import com.compdfkit.core.annotation.form.CPDFWidget;
+import com.compdfkit.core.document.CPDFDocument;
+import com.compdfkit.core.edit.CPDFEditArea;
 import com.compdfkit.core.edit.OnEditStatusChangeListener;
+import com.compdfkit.tools.common.interfaces.CPDFCustomEventCallback;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
+import com.compdfkit.tools.common.utils.customevent.CPDFCustomEventCallbackHelper;
+import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
+import com.compdfkit.tools.contenteditor.CEditToolbar;
+import com.compdfkit.ui.proxy.CPDFBaseAnnotImpl;
+import com.compdfkit.ui.reader.CPDFPageView;
 import com.compdfkit.ui.reader.CPDFReaderView;
+import com.compdfkit.ui.reader.CPDFSelectAnnotCallback;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
+import com.compdfkitpdf.reactnative.util.CPDFEditAreaUtil;
 import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import java.util.HashMap;
 import java.util.Map;
 
 
-public class CPDFView extends FrameLayout {
+public class CPDFView extends FrameLayout implements CPDFCustomEventCallback {
 
   private boolean isPasswordSet = false;
+
+  private boolean isPageIndexSet = false;
 
   public CPDFDocumentFragment documentFragment;
 
@@ -54,6 +68,8 @@ public class CPDFView extends FrameLayout {
   private String document;
 
   private String password;
+
+  private int pageIndex;
 
   private CPDFConfiguration configuration;
 
@@ -96,29 +112,38 @@ public class CPDFView extends FrameLayout {
     initDocumentFragment();
   }
 
+  public void setPageIndex(int pageIndex){
+    this.pageIndex = pageIndex;
+    this.isPageIndexSet = true;
+    initDocumentFragment();
+  }
+
   public void setConfiguration(CPDFConfiguration configuration) {
     this.configuration = configuration;
     initDocumentFragment();
   }
 
   private void initDocumentFragment() {
-    if (TextUtils.isEmpty(document) || configuration == null || !isPasswordSet) {
+    if (TextUtils.isEmpty(document) || configuration == null || !isPasswordSet || !isPageIndexSet) {
       return;
     }
     if (documentFragment == null) {
+      Bundle bundle = new Bundle();
+      bundle.putInt(CPDFDocumentFragment.EXTRA_PAGE_INDEX, pageIndex);
+      bundle.putString(CPDFDocumentFragment.EXTRA_FILE_PASSWORD, password);
+      bundle.putSerializable(CPDFDocumentFragment.EXTRA_CONFIGURATION, configuration);
       if (document.startsWith(CPDFDocumentUtil.CONTENT_SCHEME) ||
         document.startsWith(CPDFDocumentUtil.FILE_SCHEME)) {
-        documentFragment = CPDFDocumentFragment.newInstance(Uri.parse(document), password,
-          configuration);
+        bundle.putParcelable(CPDFDocumentFragment.EXTRA_FILE_URI, Uri.parse(document));
       } else {
-        documentFragment = CPDFDocumentFragment.newInstance(document, password, configuration);
+        bundle.putString(CPDFDocumentFragment.EXTRA_FILE_PATH, document);
       }
-      prepareFragment(documentFragment, true);
+      documentFragment = CPDFDocumentFragment.newInstance(bundle);
+      prepareFragment(documentFragment);
     }
   }
 
-  private void prepareFragment(CPDFDocumentFragment documentFragment, boolean attachFragment) {
-    if (attachFragment) {
+  private void prepareFragment(CPDFDocumentFragment documentFragment) {
       fragmentManager.beginTransaction()
         .add(documentFragment, "documentFragment")
         .commitNowAllowingStateLoss();
@@ -132,7 +157,7 @@ public class CPDFView extends FrameLayout {
           params.putNull("onDocumentIsReady");
           onReceiveNativeEvent(params);
           Log.i("ComPDFKit", "CPDFView-onDocumentIsReady()");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         documentFragment.pdfView.addReaderViewCallback(new CPDFIReaderViewCallback() {
           @Override
@@ -201,7 +226,125 @@ public class CPDFView extends FrameLayout {
 
           }
         });
+
+        CPDFReaderView readerView = pdfView.getCPdfReaderView();
+        documentFragment.setAddAnnotCallback((cpdfPageView, cpdfBaseAnnot) -> {
+          WritableMap annotData = getAnnotData(
+            documentFragment.pdfView.getCPdfReaderView()
+              .getPDFDocument(), cpdfBaseAnnot.onGetAnnotation());
+          WritableMap params = Arguments.createMap();
+          if (cpdfBaseAnnot.getAnnotType() == Type.WIDGET) {
+            params.putMap("formFieldsCreated", annotData);
+          } else {
+            params.putMap("annotationsCreated", annotData);
+          }
+          onReceiveNativeEvent(params);
+        });
+
+        readerView.setSelectAnnotCallback(new CPDFSelectAnnotCallback() {
+          @Override
+          public void onAnnotationSelected(CPDFPageView cpdfPageView,
+            CPDFBaseAnnotImpl<CPDFAnnotation> cpdfBaseAnnot) {
+            WritableMap annotData = getAnnotData(
+              documentFragment.pdfView.getCPdfReaderView()
+                .getPDFDocument(), cpdfBaseAnnot.onGetAnnotation());
+            WritableMap params = Arguments.createMap();
+            if (cpdfBaseAnnot.getAnnotType() == Type.WIDGET) {
+              params.putMap("formFieldsSelected", annotData);
+            } else {
+              params.putMap("annotationsSelected", annotData);
+            }
+            onReceiveNativeEvent(params);
+          }
+
+          @Override
+          public void onAnnotationDeselected(CPDFPageView cpdfPageView,
+            @Nullable CPDFBaseAnnotImpl<CPDFAnnotation> cpdfBaseAnnot) {
+            if (cpdfBaseAnnot != null) {
+              WritableMap annotData = getAnnotData(
+                documentFragment.pdfView.getCPdfReaderView()
+                  .getPDFDocument(), cpdfBaseAnnot.onGetAnnotation());
+              WritableMap params = Arguments.createMap();
+              if (cpdfBaseAnnot.getAnnotType() == Type.WIDGET) {
+                params.putMap("formFieldsDeselected", annotData);
+              } else {
+                params.putMap("annotationsDeselected", annotData);
+              }
+              onReceiveNativeEvent(params);
+            }
+          }
+        });
+
+        pdfView.addSelectEditAreaChangeListener(type -> {
+          if (type == CEditToolbar.SELECT_AREA_NONE){
+            onReceiveNativeEvent("editorSelectionDeselected", null);
+            return;
+          }
+          CPDFEditArea editArea = readerView.getSelectEditArea();
+          if (editArea == null){
+            return;
+          }
+          CPDFPageView pageView = (CPDFPageView) readerView.getChild(
+            editArea.getPageNum());
+          if (pageView == null){
+            return;
+          }
+          WritableMap map = CPDFEditAreaUtil.getEditAreaMap(pageView,
+            readerView.getSelectEditArea());
+          WritableMap params = Arguments.createMap();
+          params.putMap("editorSelectionSelected", map);
+          onReceiveNativeEvent(params);
+        });
+
+        documentFragment.annotationToolbar.addAnnotationCreatePreparedListener((type, cpdfAnnotation) -> {
+          WritableMap map = Arguments.createMap();
+          if (type == CAnnotationType.PIC){
+            map.putString("type", "pictures");
+          }else {
+            map.putString("type", type.name().toLowerCase());
+          }
+          if (cpdfAnnotation != null){
+            map.putMap("annotation", getAnnotData(readerView.getPDFDocument(), cpdfAnnotation));
+          }
+          WritableMap params = Arguments.createMap();
+          params.putMap("onAnnotationCreationPrepared", map);
+          onReceiveNativeEvent(params);
+        });
+
       });
+  }
+
+  private WritableMap getAnnotData(CPDFDocument document, CPDFAnnotation annotation) {
+    WritableMap annotMap;
+    pageUtil.setDocument(document);
+    if (annotation.getType() == Type.WIDGET) {
+      CPDFWidget widget = (CPDFWidget) annotation;
+      annotMap = pageUtil.getWidgetData(widget);
+    } else {
+      annotMap = pageUtil.getAnnotationData(
+        annotation);
+    }
+    return annotMap;
+  }
+
+  @Override
+  public void click(Map<String, Object> map) {
+    String customEventType = map.get("customEventType").toString();
+    switch (customEventType){
+      case "CustomToolbarItemTapped":
+        // click CPDFToolbar custom action.
+        onReceiveNativeEvent("onCustomToolbarItemTapped", (String) map.get("identifier"));
+        break;
+      case "ContextMenuItem":
+        // click context menu custom item.
+        WritableMap params = getCPDFPageUtil().parseCustomContextMenuEvent(map);
+        WritableMap extraMap = Arguments.createMap();
+        extraMap.putMap("onCustomContextMenuItemTapped", params);
+        onReceiveNativeEvent(extraMap);
+        break;
+      default:
+//                    methodChannel.invokeMethod("onCustomEvent", extraMap);
+        break;
     }
   }
 
@@ -209,6 +352,8 @@ public class CPDFView extends FrameLayout {
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     Log.i("ComPDFKit", "CPDFView-onAttachedToWindow()");
+    // add custom event callback
+    CPDFCustomEventCallbackHelper.getInstance().addCustomEventCallback(this);
     getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
     if (themedReactContext != null) {
       themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
@@ -222,6 +367,8 @@ public class CPDFView extends FrameLayout {
   @Override
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
+    // add custom event callback
+    CPDFCustomEventCallbackHelper.getInstance().removeCustomEventCallback(this);
     Log.i("ComPDFKit", "CPDFView-onDetachedFromWindow()");
     getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
   }
@@ -274,7 +421,6 @@ public class CPDFView extends FrameLayout {
   }
 
   public void onReceiveNativeEvent(String key, String message) {
-    ReactContext reactContext = (ReactContext) getContext();
     WritableMap event = Arguments.createMap();
     event.putString(key, message);
     themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(

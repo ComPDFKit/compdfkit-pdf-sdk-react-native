@@ -1,7 +1,7 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native-example",
-  "version": "2.5.3",
-  "versionCode": "26",
+  "version": "2.6.0",
+  "versionCode": "27",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -19,7 +19,7 @@
     "react-native-image-picker": "^8.2.1",
     "react-native-popup-menu": "^0.18.0",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "^4.13.1"
+    "react-native-screens": "4.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

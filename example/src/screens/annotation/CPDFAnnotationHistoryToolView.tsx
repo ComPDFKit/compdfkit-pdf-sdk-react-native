@@ -1,14 +1,14 @@
 
 
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
  * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
  * This notice may not be removed from this file.
  */
-import PDFReaderContext, { CPDFReaderView } from "@compdfkit_pdf_sdk/react_native";
+import PDFReaderContext, { CPDFAnnotation, CPDFReaderView, CPDFWidget } from "@compdfkit_pdf_sdk/react_native";
 import { useContext, useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -22,14 +22,47 @@ export const CPDFAnnotationHistoryToolView: React.FC = () => {
 
     const [canRedo, setCanRedo] = useState<boolean>(false);
 
+    const [selectAnnotation, setSelectAnnotation] = useState<CPDFAnnotation | null>(null);
+
+    const [selectWidget, setSelectWidget] = useState<CPDFWidget | null>(null);
+
     useEffect(() => {
         if (pdfReader) {
             pdfReader._annotationsHistoryManager.setOnHistoryStateChangedListener((canUndo, canRedo) => {
                 setCanUndo(canUndo);
                 setCanRedo(canRedo);
             });
+
+            pdfReader.addEventListener('annotationsSelected', (event : CPDFAnnotation) => {
+                setSelectAnnotation(event);
+            })
+
+            pdfReader.addEventListener('annotationsDeselected', (event : CPDFAnnotation | null) => {
+                setSelectAnnotation(null);
+                setSelectWidget(null);
+            })
+
+            pdfReader.addEventListener('formFieldsSelected', (event : CPDFWidget) => {
+                setSelectWidget(event);
+            })
+            
+            pdfReader.addEventListener('formFieldsDeselected', (event : CPDFWidget | null) => {
+                setSelectWidget(null);
+                setSelectAnnotation(null);
+            })
         }
     }, [pdfReader])
+
+    const handleShowProperties = async () => {
+        if(selectAnnotation != null){
+            await pdfReader?.showAnnotationPropertiesView(selectAnnotation);
+            return;
+        }
+        if(selectWidget != null){
+            await pdfReader?.showWidgetPropertiesView(selectWidget);
+            return;
+        }
+    };
 
     const handleUndo = async () => {
 
@@ -62,6 +95,12 @@ export const CPDFAnnotationHistoryToolView: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={handleShowProperties}>
+                <Image
+                    style={selectAnnotation != null || selectWidget != null ? styles.iconSelect : styles.iconNormal}
+                    source={require('../../../assets/ic_setting.png')}
+                />
+            </TouchableOpacity>
             <TouchableOpacity onPress={handleUndo}>
                 <Image
                     style={canUndo ? styles.iconSelect : styles.iconNormal}

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -7,724 +7,108 @@
  * This notice may not be removed from this file.
  */
 
-import { NativeModules } from 'react-native';
-import { CPDFBotaMenuItem, CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
-import { CPDFAlignment, CPDFAnnotationType, CPDFBorderStyle, CPDFCheckStyle, CPDFConfigTool, CPDFContentEditorType, CPDFDisplayMode, CPDFFormType, CPDFLineType, CPDFThemeMode, CPDFThemes, CPDFToolbarAction, CPDFToolbarMenuAction, CPDFTypeface, CPDFViewMode } from './configuration/CPDFOptions';
-import React from 'react';
-import { CPDFReaderView } from './view/CPDFReaderView';
-import { normalizeColorToARGB } from './util/CPDFEnumUtils';
+import { ComPDFKit } from "./core/ComPDFKitModule";
+import { getDefaultConfig } from "./core/DefaultConfig";
+import { menus, botaMenus } from "./core/ConfigHelpers";
+import PDFReaderContext from "./core/PDFReaderContext";
 
-declare module 'react-native' {
-  interface NativeModulesStatic {
-    ComPDFKit: {
-      getDefaultConfig(overrides: Partial<CPDFConfiguration>): string;
-      /**
-       * Get the version number of the ComPDFKit SDK.
-       * For example : '2.0.0'
-       * @memberof ComPDFKit
-       * @returns { Promise<string> } A Promise returning ComPDFKit PDF SDK Version Code
-       *
-       * @example
-       * ComPDFKit.getVersionCode().then((versionCode : string) => {
-       *   console.log('ComPDFKit SDK Version:', versionCode)
-       * })
-       */
-      getVersionCode(): () => Promise<string>;
-      /**
-       * Get the build tag of the ComPDFKit PDF SDK.
-       *
-       * For example: "build_beta_2.0.0_42db96987_202404081007"
-       * @memberof ComPDFKit
-       * @returns { Promise<string> } A Promise returning ComPDFKit PDF SDK Build Tag.
-       *
-       * @example
-       * ComPDFKit.getSDKBuildTag().then((buildTag : string) => {
-       *  console.log('ComPDFKit Build Tag:', buildTag)
-       * })
-       */
-      getSDKBuildTag(): () => Promise<string>;
-      /**
-       * Initialize the ComPDFKit PDF SDK using offline authentication.
-       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
-       *
-       * @method init_
-       * @memberof ComPDFKit
-       * @param { string } [license] Your ComPDFKit for React Native license key.
-       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
-       *
-       * @example
-       * ComPDFKit.init_('your compdfkit license')
-       *
-       */
-      init_: (license: string) => Promise<boolean>;
-      /**
-       * Initialize the ComPDFKit PDF SDK using online authentication.
-       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
-       *
-       * @method initialize
-       * @memberof ComPDFKit
-       * @param { string } [androidOnlineLicense] Your ComPDFKit for React Native Android online license key.
-       * @param { string } [iosOnlineLicense] Your ComPDFKit for React Native iOS online license key.
-       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
-       *
-       * @example
-       * ComPDFKit.initialize('your android compdfkit license', 'your ios compdfkit license')
-       */
-      initialize: (androidOnlineLicense: string, iosOnlineLicense: string) => Promise<boolean>;
+ComPDFKit.getDefaultConfig = getDefaultConfig;
 
-      /**
-       * Initialize the ComPDFKit PDF SDK using a license file.
-       * This method is supported only on Android and iOS platforms.
-       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
-       * @param { string } [licensePath] The path to the license file.
-       * - For Android, the path should be in the format: `assets://license_key.xml
-       * - For iOS, the path should be in the format: `license_key.xml`
-       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
-       * 
-       * @example
-       * // For Android
-       * bool result = await ComPDFKit.initWithPath('assets://license_key.xml')
-       * 
-       * // For iOS
-       * bool result = await ComPDFKit.initWithPath('license_key.xml')
-       * 
-       */
-      initWithPath: (licensePath: string) => Promise<boolean>;
-      /**
-       * Used to present a PDF document.
-       * @method openDocument
-       * @memberof ComPDFKit
-       * @param { string } [document]  document The path to the PDF document to be presented.
-       *
-       * * (Android) For local storage file path:
-       * ```tsx
-       *    document = 'file:///storage/emulated/0/Download/sample.pdf'
-       * ```
-       * * (Android) For content Uri:
-       * ```tsx
-       *    document = 'content://...'
-       * ```
-       * * (Android) For assets path:
-       * ```tsx
-       *    document = "file:///android_asset/..."
-       * ```
-       * ---
-       * * ios
-       * ```tsx
-       *    document = 'pdf_document.pdf'
-       * ```
-       *
-       * @param { string } [password] PDF document password.
-       * @param { string } [configuration] Configuration objects to customize the appearance and behavior of ComPDFKit. See [CPDFConfiguration](configuration/CPDFConfiguration.ts)
-       * @returns { void }
-       *
-       * @example
-       * const fileName = 'pdf_document.pdf';
-       * const document =
-       * Platform.OS === 'ios' ? fileName
-       * : 'file:///android_asset/' + fileName;
-       *
-       * const configuration : CPDFConfiguration = {
-       *    modeConfig: {
-       *       initialViewMode: CPDFModeConfig.ViewMode.VIEWER,
-       *       availableViewModes: [
-       *         CPDFModeConfig.ViewMode.VIEWER,
-       *         CPDFModeConfig.ViewMode.ANNOTATIONS,
-       *         CPDFModeConfig.ViewMode.CONTENT_EDITOR,
-       *         CPDFModeConfig.ViewMode.FORMS,
-       *         CPDFModeConfig.ViewMode.SIGNATURES
-       *       ]
-       *     }
-       * }
-       *
-       * ComPDFKit.openDocument(document, 'password', JSON.stringify(configuration))
-       *
-       */
-      openDocument: (document: string, password: string, configuration: string) => void;
-
-      /**
-       * Delete the saved signature file from the annotation signature list
-       *
-       * @example
-       * ComPDFKit.removeSignFileList().then((result : boolean) => {
-       *  console.log('ComPDFKit removeSignFileList:', result)
-       * })
-       *
-       * @returns
-       */
-      removeSignFileList: () => Promise<boolean>;
-
-      /**
-       * Opens the system file picker to select a PDF document.
-       * @returns A promise that resolves to the file path of the selected PDF document.
-       **/
-      pickFile: () => Promise<string>;
-
-      /**
-       * Imports font files to support displaying additional languages.
-       * Imported fonts will appear in the font list for FreeText annotations and text editing.
-       *
-       * **Note:** Fonts must be imported before initializing the SDK.
-       *
-       * Steps to import fonts:
-       * 1. Copy the fonts you want to import into a custom folder.
-       * 2. Call `setImportFontDir` with the folder path as a parameter.
-       * 3. Initialize the SDK using `ComPDFKit.init_`.
-       *
-       * @param {string} fontDir - The path to the folder containing font files to import.
-       * @param {boolean} addSysFont - Whether to include system fonts in the font list.
-       *
-       * @example
-       * ComPDFKit.setImportFontDir('fontdir', true);
-       * @returns A promise that resolves when the fonts have been successfully imported.
-       */
-      setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
-
-
-      /**
-       * This method is supported only on the Android platform. It is used to create a URI for saving a file on the Android device.
-       * The file is saved in the `Downloads` directory by default, but you can specify a subdirectory within `Downloads` using the
-       * [childDirectoryName] parameter. If the [childDirectoryName] is not provided, the file will be saved directly in the `Downloads` directory.
-       * The [fileName] parameter is required to specify the name of the file (e.g., `test.pdf`).
-       *
-       * @example
-       * const uri: string = await ComPDFKit.createUri('test.pdf', '', 'application/pdf');
-       *
-       * @param { string } fileName(required): specifies the name of the file, for example `test.pdf`.
-       * @param { string } childDirectoryName (optional): specifies a subdirectory within the `Downloads` folder.
-       * @param { string } mimeType (optional): the MIME type of the file, defaulting to `application/pdf`.
-       */
-      createUri: (fileName: string, childDirectoryName: string | null, mimeType: string) => Promise<string>;
-    };
-  }
-}
-
-interface ComPDFKit {
-  testConfig(configuration: string): Promise<string>;
-  getVersionCode(): Promise<string>;
-  getSDKBuildTag(): Promise<string>;
-  init_(license: string): Promise<boolean>;
-  initialize(androidOnlineLicense: string, iosOnlineLicense: string): Promise<boolean>;
-  initWithPath(licensePath: string): Promise<boolean>;
-  openDocument(document: string, password: string, configurationJson: string): void;
-  removeSignFileList(): Promise<boolean>;
-  pickFile(): Promise<string>;
-  setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
-  createUri: (fileName: string, childDIrectoryName: string | null, mimeType: string) => Promise<string>;
-}
-
-const ComPDFKit = NativeModules.ComPDFKit
-
-export { ComPDFKit };
 // === Options & Configs ===
-export * from './configuration/CPDFOptions';
-export type { CPDFConfiguration, CPDFContextMenuItem } from './configuration/CPDFConfiguration';
+export * from "./configuration/CPDFOptions";
+export type { CPDFConfiguration } from "./configuration/CPDFConfiguration";
+export type { CPDFModeConfig } from "./configuration/config/CPDFModeConfig";
+export type {
+  CPDFToolbarConfig,
+  CPDFToolbarItem,
+} from "./configuration/config/CPDFToolbarConfig";
+export type { CPDFAnnotationConfig } from "./configuration/config/CPDFAnnotationConfig";
+export type { CPDFContentEditorConfig, CPDFEditorTextAttr } from "./configuration/config/CPDFContentEditorConfig";
+export type { CPDFFormConfig } from "./configuration/config/CPDFFormConfig";
+export type { CPDFGlobalConfig, CPDFBotaMenuItem } from "./configuration/config/CPDFGlobalConfig";
+export type { CPDFWatermarkConfig } from "./configuration/config/CPDFWatermarkConfig";
+export type * from "./configuration/config/CPDFReaderViewConfig";
+export type * from "./configuration/config/CPDFContextMenuConfig";
+export type * from "./configuration/attributes/CPDFAnnotationAttr";
+export type * from "./configuration/attributes/CPDFWidgetAttr";
 
 // === Core Views ===
-export { CPDFReaderView } from './view/CPDFReaderView';
+export { CPDFReaderView } from "./view/CPDFReaderView";
+export type { CPDFReaderViewProps } from "./view/CPDFReaderView";
+export type { CPDFEventDataMap } from "./configuration/CPDFOptions";
+
 // === Document & Pages ===
-export { CPDFDocument } from './document/CPDFDocument';
-export * from './page/CPDFPage';
-export * from './page/CPDFSearchOptions';
-export * from './page/CPDFTextRange';
-export * from './page/CPDFTextSearcher';
+export { CPDFDocument } from "./document/CPDFDocument";
+export * from "./page/CPDFPage";
+export * from "./page/CPDFSearchOptions";
+export * from "./page/CPDFTextRange";
+export * from "./page/CPDFTextSearcher";
+export { CPDFFontName, CPDFFontNameProps } from "./document/CPDFFontName";
+export { CPDFInfo } from "./document/CPDFInfo";
+export { CPDFDocumentPermissionInfo } from "./document/CPDFDocumentPermissionInfo";
+
 
 // === Actions ===
-export * from './document/action/CPDFAction';
-export { CPDFGoToAction } from './document/action/CPDFGoToAction';
-export { CPDFUriAction } from './document/action/CPDFUriAction';
+export * from "./document/action/CPDFAction";
+export { CPDFGoToAction } from "./document/action/CPDFGoToAction";
+export { CPDFUriAction } from "./document/action/CPDFUriAction";
 
 // === Annotations ===
-export { CPDFAnnotation } from './annotation/CPDFAnnotation';
-export { CPDFCircleAnnotation } from './annotation/CPDFCircleAnnotation';
-export { CPDFFreeTextAnnotation } from './annotation/CPDFFreeTextAnnotation';
-export { CPDFInkAnnotation } from './annotation/CPDFInkAnnotation';
-export { CPDFLineAnnotation } from './annotation/CPDFLineAnnotation';
-export { CPDFLinkAnnotation } from './annotation/CPDFLinkAnnotation';
-export { CPDFMarkupAnnotation } from './annotation/CPDFMarkupAnnotation';
-export { CPDFSquareAnnotation } from './annotation/CPDFSquareAnnotation';
-export { CPDFTextAttribute } from './annotation/CPDFTextAttribute';
-export { CPDFAnnotationHistoryManager } from './history/CPDFAnnotationHistoryManager';
+export { CPDFAnnotation } from "./annotation/CPDFAnnotation";
+export { CPDFCircleAnnotation } from "./annotation/CPDFCircleAnnotation";
+export { CPDFFreeTextAnnotation } from "./annotation/CPDFFreeTextAnnotation";
+export { CPDFImageAnnotation } from "./annotation/CPDFImageAnnotation";
+export { CPDFInkAnnotation } from "./annotation/CPDFInkAnnotation";
+export { CPDFLineAnnotation } from "./annotation/CPDFLineAnnotation";
+export { CPDFLinkAnnotation } from "./annotation/CPDFLinkAnnotation";
+export { CPDFMarkupAnnotation, CPDFHighlightAnnotation, CPDFSquigglyAnnotation, CPDFStrikeOutAnnotation, CPDFUnderlineAnnotation} from "./annotation/CPDFMarkupAnnotation";
+export { CPDFSquareAnnotation } from "./annotation/CPDFSquareAnnotation";
+export { CPDFNoteAnnotation } from "./annotation/CPDFNoteAnnotation";
+export { CPDFStampAnnotation } from "./annotation/CPDFStampAnnotation";
+export { CPDFSignatureAnnotation } from "./annotation/CPDFSignatureAnnotation";
+export { CPDFSoundAnnotation } from "./annotation/CPDFSoundAnnotation";
+export { CPDFTextStamp, CPDFTextStampColor, CPDFTextStampShape } from "./annotation/CPDFTextStamp";
+export { CPDFTextAttribute } from "./annotation/CPDFTextAttribute";
+export { CPDFAnnotationHistoryManager } from "./history/CPDFAnnotationHistoryManager";
 
 // === Form Widgets ===
-export { CPDFWidget } from './annotation/form/CPDFWidget';
-export { CPDFCheckboxWidget } from './annotation/form/CPDFCheckboxWidget';
-export { CPDFComboboxWidget } from './annotation/form/CPDFComboboxWidget';
-export { CPDFListboxWidget } from './annotation/form/CPDFListboxWidget';
-export { CPDFPushbuttonWidget } from './annotation/form/CPDFPushbuttonWidget';
-export { CPDFRadiobuttonWidget } from './annotation/form/CPDFRadiobuttonWidget';
-export { CPDFSignatureWidget } from './annotation/form/CPDFSignatureWidget';
-export { CPDFTextWidget } from './annotation/form/CPDFTextWidget';
-export { CPDFWidgetItem } from './annotation/form/CPDFWidgetItem';
+export { CPDFWidget } from "./annotation/form/CPDFWidget";
+export { CPDFCheckboxWidget } from "./annotation/form/CPDFCheckboxWidget";
+export { CPDFComboboxWidget } from "./annotation/form/CPDFComboboxWidget";
+export { CPDFListboxWidget } from "./annotation/form/CPDFListboxWidget";
+export { CPDFPushbuttonWidget } from "./annotation/form/CPDFPushbuttonWidget";
+export { CPDFRadiobuttonWidget } from "./annotation/form/CPDFRadiobuttonWidget";
+export { CPDFSignatureWidget } from "./annotation/form/CPDFSignatureWidget";
+export { CPDFTextWidget } from "./annotation/form/CPDFTextWidget";
+export { CPDFWidgetItem } from "./annotation/form/CPDFWidgetItem";
+
+// === Content Editor Area ===
+export { CPDFEditManager } from "./edit/CPDFEditManager";
+export { CPDFEditArea } from "./edit/CPDFEditArea";
+export { CPDFEditTextArea } from "./edit/CPDFEditTextArea";
+export { CPDFEditImageArea } from "./edit/CPDFEditImageArea";
+export { CPDFEditorHistoryManager } from "./history/CPDFEditorHistoryManager";
 
 // === Utils ===
-export type { CPDFRectF } from './util/CPDFRectF';
-export { CPDFImageUtil } from './util/CPDFImageUtil';
+export type { CPDFRectF } from "./util/CPDFRectF";
+export { CPDFImageUtil } from "./util/CPDFImageUtil";
+export { CPDFDateUtil } from "./util/CPDFDateUtil";
+export { CPDFImageData, CPDFImageType } from "./util/CPDFImageData";
+export { CPDFWidgetUtil } from "./util/CPDFWidgetUtil";
 
-// === Editor ===
-export { CPDFEditManager } from './edit/CPDFEditManager';
+// === Outline ===
+export { CPDFOutline } from "./document/CPDFOutline";
+export { CPDFDestination } from "./document/CPDFDestination";
 
-ComPDFKit.getDefaultConfig = getDefaultConfig
+// === Bookmark ===
+export { CPDFBookmark } from "./document/CPDFBookmark";
 
-function getDefaultConfig(overrides: Partial<CPDFConfiguration> = {}): string {
-  const defaultConfig: CPDFConfiguration = {
-    modeConfig: {
-      initialViewMode: CPDFViewMode.VIEWER,
-      uiVisibilityMode: 'automatic',
-      availableViewModes: [
-        CPDFViewMode.VIEWER,
-        CPDFViewMode.ANNOTATIONS,
-        CPDFViewMode.CONTENT_EDITOR,
-        CPDFViewMode.FORMS,
-        CPDFViewMode.SIGNATURES,
-      ]
-    },
-    toolbarConfig: {
-      mainToolbarVisible: true,
-      annotationToolbarVisible: true,
-      showInkToggleButton: true,
-      androidAvailableActions: [
-        CPDFToolbarAction.THUMBNAIL,
-        CPDFToolbarAction.SEARCH,
-        CPDFToolbarAction.BOTA,
-        CPDFToolbarAction.MENU,
-      ],
-      iosLeftBarAvailableActions: [
-        CPDFToolbarAction.BACK,
-        CPDFToolbarAction.THUMBNAIL
-      ],
-      iosRightBarAvailableActions: [
-        CPDFToolbarAction.SEARCH,
-        CPDFToolbarAction.BOTA,
-        CPDFToolbarAction.MENU
-      ],
-      availableMenus: [
-        CPDFToolbarMenuAction.VIEW_SETTINGS,
-        CPDFToolbarMenuAction.DOCUMENT_EDITOR,
-        CPDFToolbarMenuAction.DOCUMENT_INFO,
-        CPDFToolbarMenuAction.WATERMARK,
-        CPDFToolbarMenuAction.SECURITY,
-        CPDFToolbarMenuAction.FLATTENED,
-        CPDFToolbarMenuAction.SAVE,
-        CPDFToolbarMenuAction.SHARE,
-        CPDFToolbarMenuAction.OPEN_DOCUMENT,
-        CPDFToolbarMenuAction.SNIP
-      ]
-    },
-    annotationsConfig: {
-      annotationAuthor: '',
-      availableTypes: [
-        CPDFAnnotationType.NOTE,
-        CPDFAnnotationType.HIGHLIGHT,
-        CPDFAnnotationType.UNDERLINE,
-        CPDFAnnotationType.SQUIGGLY,
-        CPDFAnnotationType.STRIKEOUT,
-        CPDFAnnotationType.INK,
-        CPDFAnnotationType.INK_ERASER,
-        CPDFAnnotationType.CIRCLE,
-        CPDFAnnotationType.SQUARE,
-        CPDFAnnotationType.ARROW,
-        CPDFAnnotationType.LINE,
-        CPDFAnnotationType.FREETEXT,
-        CPDFAnnotationType.SIGNATURE,
-        CPDFAnnotationType.STAMP,
-        CPDFAnnotationType.PICTURES,
-        CPDFAnnotationType.LINK,
-        CPDFAnnotationType.SOUND,
-      ],
-      availableTools: [
-        CPDFConfigTool.SETTING,
-        CPDFConfigTool.UNDO,
-        CPDFConfigTool.REDO
-      ],
-      initAttribute: {
-        note: {
-          color: '#1460F3',
-          alpha: 255
-        },
-        highlight: {
-          color: '#1460F3',
-          alpha: 77
-        },
-        underline: {
-          color: '#1460F3',
-          alpha: 77
-        },
-        squiggly: {
-          color: '#1460F3',
-          alpha: 77
-        },
-        strikeout: {
-          color: '#1460F3',
-          alpha: 77
-        },
-        ink: {
-          color: '#1460F3',
-          alpha: 100,
-          borderWidth: 10
-        },
-        square: {
-          fillColor: '#1460F3',
-          borderColor: '#000000',
-          colorAlpha: 128,
-          borderWidth: 2,
-          borderStyle: {
-            style: CPDFBorderStyle.SOLID,
-            dashGap: 8.0
-          }
-        },
-        circle: {
-          fillColor: '#1460F3',
-          borderColor: '#000000',
-          colorAlpha: 128,
-          borderWidth: 2,
-          borderStyle: {
-            style: CPDFBorderStyle.SOLID,
-            dashGap: 8.0
-          }
-        },
-        line: {
-          borderColor: '#1460F3',
-          borderAlpha: 100,
-          borderWidth: 5,
-          borderStyle: {
-            style: CPDFBorderStyle.SOLID,
-            dashGap: 8.0
-          }
-        },
-        arrow: {
-          borderColor: '#1460F3',
-          borderAlpha: 100,
-          borderWidth: 5,
-          borderStyle: {
-            style: CPDFBorderStyle.SOLID,
-            dashGap: 8.0
-          },
-          startLineType: CPDFLineType.NONE,
-          tailLineType: CPDFLineType.OPEN_ARROW
-        },
-        freeText: {
-          fontColor: '#000000',
-          fontColorAlpha: 255,
-          fontSize: 30,
-          isBold: false,
-          isItalic: false,
-          alignment: CPDFAlignment.LEFT,
-          typeface: CPDFTypeface.HELVETICA
-        }
-      }
-    },
-    contentEditorConfig: {
-      availableTypes: [
-        CPDFContentEditorType.EDITOR_TEXT,
-        CPDFContentEditorType.EDITOR_IMAGE
-      ],
-      availableTools: [
-        CPDFConfigTool.SETTING,
-        CPDFConfigTool.UNDO,
-        CPDFConfigTool.REDO
-      ],
-      initAttribute: {
-        text: {
-          fontColor: '#000000',
-          fontColorAlpha: 255,
-          fontSize: 30,
-          isBold: false,
-          isItalic: false,
-          typeface: CPDFTypeface.HELVETICA,
-          alignment: CPDFAlignment.LEFT
-        }
-      }
-    },
-    formsConfig: {
-      availableTypes: [
-        CPDFFormType.TEXT_FIELD,
-        CPDFFormType.CHECKBOX,
-        CPDFFormType.RADIO_BUTTON,
-        CPDFFormType.LISTBOX,
-        CPDFFormType.COMBOBOX,
-        CPDFFormType.SIGNATURES_FIELDS,
-        CPDFFormType.PUSH_BUTTON,
-      ],
-      availableTools: [
-        CPDFConfigTool.UNDO,
-        CPDFConfigTool.REDO
-      ],
-      initAttribute: {
-        textField: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          fontColor: '#000000',
-          fontSize: 20,
-          isBold: false,
-          isItalic: false,
-          alignment: CPDFAlignment.LEFT,
-          multiline: true,
-          typeface: CPDFTypeface.HELVETICA
-        },
-        checkBox: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          checkedColor: '#43474D',
-          isChecked: false,
-          checkedStyle: CPDFCheckStyle.CHECK
-        },
-        radioButton: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          checkedColor: '#43474D',
-          isChecked: false,
-          checkedStyle: CPDFCheckStyle.CIRCLE
-        },
-        listBox: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          fontColor: '#000000',
-          fontSize: 20,
-          typeface: CPDFTypeface.HELVETICA,
-          isBold: false,
-          isItalic: false
-        },
-        comboBox: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          fontColor: '#000000',
-          fontSize: 20,
-          typeface: CPDFTypeface.HELVETICA,
-          isBold: false,
-          isItalic: false
-        },
-        pushButton: {
-          fillColor: '#DDE9FF',
-          borderColor: '#1460F3',
-          borderWidth: 2,
-          fontColor: '#000000',
-          fontSize: 20,
-          title: 'Button',
-          typeface: CPDFTypeface.HELVETICA,
-          isBold: false,
-          isItalic: false
-        },
-        signaturesFields: {
-          fillColor: '#DDE9FF',
-          borderColor: '#000000',
-          borderWidth: 2
-        }
-      }
-    },
-    readerViewConfig: {
-      linkHighlight: true,
-      formFieldHighlight: true,
-      displayMode: CPDFDisplayMode.SINGLE_PAGE,
-      continueMode: true,
-      verticalMode: true,
-      cropMode: false,
-      themes: CPDFThemes.LIGHT,
-      enableSliderBar: true,
-      enablePageIndicator: true,
-      pageScale: 1.0,
-      margins: [0, 0, 0, 0],
-      pageSpacing: 10,
-      pageSameWidth: true
-    },
-    global: {
-      themeMode: CPDFThemeMode.SYSTEM,
-      fileSaveExtraFontSubset: true,
-      watermark: {
-        types: ['text', 'image'],
-        saveAsNewFile: true,
-        text: 'Watermark',
-        textSize: 40,
-        textColor: '#000000',
-        opacity: 255,
-        rotation: -45,
-        isFront: false,
-        isTilePage: false
-      },
-      signatureType: 'manual',
-      enableExitSaveTips: false,
-      thumbnail: {
-        editMode: true
-      },
-      enableErrorTips: true,
-      bota: {
-        tabs: ['outline', 'bookmarks', 'annotations'],
-        menus: {
-          annotations: {
-            global: botaMenus('importAnnotation', 'exportAnnotation', 'removeAllAnnotation', 'removeAllReply'),
-            item: botaMenus(
-              { id: 'reviewStatus', subMenus: ['accepted', 'rejected', 'cancelled', 'completed', 'none'] },
-              'markedStatus',
-              { id: 'more', subMenus: ['addReply', 'viewReply', 'delete'] })
-          }
-        }
-      },
-      search: {
-        normalKeyword: {
-          borderColor: '#00000000',
-          fillColor: '#FFFF0077'
-        },
-        focusKeyword: {
-          borderColor: '#00000000',
-          fillColor: '#FD7338CC'
-        }
-      },
-      pageEditor: {
-        menus: [ 'insertPage', 'replacePage', 'extractPage', 'copyPage' , 'rotatePage', 'deletePage' ]
-      },
-      pencilMenus: ['touch', 'discard', 'save']
-    },
-    contextMenuConfig: {
-      global: {
-        screenshot: menus('exit', 'share')
-      },
-      viewMode: {
-        textSelect: menus('copy'),
-      },
-      annotationMode: {
-        textSelect: menus('copy', 'highlight', 'underline', 'strikeout', 'squiggly'),
-        longPressContent: menus('paste', 'note', 'textBox', 'stamp', 'image'),
-        markupContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
-        soundContent: menus('reply', 'viewReply', 'play', 'record', 'delete'),
-        inkContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
-        shapeContent: menus('properties', 'note', 'reply', 'viewReply', 'delete'),
-        freeTextContent: menus('properties', 'edit', 'reply', 'viewReply', 'delete'),
-        signStampContent: menus('signHere', 'delete', 'rotate'),
-        stampContent: menus('note', 'reply', 'viewReply', 'delete', 'rotate'),
-        linkContent: menus('edit', 'delete'),
-      },
-      contentEditorMode: {
-        editTextAreaContent: menus('properties', 'edit', 'cut', 'copy', 'delete'),
-        editSelectTextContent: menus(
-          'properties',
-          { key: 'opacity', subItems: ['25%', '50%', '75%', '100%'] },
-          'cut',
-          'copy',
-          'delete'
-        ),
-        editTextContent: menus(
-          'select',
-          'selectAll',
-          'paste'
-        ),
-        imageAreaContent: menus(
-          'properties',
-          'rotateLeft',
-          'rotateRight',
-          'replace',
-          'export',
-          { key: 'opacity', subItems: ['25%', '50%', '75%', '100%'] },
-          'flipHorizontal',
-          'flipVertical',
-          'crop',
-          'delete',
-          'copy',
-          'cut'
-        ),
-        imageCropMode: menus('done', 'cancel'),
-        editPathContent: menus('delete'),
-        longPressWithEditTextMode: menus(
-          'addText',
-          'paste',
-          'keepSourceFormatingPaste'
-        ),
-        longPressWithEditImageMode: menus(
-          'addImages',
-          'paste',
-        ),
-        longPressWithAllMode: menus(
-          'paste',
-          'keepSourceFormatingPaste',
-        ),
-        searchReplace: menus(
-          'replace',
-        )
-      },
+// === Core Exports ===
+export { ComPDFKit };
+export { getDefaultConfig };
+export { menus, botaMenus };
+export { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
 
-      formMode: {
-        textField: menus('properties', 'delete'),
-        checkBox: menus('properties', 'delete'),
-        radioButton: menus('properties', 'delete'),
-        listBox: menus('options', 'properties', 'delete'),
-        comboBox: menus('options', 'properties', 'delete'),
-        signatureField: menus('startToSign', 'delete'),
-        pushButton: menus('options', 'properties', 'delete'),
-      }
-    }
-  }
-  return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);
-}
-
-
-export const menus = <
-  T extends string,
-  A extends readonly (T | CPDFContextMenuItem<T>)[]
->(
-  ...items: A
-): CPDFContextMenuItem<T>[] =>
-  items.map(item =>
-    typeof item === 'string' ? { key: item } : item
-  );
-
-export const botaMenus = <
-  T extends string,
-  A extends readonly (T | CPDFBotaMenuItem<T>)[]
->(
-  ...items: A
-): CPDFBotaMenuItem<T>[] =>
-  items.map(item =>
-    typeof item === 'string' ? { id: item } : item
-  );
-
-
-const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
-
-function mergeDeep(defaults: any, overrides: any): any {
-  const merged: any = {};
-
-  const keys = new Set([...Object.keys(defaults || {}), ...Object.keys(overrides || {})]);
-
-  for (const key of keys) {
-    const defaultValue = defaults?.[key];
-    const overrideValue = overrides?.[key];
-
-    let value: any;
-
-    if (overrideValue !== undefined) {
-      if (Array.isArray(overrideValue)) {
-        value = [...overrideValue];
-      } else if (overrideValue && typeof overrideValue === 'object') {
-        value = mergeDeep(defaultValue || {}, overrideValue);
-      } else {
-        value = overrideValue;
-      }
-    } else {
-      if (Array.isArray(defaultValue)) {
-        value = [...defaultValue];
-      } else if (defaultValue && typeof defaultValue === 'object') {
-        value = mergeDeep(defaultValue, {});
-      } else {
-        value = defaultValue;
-      }
-    }
-
-    if (typeof value === 'string' && HEX_COLOR_REGEX.test(value)) {
-      try {
-        value = normalizeColorToARGB(value);
-      } catch {
-      }
-    }
-    merged[key] = value;
-  }
-
-  return merged;
-}
-
-const PDFReaderContext = React.createContext<CPDFReaderView | null>(null);
-
+// Maintain default export of PDFReaderContext
+export { default as PDFReaderContext } from "./core/PDFReaderContext";
 export default PDFReaderContext;

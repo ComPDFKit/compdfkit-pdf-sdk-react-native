@@ -1,0 +1,15 @@
+/**
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
+import React from "react";
+import type { CPDFReaderView } from "../view/CPDFReaderView";
+
+const PDFReaderContext = React.createContext<CPDFReaderView | null>(null);
+
+export default PDFReaderContext;

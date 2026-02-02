@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -8,13 +8,14 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Image, Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
-import PDFReaderContext, { CPDFReaderView, CPDFThemeMode, CPDFViewMode, ComPDFKit, botaMenus } from '@compdfkit_pdf_sdk/react_native';
+import { Image, Platform, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import PDFReaderContext, { CPDFReaderView, ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { CPDFDisplaySettingsScreen } from './screens/CPDFDisplaySettingsScreen';
 import { CPDFPreviewModeListScreen } from './screens/CPDFPreviewModeListScreen';
+import { CPDFBotaScreen } from './screens/CPDFBotaScreen';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -29,10 +30,11 @@ type CPDFReaderViewExampleScreenRouteProp = RouteProp<
 
 const CPDFReaderViewControllerExampleScreen = () => {
 
-
     const [displaySettingModalVisible, setDisplaySettingModalVisible] = useState(false);
 
     const [previewModeModalVisible, setPreviewModeModalVisible] = useState(false);
+
+    const [botaModalVisible, setBotaModalVisible] = useState(false);
 
     const pdfReaderRef = useRef<CPDFReaderView | null>(null);
 
@@ -42,7 +44,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
 
     const [samplePDF] = useState(
         route.params?.document || (Platform.OS === 'android'
-            ? 'file:///android_asset/PDF_Document.pdf'
+            ? 'file:///android_asset/annot_test.pdf'
             : 'PDF_Document.pdf')
     );
 
@@ -101,6 +103,9 @@ const CPDFReaderViewControllerExampleScreen = () => {
         'Dismiss Context Menu',
         'Show Search Text View',
         'Hide Search Text View',
+        'Document Info',
+        'Extra Fonts 1',
+        'Extra Fonts 2',
     ];
 
     const handleMenuItemPress = async (action: string) => {
@@ -210,6 +215,29 @@ const CPDFReaderViewControllerExampleScreen = () => {
             case 'Hide Search Text View':
                 await pdfReaderRef.current?.hideSearchTextView();
                 break;
+            case 'Document Info':
+                const info  = await pdfReaderRef.current?._pdfDocument.getInfo();
+                console.log('ComPDFKitRN Document Info:', info);
+
+                const permissionsInfo = await pdfReaderRef.current?._pdfDocument.getPermissionsInfo();
+                console.log('ComPDFKitRN Document Permissions Info:', permissionsInfo);
+
+                const majorVersion = await pdfReaderRef.current?._pdfDocument.getMajorVersion();
+                const minorVersion = await pdfReaderRef.current?._pdfDocument.getMajorVersion();
+                console.log('ComPDFKitRN Document PDF Version:', majorVersion + '.' + minorVersion);
+                break;
+            case 'Extra Fonts 1':
+                const fontDir = await CPDFFileUtil.copyAssetsFolderToStorage('extraFonts');
+                console.log('ComPDFKitRN', "fontDir:", fontDir)
+                const result = await ComPDFKit.updateImportFontDir(fontDir, false);
+                console.log("ComPDFKitRN", "updateImportFontDir_:", result)
+                break;
+            case 'Extra Fonts 2':
+                const engFontDir = await CPDFFileUtil.copyAssetsFolderToStorage('extraFonts2');
+                console.log('ComPDFKitRN', "engFontDir:", engFontDir)
+                const engResult = await ComPDFKit.updateImportFontDir(engFontDir, false);
+                console.log("ComPDFKitRN", "updateImportFontDir_:", engResult)
+                break;    
             default:
                 break;
         }
@@ -220,9 +248,18 @@ const CPDFReaderViewControllerExampleScreen = () => {
             <View style={styles.toolbar}>
                 <HeaderBackButton onPress={handleBack} />
                 <Text style={styles.toolbarTitle}>Controller Example</Text>
-                <Menu>
-                    <MenuTrigger>
-                        <Image source={require('../assets/more.png')} style={{ width: 24, height: 24, marginEnd: 8 }} />
+                
+                {/* Bota Button */}
+                <TouchableOpacity onPress={()=> {
+                    setBotaModalVisible(true);
+                }}>
+                    <Image source={require('../assets/ic_bota.png')} style={{ width: 24, height: 24, marginEnd: 8 }} />
+                </TouchableOpacity>
+                
+                {/* More Menu */}
+                <Menu style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <MenuTrigger key="moreButton">
+                        <Image source={require('../assets/more.png')} style={{ width: 24, height: 24, marginEnd: 8, marginStart: 8 }} />
                     </MenuTrigger>
 
                     <MenuOptions customStyles={{ optionsWrapper: styles.menuOptionsWrapper }}>
@@ -259,13 +296,13 @@ const CPDFReaderViewControllerExampleScreen = () => {
 
     return (
         <PDFReaderContext.Provider value={pdfReaderRef.current}>
-            <MenuProvider>
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#FAFCFF' }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: '#FAFCFF' }}>
                     <View style={{ flex: 1 }}>
                         {renderToolbar()}
                         <CPDFReaderView
                             ref={pdfReaderRef}
                             document={samplePDF}
+                            pageIndex={2}
                             onPageChanged={onPageChanged}
                             saveDocument={saveDocument}
                             onIOSClickBackPressed={handleBack}
@@ -281,9 +318,12 @@ const CPDFReaderViewControllerExampleScreen = () => {
                             visible={previewModeModalVisible}
                             onClose={() => setPreviewModeModalVisible(false)}
                         />
+                        <CPDFBotaScreen
+                            visible={botaModalVisible}
+                            onClose={() => setBotaModalVisible(false)}
+                        />
                     </View>
                 </SafeAreaView>
-            </MenuProvider>
         </PDFReaderContext.Provider>
     );
 };
@@ -313,11 +353,12 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     menuOptionsWrapper: {
-        maxHeight: 500,
+        maxHeight: 800,
     },
 });
 
 export default CPDFReaderViewControllerExampleScreen;
+
 
 
 

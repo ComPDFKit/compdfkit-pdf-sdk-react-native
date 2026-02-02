@@ -186,8 +186,8 @@ open ios/Podfile
 Add the following within the `target 'compdfkitexpo' do ... end` block:
 
 ```shell
-pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.4.0.podspec'
-pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.4.0.podspec'
+pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.6.0.podspec'
+pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.6.0.podspec'
 ```
 
 Then run `pod install` in the `ios` directory.

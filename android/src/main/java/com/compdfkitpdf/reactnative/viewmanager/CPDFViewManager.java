@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  * <p>
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -29,19 +30,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.compdfkit.core.annotation.CPDFAnnotation;
+import com.compdfkit.core.annotation.CPDFStampAnnotation.StandardStamp;
+import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStamp;
+import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStampColor;
+import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStampShape;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
 import com.compdfkit.core.common.CPDFDocumentException;
 import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentEncryptAlgo;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentError;
+import com.compdfkit.core.document.CPDFDocument.PDFDocumentImageMode;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentPermissions;
 import com.compdfkit.core.document.CPDFDocument.PDFDocumentSaveType;
 import com.compdfkit.core.document.CPDFDocumentPermissionInfo;
+import com.compdfkit.core.document.CPDFOutline;
+import com.compdfkit.core.edit.CPDFEditArea;
 import com.compdfkit.core.edit.CPDFEditManager;
 import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.core.page.CPDFPage.PDFFlattenOption;
@@ -50,24 +59,36 @@ import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.pdf.config.CPDFWatermarkConfig;
 import com.compdfkit.tools.common.utils.CFileUtils;
-import com.compdfkit.tools.common.utils.glide.CPDFGlideInitializer;
+import com.compdfkit.tools.common.utils.annotation.CPDFAnnotationManager;
 import com.compdfkit.tools.common.utils.glide.CPDFWrapper;
 import com.compdfkit.tools.common.utils.glide.wrapper.impl.CPDFDocumentPageWrapper;
 import com.compdfkit.tools.common.utils.print.CPDFPrintUtils;
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
+import com.compdfkit.tools.common.views.pdfproperties.pdfstyle.CAnnotStyle;
+import com.compdfkit.tools.common.views.pdfproperties.pdfstyle.CStyleType;
+import com.compdfkit.tools.common.views.pdfproperties.pdfstyle.manager.CStyleManager;
 import com.compdfkit.tools.common.views.pdfview.CPDFPageIndicatorView;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl.COnSaveCallback;
 import com.compdfkit.tools.common.views.pdfview.CPDFViewCtrl.COnSaveError;
 import com.compdfkit.tools.common.views.pdfview.CPreviewMode;
+import com.compdfkit.ui.attribute.CPDFEditorTextAttr;
 import com.compdfkit.ui.proxy.CPDFBaseAnnotImpl;
 import com.compdfkit.ui.proxy.form.CPDFSignatureWidgetImpl;
 import com.compdfkit.ui.reader.CPDFPageView;
 import com.compdfkit.ui.reader.CPDFReaderView;
 import com.compdfkit.ui.reader.CPDFReaderView.ViewMode;
 import com.compdfkit.ui.textsearch.ITextSearcher;
+import com.compdfkitpdf.reactnative.BuildConfig;
+import com.compdfkitpdf.reactnative.util.CPDFAttrUtils;
+import com.compdfkitpdf.reactnative.util.CPDFBookmarkUtil;
+import com.compdfkitpdf.reactnative.util.CPDFDocumentInfoUtil;
 import com.compdfkitpdf.reactnative.util.CPDFDocumentUtil;
+import com.compdfkitpdf.reactnative.util.CPDFEditAreaUtil;
+import com.compdfkitpdf.reactnative.util.CPDFEditAreaUtil.CPDFFlutterCreateAreaCallback;
+import com.compdfkitpdf.reactnative.util.CPDFEnumConvertUtil;
+import com.compdfkitpdf.reactnative.util.CPDFOutlineUtil;
 import com.compdfkitpdf.reactnative.util.CPDFPageUtil;
 import com.compdfkitpdf.reactnative.util.CPDFSearchUtil;
 import com.compdfkitpdf.reactnative.view.CPDFView;
@@ -170,6 +191,11 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   public void setConfiguration(CPDFView pdfView, String configurationJson) {
     CPDFConfiguration configuration = CPDFConfigurationUtils.fromJson(configurationJson);
     pdfView.setConfiguration(configuration);
+  }
+
+  @ReactProp(name = "pageIndex")
+  public void setPageIndex(CPDFView pdfView, int pageIndex) {
+    pdfView.setPageIndex(pageIndex);
   }
 
 
@@ -278,10 +304,11 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     }
   }
 
-  private RectF convertScreenRectF(CPDFReaderView readerView, int pageIndex, RectF pageRectF){
+  private RectF convertScreenRectF(CPDFReaderView readerView, int pageIndex, RectF pageRectF) {
     CPDFPage page = readerView.getPDFDocument().pageAtIndex(pageIndex);
     RectF screenPageRect = readerView.getPageSize(pageIndex);
-    return page.convertRectFromPage(readerView.isCropMode(), screenPageRect.width(), screenPageRect.height(), pageRectF);
+    return page.convertRectFromPage(readerView.isCropMode(), screenPageRect.width(),
+      screenPageRect.height(), pageRectF);
   }
 
   public int getCurrentPageIndex(int tag) {
@@ -464,11 +491,13 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     pdfView.documentFragment.showBOTA();
   }
 
-  public void showAddWatermarkView(int tag, @Nullable  CPDFWatermarkConfig config) {
+  public void showAddWatermarkView(int tag, @Nullable CPDFWatermarkConfig config) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFWatermarkConfig defaultConfig =
       pdfView.documentFragment.pdfView.getCPDFConfiguration().globalConfig.watermark;
-    if (config == null) config = defaultConfig;
+    if (config == null) {
+      config = defaultConfig;
+    }
     pdfView.documentFragment.showAddWatermarkDialog(config);
   }
 
@@ -492,7 +521,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     pdfView.documentFragment.exitSnipMode();
   }
 
-  public void open(int tag, String filePath, String password, Promise promise) {
+  public void open(int tag, String filePath, String password, int pageIndex, Promise promise) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFViewCtrl viewCtrl = pdfView.documentFragment.pdfView;
     if (filePath.startsWith(ASSETS_SCHEME)) {
@@ -500,16 +529,16 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       String[] strs = filePath.split("/");
       String fileName = strs[strs.length - 1];
       String samplePDFPath = CFileUtils.getAssetsTempFile(reactContext, assetsPath, fileName);
-      viewCtrl.openPDF(samplePDFPath, password, () -> {
+      viewCtrl.openPDF(samplePDFPath, password, pageIndex, () -> {
         promise.resolve(true);
       });
     } else if (filePath.startsWith(CONTENT_SCHEME) || filePath.startsWith(FILE_SCHEME)) {
       Uri uri = Uri.parse(filePath);
-      viewCtrl.openPDF(uri, password, () -> {
+      viewCtrl.openPDF(uri, password, pageIndex, () -> {
         promise.resolve(true);
       });
     } else {
-      viewCtrl.openPDF(filePath, password, () -> {
+      viewCtrl.openPDF(filePath, password, pageIndex, () -> {
         promise.resolve(true);
       });
     }
@@ -755,6 +784,11 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     cpdfView.getCPDFReaderView().reloadPages();
   }
 
+  public void reloadPages2(int tag) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    cpdfView.getCPDFReaderView().reloadPages2();
+  }
+
   public void importDocument(int tag, String filePath, String password, int[] pages,
     int insertPosition, Promise promise) {
     try {
@@ -916,6 +950,63 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       updatePageIndicatorView(document, cpdfView.documentFragment.pdfView);
     }
     return isValid;
+  }
+
+  public boolean insertImagePage(int tag, int pageIndex, String imagePath, float width,
+    float height) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+
+    CPDFPage page = null;
+    if (imagePath.startsWith(ASSETS_SCHEME)) {
+      Log.d("ComPDFKit", "insertImagePage from assets");
+      String assetsPath = imagePath.replace(ASSETS_SCHEME + "/", "");
+      String[] strs = imagePath.split("/");
+      String fileName = strs[strs.length - 1];
+      String samplePDFPath = CFileUtils.getAssetsTempFile(reactContext, assetsPath, fileName);
+
+      page = document.insertPageWithImagePath(pageIndex, width, height,
+        samplePDFPath, PDFDocumentImageMode.PDFDocumentImageModeScaleAspectFit);
+    } else if (imagePath.startsWith(CONTENT_SCHEME) || imagePath.startsWith(FILE_SCHEME)) {
+
+      Uri uri = Uri.parse(imagePath);
+      Log.d("ComPDFKit", "insertImagePage from Uri");
+
+      try {
+        ParcelFileDescriptor fileDescriptor = reactContext.getContentResolver()
+          .openFileDescriptor(uri, "r");
+        if (fileDescriptor != null) {
+          page = document.insertPageWithImage(pageIndex, width, height,
+            fileDescriptor.getFd(), PDFDocumentImageMode.PDFDocumentImageModeScaleAspectFit);
+        }
+        if (fileDescriptor != null) {
+          fileDescriptor.close();
+        }
+      } catch (Exception e) {
+        Log.e("ComPDFKit", e.getMessage());
+      }
+    } else {
+      Log.d("ComPDFKit", "insertImagePage from path");
+      page = document.insertPageWithImagePath(pageIndex, width, height,
+        imagePath, PDFDocumentImageMode.PDFDocumentImageModeScaleAspectFit);
+    }
+    boolean isValid = page != null && page.isValid();
+    if (isValid) {
+      updatePageIndicatorView(document, cpdfView.documentFragment.pdfView);
+    }
+    return isValid;
+  }
+
+  public boolean removePages(int tag, int[] pages) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+    return document.removePages(pages);
+  }
+
+  public boolean movePage(int tag, int fromIndex, int toIndex) {
+    CPDFView cpdfView = mDocumentViews.get(tag);
+    CPDFDocument document = cpdfView.getCPDFReaderView().getPDFDocument();
+    return document.movePage(fromIndex, toIndex);
   }
 
   public void setAnnotationMode(int tag, String mode) {
@@ -1137,7 +1228,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     return false;
   }
 
-  public boolean editorRedo(int tag){
+  public boolean editorRedo(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     CPDFEditManager editManager = readerView.getEditManager();
@@ -1153,13 +1244,13 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   }
 
 
-  public void setFormCreationMode(int tag, String formType){
+  public void setFormCreationMode(int tag, String formType) {
     CPDFView pdfView = mDocumentViews.get(tag);
     WidgetType type = CPDFConfigurationUtils.getWidgetType(formType);
     pdfView.documentFragment.formToolBar.switchFormMode(type);
   }
 
-  public String getFormCreationMode(int tag){
+  public String getFormCreationMode(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     return switch (readerView.getCurrentFocusedFormType()) {
@@ -1174,7 +1265,7 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     };
   }
 
-  public void verifyDigitalSignatureStatus(int tag){
+  public void verifyDigitalSignatureStatus(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     pdfView.documentFragment.verifyDocumentSignStatus();
   }
@@ -1209,26 +1300,26 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     pdfView.documentFragment.hideTextSearchView();
   }
 
-  public void saveCurrentInk(int tag){
+  public void saveCurrentInk(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     readerView.getInkDrawHelper().onSave();
   }
 
-  public void setPageRotation(int tag, int pageIndex, int rotation, Promise promise){
+  public void setPageRotation(int tag, int pageIndex, int rotation, Promise promise) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     CPDFDocument document = readerView.getPDFDocument();
     CPDFPage cpdfPage = document.pageAtIndex(pageIndex);
     if (cpdfPage == null) {
-      promise.reject("SET_PAGE_ROTATION_FAIL",  "Page not found at index: " + pageIndex);
+      promise.reject("SET_PAGE_ROTATION_FAIL", "Page not found at index: " + pageIndex);
       return;
     }
     boolean setRotationResult = cpdfPage.setRotation(rotation);
     promise.resolve(setRotationResult);
   }
 
-  public int getPageRotation(int tag, int pageIndex){
+  public int getPageRotation(int tag, int pageIndex) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
     CPDFDocument document = readerView.getPDFDocument();
@@ -1237,6 +1328,449 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       return 0;
     }
     return cpdfPage.getRotation();
+  }
+
+  public void setAnnotationsVisible(int tag, boolean visible) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    readerView.setAnnotationsVisible(visible);
+  }
+
+  public boolean areAnnotationsVisible(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    return readerView.isAnnotationsVisible();
+  }
+
+  public WritableMap getInfo(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFDocumentInfoUtil.getDocumentInfo(document);
+  }
+
+  public int getMajorVersion(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return document.getMajorVersion();
+  }
+
+  public int getMinorVersion(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return document.getMinorVersion();
+  }
+
+  public WritableMap getPermissionInfo(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFDocumentInfoUtil.getPermissionsInfo(document);
+  }
+
+  public WritableMap getOutlineRoot(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.getOutlineMap(document);
+  }
+
+  public WritableMap newOutlineRoot(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.newOutlineRoot(document);
+  }
+
+
+  public boolean addOutline(int tag, String parentUuid, String title, int insertIndex,
+    int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.addOutline(document, parentUuid, title, insertIndex, pageIndex);
+  }
+
+  public boolean removeOutline(int tag, String uuid) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.deleteOutline(document, uuid);
+  }
+
+  public boolean updateOutline(int tag, String uuid, String newTitle, int newPageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.updateOutline(document, uuid, newTitle, newPageIndex);
+  }
+
+  public boolean moveOutline(int tag, String uuid, String newParentUuid, int newIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFOutlineUtil.moveTo(document, uuid, newParentUuid, newIndex);
+  }
+
+  public WritableArray getBookmarks(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    return CPDFBookmarkUtil.getBookmarks(document);
+  }
+
+  public boolean addBookmark(int tag, String title, int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      boolean result = CPDFBookmarkUtil.addBookmark(document, title, pageIndex);
+      readerView.invalidateAllChildren();
+      return result;
+    }
+    return false;
+  }
+
+  public boolean removeBookmark(int tag, int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      boolean result = document.removeBookmark(pageIndex);
+      readerView.invalidateAllChildren();
+      return result;
+    }
+    return false;
+  }
+
+  public boolean hasBookmark(int tag, int pageIndex) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      return document.hasBookmark(pageIndex);
+    }
+    return false;
+  }
+
+  public boolean updateBookmark(int tag, String uuid, String newTitle) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      boolean result = CPDFBookmarkUtil.updateBookmark(document, uuid, newTitle);
+      readerView.invalidateAllChildren();
+      return result;
+    }
+    return false;
+  }
+
+  public void showDefaultAnnotationPropertiesView(int tag, String annotType) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CAnnotationType type = CPDFEnumConvertUtil.strongToAnnotationType(annotType);
+    pdfView.documentFragment.annotationToolbar.showAnnotStyleDialog(type.getStyleType());
+  }
+
+  public void showAnnotationPropertiesView(int tag, ReadableMap annotMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+
+    int pageIndex = annotMap.getInt("page");
+    String uuid = annotMap.getString("uuid");
+    CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+    pageUtil.setDocument(readerView.getPDFDocument());
+    CPDFAnnotation annotation = pageUtil.getAnnotation(pageIndex, uuid);
+    if (annotation != null) {
+      FragmentManager fragmentManager = pdfView.documentFragment.getParentFragmentManager();
+      CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+      CPDFBaseAnnotImpl baseAnnot = null;
+      if (pageView != null) {
+        baseAnnot = pageView.getAnnotImpl(annotation);
+      }
+      if (baseAnnot != null) {
+        CPDFAnnotationManager.showPropertiesDialog(
+          fragmentManager, baseAnnot, pageView);
+      } else {
+        CPDFAnnotationManager.showPropertiesDialog(
+          fragmentManager, annotation, pageView);
+      }
+    }
+  }
+
+  public void showEditAreaPropertiesView(int tag, ReadableMap editAreaMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+
+    int pageIndex = editAreaMap.getInt("page");
+    String uuid = editAreaMap.getString("uuid");
+    String areaType = editAreaMap.getString("type");
+    CPDFDocument document = readerView.getPDFDocument();
+    CPDFEditArea editArea = CPDFEditAreaUtil.getEditArea(document, pageIndex, uuid, areaType);
+    if (editArea != null) {
+      FragmentManager fragmentManager = pdfView.documentFragment.getParentFragmentManager();
+      CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+      CPDFAnnotationManager.showPropertiesDialog(fragmentManager, editArea, pageView);
+    }
+  }
+
+  public void prepareNextSignature(int tag, String imagePath) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return;
+    }
+    CPDFViewCtrl viewCtrl = pdfView.documentFragment.pdfView;
+    CStyleManager styleManager = new CStyleManager(viewCtrl);
+    CAnnotStyle style = styleManager.getStyle(CStyleType.ANNOT_SIGNATURE);
+    style.setImagePath(imagePath);
+    styleManager.updateStyle(style);
+  }
+
+  public void prepareNextImage(int tag, String imagePath) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return;
+    }
+    CPDFViewCtrl viewCtrl = pdfView.documentFragment.pdfView;
+    CStyleManager styleManager = new CStyleManager(viewCtrl);
+    CAnnotStyle style = styleManager.getStyle(CStyleType.ANNOT_PIC);
+    style.setImagePath(imagePath);
+    styleManager.updateStyle(style);
+  }
+
+  public void prepareNextStamp(int tag, ReadableMap stampMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return;
+    }
+    CPDFViewCtrl viewCtrl = pdfView.documentFragment.pdfView;
+    String stampType = stampMap.getString("type");
+    CStyleManager styleManager = new CStyleManager(viewCtrl);
+    CAnnotStyle style = styleManager.getStyle(CStyleType.ANNOT_STAMP);
+    if ("image".equals(stampType)) {
+      String imagePath = stampMap.getString("imagePath");
+      String parseImagePath = com.compdfkitpdf.reactnative.util.CFileUtils.parseFilePath(
+        reactContext, imagePath);
+      style.setImagePath(parseImagePath);
+    } else if ("standard".equals(stampType)) {
+      String standardType = stampMap.getString("standardStamp");
+      StandardStamp standardStamp = StandardStamp.str2Enum(standardType);
+      style.setStandardStamp(standardStamp);
+    } else if ("text".equals(stampType)) {
+      ReadableMap textStampMap = stampMap.getMap("textStamp");
+      String content = textStampMap.getString("content");
+      String date = textStampMap.getString("date");
+      String shape = textStampMap.getString("shape");
+      String color = textStampMap.getString("color");
+      TextStampShape textStampShape = CPDFEnumConvertUtil.stringToStampShape(shape);
+      TextStampColor textStampColor = CPDFEnumConvertUtil.stringToStampColor(color);
+      TextStamp textStamp = new TextStamp(content, date, textStampShape.id, textStampColor.id);
+      style.setTextStamp(textStamp);
+    }
+    styleManager.updateStyle(style);
+  }
+
+  public WritableMap fetchDefaultAnnotationStyle(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return Arguments.createMap();
+    }
+    HashMap<String, Object> map = CPDFAttrUtils.getDefaultAnnotAttr(
+      pdfView.documentFragment.pdfView);
+    return Arguments.makeNativeMap(map);
+  }
+
+  public void updateDefaultAnnotationStyle(int tag, ReadableMap styleMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+
+    if (pdfView == null) {
+      return;
+    }
+
+    Map<String, Object> map = styleMap.toHashMap();
+    String annotType = styleMap.getString("type");
+    if (TextUtils.isEmpty(annotType)) {
+      return;
+    }
+    try {
+
+      CPDFAttrUtils.setDefaultAnnotAttr(pdfView.documentFragment.pdfView, annotType, map);
+      pdfView.documentFragment.annotationToolbar.updateItemColor();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public ReadableMap fetchDefaultWidgetStyle(int tag) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return Arguments.createMap();
+    }
+    HashMap<String, Object> map = CPDFAttrUtils.getDefaultWidgetAttr(
+      pdfView.documentFragment.pdfView);
+    return Arguments.makeNativeMap(map);
+  }
+
+  public void updateDefaultWidgetStyle(int tag, ReadableMap styleMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      return;
+    }
+    Map<String, Object> map = styleMap.toHashMap();
+    String annotType = styleMap.getString("type");
+    if (TextUtils.isEmpty(annotType)) {
+      return;
+    }
+    CPDFAttrUtils.setDefaultAnnotAttr(pdfView.documentFragment.pdfView, annotType, map);
+  }
+
+  public void removeEditArea(int tag, int pageIndex, String uuid, String type) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFDocument document = readerView.getPDFDocument();
+      CPDFEditAreaUtil.removeEditArea(document, pageIndex, uuid, type);
+      readerView.getContextMenuShowListener().dismissContextMenu();
+    }
+  }
+
+  public boolean createNewTextArea(int tag, ReadableMap textAreaMap) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      HashMap<String, Object> map = textAreaMap.toHashMap();
+
+      int pageIndex = textAreaMap.getInt("page_index");
+
+      boolean isEditMode = readerView.getViewMode() == ViewMode.PDFEDIT;
+      map.put("isEditMode", isEditMode);
+
+      CPDFEditorTextAttr normalEditorAttr = readerView.getReaderAttribute().getAnnotAttribute()
+        .getEditorTextAttr();
+      CPDFDocument document = readerView.getPDFDocument();
+      CPDFEditArea editArea = CPDFEditAreaUtil.createNewTextArea(document, map, normalEditorAttr);
+
+      CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+      if (pageView != null) {
+        ViewMode viewMode = readerView.getViewMode();
+        if (viewMode != ViewMode.PDFEDIT) {
+          pageView.endEdit();
+        }
+        pageView.onUpdateUI(pageIndex);
+      }
+
+      return editArea != null && editArea.isValid();
+    } else {
+      return false;
+    }
+  }
+
+  public void createNewImageArea(int tag, ReadableMap imageAreaMap, Promise promise) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView != null) {
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      HashMap<String, Object> map = imageAreaMap.toHashMap();
+
+      int pageIndex = imageAreaMap.getInt("page_index");
+
+      boolean isEditMode = readerView.getViewMode() == ViewMode.PDFEDIT;
+      map.put("isEditMode", isEditMode);
+
+      CPDFDocument document = readerView.getPDFDocument();
+      CPDFEditAreaUtil.createNewImageArea(document, map, editArea -> {
+        CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+        if (pageView != null) {
+          ViewMode viewMode = readerView.getViewMode();
+          if (viewMode != ViewMode.PDFEDIT) {
+            pageView.endEdit();
+          }
+          pageView.onUpdateUI(pageIndex);
+        }
+        promise.resolve(editArea != null && editArea.isValid());
+      });
+    }
+  }
+
+  public void updateAnnotation(int tag, ReadableMap annotMap, Promise promise) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+
+    int pageIndex = annotMap.getInt("page");
+    String uuid = annotMap.getString("uuid");
+    CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+    pageUtil.setDocument(readerView.getPDFDocument());
+
+    CPDFAnnotation annotation = pageUtil.getAnnotation(pageIndex, uuid);
+    if (annotation == null || !annotation.isValid()) {
+      promise.reject("UPDATE_ANNOTATION_FAIL", "not found this annotation");
+      return;
+    }
+    try {
+      pageUtil.updateAnnotation(annotation, annotMap);
+      CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+      if (pageView != null) {
+        CPDFBaseAnnotImpl annotImpl = pageView.getAnnotImpl(annotation);
+        if (annotImpl != null) {
+          annotImpl.onAnnotAttrChange();
+          pageView.invalidate();
+        }else {
+          pageView.addAnnotation(annotation, false);
+          pageView.invalidate();
+        }
+      }
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject("UPDATE_ANNOTATION_FAIL", e.getMessage());
+    }
+
+  }
+
+  public void updateWidget(int tag, ReadableMap widgetMap, Promise promise) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+
+    int pageIndex = widgetMap.getInt("page");
+    String uuid = widgetMap.getString("uuid");
+    CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+    pageUtil.setDocument(readerView.getPDFDocument());
+
+    CPDFAnnotation annotation = pageUtil.getAnnotation(pageIndex, uuid);
+    if (annotation == null || !annotation.isValid()) {
+      promise.reject("UPDATE_WIDGET_FAIL", "not found this widget");
+      return;
+    }
+    try {
+      pageUtil.updateWidget(annotation, widgetMap);
+      CPDFPageView pageView = (CPDFPageView) readerView.getChild(pageIndex);
+      if (pageView != null) {
+        CPDFBaseAnnotImpl annotImpl = pageView.getAnnotImpl(annotation);
+        if (annotImpl != null) {
+          annotImpl.onAnnotAttrChange();
+          pageView.invalidate();
+        }
+      }
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject("UPDATE_ANNOTATION_FAIL", e.getMessage());
+    }
+  }
+
+  public void addAnnotations(int tag, ReadableArray annotationsArray) {
+      CPDFView pdfView = mDocumentViews.get(tag);
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+      pageUtil.setDocument(readerView.getPDFDocument());
+      pageUtil.addAnnotations(readerView, annotationsArray);
+  }
+
+  public void addWidgets(int tag, ReadableArray widgetsArray) {
+      CPDFView pdfView = mDocumentViews.get(tag);
+      CPDFReaderView readerView = pdfView.getCPDFReaderView();
+      CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+      pageUtil.setDocument(readerView.getPDFDocument());
+      pageUtil.addWidgets(readerView, widgetsArray);
   }
 
 

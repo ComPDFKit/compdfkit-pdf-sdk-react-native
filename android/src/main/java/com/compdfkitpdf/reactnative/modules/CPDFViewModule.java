@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved. THIS SOURCE CODE AND ANY
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved. THIS SOURCE CODE AND ANY
  * ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW AND MAY NOT BE RESOLD OR
  * REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT. UNAUTHORIZED REPRODUCTION OR
  * DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES. This notice may not be removed from this
@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.compdfkit.tools.common.pdf.config.CPDFWatermarkConfig;
+import com.compdfkitpdf.reactnative.util.CFileUtils;
 import com.compdfkitpdf.reactnative.viewmanager.CPDFViewManager;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -378,8 +379,8 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void open(int tag, String filePath, String password, Promise promise) {
-    getReactApplicationContext().runOnUiQueueThread(() -> mPDFViewInstance.open(tag, filePath, password, promise));
+  public void open(int tag, String filePath, String password,int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> mPDFViewInstance.open(tag, filePath, password,pageIndex, promise));
   }
 
   @ReactMethod
@@ -492,6 +493,14 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   public void reloadPages(int tag, Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(() -> {
       mPDFViewInstance.reloadPages(tag);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void reloadPages2(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.reloadPages2(tag);
       promise.resolve(null);
     });
   }
@@ -825,6 +834,415 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   public void getPageRotation(int tag, int pageIndex, Promise promise){
     getReactApplicationContext().runOnUiQueueThread(()->{
       promise.resolve(mPDFViewInstance.getPageRotation(tag, pageIndex));
+    });
+  }
+
+  @ReactMethod
+  public void setAnnotationsVisible(int tag, boolean visible, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      mPDFViewInstance.setAnnotationsVisible(tag, visible);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void areAnnotationsVisible(int tag, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(()->{
+      promise.resolve(mPDFViewInstance.areAnnotationsVisible(tag));
+    });
+  }
+
+  @ReactMethod
+  public void insertImagePage(int tag, int pageIndex, String imagePath, float width, float height, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      int pageCount = mPDFViewInstance.getPageCount(tag);
+      if (pageIndex < 0 || pageIndex > pageCount){
+        promise.reject("INSERT_PAGE_FAIL", "Insert page index out of range.");
+        return;
+      }
+      promise.resolve(mPDFViewInstance.insertImagePage(tag, pageIndex, imagePath, width, height));
+    });
+  }
+
+  @ReactMethod
+  public void removePages(int tag, ReadableArray pageIndices, Promise promise){
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      int size = pageIndices.size();
+      int[] pages = new int[size];
+      for (int i = 0; i < size; i++) {
+        pages[i] = pageIndices.getInt(i);
+      }
+      promise.resolve(mPDFViewInstance.removePages(tag, pages));
+    });
+  }
+
+  @ReactMethod
+  public void movePage(int tag, int fromIndex, int toIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      promise.resolve(mPDFViewInstance.movePage(tag, fromIndex, toIndex));
+    });
+  }
+
+  @ReactMethod
+  public void getInfo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getInfo(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getMajorVersion(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getMajorVersion(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getMinorVersion(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getMinorVersion(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getPermissionsInfo(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getPermissionInfo(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getOutlineRoot(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getOutlineRoot(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void newOutlineRoot(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.newOutlineRoot(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void addOutline(int tag, String parentUuid, String title, int insertIndex, int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.addOutline(tag, parentUuid, title, insertIndex, pageIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void removeOutline(int tag, String uuid, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.removeOutline(tag, uuid));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateOutline(int tag, String outlineId, String title, int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.updateOutline(tag, outlineId, title, pageIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void moveOutline(int tag, String outlineId, String newParentId, int newIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.moveOutline(tag, outlineId, newParentId, newIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getBookmarks(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.getBookmarks(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void removeBookmark(int tag, int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.removeBookmark(tag, pageIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void hasBookmark(int tag, int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.hasBookmark(tag, pageIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void addBookmark(int tag, String title, int pageIndex, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.addBookmark(tag, title, pageIndex));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateBookmark(int tag, String uuid, String title, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.updateBookmark(tag, uuid, title));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void showDefaultAnnotationPropertiesView(int tag, String annotType, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.showDefaultAnnotationPropertiesView(tag, annotType);
+      promise.resolve(null);
+    });
+  }
+
+
+  @ReactMethod
+  public void showAnnotationPropertiesView(int tag, ReadableMap annotMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.showAnnotationPropertiesView(tag, annotMap);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void showWidgetPropertiesView(int tag, ReadableMap widgetMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.showAnnotationPropertiesView(tag, widgetMap);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void showEditAreaPropertiesView(int tag, ReadableMap areaMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      mPDFViewInstance.showEditAreaPropertiesView(tag, areaMap);
+      promise.resolve(null);
+    });
+  }
+
+  @ReactMethod
+  public void prepareNextSignature(int tag, String signatureImagePath, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        String path = CFileUtils.parseFilePath(getReactApplicationContext(), signatureImagePath);
+        mPDFViewInstance.prepareNextSignature(tag, path);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void prepareNextImage(int tag, String imagePath, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        String path = CFileUtils.parseFilePath(getReactApplicationContext(), imagePath);
+        mPDFViewInstance.prepareNextSignature(tag, path);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void prepareNextStamp(int tag, ReadableMap stampMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.prepareNextStamp(tag, stampMap);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void fetchDefaultAnnotationStyle(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.fetchDefaultAnnotationStyle(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateDefaultAnnotationStyle(int tag, ReadableMap styleMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.updateDefaultAnnotationStyle(tag, styleMap);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void fetchDefaultWidgetStyle(int tag, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.fetchDefaultWidgetStyle(tag));
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateDefaultWidgetStyle(int tag, ReadableMap styleMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.updateDefaultWidgetStyle(tag, styleMap);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateAnnotation(int tag, ReadableMap annotMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.updateAnnotation(tag, annotMap, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void updateWidget(int tag, ReadableMap widgetMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.updateWidget(tag, widgetMap, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void removeEditArea(int tag, int page, String uuid,String type,  Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.removeEditArea(tag, page, uuid, type);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void createNewTextArea(int tag, ReadableMap areaMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        promise.resolve(mPDFViewInstance.createNewTextArea(tag, areaMap));
+      } catch (Exception e) {
+        e.printStackTrace();
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void createNewImageArea(int tag, ReadableMap areaMap, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.createNewImageArea(tag, areaMap, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void addAnnotations(int tag, ReadableArray annotsArray, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.addAnnotations(tag, annotsArray);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void addWidgets(int tag, ReadableArray widgetsArray, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.addWidgets(tag, widgetsArray);
+        promise.resolve(null);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
     });
   }
 

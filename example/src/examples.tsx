@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -15,7 +15,7 @@ const modalViewExamples = [
         key: 'item1',
         title: 'Basic Example',
         description: `Open sample pdf document`,
-        action: (component: any) => {
+        action: (_component: any) => {
             var samplePDF: string = Platform.OS == 'android' ? 'file:///android_asset/PDF_Document.pdf' : 'PDF_Document.pdf'
             // We provide default UI and PDF property related configurations here, you can modify configuration options according to your needs.
             var config = ComPDFKit.getDefaultConfig({})
@@ -26,7 +26,7 @@ const modalViewExamples = [
         key: 'item2',
         title: 'Select External Files Example',
         description: `Select pdf document form system file manager`,
-        action: async (component: any)  => {
+        action: async (_component: any)  => {
             // Pick a PDF file from the local storage of Android or iOS device,
             // this example uses the `react-native-document-picker` package,
             // If you want to use this example, please add this package to your project first.
@@ -132,6 +132,46 @@ const uiConpomentExamples = [
             component.props.navigation.navigate('CPDFContentEditorExample');
         }
     },
+    {
+        key: 'item13',
+        title: 'Toolbar Customization Example',
+        description: 'Customize the toolbar in CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFCustomToolbarExample');
+        }
+    },
+    {
+        key: 'item14',
+        title: 'Event Listener Example',
+        description: 'Listen to events in CPDFReaderView, such as annotation changes.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFEventListenerExample');
+        }
+    },
+    {
+        key: 'item15',
+        title: 'Custom UI Style Example',
+        description: 'Customize the UI style of CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFCustomUiStyleExample');
+        }
+    },
+    {
+        key: 'item16',
+        title: 'Custom Context Menu Example',
+        description: 'Customize the context menu in CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFCustomContextMenuExample');
+        }
+    },
+    {
+        key: 'item17',
+        title: 'Custom Annotation Creation Example',
+        description: 'Create custom annotations in CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFCustomAnnotationCreateExample');
+        }
+    }
 ];
 
 export const examples = [

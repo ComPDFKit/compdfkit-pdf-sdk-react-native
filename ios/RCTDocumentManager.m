@@ -1,4 +1,4 @@
-//  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+//  Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -271,6 +271,43 @@ RCT_EXTERN_METHOD(insertBlankPage:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+
+RCT_EXTERN_METHOD(insertImagePage: (NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withImagePath:(NSURL *) imagePath
+                  withPageWidth:(nonnull NSNumber *) pageWidth
+                  withPageHeight:(nonnull NSNumber *) pageHeight
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removePages: (NSInteger)tag
+                  withPageIndexes:(NSArray *) pageIndexes
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(movePage: (NSInteger)tag
+                  withFromIndex:(NSInteger) fromIndex
+                  withToIndex:(NSInteger) toIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+                   
+RCT_EXTERN_METHOD(getInfo: (NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getMajorVersion: (NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getMinorVersion: (NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPermissionsInfo: (NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  
+
 // MARK: - Pages Methods
 
 RCT_EXTERN_METHOD(getAnnotations:(NSInteger)tag
@@ -318,8 +355,8 @@ RCT_EXTERN_METHOD(reloadPages:(NSInteger)tag
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(removeAnnotation:(NSInteger)tag
-                  withPageIndex:(NSInteger) pageIndex
-                  withAnnotId:(NSString *) uuid
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -466,8 +503,165 @@ RCT_EXTERN_METHOD(setPageRotation: (NSInteger)tag
                   withRotation: (NSInteger) rotation
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+// MARK: - Outline Methods
+RCT_EXTERN_METHOD(getOutlineRoot:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(newOutlineRoot:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addOutline:(NSInteger)tag
+                  withParentId:(NSString *) parentUuid
+                  withTitle:(NSString *) title
+                  withInsertIndex:(NSInteger) insertIndex
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeOutline:(NSInteger)tag
+                  withOutlineId:(NSString *) outlineId
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateOutline:(NSInteger)tag
+                  withOutlineId:(NSString *) outlineId
+                  withTitle:(NSString *) title
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(moveOutline:(NSInteger)tag
+                  withOutlineId:(NSString *) outlineId
+                  withNewParentId:(NSString *) newParentId
+                  withInsertIndex:(NSInteger) insertIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+// MARK: - Bookmarks Methods
+RCT_EXTERN_METHOD(getBookmarks:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
+RCT_EXTERN_METHOD(removeBookmark:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(hasBookmark:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addBookmark:(NSInteger)tag
+                  withTitle:(NSString *) title
+                  withPageIndex:(NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
+RCT_EXTERN_METHOD(updateBookmark:(NSInteger)tag
+                  withUuid:(NSString) uuid
+                  withTitle:(NSString *) title
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
+// MARK: - Annotations, Widget Attributes
+RCT_EXTERN_METHOD(fetchDefaultAnnotationStyle:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateDefaultAnnotationStyle:(NSInteger)tag
+                  withAttr:(NSDictionary) attr
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
                   
+RCT_EXTERN_METHOD(fetchDefaultWidgetStyle:(NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateDefaultWidgetStyle:(NSInteger)tag
+                  withAttr:(NSDictionary) attr
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateAnnotation: (NSInteger)tag
+                  withAnnotation:(NSDictionary) annotationMap
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
                   
+RCT_EXTERN_METHOD(updateWidget: (NSInteger)tag
+                  withWidget:(NSDictionary) widgetMap
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addAnnotations: (NSInteger)tag
+                  withAnnotations:(NSArray) annotationArray
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addWidgets: (NSInteger)tag
+                  withWidgets:(NSArray) widgetArray
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+// MARK: - 2.6.0
+
+RCT_EXTERN_METHOD(removeEditArea:(NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withEidtingAreaId:(NSString *) uuid
+                  withType:(NSString *) type
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setAnnotationsVisible:(NSInteger)tag
+                  withVisible:(BOOL) visible
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(isAnnotationsVisible: (NSInteger)tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(showDefaultAnnotationPropertiesView: (NSInteger)tag
+                  withType:(NSString *) type
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(showAnnotationPropertiesView: (NSInteger)tag
+                  withAnnotation:(NSDictionary *) annotation
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(showWidgetPropertiesView: (NSInteger)tag
+                  withWidget:(NSDictionary *) widget
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)    
+
+RCT_EXTERN_METHOD(showEditAreaPropertiesView: (NSInteger)tag
+                  withEditArea:(NSDictionary *) editArea
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)       
+
+RCT_EXTERN_METHOD(prepareNextSignature: (NSInteger)tag
+                  withSignaturePath:(NSString *) signaturePath
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(prepareNextStamp: (NSInteger)tag
+                  withDict:(NSDictionary *) dict
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(prepareNextImage: (NSInteger)tag
+                  withImage:(NSURL *) imagePath
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

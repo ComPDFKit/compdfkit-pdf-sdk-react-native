@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -12,7 +12,7 @@ import { Image, Platform, TouchableOpacity } from 'react-native';
 import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RNFS from 'react-native-fs';
+import { MenuProvider } from 'react-native-popup-menu';
 
 import HomeScreen from './src/screens/HomeScreen';
 import CPDFReaderViewExampleScreen from './src/CPDFReaderViewExample';
@@ -25,6 +25,12 @@ import CPDFWidgetsExampleScreen from './src/CPDFWidgetsExample';
 import CPDFSearchTextExampleScreen from './src/CPDFSearchTextExample';
 import CPDFContentEditorExampleScreen from './src/CPDFContentEditorExample';
 import CPDFFormCreationExampleScreen from './src/CPDFFormCreationExample';
+import CPDFCustomToolbarExampleScreen from './src/CPDFCustomToolbarExample';
+import CPDFEventListenerExampleScreen from './src/CPDFEventListenerExample';
+import CPDFCustomUiStyleExampleScreen from './src/CPDFCustomUiStyleExample';
+import CPDFCustomContextMenuExampleScreen from './src/CPDFCustomContextMenuExample';
+import CPDFCustomAnnotationCreateExampleScreen from './src/CPDFCustomAnnotationCreateExample';
+import { CPDFFileUtil } from './src/util/CPDFFileUtil';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +47,7 @@ export default class App extends Component<Props> {
   }
 
   async initialize() {
-    const fontDir = await copyAssetsFolderToStorage('extraFonts');
+    const fontDir = await CPDFFileUtil.copyAssetsFolderToStorage('extraFonts');
     console.log('ComPDFKitRN', "fontDir:", fontDir)
     await ComPDFKit.setImportFontDir(fontDir, true);
 
@@ -51,8 +57,9 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
+      <MenuProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeScreen} options={({ navigation }) => ({
             title: 'ComPDFKit PDF SDK for ReactNative',
             headerStyle: {
@@ -133,8 +140,44 @@ export default class App extends Component<Props> {
                   headerShown: false,
               })}
           />
-        </Stack.Navigator>
-      </NavigationContainer>
+          <Stack.Screen
+            name='CPDFCustomToolbarExample'
+            component={CPDFCustomToolbarExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFEventListenerExample'
+            component={CPDFEventListenerExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFCustomUiStyleExample'
+            component={CPDFCustomUiStyleExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFCustomContextMenuExample'
+            component={CPDFCustomContextMenuExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFCustomAnnotationCreateExample'
+            component={CPDFCustomAnnotationCreateExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </MenuProvider>
     );
   }
 }
@@ -142,48 +185,4 @@ export default class App extends Component<Props> {
 
 
 
-const copyAssetsFolderToStorage = async (folderName : string) => {
-  try {
-    // Define the target storage directory
-    const targetDir = `${RNFS.DocumentDirectoryPath}/${folderName}`;
 
-    // Ensure the target directory exists
-    const dirExists = await RNFS.exists(targetDir);
-    if (!dirExists) {
-      await RNFS.mkdir(targetDir);
-    }
-
-    if (Platform.OS === 'android') {
-      // Android: Read all files in the folder
-      const files = await RNFS.readDirAssets(folderName); // Returns an array of file objects
-      for (const file of files) {
-        if (file.isFile()) {
-          const fileContents = await RNFS.readFileAssets(`${folderName}/${file.name}`, 'base64'); // Read file from assets
-          const targetFilePath = `${targetDir}/${file.name}`;
-          await RNFS.writeFile(targetFilePath, fileContents, 'base64'); // Write to target
-        }
-      }
-    } else if (Platform.OS === 'ios') {
-      // iOS: Copy files directly
-      const files = await RNFS.readDir(`${RNFS.MainBundlePath}/${folderName}`);
-
-      for (const file of files) {
-        if (file.isFile()) {
-          const sourcePath = file.path;
-          const targetFilePath = `${targetDir}/${file.name}`;
-          if(await RNFS.exists(targetFilePath)){
-            continue;
-          }
-          await RNFS.copyFile(sourcePath, targetFilePath);
-        }
-      }
-    } else {
-      throw new Error('Unsupported platform');
-    }
-
-    return targetDir; // Return the target directory path
-  } catch (error) {
-    console.error('Error copying folder:', error);
-    throw new Error('Failed to copy folder to storage.');
-  }
-};

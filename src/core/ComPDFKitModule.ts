@@ -1,0 +1,282 @@
+/**
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
+import { NativeModules } from "react-native";
+import CPDFFontName from "../document/CPDFFontName";
+import type { CPDFConfiguration } from "../configuration/CPDFConfiguration";
+
+declare module "react-native" {
+  interface NativeModulesStatic {
+    ComPDFKit: {
+      getDefaultConfig(overrides: Partial<CPDFConfiguration>): string;
+      /**
+       * Get the version number of the ComPDFKit SDK.
+       * For example : '2.0.0'
+       * @returns { Promise<string> } A Promise returning ComPDFKit PDF SDK Version Code
+       *
+       * @example
+       * ComPDFKit.getVersionCode().then((versionCode : string) => {
+       *   console.log('ComPDFKit SDK Version:', versionCode)
+       * })
+       */
+      getVersionCode(): () => Promise<string>;
+      /**
+       * Get the build tag of the ComPDFKit PDF SDK.
+       *
+       * For example: "build_beta_2.0.0_42db96987_202404081007"
+       * @returns { Promise<string> } A Promise returning ComPDFKit PDF SDK Build Tag.
+       *
+       * @example
+       * ComPDFKit.getSDKBuildTag().then((buildTag : string) => {
+       *  console.log('ComPDFKit Build Tag:', buildTag)
+       * })
+       */
+      getSDKBuildTag(): () => Promise<string>;
+      /**
+       * Initialize the ComPDFKit PDF SDK using offline authentication.
+       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
+       *
+       * @param { string } [license] Your ComPDFKit for React Native license key.
+       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
+       *
+       * @example
+       * ComPDFKit.init_('your compdfkit license')
+       *
+       */
+      init_: (license: string) => Promise<boolean>;
+      /**
+       * Initialize the ComPDFKit PDF SDK using online authentication.
+       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
+       *
+       * @param { string } [androidOnlineLicense] Your ComPDFKit for React Native Android online license key.
+       * @param { string } [iosOnlineLicense] Your ComPDFKit for React Native iOS online license key.
+       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
+       *
+       * @example
+       * ComPDFKit.initialize('your android compdfkit license', 'your ios compdfkit license')
+       */
+      initialize: (
+        androidOnlineLicense: string,
+        iosOnlineLicense: string
+      ) => Promise<boolean>;
+
+      /**
+       * Initialize the ComPDFKit PDF SDK using a license file.
+       * This method is supported only on Android and iOS platforms.
+       * Each ComPDFKit license is bound to a specific app bundle ID(Android Application ID).
+       * @param { string } [licensePath] The path to the license file.
+       * - For Android, the path should be in the format: `assets://license_key.xml
+       * - For iOS, the path should be in the format: `license_key.xml`
+       * @returns { Promise<boolean> } Returns ```true``` if initialization is successful, otherwise returns ```false```.
+       *
+       * @example
+       * // For Android
+       * bool result = await ComPDFKit.initWithPath('assets://license_key.xml')
+       *
+       * // For iOS
+       * bool result = await ComPDFKit.initWithPath('license_key.xml')
+       *
+       */
+      initWithPath: (licensePath: string) => Promise<boolean>;
+      /**
+       * Used to present a PDF document.
+       * @param { string } [document]  document The path to the PDF document to be presented.
+       *
+       * * (Android) For local storage file path:
+       * ```tsx
+       *    document = 'file:///storage/emulated/0/Download/sample.pdf'
+       * ```
+       * * (Android) For content Uri:
+       * ```tsx
+       *    document = 'content://...'
+       * ```
+       * * (Android) For assets path:
+       * ```tsx
+       *    document = "file:///android_asset/..."
+       * ```
+       * ---
+       * * ios
+       * ```tsx
+       *    document = 'pdf_document.pdf'
+       * ```
+       *
+       * @param { string } [password] PDF document password.
+       * @param { string } [configuration] Configuration objects to customize the appearance and behavior of ComPDFKit. See CPDFConfiguration.ts
+       * @returns { void }
+       *
+       * @example
+       * const fileName = 'pdf_document.pdf';
+       * const document =
+       * Platform.OS === 'ios' ? fileName
+       * : 'file:///android_asset/' + fileName;
+       *
+       * const configuration : CPDFConfiguration = {
+       *    modeConfig: {
+       *       initialViewMode: CPDFModeConfig.ViewMode.VIEWER,
+       *       availableViewModes: [
+       *         CPDFModeConfig.ViewMode.VIEWER,
+       *         CPDFModeConfig.ViewMode.ANNOTATIONS,
+       *         CPDFModeConfig.ViewMode.CONTENT_EDITOR,
+       *         CPDFModeConfig.ViewMode.FORMS,
+       *         CPDFModeConfig.ViewMode.SIGNATURES
+       *       ]
+       *     }
+       * }
+       *
+       * ComPDFKit.openDocument(document, 'password', JSON.stringify(configuration))
+       *
+       */
+      openDocument: (
+        document: string,
+        password: string,
+        configuration: string
+      ) => void;
+
+      /**
+       * Delete the saved signature file from the annotation signature list
+       *
+       * @example
+       * ComPDFKit.removeSignFileList().then((result : boolean) => {
+       *  console.log('ComPDFKit removeSignFileList:', result)
+       * })
+       *
+       * @returns
+       */
+      removeSignFileList: () => Promise<boolean>;
+
+      /**
+       * Opens the system file picker to select a PDF document.
+       * @returns A promise that resolves to the file path of the selected PDF document.
+       **/
+      pickFile: () => Promise<string>;
+
+      /**
+       * Imports font files to support displaying additional languages.
+       * Imported fonts will appear in the font list for FreeText annotations and text editing.
+       *
+       * **Note:** Fonts must be imported before initializing the SDK.
+       *
+       * Steps to import fonts:
+       * 1. Copy the fonts you want to import into a custom folder.
+       * 2. Call `setImportFontDir` with the folder path as a parameter.
+       * 3. Initialize the SDK using `ComPDFKit.init_`.
+       *
+       * @param {string} fontDir - The path to the folder containing font files to import.
+       * @param {boolean} addSysFont - Whether to include system fonts in the font list.
+       *
+       * @example
+       * await ComPDFKit.setImportFontDir('fontdir', true);
+       * @returns A promise that resolves when the fonts have been successfully imported.
+       */
+      setImportFontDir: (
+        fontDir: string,
+        addSysFont: boolean
+      ) => Promise<boolean>;
+
+      /**
+       * Updates the font directory and configures whether to include system fonts.
+       * This method is primarily used to dynamically update the font directory after initializing the SDK.
+       *
+       * @param {string} fontDir - The directory path where the font files are stored.
+       * @param {boolean} addSysFont - Whether to include system fonts. Default is `true`, which will show system fonts in the font list.
+       *
+       * If you have loaded a document and there are annotations or content edits that use fonts not imported,
+       * the text may not display correctly. After updating the font directory with this method, you need to reload the document
+       * to see the updated font list.
+       *
+       * @example
+       * await ComPDFKit.updateImportFontDir('path/to/your/font', true);
+       *
+       * @returns {Promise<boolean>} A promise that resolves to `true` if the font directory was successfully updated, or `false` if an error occurred.
+       */
+      updateImportFontDir: (
+        fontDir: string,
+        addSysFont: boolean
+      ) => Promise<boolean>;
+
+      /**
+       * This method is supported only on the Android platform. It is used to create a URI for saving a file on the Android device.
+       * The file is saved in the `Downloads` directory by default, but you can specify a subdirectory within `Downloads` using the
+       * [childDirectoryName] parameter. If the [childDirectoryName] is not provided, the file will be saved directly in the `Downloads` directory.
+       * The [fileName] parameter is required to specify the name of the file (e.g., `test.pdf`).
+       *
+       * @example
+       * const uri: string = await ComPDFKit.createUri('test.pdf', '', 'application/pdf');
+       *
+       * @param fileName Specifies the name of the file, for example `test.pdf` (required).
+       * @param childDirectoryName Specifies a subdirectory within the `Downloads` folder (optional).
+       * @param mimeType The MIME type of the file, defaulting to `application/pdf` (optional).
+       */
+      createUri: (
+        fileName: string,
+        childDirectoryName: string | null,
+        mimeType: string
+      ) => Promise<string>;
+
+      /**
+       * Get the list of fonts available in the ComPDFKit PDF SDK.
+       * Mainly used to configure fonts for FreeText annotations and content editing.
+       *
+       * @example
+       * ComPDFKit.getFonts().then((fonts : CPDFFontName[]) => {
+       *   fonts.forEach((font : CPDFFontName) => {
+       *     console.log('Font Family Name:', font.familyName);
+       *     console.log('Font Style Names:', font.styleNames.join(', '));
+       *   });
+       * })
+       * @returns
+       */
+      getFonts: () => Promise<CPDFFontName[]>;
+    };
+  }
+}
+
+interface ComPDFKit {
+  testConfig(configuration: string): Promise<string>;
+  getVersionCode(): Promise<string>;
+  getSDKBuildTag(): Promise<string>;
+  init_(license: string): Promise<boolean>;
+  initialize(
+    androidOnlineLicense: string,
+    iosOnlineLicense: string
+  ): Promise<boolean>;
+  initWithPath(licensePath: string): Promise<boolean>;
+  openDocument(
+    document: string,
+    password: string,
+    configurationJson: string
+  ): void;
+  removeSignFileList(): Promise<boolean>;
+  pickFile(): Promise<string>;
+  setImportFontDir: (fontDir: string, addSysFont: boolean) => Promise<boolean>;
+  updateImportFontDir: (
+    fontDir: string,
+    addSysFont: boolean
+  ) => Promise<boolean>;
+  createUri: (
+    fileName: string,
+    childDIrectoryName: string | null,
+    mimeType: string
+  ) => Promise<string>;
+}
+
+const ComPDFKit = NativeModules.ComPDFKit;
+
+// Ensure getFonts returns CPDFFontName instances instead of plain objects
+if (ComPDFKit && typeof (ComPDFKit as any).getFonts === "function") {
+  const nativeGetFonts = (ComPDFKit as any).getFonts as () => Promise<any[]>;
+  (ComPDFKit as any).getFonts = async (): Promise<CPDFFontName[]> => {
+    const fonts = await nativeGetFonts();
+    return Array.isArray(fonts)
+      ? fonts.map((f: any) => CPDFFontName.fromJson(f))
+      : [];
+  };
+}
+
+export { ComPDFKit };

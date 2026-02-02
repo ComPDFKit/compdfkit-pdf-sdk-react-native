@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  * <p>
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -21,20 +21,31 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.compdfkit.core.document.CPDFAbility;
+import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.document.CPDFSdk;
+import com.compdfkit.core.font.CPDFFont;
+import com.compdfkit.core.font.CPDFFontName;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.CFileUtils;
 import com.compdfkit.tools.common.utils.CUriUtil;
+import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * RN and Android native ComPDFKit SDK interaction class
@@ -248,6 +259,37 @@ public class CompdfkitPdfModule extends ReactContextBaseJavaModule {
   public void setImportFontDir(String dir, boolean addSysFont,Promise promise){
     CPDFSdk.setImportFontDir(dir, addSysFont);
     promise.resolve(true);
+  }
+
+  @ReactMethod
+  public void updateImportFontDir(String dir, boolean addSysFont,Promise promise){
+    File file = new File(dir);
+    if (file.isDirectory()){
+      CPDFDocument.importFontDir(dir, addSysFont);
+      promise.resolve(true);
+    }else{
+      promise.resolve(false);
+    }
+  }
+
+  @ReactMethod
+  public void getFonts(Promise promise){
+    CThreadPoolUtils.getInstance().executeIO(()->{
+      List<CPDFFontName> fontNames = CPDFFont.getFontName();
+      WritableArray fontList = Arguments.createArray();
+      for (CPDFFontName fontName : fontNames) {
+        WritableMap fontMap = Arguments.createMap();
+        fontMap.putString("familyName", fontName.getFamilyName());
+        WritableArray styleNames = Arguments.createArray();
+        for (String styleName : fontName.getStyleName()) {
+          styleNames.pushString(styleName);
+        }
+        fontMap.putArray("styleNames", styleNames);
+        fontList.pushMap(fontMap);
+      }
+      promise.resolve(fontList);
+    });
+
   }
 
   @Override

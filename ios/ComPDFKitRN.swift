@@ -1,4 +1,4 @@
-//  Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+//  Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -241,6 +241,43 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
       print("Error copying Font directory: \(error)")
     }
     resolve(true)
+  }
+  
+  @objc(updateImportFontDir:addSysFont:withResolver: withRejecter:)
+  func updateImportFontDir(fontDir : String, addSysFont : Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    let fileManager = FileManager.default
+    let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+    let destinationPath = documentDirectory.appendingPathComponent("Font")
+    
+    do {
+      if fileManager.fileExists(atPath: destinationPath.path) {
+        try fileManager.removeItem(at: destinationPath)
+      }
+      
+      try fileManager.copyItem(atPath: fontDir, toPath: destinationPath.path)
+      CPDFFont.reloadImportDir(destinationPath.path, isContainSysFont: addSysFont)
+    } catch {
+      print("Error copying Font directory: \(error)")
+    }
+    resolve(true)
+  }
+  
+  @objc(getFonts: withRejecter:)
+  func getFonts(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    var fontDicts:[Dictionary<String, Any>] = []
+    let familyNames = CPDFFont.familyNames
+    familyNames.forEach { familyName in
+        var fontDict: Dictionary<String, Any> = [:]
+        fontDict["familyName"] = familyName
+        let fontNames = CPDFFont.fontNames(forFamilyName: familyName)
+        var styleNames = []
+        fontNames.forEach { styleName in
+            styleNames.append(styleName)
+        }
+        fontDict["styleNames"] = styleNames
+        fontDicts.append(fontDict)
+    }
+    resolve(fontDicts)
   }
   
   //MARK: - ViewController Method

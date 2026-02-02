@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -16,7 +16,7 @@ interface CPDFWidgetListScreenProps {
     visible: boolean;
     widgets: CPDFWidget[];
     onClose: () => void;
-    onEditText: (itemIndex: number) => void;
+    onEditText: (widget: CPDFWidget) => void;
     onDelete: (widget: CPDFWidget) => void;
 }
 
@@ -45,7 +45,7 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
         flattenedData.push(...items);
     });
 
-    const widgetItem = (widget: CPDFWidget, index: number, onPress: () => void, onEditText: (itemIndex: number) => void, onDelete: (widget: CPDFWidget) => void) => {
+    const widgetItem = (widget: CPDFWidget, index: number, onPress: () => void, onEditText: (widget : CPDFWidget) => void, onDelete: (widget: CPDFWidget) => void) => {
         return (
             <TouchableOpacity onPress={async () => {
                 console.log(JSON.stringify(widget, null, 2));
@@ -70,7 +70,7 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
                                     if (Platform.OS === 'ios') {
                                         onClose();
                                     }
-                                    onEditText(index - 1)
+                                    onEditText(widget);
                                 }}>
                                     <Text style={styles.closeButtonText}>Edit</Text>
                                 </TouchableOpacity>
@@ -92,9 +92,8 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
 
                                             // ---------------------->
                                             // change RadioButtonWidget or CPDFCheckboxWidget checked status;
-                                            await updatedWidget.setChecked(newChecked);
-                                            // update appearance
-                                            await updatedWidget.updateAp();
+                                            updatedWidget.update({ isChecked: newChecked });
+                                            await pdfReader?._pdfDocument.updateWidget(updatedWidget);
                                             // <----------------------
 
                                             updatedWidgetData[index] = { ...widget, isChecked: newChecked };
@@ -114,9 +113,9 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
                                             return false;
                                         }
                                         const path = res.assets?.[0]?.uri;
-                                        const signResult = await signatureWidget?.addImageSignature(path!);
-                                        await signatureWidget?.updateAp();
+                                        const signResult = await pdfReader?._pdfDocument.addSignatureImage(signatureWidget,path!);
                                         if (signResult) {
+                                            await pdfReader?._pdfDocument.updateAp(signatureWidget);
                                             onClose();
                                         }
                                         return true;
@@ -175,7 +174,9 @@ export const CPDFWidgetListScreen: React.FC<CPDFWidgetListScreenProps> = ({ visi
                                                 await pdfReader?.setDisplayPageIndex(item.page);
                                                 onClose();
                                             },
-                                            onEditText,
+                                            (widget) => {
+                                                onEditText(widget);
+                                            },
                                             async (widget) => {
                                                 onDelete(widget);
                                                 onClose();

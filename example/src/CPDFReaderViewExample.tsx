@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2025 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -9,9 +9,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import { CPDFReaderView, ComPDFKit} from '@compdfkit_pdf_sdk/react_native';
+import { CPDFReaderView, CPDFToolbarAction, ComPDFKit} from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
     CPDFReaderViewExample: { document?: string };
@@ -65,7 +64,13 @@ const CPDFReaderViewExampleScreen = () => {
                 ref={pdfReaderRef}
                 document={samplePDF}
                 onIOSClickBackPressed={() => navigation.goBack()}
-                configuration={ComPDFKit.getDefaultConfig({})}
+                configuration={ComPDFKit.getDefaultConfig({
+                    toolbarConfig:{
+                        toolbarLeftItems: [
+                            CPDFToolbarAction.BACK
+                        ]
+                    }
+                })}
                 onViewCreated={() => {
                     console.log('ComPDFKitRN onViewCreated');
                 }}

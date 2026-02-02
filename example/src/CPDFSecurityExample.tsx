@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014-2024 PDF Technologies, Inc. All Rights Reserved.
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
  *
  * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
  * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
@@ -12,7 +12,7 @@ import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import { CPDFReaderView, ComPDFKit, CPDFDocumentEncryptAlgo } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { CPDFFileUtil } from './util/CPDFFileUtil';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -131,7 +131,6 @@ const CPDFSecurityExampleScreen = () => {
     };
 
     return (
-        <MenuProvider>
             <SafeAreaView style={{ flex: 1 , backgroundColor: '#FAFCFF' }}>
                 <View style={{ flex: 1 }}>
                     {renderToolbar()}
@@ -142,7 +141,6 @@ const CPDFSecurityExampleScreen = () => {
                         onIOSClickBackPressed={handleBack} />
                 </View>
             </SafeAreaView>
-        </MenuProvider>
     );
 };
 
