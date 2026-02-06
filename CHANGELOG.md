@@ -1,3 +1,6 @@
+## 2.6.1
+* Fixed a crash issue when editing text in some document contents.
+
 ## 2.6.0
 * Added the features support for ComPDFKit PDF SDK for iOS V2.6.0.
 * Added the features support for ComPDFKit PDF SDK for Android V2.6.0.
