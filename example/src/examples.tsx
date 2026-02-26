@@ -171,6 +171,14 @@ const uiConpomentExamples = [
         action: (component: any)  => {
             component.props.navigation.navigate('CPDFCustomAnnotationCreateExample');
         }
+    },
+    {
+        key: 'item18',
+        title: 'Custom Annotation Action Example',
+        description: 'Customize annotation actions in CPDFReaderView.',
+        action: (component: any)  => {
+            component.props.navigation.navigate('CPDFInterceptAnnotationActionExample');
+        }
     }
 ];
 

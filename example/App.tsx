@@ -31,6 +31,7 @@ import CPDFCustomUiStyleExampleScreen from './src/CPDFCustomUiStyleExample';
 import CPDFCustomContextMenuExampleScreen from './src/CPDFCustomContextMenuExample';
 import CPDFCustomAnnotationCreateExampleScreen from './src/CPDFCustomAnnotationCreateExample';
 import { CPDFFileUtil } from './src/util/CPDFFileUtil';
+import CPDFInterceptAnnotationActionExampleScreen from './src/CPDFInterceptAnnotationActionExample';
 
 const Stack = createNativeStackNavigator();
 
@@ -171,6 +172,13 @@ export default class App extends Component<Props> {
           <Stack.Screen
             name='CPDFCustomAnnotationCreateExample'
             component={CPDFCustomAnnotationCreateExampleScreen}
+            options={() => ({
+                  headerShown: false,
+              })}
+          />
+          <Stack.Screen
+            name='CPDFInterceptAnnotationActionExample'
+            component={CPDFInterceptAnnotationActionExampleScreen}
             options={() => ({
                   headerShown: false,
               })}

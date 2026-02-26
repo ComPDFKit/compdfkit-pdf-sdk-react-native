@@ -158,6 +158,8 @@ export function getDefaultConfig(
       autoShowLinkDialog: true,
       autoShowPicPicker: true,
       autoShowStampPicker: true,
+      interceptLinkAction: false,
+      interceptNoteAction: false,
       availableTypes: [
         CPDFAnnotationType.NOTE,
         CPDFAnnotationType.HIGHLIGHT,

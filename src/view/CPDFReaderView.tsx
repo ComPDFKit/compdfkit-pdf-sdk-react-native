@@ -86,6 +86,7 @@ export interface CPDFReaderViewProps {
     type: CPDFAnnotationType,
     event: CPDFAnnotation | null
   ) => void;
+  onInterceptAnnotationActionCallback?: (annotation: CPDFAnnotation) => void;
   style?: any;
 }
 
@@ -335,6 +336,12 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
           ? CPDFAnnotationFactory.create(data.annotation)
           : null;
         this.props.onAnnotationCreationPrepared(type, annotation);
+      }
+    } else if ("onInterceptAnnotationAction" in event.nativeEvent) {
+      if (this.props.onInterceptAnnotationActionCallback) {
+        const data = event.nativeEvent.onInterceptAnnotationAction;
+        const annotation = CPDFAnnotationFactory.create(data);
+        this.props.onInterceptAnnotationActionCallback(annotation);
       }
     }
   };

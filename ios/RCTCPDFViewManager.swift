@@ -861,24 +861,22 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     
     DispatchQueue.global(qos: .userInitiated).async {
       let thumbnailSize = CGSize(width: width, height: height)
-      page.thumbnail(of: thumbnailSize, needReset: true) { image in
-        DispatchQueue.main.async {
-          if(image == nil) {
-            completionHandler(nil)
-            return;
-          }
-          var data: Data
-          switch(pageCompression) {
-          case "png":
-            data = image!.pngData()!
-          case "jpeg":
-            data = image!.jpegData(compressionQuality: 0.85)!
-          default:
-            data = image!.pngData()!
-          }
-          
-          completionHandler(data.base64EncodedString())
-        }
+      let image = page.thumbnail(of: thumbnailSize)
+      if(image == nil) {
+        completionHandler(nil)
+        return;
+      }
+      var data: Data
+      switch(pageCompression) {
+      case "png":
+        data = image!.pngData()!
+      case "jpeg":
+        data = image!.jpegData(compressionQuality: 0.85)!
+      default:
+        data = image!.pngData()!
+      }
+      DispatchQueue.main.async {
+        completionHandler(data.base64EncodedString())
       }
     }
   }
@@ -1404,6 +1402,15 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
       let identifier = payload["identifier"] as? String ?? ""
       let eventBody: [String: Any] = [
         "onCustomToolbarItemTapped": identifier
+      ]
+      onChange(eventBody)
+    }
+  }
+  
+  func onInterceptAnnotationDoAction(_ cpdfView: RCTCPDFView, annotation: [String : Any]) {
+    if let onChange = cpdfView.onChange {
+      let eventBody: [String: Any] = [
+        "onInterceptAnnotationAction" : annotation
       ]
       onChange(eventBody)
     }

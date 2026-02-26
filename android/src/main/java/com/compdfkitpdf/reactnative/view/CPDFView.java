@@ -32,6 +32,8 @@ import com.compdfkit.tools.common.interfaces.CPDFCustomEventCallback;
 import com.compdfkit.tools.common.pdf.CPDFDocumentFragment;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
 import com.compdfkit.tools.common.utils.customevent.CPDFCustomEventCallbackHelper;
+import com.compdfkit.tools.common.utils.customevent.CPDFCustomEventField;
+import com.compdfkit.tools.common.utils.customevent.CPDFCustomEventType;
 import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfview.CPDFIReaderViewCallback;
 import com.compdfkit.tools.contenteditor.CEditToolbar;
@@ -46,6 +48,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -329,18 +332,33 @@ public class CPDFView extends FrameLayout implements CPDFCustomEventCallback {
 
   @Override
   public void click(Map<String, Object> map) {
-    String customEventType = map.get("customEventType").toString();
+    String customEventType = map.get(CPDFCustomEventField.CUSTOM_EVENT_TYPE).toString();
+
     switch (customEventType){
-      case "CustomToolbarItemTapped":
+      case CPDFCustomEventType.TOOLBAR_ITEM_TAPPED:
         // click CPDFToolbar custom action.
         onReceiveNativeEvent("onCustomToolbarItemTapped", (String) map.get("identifier"));
         break;
-      case "ContextMenuItem":
+      case CPDFCustomEventType.CONTEXT_MENU_ITEM_TAPPED:
         // click context menu custom item.
         WritableMap params = getCPDFPageUtil().parseCustomContextMenuEvent(map);
         WritableMap extraMap = Arguments.createMap();
         extraMap.putMap("onCustomContextMenuItemTapped", params);
         onReceiveNativeEvent(extraMap);
+        break;
+      case CPDFCustomEventType.INTERCEPT_ANNOTATION_DO_ACTION:
+        if (map.containsKey(CPDFCustomEventField.ANNOTATION)){
+          CPDFAnnotation annotation = (CPDFAnnotation) map.get(CPDFCustomEventField.ANNOTATION);
+          if (annotation != null){
+            WritableMap annotData = getAnnotData(
+              documentFragment.pdfView.getCPdfReaderView()
+                .getPDFDocument(),
+              annotation);
+            WritableMap extraMap1 = Arguments.createMap();
+            extraMap1.putMap("onInterceptAnnotationAction", annotData);
+            onReceiveNativeEvent(extraMap1);
+          }
+        }
         break;
       default:
 //                    methodChannel.invokeMethod("onCustomEvent", extraMap);

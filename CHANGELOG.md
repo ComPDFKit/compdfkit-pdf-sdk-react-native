@@ -1,3 +1,10 @@
+## 2.6.2
+* Added the features support for ComPDFKit PDF SDK for iOS V2.6.2.
+* Added the features support for ComPDFKit PDF SDK for Android V2.6.2.
+* Added support for customizing click actions for note and hyperlink annotations.
+* Fixed an issue on Android where CPDFPageView.onDetachedFromWindow() could cause crashes and ANR under specific scenarios.
+* Optimized Android obfuscation configuration by enabling ProGuard optimization options to improve build stability and code security.
+
 ## 2.6.1
 * Fixed a crash issue when editing text in some document contents.
 

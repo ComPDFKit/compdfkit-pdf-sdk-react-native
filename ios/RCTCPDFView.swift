@@ -35,6 +35,7 @@ protocol RCTCPDFViewDelegate: AnyObject {
   func onAutoShowFormPickerChanged(_ cpdfView: RCTCPDFView, formData: [String: Any])
   func onCustomMenuActionChanged(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onCustomToolbarActionChanged(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onInterceptAnnotationDoAction(_ cpdfView: RCTCPDFView, annotation: [String: Any])
 }
 
 extension Bundle {
@@ -1261,6 +1262,17 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
   
   func PDFViewBaseControllerHandleCustomToolbarAction(_ baseController: CPDFViewBaseController, fronView view: Any, payload: [String : Any]) {
     self.delegate?.onCustomToolbarActionChanged(self, payload: payload)
+  }
+  
+  func PDFViewBaseControllerInterceptAnnotationDoAction(_ baseController: CPDFViewBaseController, forAnnotation annotation:CPDFAnnotation?) {
+      if annotation == nil {
+          return
+      }
+      let page = annotation?.page
+      let pageUtil = RCTCPDFPageUtil(page: page)
+      pageUtil.pageIndex = Int(page?.pageIndexInteger ?? 0)
+      let dict = pageUtil.getAnnotation(FormAnnotation: annotation!)
+      self.delegate?.onInterceptAnnotationDoAction(self, annotation: dict)
   }
   
   // MARK: - Notification

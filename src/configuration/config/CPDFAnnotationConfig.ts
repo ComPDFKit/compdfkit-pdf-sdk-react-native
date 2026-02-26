@@ -76,4 +76,22 @@ export interface CPDFAnnotationConfig {
      * When adding an annotation, the annotation’s default attributes.
      */
     initAttribute?: CPDFAnnotationAttr;
+
+    /**
+     * Intercept click actions on existing note annotations.
+     * Default is false (not intercepted). Clicking a note annotation will directly pop up the note content editing dialog.
+     * When set to true, the click event is intercepted via [CPDFReaderView.onInterceptAnnotationActionCallback].
+     * Developers can handle custom note content editing dialogs through the callback.
+     */
+    interceptNoteAction?: boolean;
+
+    /**
+     * Intercept click actions on existing link annotations.
+     * Default is false (not intercepted). Clicking a link annotation will directly execute the link jump action.
+     * When set to true, the click event is intercepted via [CPDFReaderView.onInterceptAnnotationActionCallback].
+     * Developers can handle custom link jump actions through the callback.
+     */
+    interceptLinkAction?: boolean;
+
+
 };
