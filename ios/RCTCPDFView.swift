@@ -741,7 +741,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     self.pdfViewController?.exitPDFSnipImageMode()
   }
   
-  func open(document : URL, password : String, completionHandler: @escaping (Bool) -> Void) {
+  func open(document : URL, password : String, pageIndex: Int, completionHandler: @escaping (Bool) -> Void) {
     if let pdfListView = self.pdfViewController?.pdfListView {
       let newDocument = CPDFDocument(url: document)
       if(newDocument?.isLocked == true){
@@ -749,6 +749,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
       }
       pdfListView.document = newDocument
       self.pdfViewController?.filePath = newDocument?.documentURL.path
+      pdfListView.go(toPageIndex: pageIndex, animated: false)
       pdfListView.setNeedsDisplay()
       completionHandler(true)
     } else {

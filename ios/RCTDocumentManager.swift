@@ -568,11 +568,12 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
     }
   }
   
-  @objc(open: withDocument: withPassword: withResolver: withRejecter:)
+  @objc(open: withDocument: withPassword: withPageIndex: withResolver: withRejecter:)
   func open(
     forCPDFViewTag tag: Int,
     document : URL,
     password : String,
+    pageIndex: Int,
     resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
   ){
@@ -582,7 +583,8 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         .open(
           forCPDFViewTag: tag,
           document: document,
-          password: password
+          password: password,
+          pageIndex: pageIndex
         ) { success in
           resolve(success)
         }

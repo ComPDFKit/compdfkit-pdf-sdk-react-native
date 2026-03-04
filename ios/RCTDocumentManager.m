@@ -176,6 +176,7 @@ RCT_EXTERN_METHOD(exitSnipMode:(NSInteger)tag
 RCT_EXTERN_METHOD(open:(NSInteger)tag
                   withDocument:(NSURL *) document
                   withPassword:(NSString *) password
+                  withPageIndex: (NSInteger) pageIndex
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 

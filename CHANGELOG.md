@@ -1,3 +1,7 @@
+## 2.6.3
+* Fixed an issue with the `document.open()` API on iOS.
+* Fixed TypeScript TS1205 errors when using the library in projects with `isolatedModules` enabled (e.g., Expo projects) by using `export type` for type-only re-exports.
+
 ## 2.6.2
 * Added the features support for ComPDFKit PDF SDK for iOS V2.6.2.
 * Added the features support for ComPDFKit PDF SDK for Android V2.6.2.

@@ -247,9 +247,9 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     rtcCPDFView?.exitSnipMode()
   }
   
-  func open(forCPDFViewTag : Int, document : URL, password : String, completionHandler: @escaping (Bool) -> Void) {
+  func open(forCPDFViewTag : Int, document : URL, password : String, pageIndex : Int, completionHandler: @escaping (Bool) -> Void) {
     let rtcCPDFView = cpdfViews[forCPDFViewTag]
-    rtcCPDFView?.open(document: document, password: password, completionHandler: { success in
+    rtcCPDFView?.open(document: document, password: password, pageIndex : pageIndex, completionHandler: { success in
       completionHandler(success)
     })
   }

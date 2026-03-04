@@ -129,7 +129,7 @@ const CPDFReaderViewControllerExampleScreen = () => {
                 // const androidUri = await ComPDFKit.createUri('save_as_test.pdf', '', 'application/pdf');
                 const success = await pdfReaderRef.current?._pdfDocument.saveAs(uniqueFilePath, false, true);
                 if (success) {
-                    await pdfReaderRef.current?._pdfDocument.open(uniqueFilePath, '');
+                    await pdfReaderRef.current?._pdfDocument.open(uniqueFilePath, '', 0);
                 }
                 console.log('ComPDFKitRN saveAs:', success);
                 break;

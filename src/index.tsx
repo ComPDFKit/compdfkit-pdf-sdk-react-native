@@ -43,9 +43,10 @@ export * from "./page/CPDFPage";
 export * from "./page/CPDFSearchOptions";
 export * from "./page/CPDFTextRange";
 export * from "./page/CPDFTextSearcher";
-export { CPDFFontName, CPDFFontNameProps } from "./document/CPDFFontName";
-export { CPDFInfo } from "./document/CPDFInfo";
-export { CPDFDocumentPermissionInfo } from "./document/CPDFDocumentPermissionInfo";
+export { CPDFFontName } from "./document/CPDFFontName";
+export type { CPDFFontNameProps } from "./document/CPDFFontName";
+export type { CPDFInfo } from "./document/CPDFInfo";
+export type { CPDFDocumentPermissionInfo } from "./document/CPDFDocumentPermissionInfo";
 
 
 // === Actions ===
@@ -68,7 +69,7 @@ export { CPDFStampAnnotation } from "./annotation/CPDFStampAnnotation";
 export { CPDFSignatureAnnotation } from "./annotation/CPDFSignatureAnnotation";
 export { CPDFSoundAnnotation } from "./annotation/CPDFSoundAnnotation";
 export { CPDFTextStamp, CPDFTextStampColor, CPDFTextStampShape } from "./annotation/CPDFTextStamp";
-export { CPDFTextAttribute } from "./annotation/CPDFTextAttribute";
+export type { CPDFTextAttribute } from "./annotation/CPDFTextAttribute";
 export { CPDFAnnotationHistoryManager } from "./history/CPDFAnnotationHistoryManager";
 
 // === Form Widgets ===
@@ -80,7 +81,7 @@ export { CPDFPushbuttonWidget } from "./annotation/form/CPDFPushbuttonWidget";
 export { CPDFRadiobuttonWidget } from "./annotation/form/CPDFRadiobuttonWidget";
 export { CPDFSignatureWidget } from "./annotation/form/CPDFSignatureWidget";
 export { CPDFTextWidget } from "./annotation/form/CPDFTextWidget";
-export { CPDFWidgetItem } from "./annotation/form/CPDFWidgetItem";
+export type { CPDFWidgetItem } from "./annotation/form/CPDFWidgetItem";
 
 // === Content Editor Area ===
 export { CPDFEditManager } from "./edit/CPDFEditManager";
@@ -97,17 +98,17 @@ export { CPDFImageData, CPDFImageType } from "./util/CPDFImageData";
 export { CPDFWidgetUtil } from "./util/CPDFWidgetUtil";
 
 // === Outline ===
-export { CPDFOutline } from "./document/CPDFOutline";
-export { CPDFDestination } from "./document/CPDFDestination";
+export type { CPDFOutline } from "./document/CPDFOutline";
+export type { CPDFDestination } from "./document/CPDFDestination";
 
 // === Bookmark ===
-export { CPDFBookmark } from "./document/CPDFBookmark";
+export type { CPDFBookmark } from "./document/CPDFBookmark";
 
 // === Core Exports ===
 export { ComPDFKit };
 export { getDefaultConfig };
 export { menus, botaMenus };
-export { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
+export type { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
 
 // Maintain default export of PDFReaderContext
 export { default as PDFReaderContext } from "./core/PDFReaderContext";
