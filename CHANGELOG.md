@@ -1,3 +1,7 @@
+## 2.6.4
+* Optimize URI navigation logic to support custom schemes
+* Fixed an issue on iOS where controller.addEventListener(CPDFEvent.editorSelectionDeselected, (event) {}) was not working properly.
+
 ## 2.6.3
 * Fixed an issue with the `document.open()` API on iOS.
 * Fixed TypeScript TS1205 errors when using the library in projects with `isolatedModules` enabled (e.g., Expo projects) by using `export type` for type-only re-exports.
