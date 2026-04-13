@@ -1,3 +1,23 @@
+## 2.6.5
+* Upgraded iOS ComPDFKit PDF SDK to 2.6.5
+* Upgraded Android ComPDFKit PDF SDK to 2.6.5
+* Refactored the Example project for clearer usage demonstrations
+* Added annotation appearance rendering API
+* Added support for multiple image annotation creation methods
+* Improved SDK compatibility to support lower React Native versions
+* Added official Expo config plugin to auto-inject iOS pods during expo prebuild and EAS Build, while maintaining RN CLI compatibility
+* Optimized preloading in iOS non-continuous page mode to reduce blank time during page transitions
+* Updated the More menu UI on iOS
+* Adapted to minimum device requirements for newer Xcode versions on iOS
+* Optimized Android online license verification for improved concurrency safety and stability
+* Improved touch handling logic in Android editing mode to reduce crash risks
+* Fixed a potential crash in CPDFPageView on Android caused by invalid page state during touch events
+* Fixed an issue on Android where images might not be visible when dragged on rotated pages
+* Fixed an issue on Android where editing text could cause incorrect text layering
+* Fixed an issue on iOS where page position could be lost after device rotation
+* Fixed abnormal zoom rendering in iOS non-continuous mode
+* Fixed an issue where COPY menu content appeared empty on iOS
+
 ## 2.6.4
 * Optimize URI navigation logic to support custom schemes
 * Fixed an issue on iOS where controller.addEventListener(CPDFEvent.editorSelectionDeselected, (event) {}) was not working properly.

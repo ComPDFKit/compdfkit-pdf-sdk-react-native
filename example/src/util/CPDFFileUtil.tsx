@@ -8,6 +8,7 @@
  */
 import * as RNFS from "react-native-fs";
 import { Platform } from "react-native";
+import { Logger } from './logger';
 
 export class CPDFFileUtil {
   private cacheDirectory: string;
@@ -51,7 +52,7 @@ export class CPDFFileUtil {
       const dirExists = await RNFS.exists(destDir);
       if (!dirExists) {
         await RNFS.mkdir(destDir);
-        console.log("Created directory:", destDir);
+        Logger.log("Created directory:", destDir);
       }
 
       // 3️⃣ Target file path
@@ -60,11 +61,11 @@ export class CPDFFileUtil {
       // 4️⃣ Return directly if the file already exists
       const fileExists = await RNFS.exists(destPath);
       if (fileExists) {
-        console.log("File already exists:", destPath);
+        Logger.log("File already exists:", destPath);
         return destPath;
       }
 
-      console.log("Copying from:", assetPath, "to:", destPath);
+      Logger.log("Copying from:", assetPath, "to:", destPath);
 
       // 5️⃣ Copy logic based on platform
       if (Platform.OS === "android") {
@@ -85,10 +86,10 @@ export class CPDFFileUtil {
         throw new Error(`Unsupported platform: ${Platform.OS}`);
       }
 
-      console.log("File copied successfully to:", destPath);
+      Logger.log("File copied successfully to:", destPath);
       return destPath;
     } catch (error) {
-      console.error("Error copying asset file:", error);
+      Logger.error("Error copying asset file:", error);
       throw error;
     }
   }
@@ -139,7 +140,7 @@ export class CPDFFileUtil {
 
       return targetDir; // Return the target directory path
     } catch (error) {
-      console.error("Error copying folder:", error);
+      Logger.error("Error copying folder:", error);
       throw new Error("Failed to copy folder to storage.");
     }
   };

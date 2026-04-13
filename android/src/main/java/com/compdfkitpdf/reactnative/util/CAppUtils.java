@@ -17,11 +17,13 @@ import android.util.Base64;
 import androidx.annotation.ColorInt;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class CAppUtils {
 
@@ -72,6 +74,16 @@ public class CAppUtils {
     return BigDecimal.valueOf(value)
       .setScale(2, RoundingMode.HALF_UP)
       .floatValue();
+  }
+
+  public static <K, V> void putIfAbsentCompat(Map<K, V> map, K key, V value) {
+    if (map.get(key) == null) {
+      map.put(key, value);
+    }
+  }
+
+  public static void putLongCompat(WritableMap map, String key, long value) {
+    map.putDouble(key, (double) value);
   }
 
   public static Bitmap base64ToBitmap(String base64Image) {

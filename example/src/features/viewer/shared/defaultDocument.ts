@@ -1,0 +1,16 @@
+/**
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
+import { Platform } from 'react-native';
+
+export function getDefaultViewerDocument() {
+  return Platform.OS === 'android'
+    ? 'file:///android_asset/PDF_Document.pdf'
+    : 'PDF_Document.pdf';
+}

@@ -2,8 +2,6 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
-
   }
 
   dependencies {
@@ -11,15 +9,7 @@ buildscript {
   }
 }
 
-def isNewArchitectureEnabled() {
-  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
-}
-
 apply plugin: "com.android.library"
-
-if (isNewArchitectureEnabled()) {
-  apply plugin: "com.facebook.react"
-}
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["CompdfkitPdf_" + name]
@@ -86,7 +76,8 @@ dependencies {
   compileOnly fileTree(include: ['*.jar','*.aar'], dir: 'libs')
   implementation "com.facebook.react:react-native:+"
 
-  api "com.compdf:compdfkit-tools:2.6.4"
+  api("com.compdf:compdfkit-tools:2.6.5")
+
   api 'com.github.bumptech.glide:glide:4.15.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
   api 'androidx.documentfile:documentfile:1.0.1'
@@ -94,6 +85,5 @@ dependencies {
   api 'com.google.android.material:material:1.8.0'
   api 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
-configurations.all { resolutionStrategy.cacheChangingModulesFor 0, 'seconds' }
 
 

@@ -160,7 +160,8 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   @Override
   protected CPDFView createViewInstance(@NonNull ThemedReactContext themedReactContext) {
     Activity currentActivity = themedReactContext.getCurrentActivity();
-    if (currentActivity instanceof FragmentActivity fragmentActivity) {
+    if (currentActivity instanceof FragmentActivity) {
+      FragmentActivity fragmentActivity = (FragmentActivity) currentActivity;
       CPDFView pdfView = new CPDFView(fragmentActivity);
       pdfView.setup(themedReactContext, fragmentActivity.getSupportFragmentManager());
       pdfView.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
@@ -698,12 +699,13 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     CPDFView pdfView = mDocumentViews.get(tag);
     PDFDocumentEncryptAlgo encryptAlgo = pdfView.getCPDFReaderView().getPDFDocument()
       .getEncryptAlgorithm();
-    return switch (encryptAlgo) {
-      case PDFDocumentRC4 -> "rc4";
-      case PDFDocumentAES128 -> "aes128";
-      case PDFDocumentAES256 -> "aes256";
-      case PDFDocumentNoEncryptAlgo -> "noEncryptAlgo";
-    };
+    switch (encryptAlgo) {
+      case PDFDocumentRC4: return "rc4";
+      case PDFDocumentAES128: return "aes128";
+      case PDFDocumentAES256: return "aes256";
+      case PDFDocumentNoEncryptAlgo: return "noEncryptAlgo";
+      default: return "noEncryptAlgo";
+    }
   }
 
   public boolean importWidgets(int tag, String xfdfFilePath) throws Exception {
@@ -1013,11 +1015,17 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
     CPDFView pdfView = mDocumentViews.get(tag);
     CAnnotationType type;
     try {
-      type = switch (mode) {
-        case "note" -> CAnnotationType.TEXT;
-        case "pictures" -> CAnnotationType.PIC;
-        default -> CAnnotationType.valueOf(mode.toUpperCase());
-      };
+      switch (mode) {
+        case "note":
+          type =  CAnnotationType.TEXT;
+          break;
+        case "pictures":
+          type = CAnnotationType.PIC;
+          break;
+        default:
+          type = CAnnotationType.valueOf(mode.toUpperCase());
+          break;
+      }
     } catch (Exception e) {
       type = CAnnotationType.UNKNOWN;
     }
@@ -1027,11 +1035,11 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   public String getAnnotationMode(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CAnnotationType annotationType = pdfView.documentFragment.annotationToolbar.toolListAdapter.getCurrentAnnotType();
-    return switch (annotationType) {
-      case TEXT -> "note";
-      case PIC -> "pictures";
-      default -> annotationType.name().toLowerCase();
-    };
+     switch (annotationType) {
+       case TEXT :return "note";
+       case PIC : return "pictures";
+       default : return annotationType.name().toLowerCase();
+    }
   }
 
   public boolean annotationCanUndo(int tag) {
@@ -1171,6 +1179,139 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
       });
   }
 
+  public void renderAnnotationAppearance(int tag, int pageIndex, String uuid,
+    ReadableMap optionsMap, Promise promise) {
+    CPDFView pdfView = mDocumentViews.get(tag);
+    if (pdfView == null) {
+      promise.reject("RENDER_ANNOTATION_APPEARANCE_FAIL", "Unable to find the native view reference");
+      return;
+    }
+
+    CPDFReaderView readerView = pdfView.getCPDFReaderView();
+    CPDFDocument document = readerView.getPDFDocument();
+    CPDFPageUtil pageUtil = pdfView.getCPDFPageUtil();
+    pageUtil.setDocument(document);
+    HashMap<String, Object> options = optionsMap != null ? optionsMap.toHashMap() : new HashMap<>();
+
+    CThreadPoolUtils.getInstance().executeIO(() -> {
+      Bitmap bitmap = null;
+      try {
+        if (document == null || pageIndex < 0 || pageIndex >= document.getPageCount()) {
+          CThreadPoolUtils.getInstance().executeMain(() -> promise.reject(
+            "RENDER_ANNOTATION_APPEARANCE_FAIL", "Invalid page index: " + pageIndex));
+          return;
+        }
+        if (TextUtils.isEmpty(uuid)) {
+          CThreadPoolUtils.getInstance().executeMain(() -> promise.reject(
+            "RENDER_ANNOTATION_APPEARANCE_FAIL", "Annotation uuid is empty"));
+          return;
+        }
+
+        CPDFAnnotation annotation = pageUtil.getAnnotation(pageIndex, uuid);
+        if (annotation == null || !annotation.isValid()) {
+          CThreadPoolUtils.getInstance().executeMain(() -> promise.reject(
+            "RENDER_ANNOTATION_APPEARANCE_FAIL", "Annotation was not found"));
+          return;
+        }
+
+        RectF rect = annotation.getRect();
+        if (rect == null) {
+          CThreadPoolUtils.getInstance().executeMain(() -> promise.reject(
+            "RENDER_ANNOTATION_APPEARANCE_FAIL", "Annotation rect is empty"));
+          return;
+        }
+
+        int[] renderSize = resolveAnnotationAppearanceRenderSize(rect, options);
+        bitmap = Bitmap.createBitmap(renderSize[0], renderSize[1], Bitmap.Config.ARGB_8888);
+        if (!annotation.getAppearanceByPixel(bitmap, CPDFAnnotation.AppearanceType.Normal)) {
+          CThreadPoolUtils.getInstance().executeMain(() -> promise.reject(
+            "RENDER_ANNOTATION_APPEARANCE_FAIL", "Failed to render annotation appearance"));
+          return;
+        }
+
+        String base64 = Base64.encodeToString(compressBitmap(bitmap, options), Base64.NO_WRAP);
+        CThreadPoolUtils.getInstance().executeMain(() -> promise.resolve(base64));
+      } catch (Exception e) {
+        String message = e.getMessage() == null ? "Failed to render annotation appearance" : e.getMessage();
+        CThreadPoolUtils.getInstance().executeMain(() ->
+          promise.reject("RENDER_ANNOTATION_APPEARANCE_FAIL", message));
+      } finally {
+        if (bitmap != null && !bitmap.isRecycled()) {
+          bitmap.recycle();
+        }
+      }
+    });
+  }
+
+  private byte[] compressBitmap(Bitmap bitmap, HashMap<String, Object> options) {
+    String compression = getStringOption(options, "compression", "png");
+    int quality = getIntOption(options, "quality", 100);
+    Bitmap.CompressFormat format = "jpeg".equals(compression)
+      ? Bitmap.CompressFormat.JPEG
+      : Bitmap.CompressFormat.PNG;
+    int compressedQuality = format == Bitmap.CompressFormat.JPEG ? quality : 100;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    bitmap.compress(format, compressedQuality, outputStream);
+    return outputStream.toByteArray();
+  }
+
+  private int[] resolveAnnotationAppearanceRenderSize(RectF rect, HashMap<String, Object> options) {
+    int baseWidth = Math.max(1, Math.round(Math.abs(rect.width())));
+    int baseHeight = Math.max(1, Math.round(Math.abs(rect.height())));
+    int targetWidth = getIntOption(options, "target_width", 0);
+    int targetHeight = getIntOption(options, "target_height", 0);
+    double scale = getDoubleOption(options, "scale", 3.0);
+
+    if (targetWidth > 0 && targetHeight > 0) {
+      return new int[]{targetWidth, targetHeight};
+    }
+    if (targetWidth > 0) {
+      int resolvedHeight = Math.max(1, Math.round(targetWidth * (baseHeight / (float) baseWidth)));
+      return new int[]{targetWidth, resolvedHeight};
+    }
+    if (targetHeight > 0) {
+      int resolvedWidth = Math.max(1, Math.round(targetHeight * (baseWidth / (float) baseHeight)));
+      return new int[]{resolvedWidth, targetHeight};
+    }
+
+    int scaledWidth = Math.max(1, (int) Math.round(baseWidth * scale));
+    int scaledHeight = Math.max(1, (int) Math.round(baseHeight * scale));
+    return new int[]{scaledWidth, scaledHeight};
+  }
+
+  private int getIntOption(HashMap<String, Object> options, String key, int defaultValue) {
+    if (options == null) {
+      return defaultValue;
+    }
+    Object value = options.get(key);
+    if (value instanceof Number) {
+      return ((Number) value).intValue();
+    }
+    return defaultValue;
+  }
+
+  private double getDoubleOption(HashMap<String, Object> options, String key, double defaultValue) {
+    if (options == null) {
+      return defaultValue;
+    }
+    Object value = options.get(key);
+    if (value instanceof Number) {
+      return ((Number) value).doubleValue();
+    }
+    return defaultValue;
+  }
+
+  private String getStringOption(HashMap<String, Object> options, String key, String defaultValue) {
+    if (options == null) {
+      return defaultValue;
+    }
+    Object value = options.get(key);
+    if (value instanceof String && !TextUtils.isEmpty((String) value)) {
+      return (String) value;
+    }
+    return defaultValue;
+  }
+
   public void changeEditType(int tag, int type, Promise promise) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
@@ -1253,16 +1394,16 @@ public class CPDFViewManager extends ViewGroupManager<CPDFView> {
   public String getFormCreationMode(int tag) {
     CPDFView pdfView = mDocumentViews.get(tag);
     CPDFReaderView readerView = pdfView.getCPDFReaderView();
-    return switch (readerView.getCurrentFocusedFormType()) {
-      case Widget_TextField -> "textField";
-      case Widget_CheckBox -> "checkBox";
-      case Widget_RadioButton -> "radioButton";
-      case Widget_ListBox -> "listBox";
-      case Widget_ComboBox -> "comboBox";
-      case Widget_PushButton -> "pushButton";
-      case Widget_SignatureFields -> "signaturesFields";
-      default -> "unknown";
-    };
+    switch (readerView.getCurrentFocusedFormType()) {
+      case Widget_TextField : return "textField";
+      case Widget_CheckBox :return "checkBox";
+      case Widget_RadioButton :return "radioButton";
+      case Widget_ListBox :return "listBox";
+      case Widget_ComboBox :return "comboBox";
+      case Widget_PushButton :return "pushButton";
+      case Widget_SignatureFields :return "signaturesFields";
+      default: return "unknown";
+    }
   }
 
   public void verifyDigitalSignatureStatus(int tag) {

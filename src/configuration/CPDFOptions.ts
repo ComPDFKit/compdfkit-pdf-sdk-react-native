@@ -532,6 +532,18 @@ export const CPDFPageCompression = {
 } as const;
 export type CPDFPageCompression = ValueOf<typeof CPDFPageCompression>;
 
+export interface CPDFAnnotationRenderOptions {
+    scale?: number;
+
+    targetWidth?: number;
+
+    targetHeight?: number;
+
+    compression?: CPDFPageCompression;
+
+    quality?: number;
+}
+
 
 export const CPDFEditType = {
     NONE: 0,

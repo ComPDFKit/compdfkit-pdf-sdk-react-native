@@ -4,6 +4,22 @@
 
 ComPDFKit React Native supports TypeScript. Types used in this document will be described using TypeScript types. Type information is automatically provided when encoding, and the exact type aliases and constants used in our custom types can be found in the [CPDFConfiguration](./src/configuration/CPDFConfiguration.ts) and [CPDFOptions](./src/configuration/CPDFOptions.ts) source folders.
 
+## Image Annotations
+
+`CPDFImageAnnotation` now supports multiple image source formats through factory methods aligned with the Flutter SDK.
+
+Supported factories:
+
+| API | Description |
+| --- | --- |
+| `CPDFImageAnnotation.fromBase64(...)` | Create an image annotation from a raw Base64 string. |
+| `CPDFImageAnnotation.fromDataUri(...)` | Create an image annotation from a `data:image/...;base64,...` string. |
+| `CPDFImageAnnotation.fromPath(...)` | Create an image annotation from a local file path. |
+| `CPDFImageAnnotation.fromAsset(...)` | Create an image annotation from a bundled asset path. |
+| `CPDFImageAnnotation.fromUri(...)` | Create an image annotation from a platform URI string. |
+
+The legacy `image` constructor field remains supported for backward compatibility, but new integrations should prefer the factory methods above.
+
 ## ComPDFKit
 
 ComPDFKit contains static methods for global library initialization, configuration, and utility methods.
@@ -1064,6 +1080,42 @@ const base64Image = await pdfReaderRef.current?._pdfDocument.renderPage(0, pageS
 <Image
     style={{width: '100%', height: '100%'}}
     source={{uri: CPDFImageUtil.base64ToUri(base64Image)}}/>
+```
+
+#### renderAnnotationAppearance
+
+Renders the current appearance of an annotation to a base64-encoded image string.
+
+Parameters:
+
+| Name | Type | Description |
+| --------------- | ------ | ---------------------------------------------------------------------------------- |
+| annotation | CPDFAnnotation | The target annotation to render. The annotation must include a valid page and uuid. |
+| options.scale | number | Render scale multiplier. Defaults to 3.0. Ignored when both targetWidth and targetHeight are provided. |
+| options.targetWidth | number | Optional target width in pixels. When only width is provided, height is resolved proportionally. |
+| options.targetHeight | number | Optional target height in pixels. When only height is provided, width is resolved proportionally. |
+| options.compression | 'png' \| 'jpeg' | Output image compression format. Defaults to png. |
+| options.quality | number | JPEG quality from 1 to 100. Defaults to 100. PNG ignores this value. |
+
+```tsx
+const page = pdfReaderRef.current?._pdfDocument.pageAtIndex(0);
+const annotations = await page?.getAnnotations();
+const annotation = annotations?.[0];
+
+if (annotation) {
+  const base64Image = await pdfReaderRef.current?._pdfDocument.renderAnnotationAppearance(
+    annotation,
+    {
+      scale: 4,
+      compression: 'png',
+      quality: 100,
+    }
+  );
+
+  <Image
+      style={{width: '100%', height: '100%'}}
+      source={{uri: CPDFImageUtil.base64ToUri(base64Image)}}/>
+}
 ```
 
 #### dismissContextMenu

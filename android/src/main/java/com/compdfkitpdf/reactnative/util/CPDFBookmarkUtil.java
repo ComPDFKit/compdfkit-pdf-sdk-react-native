@@ -50,14 +50,14 @@ public class CPDFBookmarkUtil {
             if (bookmark.getDate().startsWith("D:")) {
               CPDFDate createDate = CPDFDate.standardDateStr2LocalDate(
                 bookmark.getDate());
-              map.putLong("date", CDateUtil.transformToTimestamp(createDate));
+              CAppUtils.putLongCompat(map, "date", CDateUtil.transformToTimestamp(createDate));
             } else {
               SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmZ",
                 Locale.ENGLISH);
               Date date = sdf.parse(bookmark.getDate());
               if (date != null) {
                 long timestampMillis = date.getTime();
-                map.putLong("date", timestampMillis);
+                CAppUtils.putLongCompat(map, "date", timestampMillis);
               }
             }
           } catch (Exception ignored) {

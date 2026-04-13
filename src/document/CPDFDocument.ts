@@ -9,6 +9,7 @@
 
 import { NativeModules, findNodeHandle, Platform } from "react-native";
 import {
+  CPDFAnnotationRenderOptions,
   CPDFDocumentEncryptAlgo,
   CPDFDocumentPermissions,
   CPDFPageCompression,
@@ -16,10 +17,11 @@ import {
 } from "../configuration/CPDFOptions";
 import { CPDFPage, CPDFPageSize } from "../page/CPDFPage";
 import { CPDFAnnotation } from "../annotation/CPDFAnnotation";
+import { CPDFImageAnnotation } from "../annotation/CPDFImageAnnotation";
 import { CPDFWidget } from "../annotation/form/CPDFWidget";
 import { CPDFTextSearcher } from "../page/CPDFTextSearcher";
 import { normalizeColorsInAnnotation, normalizeColorsInWidget, normalizeColorToARGB } from "../util/CPDFEnumUtils";
-import { CPDFImageData } from "../util/CPDFImageData";
+import { CPDFImageData, CPDFImageType } from "../util/CPDFImageData";
 import { CPDFInfo } from "./CPDFInfo";
 import { CPDFDocumentPermissionInfo } from "./CPDFDocumentPermissionInfo";
 import { CPDFOutline } from "./CPDFOutline";
@@ -28,6 +30,68 @@ import { CPDFEditorTextAttr } from "../configuration/config/CPDFContentEditorCon
 import { CPDFEditArea } from "../edit/CPDFEditArea";
 import { CPDFSignatureWidget } from "../annotation/form/CPDFSignatureWidget";
 const { CPDFViewManager } = NativeModules;
+
+const DEFAULT_ANNOTATION_RENDER_SCALE = 3.0;
+const DEFAULT_ANNOTATION_RENDER_QUALITY = 100;
+
+function createAnnotationRenderOptions(
+  options: CPDFAnnotationRenderOptions = {}
+) {
+  const scale = options.scale ?? DEFAULT_ANNOTATION_RENDER_SCALE;
+  const targetWidth = options.targetWidth;
+  const targetHeight = options.targetHeight;
+  const compression = options.compression ?? CPDFPageCompression.PNG;
+  const quality = options.quality ?? DEFAULT_ANNOTATION_RENDER_QUALITY;
+
+  if (scale <= 0) {
+    throw new Error("renderAnnotationAppearance(): scale must be greater than 0.");
+  }
+  if (targetWidth != null && targetWidth <= 0) {
+    throw new Error("renderAnnotationAppearance(): targetWidth must be greater than 0.");
+  }
+  if (targetHeight != null && targetHeight <= 0) {
+    throw new Error("renderAnnotationAppearance(): targetHeight must be greater than 0.");
+  }
+  if (quality < 1 || quality > 100) {
+    throw new Error("renderAnnotationAppearance(): quality must be between 1 and 100.");
+  }
+
+  return {
+    scale,
+    target_width: targetWidth,
+    target_height: targetHeight,
+    compression,
+    quality,
+  };
+}
+
+function normalizeNativeDate(value: unknown): Date | undefined {
+  if (value == null) {
+    return undefined;
+  }
+
+  const date = value instanceof Date ? value : new Date(value as string | number);
+  if (Number.isNaN(date.getTime())) {
+    return undefined;
+  }
+
+  return date;
+}
+
+function normalizeBookmark(bookmark: CPDFBookmark): CPDFBookmark {
+  return {
+    ...bookmark,
+    date: normalizeNativeDate(bookmark.date),
+  };
+}
+
+function normalizeDocumentInfo(info: CPDFInfo): CPDFInfo {
+  return {
+    ...info,
+    creationDate: normalizeNativeDate(info.creationDate),
+    modificationDate: normalizeNativeDate(info.modificationDate),
+  };
+}
 
 export class CPDFDocument {
   private _viewerRef: any;
@@ -432,6 +496,7 @@ export class CPDFDocument {
    * const savePath = await ComPDFKit.createUri('flatten_test.pdf', 'compdfkit', 'application/pdf');
    * const fontSubset = true;
    * const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
+   * await pdfReaderRef.current?.reloadPages2();
    * @returns Returns 'true' if the flattened document is saved successfully, otherwise 'false'.
    */
   flattenAllPages = (
@@ -842,6 +907,54 @@ export class CPDFDocument {
   }
 
   /**
+   * Renders the current appearance of an annotation to a base64-encoded image string.
+   *
+   * This API renders the annotation appearance from the PDF page. It does not
+   * return the original source asset for annotations backed by external content.
+   *
+   * @example
+   * ```ts
+   * const page = pdfReaderRef.current?._pdfDocument.pageAtIndex(0);
+   * const annotations = await page?.getAnnotations();
+   * const annotation = annotations?.[0];
+   *
+   * if (annotation) {
+   *   const base64 = await pdfReaderRef.current?._pdfDocument.renderAnnotationAppearance(
+   *     annotation,
+   *     {
+   *       scale: 4,
+   *       compression: CPDFPageCompression.PNG,
+   *     }
+   *   );
+   * }
+   * ```
+   */
+  renderAnnotationAppearance = (
+    annotation: CPDFAnnotation,
+    options: CPDFAnnotationRenderOptions = {}
+  ): Promise<string> => {
+    if (annotation.page === undefined || annotation.page === null) {
+      throw new Error("renderAnnotationAppearance(): annotation.page is required.");
+    }
+    if (!annotation.uuid) {
+      throw new Error("renderAnnotationAppearance(): annotation.uuid is required.");
+    }
+
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.renderAnnotationAppearance(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        createAnnotationRenderOptions(options)
+      );
+    }
+    return Promise.reject(
+      new Error("Unable to find the native view reference")
+    );
+  };
+
+  /**
    * Gets the document information, such as title, author, subject, keywords, creation date, modification date, and producer.
    * @example
    * const info = await pdfReaderRef?.current?._pdfDocument.getInfo();
@@ -852,7 +965,9 @@ export class CPDFDocument {
   getInfo = (): Promise<CPDFInfo> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
-      return CPDFViewManager.getInfo(tag);
+      return CPDFViewManager.getInfo(tag).then((info: CPDFInfo | null | undefined) =>
+        normalizeDocumentInfo(info ?? {})
+      );
     }
     return Promise.reject(
       new Error("Unable to find the native view reference")
@@ -1038,7 +1153,10 @@ export class CPDFDocument {
   getBookmarks = (): Promise<CPDFBookmark[]> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
-      return CPDFViewManager.getBookmarks(tag);
+      return CPDFViewManager.getBookmarks(tag).then(
+        (bookmarks: CPDFBookmark[] | null | undefined) =>
+          Array.isArray(bookmarks) ? bookmarks.map(normalizeBookmark) : []
+      );
     }
     return Promise.reject(
       new Error("Unable to find the native view reference")
@@ -1378,10 +1496,20 @@ export class CPDFDocument {
           console.error(errorMsg);
           throw new Error(errorMsg);
         }
+
+        if (annot instanceof CPDFImageAnnotation) {
+          const hasLegacyImage = typeof annot.image === 'string' && annot.image.trim().length > 0;
+          const hasImageData = annot.imageData != null && annot.imageData.data.trim().length > 0;
+          if (!hasLegacyImage && !hasImageData) {
+            const errorMsg = `Image annotation at index ${index} requires either 'image' or 'imageData'.`;
+            console.error(errorMsg);
+            throw new Error(errorMsg);
+          }
+        }
       });
 
       const annotationsData = annotations.map(annot => {
-        const annotData = annot.toJSON();
+        const annotData = this.serializeAnnotation(annot);
         return normalizeColorsInAnnotation(annotData);
       });
       return CPDFViewManager.addAnnotations(tag, annotationsData);
@@ -1389,6 +1517,83 @@ export class CPDFDocument {
     return Promise.reject(
       new Error("Unable to find the native view reference")
     );
+  }
+
+  private serializeAnnotation(annotation: CPDFAnnotation): Record<string, any> {
+    if (annotation instanceof CPDFImageAnnotation) {
+      return this.serializeImageAnnotation(annotation);
+    }
+
+    return annotation.toJSON();
+  }
+
+  private serializeImageAnnotation(annotation: CPDFImageAnnotation): Record<string, any> {
+    const data: Record<string, any> = annotation.toJSON();
+    const normalizedImageData = this.normalizeAnnotationImageData(annotation);
+
+    if (normalizedImageData != null) {
+      data.imageData = normalizedImageData;
+      if (normalizedImageData.type === CPDFImageType.Base64) {
+        data.image = normalizedImageData.data;
+      } else {
+        delete data.image;
+      }
+    } else if (typeof annotation.image === 'string' && annotation.image.trim().length > 0) {
+      data.image = this.stripDataUriPrefix(annotation.image);
+    }
+
+    return data;
+  }
+
+  private normalizeAnnotationImageData(
+    annotation: CPDFImageAnnotation,
+  ): Record<string, any> | null {
+    if (annotation.imageData != null) {
+      return this.normalizeImageData(annotation.imageData);
+    }
+
+    if (typeof annotation.image !== 'string' || annotation.image.trim().length === 0) {
+      return null;
+    }
+
+    return {
+      type: CPDFImageType.Base64,
+      data: this.stripDataUriPrefix(annotation.image),
+    };
+  }
+
+  private normalizeImageData(imageData: CPDFImageData): Record<string, any> {
+    switch (imageData.type) {
+      case CPDFImageType.Base64:
+        return {
+          type: CPDFImageType.Base64,
+          data: this.stripDataUriPrefix(imageData.data),
+        };
+      case CPDFImageType.FilePath:
+      case CPDFImageType.Asset:
+      case CPDFImageType.Uri:
+      default:
+        return imageData.toJson();
+    }
+  }
+
+  private stripDataUriPrefix(value: string): string {
+    const trimmed = value.trim();
+    if (!trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+
+    const commaIndex = trimmed.indexOf(',');
+    if (commaIndex < 0) {
+      return trimmed;
+    }
+
+    const metadata = trimmed.slice(0, commaIndex).toLowerCase();
+    if (!metadata.includes(';base64')) {
+      return trimmed;
+    }
+
+    return trimmed.slice(commaIndex + 1).trim();
   }
 
   /**

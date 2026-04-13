@@ -1512,15 +1512,13 @@ class RCTCPDFPageUtil: NSObject {
                       stampAnnotation = nil
                   }
               case "image":
-                  if let imageBase64 = annot["image"] as? String,
-                        let imageData = Data(base64Encoded: imageBase64, options: .ignoreUnknownCharacters),
-                      let image = UIImage(data: imageData) {
+                  if let image = Self.resolvedImage(from: annot) {
                       let sourceRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
                       let adJustRect = computeAdjustedRect(sourceRect: sourceRect, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
                       stampAnnotation = CPDFStampAnnotation(document: document, image: image)
                       stampAnnotation?.bounds = adJustRect
-                      
-                  }else {
+                  } else {
+                      CPDFUtil.log("addAnnotations - failed to resolve image stamp data")
                       stampAnnotation = nil
                   }
               default:
@@ -2048,6 +2046,158 @@ class RCTCPDFPageUtil: NSObject {
 
   private static func rectFromDict(_ dict: [String: Any]?) -> CGRect {
       return rectFromDict(borderWidth: 0, dict: dict)
+  }
+
+  private static func resolvedImage(from annot: [String: Any]) -> UIImage? {
+      if let imageData = annot["imageData"] as? [String: Any] {
+          if let image = resolvedImageData(from: imageData) {
+              return image
+          }
+      }
+
+      if let imageStr = annot["image"] as? String, !imageStr.isEmpty {
+          if let image = imageFromBase64(imageStr) {
+              return image
+          }
+      }
+
+      return nil
+  }
+
+  private static func resolvedImageData(from imageData: [String: Any]) -> UIImage? {
+      let type = imageData["type"] as? String ?? "base64"
+      let value = imageData["data"] as? String ?? ""
+      guard !value.isEmpty else {
+          return nil
+      }
+
+      let image: UIImage?
+      switch type {
+      case "base64":
+          image = imageFromBase64(value)
+      case "filePath":
+          image = imageFromPath(value)
+      case "asset":
+          image = imageFromAsset(value)
+      case "uri":
+          image = imageFromUri(value)
+      default:
+          image = nil
+      }
+      return image
+  }
+
+  private static func imageFromBase64(_ value: String) -> UIImage? {
+      let normalized = stripDataUriPrefix(value)
+      guard let data = Data(base64Encoded: normalized, options: .ignoreUnknownCharacters) else {
+          return nil
+      }
+      guard let image = UIImage(data: data) else {
+          return nil
+      }
+      return image
+  }
+
+  private static func stripDataUriPrefix(_ value: String) -> String {
+      let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard let commaIndex = trimmed.firstIndex(of: ",") else {
+          return trimmed
+      }
+
+      let prefix = trimmed[..<commaIndex].lowercased()
+      guard prefix.hasPrefix("data:") else {
+          return trimmed
+      }
+
+      return String(trimmed[trimmed.index(after: commaIndex)...])
+  }
+
+  private static func imageFromPath(_ value: String) -> UIImage? {
+      let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard !trimmed.isEmpty else {
+          return nil
+      }
+
+      // 1. Try parsing as URL (handles file:// and percent-encoded paths)
+      if let url = URL(string: trimmed), url.isFileURL {
+          let filePath = url.path
+          if FileManager.default.fileExists(atPath: filePath) {
+              if let image = UIImage(contentsOfFile: filePath) {
+                  return image
+              }
+          } 
+      }
+
+      // 2. Strip file:// prefix manually for paths that URL(string:) cannot parse
+      //    (e.g. paths with unencoded spaces: "file:///path with spaces/img.png")
+      var rawPath = trimmed
+      if rawPath.hasPrefix("file://") {
+          rawPath = String(rawPath.dropFirst("file://".count))
+          rawPath = rawPath.removingPercentEncoding ?? rawPath
+      }
+
+      if FileManager.default.fileExists(atPath: rawPath) {
+          if let image = UIImage(contentsOfFile: rawPath) {
+              return image
+          }
+      } 
+
+      return nil
+  }
+
+  private static func imageFromUri(_ value: String) -> UIImage? {
+      let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard !trimmed.isEmpty else {
+          return nil
+      }
+
+      // Try as local file path first
+      if let image = imageFromPath(trimmed) {
+          return image
+      }
+
+      // Try as remote URL (http:// or https://)
+      if let url = URL(string: trimmed),
+         let scheme = url.scheme?.lowercased(),
+         (scheme == "http" || scheme == "https") {
+          do {
+              let data = try Data(contentsOf: url)
+              if let image = UIImage(data: data) {
+                  return image
+              }
+          } catch {
+          }
+      }
+
+      return nil
+  }
+
+  private static func imageFromAsset(_ value: String) -> UIImage? {
+      let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard !trimmed.isEmpty else {
+          return nil
+      }
+
+      if let directImage = UIImage(named: trimmed) {
+          return directImage
+      }
+
+      let normalizedPath = trimmed.hasPrefix("/") ? String(trimmed.dropFirst()) : trimmed
+      if let bundlePath = Bundle.main.path(forResource: normalizedPath, ofType: nil) {
+          return UIImage(contentsOfFile: bundlePath)
+      }
+
+      let assetUrl = URL(fileURLWithPath: normalizedPath)
+      let fileName = assetUrl.deletingPathExtension().lastPathComponent
+      let fileExtension = assetUrl.pathExtension.isEmpty ? nil : assetUrl.pathExtension
+      let directory = assetUrl.deletingLastPathComponent().path
+      let bundleDirectory = directory == "." ? nil : directory
+
+      if let bundlePath = Bundle.main.path(forResource: fileName, ofType: fileExtension, inDirectory: bundleDirectory) {
+          return UIImage(contentsOfFile: bundlePath)
+      }
+
+      return nil
   }
   
   private static func rectFromDict(borderWidth: Double, dict: [String: Any]?) -> CGRect {

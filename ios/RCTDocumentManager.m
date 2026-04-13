@@ -494,6 +494,13 @@ RCT_EXTERN_METHOD(renderPage: (NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(renderAnnotationAppearance: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withUuid: (NSString *) uuid
+                  withOptions: (NSDictionary) options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getPageRotation: (NSInteger)tag
                   withPageIndex: (NSInteger) pageIndex
                   withResolver:(RCTPromiseResolveBlock)resolve

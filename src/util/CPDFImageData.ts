@@ -66,6 +66,19 @@ export class CPDFImageData {
   }
 
   /**
+   * Create image data from a data URI string.
+   *
+   * @example
+   * const imageData = CPDFImageData.fromDataUri('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...');
+   *
+   * @param dataUri The data URI string
+   * @returns CPDFImageData instance
+   */
+  static fromDataUri(dataUri: string): CPDFImageData {
+    return new CPDFImageData(CPDFImageType.Base64, dataUri);
+  }
+
+  /**
    * Create image data from an asset path.
    * 
    * @example
@@ -90,6 +103,22 @@ export class CPDFImageData {
    */
   static fromUri(uri: string): CPDFImageData {
     return new CPDFImageData(CPDFImageType.Uri, uri);
+  }
+
+  /**
+   * Create image data from serialized JSON.
+   *
+   * @param json Serialized image data object
+   * @returns CPDFImageData instance
+   */
+  static fromJson(json: unknown): CPDFImageData {
+    const object = json as { type?: string; data?: unknown } | null | undefined;
+    const typeValue = object?.type;
+    const type = Object.values(CPDFImageType).includes(typeValue as CPDFImageType)
+      ? (typeValue as CPDFImageType)
+      : CPDFImageType.Base64;
+
+    return new CPDFImageData(type, object?.data?.toString() ?? '');
   }
 
   /**

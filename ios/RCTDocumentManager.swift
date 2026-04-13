@@ -1617,6 +1617,34 @@ class RCTDocumentManager: NSObject, RCTBridgeModule {
         }
     }
   }
+
+  @objc(
+    renderAnnotationAppearance: withPageIndex: withUuid: withOptions: withResolver: withRejecter:
+  )
+  func renderAnnotationAppearance(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    uuid: String,
+    options: [String: Any],
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    DispatchQueue.main.async {
+      let reader = self.readerView()
+      reader.renderAnnotationAppearance(
+        forCPDFViewTag: tag,
+        pageIndex: pageIndex,
+        uuid: uuid,
+        options: options
+      ) { image in
+        if let image {
+          resolve(image)
+        } else {
+          reject("render_annotation_appearance_failed", "Failed to render annotation appearance", nil)
+        }
+      }
+    }
+  }
   
   @objc(getPageRotation: withPageIndex: withResolver: withRejecter:)
   func getPageRotation(

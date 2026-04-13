@@ -2,6 +2,7 @@ package com.compdfkitpdf.reactnative.util.annotation;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.text.TextUtils;
 import com.compdfkit.core.annotation.CPDFAnnotation;
@@ -117,14 +118,10 @@ public class RCPDFStampAnnotation extends RCPDFBaseAnnotation{
         RectF adjusted = computeAdjustedRect(sourceRect, (float) left, (float) top, (float) right, (float) bottom);
         stampAnnotation.setRect(adjusted);
       } else if (stampType == CPDFStampAnnotation.StampType.IMAGE_STAMP) {
-        // IMAGE_STAMP handling can be implemented here if needed.
-        // Currently, we just set the rect as is.
-        String base64Image = annotMap.getString("image");
-        if (!TextUtils.isEmpty(base64Image)){
-          Bitmap bitmap = CAppUtils.base64ToBitmap(base64Image);
+        Bitmap bitmap = resolveImageBitmap(document, annotMap);
+        if (bitmap != null){
           RectF sourceRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
           stampAnnotation.setRect(computeAdjustedRect(sourceRect,(float) left, (float) top, (float) right, (float) bottom));
-          //base64Image convert to bitmap
           stampAnnotation.updateApWithBitmap(bitmap);
         }
         if (annotMap.hasKey("isStampSignature")){
@@ -146,6 +143,56 @@ public class RCPDFStampAnnotation extends RCPDFBaseAnnotation{
     float aspect = (sourceRect.width() == 0f) ? 1f : Math.abs(sourceRect.height() / sourceRect.width());
     float targetHeight = targetWidth * aspect;
     return new RectF(left, top, left + targetWidth, top + targetHeight);
+  }
+
+  private Bitmap resolveImageBitmap(CPDFDocument document, ReadableMap annotMap) {
+    if (annotMap.hasKey("imageData") && !annotMap.isNull("imageData")) {
+      ReadableMap imageDataMap = annotMap.getMap("imageData");
+      if (imageDataMap != null) {
+        Bitmap bitmap = resolveBitmapFromImageData(document, imageDataMap);
+        if (bitmap != null) {
+          return bitmap;
+        }
+      }
+    }
+
+    if (!annotMap.hasKey("image") || annotMap.isNull("image")) {
+      return null;
+    }
+
+    String base64Image = annotMap.getString("image");
+    if (TextUtils.isEmpty(base64Image)) {
+      return null;
+    }
+    return CAppUtils.base64ToBitmap(base64Image);
+  }
+
+  private Bitmap resolveBitmapFromImageData(CPDFDocument document, ReadableMap imageDataMap) {
+    String type = imageDataMap.hasKey("type") && !imageDataMap.isNull("type")
+      ? imageDataMap.getString("type")
+      : "base64";
+    String data = imageDataMap.hasKey("data") && !imageDataMap.isNull("data")
+      ? imageDataMap.getString("data")
+      : "";
+
+    if (TextUtils.isEmpty(data)) {
+      return null;
+    }
+
+    switch (type) {
+      case "filePath":
+      case "uri": {
+        String path = com.compdfkitpdf.reactnative.util.CFileUtils.parseFilePath(document.getContext(), data);
+        return TextUtils.isEmpty(path) ? null : BitmapFactory.decodeFile(path);
+      }
+      case "asset": {
+        String path = com.compdfkitpdf.reactnative.util.CFileUtils.assetToTempFile(document.getContext(), data);
+        return TextUtils.isEmpty(path) ? null : BitmapFactory.decodeFile(path);
+      }
+      case "base64":
+      default:
+        return CAppUtils.base64ToBitmap(data);
+    }
   }
 
 

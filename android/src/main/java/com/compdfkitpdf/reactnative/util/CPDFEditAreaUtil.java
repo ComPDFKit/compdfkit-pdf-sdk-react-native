@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.Log;
+import androidx.annotation.Nullable;
 import com.compdfkit.core.annotation.CPDFTextAttribute;
 import com.compdfkit.core.annotation.CPDFTextAttribute.FontNameHelper;
 import com.compdfkit.core.document.CPDFDocument;
@@ -36,7 +37,6 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import java.util.HashMap;
 import java.util.List;
-import org.jspecify.annotations.Nullable;
 
 public class CPDFEditAreaUtil {
 
@@ -193,12 +193,12 @@ public class CPDFEditAreaUtil {
     if (attrMap == null) {
       attrMap = new HashMap<>();
     }
-    attrMap.putIfAbsent("familyName", names[0]);
-    attrMap.putIfAbsent("styleName", names[1]);
-    attrMap.putIfAbsent("fontSize", (double) textAttribute.getFontSize());
-    attrMap.putIfAbsent("fontColor", CAppUtils.toHexColor(textAttribute.getColor()));
-    attrMap.putIfAbsent("fontColorAlpha", (double) normalTextAttr.getAlpha());
-    attrMap.putIfAbsent("alignment", CPDFEnumConvertUtil.editAlignTypeToString(
+    CAppUtils.putIfAbsentCompat(attrMap, "familyName", names[0]);
+    CAppUtils.putIfAbsentCompat(attrMap, "styleName", names[1]);
+    CAppUtils.putIfAbsentCompat(attrMap, "fontSize", (double) textAttribute.getFontSize());
+    CAppUtils.putIfAbsentCompat(attrMap, "fontColor", CAppUtils.toHexColor(textAttribute.getColor()));
+    CAppUtils.putIfAbsentCompat(attrMap, "fontColorAlpha", (double) normalTextAttr.getAlpha());
+    CAppUtils.putIfAbsentCompat(attrMap, "alignment", CPDFEnumConvertUtil.editAlignTypeToString(
       normalTextAttr.getAlignment()));
 
     // Define the font, font size, and text color

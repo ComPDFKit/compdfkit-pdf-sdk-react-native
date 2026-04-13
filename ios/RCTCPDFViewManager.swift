@@ -880,6 +880,148 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
       }
     }
   }
+
+  func renderAnnotationAppearance(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    uuid: String,
+    options: [String: Any],
+    completionHandler: @escaping (String?) -> Void
+  ) {
+    guard let rtcCPDFView = cpdfViews[tag],
+          let document = rtcCPDFView.pdfViewController?.pdfListView?.document,
+          pageIndex >= 0,
+          pageIndex < document.pageCount,
+          let page = document.page(at: UInt(pageIndex)),
+          !uuid.isEmpty else {
+      completionHandler(nil)
+      return
+    }
+
+    let pageUtil = RCTCPDFPageUtil(page: page)
+    pageUtil.pageIndex = pageIndex
+
+    DispatchQueue.global(qos: .userInitiated).async {
+      guard let annotation = pageUtil.getAnnotation(formUUID: uuid) else {
+        DispatchQueue.main.async {
+          completionHandler(nil)
+        }
+        return
+      }
+
+      let renderSize = self.resolveAnnotationAppearanceRenderSize(
+        bounds: annotation.bounds,
+        options: options
+      )
+
+      guard let data = self.renderAnnotationAppearanceData(
+        annotation: annotation,
+        size: renderSize,
+        options: options
+      ) else {
+        DispatchQueue.main.async {
+          completionHandler(nil)
+        }
+        return
+      }
+
+      DispatchQueue.main.async {
+        completionHandler(data.base64EncodedString())
+      }
+    }
+  }
+
+  private func renderAnnotationAppearanceData(
+    annotation: CPDFAnnotation,
+    size: CGSize,
+    options: [String: Any]
+  ) -> Data? {
+    let image = annotation.anntationImage()
+    guard size.width > 0, size.height > 0 else {
+      return nil
+    }
+
+    let format = UIGraphicsImageRendererFormat.default()
+    format.scale = 1
+    format.opaque = false
+
+    let renderer = UIGraphicsImageRenderer(size: size, format: format)
+    let renderedImage = renderer.image { _ in
+      image.draw(in: CGRect(origin: .zero, size: size))
+    }
+
+    let compression: String = self.getAnnotationRenderValue(
+      from: options,
+      key: "compression",
+      defaultValue: "png"
+    )
+    let quality: Int = min(max(self.getAnnotationRenderValue(
+      from: options,
+      key: "quality",
+      defaultValue: 100
+    ), 1), 100)
+
+    if compression == "jpeg" {
+      return renderedImage.jpegData(compressionQuality: CGFloat(quality) / 100.0)
+    }
+
+    return renderedImage.pngData()
+  }
+
+  private func resolveAnnotationAppearanceRenderSize(
+    bounds: CGRect,
+    options: [String: Any]
+  ) -> CGSize {
+    let baseWidth = max(1, Int(abs(bounds.width).rounded()))
+    let baseHeight = max(1, Int(abs(bounds.height).rounded()))
+    let targetWidth: Int = self.getAnnotationRenderValue(
+      from: options,
+      key: "target_width",
+      defaultValue: 0
+    )
+    let targetHeight: Int = self.getAnnotationRenderValue(
+      from: options,
+      key: "target_height",
+      defaultValue: 0
+    )
+    let scale: Double = self.getAnnotationRenderValue(
+      from: options,
+      key: "scale",
+      defaultValue: 3.0
+    )
+
+    if targetWidth > 0 && targetHeight > 0 {
+      return CGSize(width: targetWidth, height: targetHeight)
+    }
+
+    if targetWidth > 0 {
+      let resolvedHeight = max(
+        1,
+        Int((Double(targetWidth) * (Double(baseHeight) / Double(baseWidth))).rounded())
+      )
+      return CGSize(width: targetWidth, height: resolvedHeight)
+    }
+
+    if targetHeight > 0 {
+      let resolvedWidth = max(
+        1,
+        Int((Double(targetHeight) * (Double(baseWidth) / Double(baseHeight))).rounded())
+      )
+      return CGSize(width: resolvedWidth, height: targetHeight)
+    }
+
+    let scaledWidth = max(1, Int((Double(baseWidth) * scale).rounded()))
+    let scaledHeight = max(1, Int((Double(baseHeight) * scale).rounded()))
+    return CGSize(width: scaledWidth, height: scaledHeight)
+  }
+
+  private func getAnnotationRenderValue<T>(
+    from options: [String: Any],
+    key: String,
+    defaultValue: T
+  ) -> T {
+    return options[key] as? T ?? defaultValue
+  }
   
   func getPageRotation(forCPDFViewTag tag : Int, pageIndex: Int, completionHandler: @escaping (NSNumber) -> Void) {
     let rtcCPDFView = cpdfViews[tag]

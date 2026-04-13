@@ -1,113 +1,97 @@
 # How to Use ComPDFKit PDF SDK for ReactNative with Expo
 
-[Expo](https://docs.expo.dev/) is a React Native platform that significantly simplifies the development, building, and testing of [React Native](https://reactnative.dev/) applications.
+This guide explains how to integrate `@compdfkit_pdf_sdk/react_native` into an Expo project.
 
-However, a major drawback of Expo is that it is optimized for JavaScript only by default. Developers need additional steps to use any packages that rely on native code. Native code is not included in the initial project setup. To run the app on the appropriate platform, you must use the [Expo Go](https://expo.dev/client) app to provide the necessary platform foundation.
+ComPDFKit depends on native iOS and Android code, so it is not supported in Expo Go. Use a development build, `expo run`, or EAS Build instead.
 
-The ComPDFKit ReactNative SDK is implemented on top of the existing ComPDFKit Android and iOS SDKs. This means it cannot be used in projects running inside the Expo Go app.
+The Expo config plugin included in the package updates the iOS Podfile during `expo prebuild`. Manual changes to `ios/Podfile` are not required.
 
-This guide will walk you through enabling native module support in an Expo project by setting up a development build using Expo Application Services (EAS), allowing you to use the ComPDFKit ReactNative package.
+## Before you start
 
-## Prerequisites
-
-To get started, please set up your environment. If you haven’t already installed the following tools, please do so:
+Ensure that your environment is ready for native Expo builds:
 
 - [Android Studio](https://developer.android.com/studio/install)
 - [Xcode](https://developer.apple.com/xcode/)
 - [Expo CLI](https://docs.expo.dev/get-started/create-a-project/)
 - [EAS CLI](https://www.npmjs.com/package/eas-cli)
 
-## Create an Expo Project
+## Create an Expo project
 
-Start by creating a regular [Expo](https://docs.expo.dev/) project that can run in [Expo Go](https://expo.dev/client). If you’re new to Expo, it’s recommended to familiarize yourself with the official Expo documentation.
-
-Use the following command to create a new project:
+Run the following commands:
 
 ```shell
 npx create-expo-app compdfkit_expo
+cd compdfkit_expo
 ```
 
-> In this example, the project is named `compdfkit_expo`, but you can change it to any name you prefer.
-
-Install the project dependencies using:
+Then install the Expo project dependencies:
 
 ```shell
 npm install
-// or
+# or
 yarn install
 ```
 
-Run `npx expo start` to start the application and test if your setup is correct.
+## Install ComPDFKit
 
-## Production Build
+Run:
 
-If you’re using a production build configuration and don’t have access to the iOS and Android folders locally, use the [Expo BuildProperties](https://docs.expo.dev/versions/latest/sdk/build-properties/) plugin to configure the required build properties for ComPDFKit ReactNative SDK.
-
-Run the following command:
-
-```
-npx expo install expo-build-properties
+```shell
+yarn add @compdfkit_pdf_sdk/react_native
 ```
 
-Add the following plugin configuration to your `app.json` file:
+## Add the plugins to your Expo config
+
+Update `app.json` as follows:
 
 ```json
 {
   "expo": {
-    "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 35,
-            "minSdkVersion": 24
-          },
-          "ios": {
-            "deploymentTarget": "15.1"
-          }
-        }
-      ]
-    ]
+    "plugins": ["@compdfkit_pdf_sdk/react_native"]
   }
 }
 ```
 
-ComPDFKit SDK licenses are bound to the project’s ApplicationID. Update the project’s ApplicationID in your `app.json` file:
+Also make sure your project uses the correct iOS `bundleIdentifier` and Android `package` values. ComPDFKit licenses are bound to those identifiers.
 
-```diff
-{
-  "expo": {
-    "ios": {
-      "supportsTablet": true,
-+      "bundleIdentifier": "com.compdfkit.reactnative.example"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-+      "package": "com.compdfkit.reactnative.example"
-    }
-  }
+If your Expo project also needs custom native build settings, such as `compileSdkVersion`, `minSdkVersion`, or `deploymentTarget`, you can additionally install and configure `expo-build-properties`. It is not required for the ComPDFKit plugin itself.
+
+## Generate the native projects
+
+Run:
+
+```shell
+CI=1 npx expo prebuild --clean
 ```
 
-> This guide uses the RN Demo ApplicationId as an example. You may replace it with your own product’s ApplicationId.
+This command generates the `ios` and `android` folders and applies the ComPDFKit plugin.
 
-## Development Build
+## Verify that the iOS plugin ran
 
-Development builds allow you to run React Native apps outside the Expo Go client. It generates platform-specific modules including all native code required for standalone operation.
+After prebuild completes, open `ios/Podfile`.
 
-EAS configurations are stored in an `eas.json` file. Run the following command in your project root directory:
+You should see a generated block similar to the following under `use_expo_modules!`:
+
+```ruby
+# @generated begin compdfkit-react-native-ios-pods
+pod 'ComPDFKit', :podspec => 'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.6.4/ComPDFKit.podspec'
+pod 'ComPDFKit_Tools', :podspec => 'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.6.4/ComPDFKit_Tools.podspec'
+# @generated end compdfkit-react-native-ios-pods
+```
+
+If this block is present, the plugin is working correctly and no manual Podfile changes are required.
+
+## Set up EAS for cloud builds
+
+Run:
 
 ```shell
 eas build:configure
 ```
 
-> If this is your first time using the command, you’ll be prompted to log into your account. If you don’t have an account, please [sign up for Expo](https://expo.dev/signup).
+If Expo prompts you to sign in, complete that step first.
 
-You’ll see a list of platforms. Choose the one that fits your application, then press Enter.
-
-If you select `All`, an `eas.json` file will be created in your project with contents like:
+If you choose `All`, Expo creates an `eas.json` file similar to the following:
 
 ```json
 {
@@ -130,38 +114,11 @@ If you select `All`, an `eas.json` file will be created in your project with con
 }
 ```
 
-Now that your Expo project is set up for development builds, you can run your app on Android or iOS emulators without the Expo Go client. Run your app locally to verify it works correctly:
+## Add the Android permissions
 
-```shell
-npx expo run:android
-npx expo run:ios
-```
+In this phase, the Expo plugin only handles iOS Podfile integration. Android permissions still need to be added manually after prebuild.
 
-## Installation
-
-You can integrate the SDK in two ways:
-
-- **Via [ComPDFKit GitHub](https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native):**
-
-  Run this in your **compdfkit_expo** folder:
-
-  ```shell
-  yarn add github:ComPDFKit/compdfkit-pdf-sdk-react-native
-  ```
-
-- **Via [ComPDFKit npm](https://www.npmjs.com/package/@compdfkit_pdf_sdk/react_native):**
-
-  Run this in your **compdfkit_expo** folder:
-
-  ```shell
-  yarn add @compdfkit_pdf_sdk/react_native
-  ```
-
-For Android and iOS, some platform-specific settings are required.
-
-### Android
-
-Open `android/app/src/main/AndroidManifest.xml` and add the following permissions:
+Open `android/app/src/main/AndroidManifest.xml` and add the following:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
@@ -175,31 +132,18 @@ Open `android/app/src/main/AndroidManifest.xml` and add the following permission
 </application>
 ```
 
-### iOS
+## Add a sample PDF for testing
 
-Open the Podfile in a text editor:
+For this example, copy a PDF named `PDF_Document.pdf` into the following locations after prebuild:
 
-```shell
-open ios/Podfile
-```
+1. `android/app/src/main/assets/PDF_Document.pdf`
+2. Your iOS app target in Xcode, so that the file is bundled with the app
 
-Add the following within the `target 'compdfkitexpo' do ... end` block:
+This example uses native bundled file paths. If you run `expo prebuild --clean` again later, verify whether the sample file needs to be copied again.
 
-```shell
-pod "ComPDFKit", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit/2.6.0.podspec'
-pod "ComPDFKit_Tools", podspec:'https://www.compdf.com/download/ios/cocoapods/xcframeworks/compdfkit_tools/2.6.0.podspec'
-```
+## Replace your app code
 
-Then run `pod install` in the `ios` directory.
-
-## Open a PDF
-
-To open a PDF file:
-
-1. Add the test PDF file to `android/app/src/main/assets` on Android. You may need to create this folder if it doesn’t exist.
-2. On iOS, drag the downloaded PDF into your project to include it in the app bundle.
-
-Replace the contents of `index.tsx` with the following:
+Replace the contents of `index.tsx` with the following example:
 
 ```tsx
 import { Platform, SafeAreaView } from 'react-native';
@@ -213,18 +157,21 @@ type Props = {};
 
 export default class HomeScreen extends Component<Props> {
   constructor(props: Props) {
-    super(props)
-    this.initialize()
+    super(props);
+    this.initialize();
   }
 
   async initialize() {
-    const result = await ComPDFKit.init_(Platform.OS === 'android' ? androidLicense : iosLicense);
-    console.log("ComPDFKitRN", "init_:", result)
+    const result = await ComPDFKit.init_(
+      Platform.OS === 'android' ? androidLicense : iosLicense
+    );
+    console.log('ComPDFKitRN', 'init_:', result);
   }
 
-  samplePDF = Platform.OS === 'android'
-    ? 'file:///android_asset/PDF_Document.pdf'
-    : 'PDF_Document.pdf';
+  samplePDF =
+    Platform.OS === 'android'
+      ? 'file:///android_asset/PDF_Document.pdf'
+      : 'PDF_Document.pdf';
 
   render() {
     return (
@@ -240,19 +187,61 @@ export default class HomeScreen extends Component<Props> {
 }
 ```
 
-> Trial licenses for the ComPDFKit ReactNative SDK can be found in the [GitHub example project](https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/blob/5b16c6af7561941b85256beaa05268145faa04a7/example/App.tsx#L26) or by [contacting our sales team](https://www.compdf.com/contact-sales).
+Before running the app, replace `androidLicense` and `iosLicense` with your actual ComPDFKit license values.
 
-Now you can run your app using `yarn run android` or `yarn run ios`, and the PDF will load from the path you provided.
+> Trial licenses for the ComPDFKit React Native SDK are available in the [GitHub example project](https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/blob/5b16c6af7561941b85256beaa05268145faa04a7/example/App.tsx#L26) or by [contacting the ComPDFKit sales team](https://www.compdf.com/contact-sales).
 
-Note: The ComPDFKit ReactNative SDK will not work when running `expo start` because it relies on the Expo Go app, which cannot access native modules.
+## Run the app
 
-This concludes the guide on integrating the `ComPDFKit ReactNative SDK` with `Expo`. For any questions, please [contact us](https://www.compdf.com/support).
+Run:
 
-## **Support**
+```shell
+npx expo run:android
+```
 
-[ComPDFKit](https://www.compdf.com/) has a professional R&D team that produces comprehensive technical documentation and guides to help developers. Also, you can get an immediate response when reporting your problems to our support team.
+Or:
 
-- For detailed information, please visit our [Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview) page.
-- Stay updated with the latest improvements through our [Changelog](https://www.compdf.com/pdf-sdk/changelog-react-native).
-- For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support).
-- To get more details and an accurate quote, please contact our [Sales Team](https://compdf.com/contact-us).
+```shell
+npx expo run:ios
+```
+
+## Build with EAS
+
+Run:
+
+```shell
+eas build --platform ios
+```
+
+Or:
+
+```shell
+eas build --platform android
+```
+
+Use these commands when you want Expo to build the native application in the cloud with the same plugin configuration defined in `app.json`.
+
+## Troubleshoot common issues
+
+### Expo Go cannot open the SDK
+
+This behavior is expected. ComPDFKit requires native modules, so use a development build, `expo run`, or EAS Build.
+
+### The generated Podfile does not include ComPDFKit
+
+Ensure that `@compdfkit_pdf_sdk/react_native` is listed in `expo.plugins`, then run:
+
+```shell
+CI=1 npx expo prebuild --clean
+```
+
+### The sample PDF is missing after prebuild
+
+If you run `expo prebuild --clean`, Expo regenerates the native projects. Copy the sample PDF into the generated native project again.
+
+## Support
+
+- Check out the [React Native guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview).
+- Stay up to date with the [React Native changelog](https://www.compdf.com/pdf-sdk/changelog-react-native).
+- Contact [technical support](https://www.compdf.com/support) if you run into issues.
+- Contact [sales](https://compdf.com/contact-us) for licensing questions.

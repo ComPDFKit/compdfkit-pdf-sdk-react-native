@@ -719,6 +719,17 @@ public class CPDFViewModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void renderAnnotationAppearance(int tag, int pageIndex, String uuid, ReadableMap options, Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(() -> {
+      try {
+        mPDFViewInstance.renderAnnotationAppearance(tag, pageIndex, uuid, options, promise);
+      } catch (Exception e) {
+        promise.reject(e);
+      }
+    });
+  }
+
+  @ReactMethod
   public void changeEditType(int tag, ReadableArray editTypes, Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(() -> {
       try {

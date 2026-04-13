@@ -33,11 +33,11 @@ public class CPDFDocumentInfoUtil {
       documentInfo.putString("producer", info.getProducer());
       long createDateTimes = CAppUtils.toTimes(CDateUtil.transformPDFDate(info.getCreationDate()));
       if (createDateTimes != 0L){
-        documentInfo.putLong("creationDate", createDateTimes);
+        CAppUtils.putLongCompat(documentInfo, "creationDate", createDateTimes);
       }
       long modificationDateTimes = CAppUtils.toTimes(CDateUtil.transformPDFDate(info.getModificationDate()));
       if (modificationDateTimes != 0L){
-        documentInfo.putLong("modificationDate", modificationDateTimes);
+        CAppUtils.putLongCompat(documentInfo, "modificationDate", modificationDateTimes);
       }
       return documentInfo;
     } catch (Exception e) {
