@@ -92,8 +92,8 @@ export default function CustomToolbarExampleScreen() {
     Logger.log('Custom toolbar item tapped: ' + identifier);
     switch (identifier) {
       case 'custom_editor': {
-        const currentMode = await pdfReaderRef.current?.getPreviewMode();
-        await pdfReaderRef.current?.setPreviewMode(
+        const currentMode = await pdfReaderRef.current?.getViewMode();
+        await pdfReaderRef.current?.setViewMode(
           currentMode === CPDFViewMode.CONTENT_EDITOR
             ? CPDFViewMode.VIEWER
             : CPDFViewMode.CONTENT_EDITOR,

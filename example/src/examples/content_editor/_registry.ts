@@ -67,5 +67,17 @@ export const contentEditorCategory: CategoryInfo = {
         backgroundColor: '#FCE4EC',
       },
     },
+    {
+      id: 'editor-selection-observation',
+      name: 'Editor Selection Observation',
+      description: 'Observe content selection and deselection events',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.contentEditorSelectionObservation,
+      visual: {
+        badge: 'SO',
+        accentColor: '#6D4C41',
+        backgroundColor: '#EFEBE9',
+      },
+    },
   ],
 };

@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig",
-  "exclude": ["example"]
+  "compilerOptions": {
+    "sourceMap": true
+  },
+  "exclude": ["example", "lib", "node_modules"]
 }

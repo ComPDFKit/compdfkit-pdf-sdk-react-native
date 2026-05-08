@@ -32,6 +32,18 @@ export const formsCategory: CategoryInfo = {
       },
     },
     {
+      id: 'list-form-fields',
+      name: 'List Form Fields',
+      description: 'Get and view form fields',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.formList,
+      visual: {
+        badge: 'LF',
+        accentColor: '#E65100',
+        backgroundColor: '#FFF3E0',
+      },
+    },
+    {
       id: 'fill-form',
       name: 'Fill Form',
       description: 'Programmatically fill form fields',
@@ -68,18 +80,6 @@ export const formsCategory: CategoryInfo = {
       },
     },
     {
-      id: 'form-field-operations',
-      name: 'Form Field Operations',
-      description: 'Get and view form fields',
-      routeType: EXAMPLE_ROUTE_TYPES.screen,
-      routeName: EXAMPLE_ROUTES.formFieldOperations,
-      visual: {
-        badge: 'FO',
-        accentColor: '#E65100',
-        backgroundColor: '#FFF3E0',
-      },
-    },
-    {
       id: 'custom-form-creation',
       name: 'Custom Form Creation',
       description: 'Custom handling for ListBox, ComboBox and PushButton creation',
@@ -104,12 +104,11 @@ export const formsCategory: CategoryInfo = {
       },
     },
     {
-      id: 'form-intercept-action',
-      name: 'Field Action Observation',
-      description: 'Observe ListBox and ComboBox selection actions',
+      id: 'field-selection-observation',
+      name: 'Field Selection Observation',
+      description: 'Observe ListBox and ComboBox selection events',
       routeType: EXAMPLE_ROUTE_TYPES.screen,
-      routeName: EXAMPLE_ROUTES.formInterceptAction,
-      supportedPlatforms: ['android'],
+      routeName: EXAMPLE_ROUTES.formFieldSelectionObservation,
       visual: {
         badge: 'IA',
         accentColor: '#7B1FA2',

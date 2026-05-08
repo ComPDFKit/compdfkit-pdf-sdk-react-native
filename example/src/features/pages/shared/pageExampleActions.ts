@@ -30,7 +30,8 @@ export async function insertBlankPage(reader: CPDFReaderView) {
  *
  * Uses `CPDFDocument.insertImagePage(pageIndex, imagePath, pageSize)` where the page
  * size is derived from the actual image dimensions via `CPDFPageSize.custom(w, h)`.
- * After insertion, calls `reloadPages2()` to refresh the viewer.
+ * After insertion, calls `reloadPagesPreservingPosition()` to refresh the viewer
+ * without jumping back to the top of the current page.
  */
 export async function insertImagePage(reader: CPDFReaderView) {
   return new Promise<boolean>(resolve => {
@@ -59,7 +60,7 @@ export async function insertImagePage(reader: CPDFReaderView) {
         );
 
         if (result) {
-          await reader.reloadPages2();
+          await reader.reloadPagesPreservingPosition();
         }
 
         Logger.log('insertImagePage:', result);
@@ -73,12 +74,13 @@ export async function insertImagePage(reader: CPDFReaderView) {
  * Removes the first three pages (indices 0, 1, 2) from the document.
  *
  * Uses `CPDFDocument.removePages(pageIndices)` which accepts an array of
- * zero-based page indices. Calls `reloadPages2()` afterwards to synchronize the viewer.
+ * zero-based page indices. Calls `reloadPagesPreservingPosition()` afterwards to
+ * synchronize the viewer without resetting the current reading position.
  */
 export async function removeSamplePages(reader: CPDFReaderView) {
   const result = await reader._pdfDocument.removePages([0, 1, 2]);
   if (result) {
-    await reader.reloadPages2();
+    await reader.reloadPagesPreservingPosition();
   }
   Logger.log('deletePageAtIndex:', result);
   return result;
@@ -106,12 +108,13 @@ export async function rotateFirstPage(reader: CPDFReaderView) {
  * Moves the second page to the first position.
  *
  * Uses `CPDFDocument.movePage(fromIndex, toIndex)` to reorder pages.
- * After a successful move, `reloadPages2()` refreshes the viewer.
+ * After a successful move, `reloadPagesPreservingPosition()` refreshes the viewer
+ * while keeping the current viewport position.
  */
 export async function moveSecondPageToFirst(reader: CPDFReaderView) {
   const result = await reader._pdfDocument.movePage(1, 0);
   if (result) {
-    await reader.reloadPages2();
+    await reader.reloadPagesPreservingPosition();
   }
   Logger.log('movePage:', result);
   return result;

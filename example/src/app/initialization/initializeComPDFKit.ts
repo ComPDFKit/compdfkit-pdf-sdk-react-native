@@ -36,6 +36,13 @@ export async function initializeComPDFKit(): Promise<void> {
     initializationPromise = (async () => {
       const fontDir = await CPDFFileUtil.copyAssetsFolderToStorage('extraFonts');
       Logger.log('fontDir:', fontDir);
+
+      if (typeof ComPDFKit.setImportFontDir !== 'function') {
+        Logger.error(
+          'ComPDFKit native API mismatch: setImportFontDir is unavailable. Rebuild and reinstall the native app after SDK native changes.'
+        );
+      }
+
       await ComPDFKit.setImportFontDir(fontDir, true);
 
       const licensePath =

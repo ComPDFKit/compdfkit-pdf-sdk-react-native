@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFConfigTool, CPDFWidgetType } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFConfigTool, CPDFWidgetType } from "../CPDFOptions";
 import { CPDFWidgetAttr } from "../attributes/CPDFWidgetAttr";
 
 /**

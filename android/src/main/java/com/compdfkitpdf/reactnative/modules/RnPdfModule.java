@@ -1,0 +1,342 @@
+/**
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
+ * <p>
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
+package com.compdfkitpdf.reactnative.modules;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
+import androidx.annotation.NonNull;
+import com.compdfkit.core.document.CPDFAbility;
+import com.compdfkit.core.document.CPDFDocument;
+import com.compdfkit.core.document.CPDFSdk;
+import com.compdfkit.core.font.CPDFFont;
+import com.compdfkit.core.font.CPDFFontName;
+import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
+import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
+import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
+import com.compdfkit.tools.common.utils.CFileUtils;
+import com.compdfkit.tools.common.utils.CUriUtil;
+import com.compdfkitpdf.reactnative.util.RnDocumentSourceResolver;
+import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * RN and Android native ComPDFKit SDK interaction class
+ *
+ */
+public class RnPdfModule extends ReactContextBaseJavaModule {
+
+  private static final String TAG = "ComPDFKitRN";
+
+  public static final String NAME = "ComPDFKit";
+
+  public static final int PICK_PDF_FILE_REQUEST_CODE = 90;
+
+  private Promise promise;
+
+  private ReactContext mReactContext;
+
+  /**
+   * Creates a new RnPdfModule instance.
+   */
+  public RnPdfModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    this.mReactContext = reactContext;
+    this.mReactContext.addActivityEventListener(activityEventListener);
+  }
+
+  /**
+   * Returns the React Native name used to register this module.
+   */
+  @Override
+  @NonNull
+  public String getName() {
+    return NAME;
+  }
+
+  /**
+   * Get the version number of the ComPDFKit SDK.<br/>
+   * For example: "2.0.0".<br/>
+   * <p></p>
+   * Usage example:<br/><br/>
+   * <pre>
+   * ComPDFKit.getVersionCode().then((versionCode : string) => {
+   *   console.log('ComPDFKit SDK Version:', versionCode)
+   * })
+   * </pre>
+   *
+   */
+  @ReactMethod
+  public void getVersionCode(final Promise promise) {
+    promise.resolve(CPDFSdk.getSDKVersion());
+  }
+
+  /**
+   * Get the build tag of the ComPDFKit PDF SDK.<br/>
+   * For example: "build_beta_2.0.0_42db96987_202404081007"<br/>
+   * <p></p>
+   *
+   * Usage example:<br/>
+   * <pre>
+   * ComPDFKit.getSDKBuildTag().then((buildTag : string) => {
+   *   console.log('ComPDFKit Build Tag:', buildTag)
+   * })
+   * </pre>
+   *
+   */
+  @ReactMethod
+  public void getSDKBuildTag(final Promise promise) {
+    promise.resolve(CPDFSdk.getSDKBuildTag());
+  }
+
+  /**
+   * Initialize the ComPDFKit PDF SDK using offline authentication.<br/>
+   * <p></p>
+   * Usage example:<br/>
+   * <pre>
+   * ComPDFKit.init_('license')
+   * </pre>
+   *
+   * @param license The offline license.
+   */
+  @ReactMethod
+  public void init_(String license, Promise promise) {
+    CPDFSdk.init(mReactContext, license, true, (code, msg) -> {
+      Log.d(TAG, "init_: code:" + code + ", msg:" + msg);
+      promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+    });
+  }
+
+
+  /**
+   * Initialize the ComPDFKit PDF SDK using online authentication. <br/>
+   * Requires internet connection. Please ensure that the network permission has been added in [AndroidManifest.xml] file. <br/>
+   * {@link android.Manifest.permission#INTERNET} <br/>
+   * <p></p>
+   * Usage example:
+   * <pre>
+   *   ComPDFKit.initialize(androidLicense, iosLicense)
+   * </pre>
+   *
+   * @param androidOnlineLicense The online license for the ComPDFKit SDK on Android platform.
+   * @param iosOnlineLicense     The online license for the ComPDFKit SDK on iOS platform.
+   */
+  @ReactMethod
+  public void initialize(String androidOnlineLicense, String iosOnlineLicense, Promise promise) {
+    CPDFSdk.init(mReactContext, androidOnlineLicense, false, (code, msg) -> {
+      Log.d(TAG, "initialize: code:" + code + ", msg:" + msg);
+      promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+    });
+  }
+
+  /**
+   * Handles init with path.
+   */
+  @ReactMethod
+  public void initWithPath(String licensePath, Promise promise) {
+    CPDFSdk.initWithPath(mReactContext, licensePath, (code, msg) -> {
+      Log.d(TAG, "initWithPath: code:" + code + ", msg:" + msg);
+      promise.resolve(code == CPDFSdk.VERIFY_SUCCESS);
+    });
+  }
+
+
+  /**
+   * Display a PDF.<br/>
+   *
+   * Usage example:<br/>
+   * <pre>
+   *   ComPDFKit.openDocument(document, password, configurationJson)
+   * </pre>
+   *
+   * (Android) For local storage file path: <br/>
+   * <pre>
+   *   document = "file:///storage/emulated/0/Download/sample.pdf";<br/>
+   * </pre>
+   *
+   * (Android) For content Uri: <br/>
+   * <pre>
+   *   document = "content://...";
+   * </pre>
+   *
+   * (Android) For assets path: <br/>
+   * <pre>
+   *   document = "file:///android_asset/..."
+   * </pre>
+   *
+   * @param document          The document URI or file path.
+   * @param password          The document password.
+   * @param configurationJson Configuration data in JSON format.
+   */
+  @ReactMethod
+  public void openDocument(String document, String password, String configurationJson) {
+    Intent intent = new Intent(mReactContext, CPDFDocumentActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    RnDocumentSourceResolver.applyOpenDocumentToIntent(mReactContext, document, intent);
+    intent.putExtra(CPDFDocumentActivity.EXTRA_FILE_PASSWORD, password);
+    CPDFConfiguration configuration = CPDFConfigurationUtils.fromJson(configurationJson);
+    intent.putExtra(CPDFDocumentActivity.EXTRA_CONFIGURATION, configuration);
+    mReactContext.startActivity(intent);
+  }
+
+  /**
+   * Delete the saved signature file from the annotation signature list.
+   * @param promise
+   */
+  @ReactMethod
+  public void removeSignFileList(Promise promise){
+    File dirFile = new File(mReactContext.getFilesDir(), CFileUtils.SIGNATURE_FOLDER);
+    boolean deleteResult = CFileUtils.deleteDirectory(dirFile.getAbsolutePath());
+    promise.resolve(deleteResult);
+  }
+
+  /**
+   * Handles pick file.
+   */
+  @ReactMethod
+  public void pickFile(Promise promise){
+    this.promise = promise;
+    Activity activity = getCurrentActivity();
+    if (activity != null) {
+      activity.startActivityForResult(CFileUtils.getContentIntent(), PICK_PDF_FILE_REQUEST_CODE);
+    }else {
+      this.promise.reject(new Throwable("activity is null"));
+    }
+  }
+
+  /**
+   * Creates uri.
+   */
+  @ReactMethod
+  public void createUri(String fileName , String childDirectoryName, String mimeType, Promise promise){
+    String dir = Environment.DIRECTORY_DOWNLOADS ;
+    if (!TextUtils.isEmpty(childDirectoryName)){
+      dir += File.separator + childDirectoryName;
+    }
+    Uri uri = CUriUtil.createFileUri(mReactContext,
+      dir,
+      fileName, mimeType);
+    if (uri != null){
+      promise.resolve(uri.toString());
+    }else {
+      promise.reject("CREATE_URI_FAIL", "create uri fail");
+    }
+  }
+
+  /**
+   * Sets the import font dir.
+   */
+  @ReactMethod
+  public void setImportFontDir(String dir, boolean addSysFont,Promise promise){
+    try {
+      CPDFSdk.setImportFontDir(dir, addSysFont);
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject("SET_IMPORT_FONT_DIR_FAIL", e);
+    }
+  }
+
+  /**
+   * Updates import font dir.
+   */
+  @ReactMethod
+  public void updateImportFontDir(String dir, boolean addSysFont,Promise promise){
+    File file = new File(dir);
+    if (file.isDirectory()){
+      try {
+        CPDFDocument.importFontDir(dir, addSysFont);
+        promise.resolve(true);
+      } catch (Exception e) {
+        promise.reject("UPDATE_IMPORT_FONT_DIR_FAIL", e);
+      }
+    }else{
+      promise.reject("UPDATE_IMPORT_FONT_DIR_FAIL", "Font directory does not exist or is not a directory.");
+    }
+  }
+
+  /**
+   * Returns the fonts.
+   */
+  @ReactMethod
+  public void getFonts(Promise promise){
+    CThreadPoolUtils.getInstance().executeIO(()->{
+      List<CPDFFontName> fontNames = CPDFFont.getFontName();
+      WritableArray fontList = Arguments.createArray();
+      for (CPDFFontName fontName : fontNames) {
+        WritableMap fontMap = Arguments.createMap();
+        fontMap.putString("familyName", fontName.getFamilyName());
+        WritableArray styleNames = Arguments.createArray();
+        for (String styleName : fontName.getStyleName()) {
+          styleNames.pushString(styleName);
+        }
+        fontMap.putArray("styleNames", styleNames);
+        fontList.pushMap(fontMap);
+      }
+      promise.resolve(fontList);
+    });
+
+  }
+
+  /**
+   * Handles invalidate.
+   */
+  @Override
+  public void invalidate() {
+    getReactApplicationContext().removeActivityEventListener(activityEventListener);
+    super.invalidate();
+  }
+
+  private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
+    /**
+     * Handles on activity result.
+     */
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+      boolean isForeignResult = requestCode != PICK_PDF_FILE_REQUEST_CODE;
+      if (isForeignResult) {
+        return;
+      }
+      final Promise storedPromise = promise;
+      if (storedPromise == null) {
+        Log.e(NAME, "promise was null in onActivityResult");
+        return;
+      }
+      if (resultCode == Activity.RESULT_CANCELED) {
+        storedPromise.reject("PICK_FILE_CANCEL","User canceled directory picker" );
+        return;
+      }
+      if (requestCode == PICK_PDF_FILE_REQUEST_CODE) {
+        Uri uri = data.getData();
+        if (uri != null) {
+          storedPromise.resolve(uri.toString());
+        }else {
+          storedPromise.reject("PICK_FILE_URI_IS_NULL", "uri is null");
+        }
+      }
+    }
+  };
+}

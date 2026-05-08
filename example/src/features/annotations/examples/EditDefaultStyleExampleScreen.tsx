@@ -16,7 +16,6 @@ import {
 } from '@compdfkit_pdf_sdk/react_native';
 
 import type { AppStackParamList } from '../../../app/navigation/routes';
-import { CPDFAnnotationToolbar } from '../components/CPDFAnnotationToolbar';
 import { AnnotationExampleScaffold } from '../shared/AnnotationExampleScaffold';
 import { annotationExampleScreenActions } from '../shared/annotationExampleActionRegistry';
 import { getDefaultAnnotationDocument } from '../shared/defaultDocument';

@@ -1,6 +1,18 @@
+## 2.6.6
+1. Added the features support for ComPDF PDF SDK for iOS V2.6.6.
+2. Added the features support for ComPDF PDF SDK for Android V2.6.6.
+3. Added the reader controller API to open the document information view.
+4. Added event callbacks for closing annotation, form, and content editing property panels.
+5. Added event callback for the search back button click.
+6. Removed the default storage permission request logic when opening CPDFReaderView on Android.
+7. Fixed a crash when clicking the rotate icon on a stamp annotation on Android.
+8. Fixed an issue on iOS where setting the default border width for content editing had no effect.
+9. Fixed an issue on iOS where the top toolbar was displayed after clicking Share in the snapshot feature.
+
+
 ## 2.6.5
-* Upgraded iOS ComPDFKit PDF SDK to 2.6.5
-* Upgraded Android ComPDFKit PDF SDK to 2.6.5
+* Upgraded iOS ComPDF PDF SDK to 2.6.5
+* Upgraded Android ComPDF PDF SDK to 2.6.5
 * Refactored the Example project for clearer usage demonstrations
 * Added annotation appearance rendering API
 * Added support for multiple image annotation creation methods

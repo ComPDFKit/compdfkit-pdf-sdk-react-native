@@ -133,6 +133,7 @@ export function getDefaultConfig(
       mainToolbarVisible: true,
       annotationToolbarVisible: true,
       showInkToggleButton: true,
+      formToolbarVisible: true,
       toolbarLeftItems: isAndroid
         ? DEFAULT_ANDROID_TOOLBAR_LEFT
         : DEFAULT_IOS_TOOLBAR_LEFT,

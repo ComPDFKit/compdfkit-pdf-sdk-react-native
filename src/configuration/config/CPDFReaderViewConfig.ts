@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFDisplayMode, CPDFThemes, HexColor } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFDisplayMode, CPDFThemes, HexColor } from "../CPDFOptions";
 
 /**
  * @group Configuration

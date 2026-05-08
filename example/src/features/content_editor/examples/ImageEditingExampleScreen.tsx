@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { Platform } from 'react-native';
 
 import {
   disableEditMode,
@@ -32,11 +33,15 @@ export default function ImageEditingExampleScreen() {
           label: 'Disable Edit Mode',
           onPress: disableEditMode,
         },
-        {
-          key: 'insert-picked-image',
-          label: 'Insert Image',
-          onPress: insertPickedImage,
-        },
+        ...(Platform.OS === 'ios'
+          ? []
+          : [
+              {
+                key: 'insert-picked-image',
+                label: 'Insert Image',
+                onPress: insertPickedImage,
+              },
+            ]),
       ]}
     />
   );

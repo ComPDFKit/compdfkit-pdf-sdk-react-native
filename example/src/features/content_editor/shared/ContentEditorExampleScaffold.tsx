@@ -26,7 +26,8 @@ type ContentEditorRouteName =
   | 'CPDFTextEditingExample'
   | 'CPDFImageEditingExample'
   | 'CPDFContentEditingModeExample'
-  | 'CPDFEditorHistoryExample';
+  | 'CPDFEditorHistoryExample'
+  | 'CPDFEditorSelectionObservationExample';
 
 type ContentEditorRoute = RouteProp<AppStackParamList, ContentEditorRouteName>;
 

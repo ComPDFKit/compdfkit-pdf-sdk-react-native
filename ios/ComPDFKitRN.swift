@@ -174,14 +174,14 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
           let samplesFilePath = NSHomeDirectory().appending("/Documents/Files")
           let fileName = document.lastPathComponent
           let docsFilePath = samplesFilePath + "/" + fileName
-          
-          if !fileManager.fileExists(atPath: samplesFilePath) {
+
+            if !fileManager.fileExists(atPath: samplesFilePath) {
             try? FileManager.default.createDirectory(atPath: samplesFilePath, withIntermediateDirectories: true, attributes: nil)
-          }
-          
+            }
+
           try? FileManager.default.copyItem(atPath: document.path, toPath: docsFilePath)
-          
-          documentPath = docsFilePath
+
+            documentPath = docsFilePath
         }
       } else {
         success = document.startAccessingSecurityScopedResource()
@@ -237,10 +237,10 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
       
       try fileManager.copyItem(atPath: fontDir, toPath: destinationPath.path)
       CPDFFont.setImportDir(destinationPath.path, isContainSysFont: addSysFont)
+      resolve(true)
     } catch {
-      print("Error copying Font directory: \(error)")
+      reject("set_import_font_dir_failed", "Failed to import font directory", error)
     }
-    resolve(true)
   }
   
   @objc(updateImportFontDir:addSysFont:withResolver: withRejecter:)
@@ -256,10 +256,10 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
       
       try fileManager.copyItem(atPath: fontDir, toPath: destinationPath.path)
       CPDFFont.reloadImportDir(destinationPath.path, isContainSysFont: addSysFont)
+      resolve(true)
     } catch {
-      print("Error copying Font directory: \(error)")
+      reject("update_import_font_dir_failed", "Failed to update imported font directory", error)
     }
-    resolve(true)
   }
   
   @objc(getFonts: withRejecter:)

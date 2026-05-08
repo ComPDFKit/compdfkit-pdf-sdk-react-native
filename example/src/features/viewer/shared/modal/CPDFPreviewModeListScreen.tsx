@@ -98,7 +98,7 @@ export const CPDFPreviewModeListScreen: React.FC<
             <View style={styles.modalView}>
               <View style={styles.handle} />
               <View style={styles.header}>
-                <Text style={styles.title}>Preview Mode</Text>
+                <Text style={styles.title}>View Mode</Text>
                 <Text style={styles.subtitle}>
                   Choose the toolset you want to work with in the document.
                 </Text>
@@ -110,7 +110,7 @@ export const CPDFPreviewModeListScreen: React.FC<
                 renderItem={({ item }) =>
                   renderItem(item.title, viewMode === item.mode, () => {
                     setViewMode(item.mode);
-                    void pdfReader?.setPreviewMode(item.mode);
+                    void pdfReader?.setViewMode(item.mode);
                     onClose();
                   })
                 }

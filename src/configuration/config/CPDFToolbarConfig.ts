@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFToolbarAction } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFToolbarAction } from "../CPDFOptions";
 
 /**
  * Configuration for the top toolbar and bottom toolbars in different modes.

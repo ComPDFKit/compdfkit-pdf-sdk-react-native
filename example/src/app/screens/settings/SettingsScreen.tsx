@@ -81,10 +81,7 @@ export function SettingsScreen() {
 
     const loadVersion = async () => {
       const rawVersion = await ComPDFKit.getVersionCode();
-      const version =
-        typeof rawVersion === 'function'
-          ? await rawVersion()
-          : String(rawVersion);
+      const version = String(rawVersion);
       if (mounted) {
         setVersionCode(version);
       }

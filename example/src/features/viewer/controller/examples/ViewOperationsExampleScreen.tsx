@@ -14,7 +14,8 @@ import {
   showThumbnailView,
   showBotaView,
   showAddWatermarkView,
-  showSecurityView
+  showSecurityView,
+  showDocumentInfoView,
 } from '../shared/readerControllerActions';
 import { ReaderControllerExampleScaffold } from '../shared/ReaderControllerExampleScaffold';
 
@@ -45,6 +46,11 @@ export default function ViewOperationsExampleScreen() {
           key: 'show-security-view',
           label: 'Security',
           onPress: showSecurityView,
+        },
+        {
+          key: 'show-document-info-view',
+          label: 'Document Info',
+          onPress: showDocumentInfoView,
         },
         {
           key: 'show-custom-bota',

@@ -496,7 +496,7 @@ export class CPDFDocument {
    * const savePath = await ComPDFKit.createUri('flatten_test.pdf', 'compdfkit', 'application/pdf');
    * const fontSubset = true;
    * const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
-   * await pdfReaderRef.current?.reloadPages2();
+  * await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * @returns Returns 'true' if the flattened document is saved successfully, otherwise 'false'.
    */
   flattenAllPages = (
@@ -697,7 +697,7 @@ export class CPDFDocument {
    * 
    * // need reload pages after inserting image page.
    * if (success) {
-   *   await pdfReaderRef.current?.reloadPages2();
+  *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * } 
    */
   insertImagePage(
@@ -732,7 +732,7 @@ export class CPDFDocument {
    * const result = await pdfReaderRef.current?._pdfDocument.removePages([0, 2, 5]);
    * // need reload pages after removing pages.
    * if (result){
-   *     await pdfReaderRef.current?.reloadPages2();
+  *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * }
    */
   removePages(pageIndices: Array<number>): Promise<boolean> {
@@ -758,7 +758,7 @@ export class CPDFDocument {
    * const moved = await pdfReaderRef.current?._pdfDocument.movePage(4, 1);
    * // need reload pages after moving page.
    * if (moved){
-   *     await pdfReaderRef.current?.reloadPages2();
+  *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * }
    */
   movePage(fromIndex: number, toIndex: number): Promise<boolean> {

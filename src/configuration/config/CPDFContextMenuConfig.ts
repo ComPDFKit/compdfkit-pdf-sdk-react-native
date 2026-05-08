@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { HexColor } from "@compdfkit_pdf_sdk/react_native";
+import { HexColor } from "../CPDFOptions";
 
 /**
  * Fixed-length padding tuple: [left, top, right, bottom]

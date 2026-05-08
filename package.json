@@ -1,9 +1,22 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native",
-  "version": "2.6.5",
+  "version": "2.6.6",
   "description": "ComPDFKit for React Native is a comprehensive SDK that allows you to quickly add PDF functionality to Android, iOS, and React Native applications.",
-  "main": "./src/index.tsx",
-  "source": "src/index",
+  "main": "./lib/commonjs/index.js",
+  "module": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "react-native": "./src/index.tsx",
+  "source": "./src/index.tsx",
+  "exports": {
+    ".": {
+      "types": "./lib/typescript/src/index.d.ts",
+      "react-native": "./src/index.tsx",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "default": "./lib/commonjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "app.plugin.js",
     "plugin",
@@ -33,6 +46,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "build": "yarn build:commonjs && yarn build:module && yarn build:types",
+    "build:commonjs": "tsc -p tsconfig.build.commonjs.json",
+    "build:module": "tsc -p tsconfig.build.module.json",
+    "build:types": "tsc -p tsconfig.build.types.json",
+    "prepare": "yarn build",
     "release": "yarn prepare && release-it",
     "docs": "typedoc",
     "docs:md": "typedoc"
@@ -59,10 +77,12 @@
   },
   "homepage": "https://www.compdf.com/react-native",
   "devDependencies": {
-    "@types/react": "*",
-    "react": "*",
+    "@types/react": "^19.0.10",
+    "del-cli": "^5.1.0",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
     "typedoc": "^0.28.14",
-    "typescript": "*"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "@expo/config-plugins": ">=7.0.0",

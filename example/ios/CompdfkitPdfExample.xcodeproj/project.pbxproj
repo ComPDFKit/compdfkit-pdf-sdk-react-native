@@ -159,22 +159,22 @@
 		7BBF2AED2F284A3600026641 /* stamp_sign_here.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stamp_sign_here.png; sourceTree = "<group>"; };
 		7BBF2AEE2F284A3600026641 /* stamp_void.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stamp_void.png; sourceTree = "<group>"; };
 		7BBF2AEF2F284A3600026641 /* stamp_witness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stamp_witness.png; sourceTree = "<group>"; };
-		7BBF2B062F28601E00026641 /* extraFonts2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = extraFonts2; sourceTree = "<group>"; };
+		7BBF2B062F28601E00026641 /* extraFonts2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts/extraFonts2; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CompdfkitPdfExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PDF_Document.pdf; sourceTree = "<group>"; };
+		C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/PDF_Document.pdf; sourceTree = "<group>"; };
 		C980F8612E9F3E720056266F /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C9FCF5E22C475A9100CEFDBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9FCF5E42C475AB600CEFDBB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xfdf; sourceTree = "<group>"; };
+		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Documents/test.xfdf; sourceTree = "<group>"; };
 		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
 		EC9311742E389CE900F89503 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CompdfkitPdfExample/AppDelegate.swift; sourceTree = "<group>"; };
 		EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CompdfkitPdfExample-Bridging-Header.h"; sourceTree = "<group>"; };
-		EC9B1FCF2F0BDCCF000E5E3A /* Bird.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Bird.wav; sourceTree = "<group>"; };
-		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = annot_test.pdf; sourceTree = "<group>"; };
-		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_sign_pic.png; sourceTree = "<group>"; };
-		ECBEE6F22E9E46B4002D0414 /* ic_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_logo.png; sourceTree = "<group>"; };
-		ECC155E12E0BD80C007D528F /* license_key_rn.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = license_key_rn.xml; sourceTree = "<group>"; };
+		EC9B1FCF2F0BDCCF000E5E3A /* Bird.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Audio/Bird.wav; sourceTree = "<group>"; };
+		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/annot_test.pdf; sourceTree = "<group>"; };
+		EC9B30152D7AC832004E62E0 /* test_sign_pic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/test_sign_pic.png; sourceTree = "<group>"; };
+		ECBEE6F22E9E46B4002D0414 /* ic_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Branding/ic_logo.png; sourceTree = "<group>"; };
+		ECC155E12E0BD80C007D528F /* license_key_rn.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = License/license_key_rn.xml; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -273,7 +273,7 @@
 				7B01271D2F20D0C3003D9E18 /* ic_test_wavyline.png */,
 				7B01271E2F20D0C3003D9E18 /* launch_background.xml */,
 			);
-			path = drawable;
+			path = UI/drawable;
 			sourceTree = "<group>";
 		};
 		7BBF2AD62F284A2A00026641 /* sign */ = {
@@ -284,7 +284,7 @@
 				7BBF2AD42F284A2A00026641 /* signature_3.png */,
 				7BBF2AD52F284A2A00026641 /* signature_4.png */,
 			);
-			path = sign;
+			path = Signatures/sign;
 			sourceTree = "<group>";
 		};
 		7BBF2AF02F284A3600026641 /* stamp */ = {
@@ -312,17 +312,10 @@
 				7BBF2AEE2F284A3600026641 /* stamp_void.png */,
 				7BBF2AEF2F284A3600026641 /* stamp_witness.png */,
 			);
-			path = stamp;
+			path = Stamps/stamp;
 			sourceTree = "<group>";
 		};
-		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
-		83CBB9F61A601CBA00E9B192 = {
+		7C1000012F30000000000001 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				7BBF2B062F28601E00026641 /* extraFonts2 */,
@@ -336,6 +329,21 @@
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
 				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
 				EC09D8202D3DE886001B2CB3 /* test.xfdf */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				7C1000012F30000000000001 /* Resources */,
 				EC4EF3562D36664A00EEA52B /* extraFonts */,
 				13B07FAE1A68108700A75B9A /* CompdfkitPdfExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,

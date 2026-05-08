@@ -22,6 +22,7 @@ export default function CustomFormCreationExampleScreen() {
         CPDFWidgetType.COMBOBOX,
         CPDFWidgetType.PUSH_BUTTON,
       ]}
+      formToolbarVisible={true}
       enableCustomCreationDialogs={true}
       showCreationToolbar={false}
     />

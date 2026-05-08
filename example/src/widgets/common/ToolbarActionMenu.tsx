@@ -11,8 +11,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
-  InteractionManager,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -51,25 +51,22 @@ export function ToolbarActionMenu({ actions }: ToolbarActionMenuProps) {
 
   useEffect(() => {
     if (menuVisible || !pendingActionRef.current) {
-      return;
+      return undefined;
     }
-
-    let cancelled = false;
-    const interactionHandle = InteractionManager.runAfterInteractions(() => {
-      if (cancelled) {
-        return;
-      }
-
-      const action = pendingActionRef.current;
-      pendingActionRef.current = null;
-      if (action) {
-        void action();
-      }
-    });
+    // On iOS, onDismiss handles action execution after the native modal VC
+    // is fully removed from the window hierarchy. On Android onDismiss is
+    // not available, so we fall back to setTimeout.
+    if (Platform.OS === 'ios') {
+      return undefined;
+    }
+    const action = pendingActionRef.current;
+    pendingActionRef.current = null;
+    const timer = setTimeout(() => {
+      void action();
+    }, 0);
 
     return () => {
-      cancelled = true;
-      interactionHandle.cancel();
+      clearTimeout(timer);
     };
   }, [menuVisible]);
 
@@ -184,6 +181,13 @@ export function ToolbarActionMenu({ actions }: ToolbarActionMenuProps) {
         transparent
         animationType="none"
         onRequestClose={closeMenu}
+        onDismiss={() => {
+          if (pendingActionRef.current) {
+            const action = pendingActionRef.current;
+            pendingActionRef.current = null;
+            void action();
+          }
+        }}
       >
         <View style={styles.modalRoot}>
           <Pressable style={styles.backdropPressTarget} onPress={closeMenu}>

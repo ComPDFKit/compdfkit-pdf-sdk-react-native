@@ -959,7 +959,7 @@ await pdfReaderRef.current?.setFixedScroll(true);
 
 > Note: This method only supports the Android platform.
 
-#### setPreviewMode
+#### setViewMode
 
 Switch the mode displayed by the current CPDFReaderWidget.
 
@@ -970,10 +970,12 @@ Parameters:
 | viewMode | CPDFViewMode | The view mode to display |
 
 ```tsx
-await pdfReaderRef.current?.setPreviewMode(CPDFViewMode.VIEWER);
+await pdfReaderRef.current?.setViewMode(CPDFViewMode.VIEWER);
 ```
 
-#### getPreviewMode
+> The old method name `setPreviewMode` is still available as a deprecated alias for backward compatibility.
+
+#### getViewMode
 
 Get the currently displayed mode.
 
@@ -984,8 +986,10 @@ Returns a Promise.
 | viewMode | CPDFViewMode | Returns the currently displayed view mode |
 
 ```tsx
-const mode = await pdfReaderRef.current?.getPreviewMode();
+const mode = await pdfReaderRef.current?.getViewMode();
 ```
+
+> The old method name `getPreviewMode` is still available as a deprecated alias for backward compatibility.
 
 #### showThumbnailView
 
@@ -1031,6 +1035,17 @@ Displays the display settings view, where users can configure options such as sc
 
 ```tsx
 await pdfReaderRef.current?.showDisplaySettingView();
+```
+
+#### showDocumentInfoView
+
+Displays the native document information view.
+
+- Android: opens the native document info dialog.
+- iOS: currently reserved only; calling it resolves immediately and does not show a dialog.
+
+```tsx
+await pdfReaderRef.current?.showDocumentInfoView();
 ```
 
 #### enterSnipMode

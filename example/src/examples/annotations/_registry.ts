@@ -46,6 +46,18 @@ export const annotationsCategory: CategoryInfo = {
       },
     },
     {
+      id: 'annotation-selection-observation',
+      name: 'Annotation Selection Observation',
+      description: 'Observe annotation selection and deselection events',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.annotationSelectionObservation,
+      visual: {
+        badge: 'SO',
+        accentColor: '#00897B',
+        backgroundColor: '#E0F2F1',
+      },
+    },
+    {
       id: 'annotation-appearance',
       name: 'Annotation Appearance',
       description: 'Render annotation appearance to an image',

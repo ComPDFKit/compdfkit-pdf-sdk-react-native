@@ -727,6 +727,44 @@ export interface CPDFEventDataMap {
   [CPDFEvent.EDITOR_SELECTION_DESELECTED]: CPDFEditArea | null;
 }
 
+export interface CPDFSearchBackButtonTappedEvent {
+    customEventType: 'SearchBackButtonTapped';
+    identifier: 'search_back_button';
+    viewType: 'search' | 'searchReplace';
+    source: 'searchToolbar';
+}
+
+export interface CPDFAnnotationStyleDialogDismissedEvent {
+    type:
+      | 'note'
+      | 'strikeout'
+      | 'underline'
+      | 'highlight'
+      | 'squiggly'
+      | 'ink'
+      | 'square'
+      | 'circle'
+      | 'line'
+      | 'arrow'
+      | 'freetext'
+      | 'stamp'
+      | 'pictures';
+}
+
+export interface CPDFFormStyleDialogDismissedEvent {
+        type:
+            | 'textField'
+            | 'checkBox'
+            | 'radioButton'
+            | 'listBox'
+            | 'comboBox'
+            | 'pushButton';
+}
+
+export interface CPDFContentEditorStyleDialogDismissedEvent {
+        type: 'editorText' | 'editorImage';
+}
+
 export type CPDFPrepareNextStampOptions =
   | { imagePath: string; standardStamp?: never; textStamp?: never }
   | { imagePath?: never; standardStamp: CPDFStandardStamp; textStamp?: never }

@@ -16,6 +16,7 @@ import ComPDFKit
 
 protocol RCTCPDFViewDelegate: AnyObject {
   func cpdfViewAttached(_ cpdfView: RCTCPDFView)
+  func cpdfViewDetached(_ cpdfView: RCTCPDFView)
   func saveDocumentChange(_ cpdfView: RCTCPDFView)
   func onPageChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
   func onPageEditDialogBackPress(_ cpdfView: RCTCPDFView)
@@ -35,6 +36,11 @@ protocol RCTCPDFViewDelegate: AnyObject {
   func onAutoShowFormPickerChanged(_ cpdfView: RCTCPDFView, formData: [String: Any])
   func onCustomMenuActionChanged(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onCustomToolbarActionChanged(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onSearchBackButtonTapped(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onAnnotationStyleDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onFormStyleDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onContentEditorStyleDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onWatermarkDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onInterceptAnnotationDoAction(_ cpdfView: RCTCPDFView, annotation: [String: Any])
 }
 
@@ -53,12 +59,19 @@ extension Bundle {
 }
 
 class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
+  private enum NotificationNames {
+    static let annotationsOperationChange = Notification.Name("CPDFListViewAnnotationsOperationChangeNotification")
+    static let pageChanged = Notification.Name("CPDFViewPageChangedNotification")
+    static let pageEditingDidChanged = Notification.Name("CPDFPageEditingDidChangedNotification")
+  }
   
   weak var delegate: RCTCPDFViewDelegate?
   
   public var pdfViewController : CPDFViewController?
   
   private var navigationController : CNavigationController?
+  private var hasRegisteredNotificationObservers = false
+  private var hasCleanedUp = false
   
   init() {
     super.init(frame: CGRect(x: 0, y: 0, width: 500, height: 400))
@@ -67,8 +80,103 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+
+  deinit {
+    cleanupLifecycle()
+  }
+
+  override func willMove(toSuperview newSuperview: UIView?) {
+    super.willMove(toSuperview: newSuperview)
+
+    if newSuperview == nil {
+      cleanupLifecycle()
+    }
+  }
   
   // MARK: - Private Methods
+
+  private func registerNotificationObservers() {
+    guard !hasRegisteredNotificationObservers else { return }
+
+    let notificationCenter = NotificationCenter.default
+    notificationCenter.addObserver(
+      self,
+      selector: #selector(annotationsOperationChangeNotification(_:)),
+      name: NotificationNames.annotationsOperationChange,
+      object: pdfViewController?.pdfListView
+    )
+    notificationCenter.addObserver(
+      self,
+      selector: #selector(pageChangedNotification(_:)),
+      name: NotificationNames.pageChanged,
+      object: pdfViewController
+    )
+    notificationCenter.addObserver(
+      self,
+      selector: #selector(pageEditingDidChanged(_:)),
+      name: NotificationNames.pageEditingDidChanged,
+      object: nil
+    )
+    hasRegisteredNotificationObservers = true
+  }
+
+  private func cleanupLifecycle() {
+    guard !hasCleanedUp else { return }
+    hasCleanedUp = true
+
+    NotificationCenter.default.removeObserver(self)
+    hasRegisteredNotificationObservers = false
+
+    delegate?.cpdfViewDetached(self)
+
+    pdfViewController?.delegate = nil
+    navigationController?.view.removeFromSuperview()
+    navigationController = nil
+    pdfViewController = nil
+    delegate = nil
+  }
+
+  private func annotationDialogType(for annotationMode: CPDFViewAnnotationMode) -> String? {
+    switch annotationMode {
+    case .note: return "note"
+    case .highlight: return "highlight"
+    case .underline: return "underline"
+    case .strikeout: return "strikeout"
+    case .squiggly: return "squiggly"
+    case .ink: return "ink"
+    case .circle: return "circle"
+    case .square: return "square"
+    case .arrow: return "arrow"
+    case .line: return "line"
+    case .freeText: return "freetext"
+    case .stamp: return "stamp"
+    case .image: return "pictures"
+    default: return nil
+    }
+  }
+
+  private func formDialogType(for annotationMode: CPDFViewAnnotationMode) -> String? {
+    switch annotationMode {
+    case .formModeText: return "textField"
+    case .formModeCheckBox: return "checkBox"
+    case .formModeRadioButton: return "radioButton"
+    case .formModeList: return "listBox"
+    case .formModeCombox: return "comboBox"
+    case .formModeButton: return "pushButton"
+    default: return nil
+    }
+  }
+
+  private func contentEditorDialogType(for editMode: CPDFEditMode) -> String? {
+    let normalized = String(describing: editMode).lowercased()
+    if normalized.contains("text") {
+      return "editorText"
+    }
+    if normalized.contains("image") {
+      return "editorImage"
+    }
+    return nil
+  }
   
   private func createCPDFView() {
     let initPageIndex = pageIndex
@@ -198,10 +306,8 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     if success {
       document.stopAccessingSecurityScopedResource()
     }
-    
-    NotificationCenter.default.addObserver(self, selector: #selector(annotationsOperationChangeNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFListViewAnnotationsOperationChangeNotification").rawValue), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(pageChangedNotification(_:)), name: NSNotification.Name(NSNotification.Name("CPDFViewPageChangedNotification").rawValue), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(pageEditingDidChanged(_:)), name: NSNotification.Name(NSNotification.Name("CPDFPageEditingDidChangedNotification").rawValue), object: nil)
+
+    registerNotificationObservers()
   }
   
   func insertPDFDocument(_ document: CPDFDocument, Pages pages: [Int], Position index: Int) -> Bool {
@@ -731,6 +837,10 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
   
   func showDisplaySettingView() {
     self.pdfViewController?.enterPDFSetting()
+  }
+  
+  func showDocumentInfoView() {
+    self.pdfViewController?.enterPDFInfo()
   }
   
   func enterSnipMode() {
@@ -1264,6 +1374,35 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
   func PDFViewBaseControllerHandleCustomToolbarAction(_ baseController: CPDFViewBaseController, fronView view: Any, payload: [String : Any]) {
     self.delegate?.onCustomToolbarActionChanged(self, payload: payload)
   }
+
+  func PDFViewBaseControllerAnnotationDialogDismissed(_ baseController: CPDFViewBaseController, forAnnotationMode annotationMode: CPDFViewAnnotationMode) {
+    guard let type = annotationDialogType(for: annotationMode) else {
+      return
+    }
+    self.delegate?.onAnnotationStyleDialogDismissed(self, payload: ["type": type])
+  }
+
+  func PDFViewBaseControllerFormPropertyDialogDismissed(_ baseController: CPDFViewBaseController, forAnnotationMode annotationMode: CPDFViewAnnotationMode) {
+    guard let type = formDialogType(for: annotationMode) else {
+      return
+    }
+    self.delegate?.onFormStyleDialogDismissed(self, payload: ["type": type])
+  }
+
+  func PDFViewBaseControllerEditPropertyDialogDismissed(_ baseController: CPDFViewBaseController, forEditMode editMode: CPDFEditMode) {
+    guard let type = contentEditorDialogType(for: editMode) else {
+      return
+    }
+    self.delegate?.onContentEditorStyleDialogDismissed(self, payload: ["type": type])
+  }
+
+  func PDFViewBaseControllerSearchToolbarBack(_ baseController: CPDFViewBaseController) {
+    self.delegate?.onSearchBackButtonTapped(self, payload: [:])
+  }
+
+  func PDFViewBaseControllerWatermarkDialogDismissed(_ baseController: CPDFViewBaseController) {
+    self.delegate?.onWatermarkDialogDismissed(self, payload: [:])
+  }
   
   func PDFViewBaseControllerInterceptAnnotationDoAction(_ baseController: CPDFViewBaseController, forAnnotation annotation:CPDFAnnotation?) {
       if annotation == nil {
@@ -1291,6 +1430,12 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     guard let page = notification.object as? CPDFPage else {
       return
     }
+
+    guard let currentPage = self.pdfViewController?.pdfListView?.document.page(at: UInt(Int(page.pageIndexInteger))),
+          currentPage === page else {
+      return
+    }
+
     let pageIndex = page.pageIndexInteger
     self.delegate?.onContentEditorHistoryChanged(self, pageIndex: Int(pageIndex))
   }

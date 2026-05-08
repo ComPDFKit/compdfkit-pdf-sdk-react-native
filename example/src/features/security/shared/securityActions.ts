@@ -83,10 +83,14 @@ export async function getDocumentPermissionsSnapshot(
  * allowCopying, algorithm)` applies PDF encryption. The `userPassword` is
  * required to open the document; the `ownerPassword` controls editing rights.
  */
-export async function setDocumentPassword(reader: CPDFReaderView) {
+export async function setDocumentPassword(
+  reader: CPDFReaderView,
+  userPassword: string,
+  ownerPassword: string,
+) {
   const result = await reader._pdfDocument.setPassword(
-    '1234',
-    '4321',
+    userPassword,
+    ownerPassword,
     false,
     false,
     CPDFDocumentEncryptAlgo.AES128,

@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFUiVisibilityMode, CPDFViewMode } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFUiVisibilityMode, CPDFViewMode } from "../CPDFOptions";
 
 
 /**

@@ -65,6 +65,10 @@ export async function showSecurityView(reader: CPDFReaderView) {
   await reader.showSecurityView();
 }
 
+export async function showDocumentInfoView(reader: CPDFReaderView) {
+  await reader.showDocumentInfoView();
+}
+
 export async function showSearchTextView(reader: CPDFReaderView) {
   await reader.showSearchTextView();
 }

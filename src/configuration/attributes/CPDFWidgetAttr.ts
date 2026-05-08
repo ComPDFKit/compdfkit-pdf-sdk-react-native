@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFCheckStyle, HexColor, BorderWidth, FontSize, CPDFAlignment } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFCheckStyle, HexColor, BorderWidth, FontSize, CPDFAlignment } from "../CPDFOptions";
 
 
 

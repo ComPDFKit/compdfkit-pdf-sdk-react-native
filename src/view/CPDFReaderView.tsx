@@ -16,31 +16,36 @@ import {
 } from "react-native";
 import {
   CPDFAnnotationType,
+  CPDFAnnotationStyleDialogDismissedEvent,
+  CPDFContentEditorStyleDialogDismissedEvent,
   CPDFEditType,
   CPDFEventDataMap,
+  CPDFFormStyleDialogDismissedEvent,
   CPDFPrepareNextStampOptions,
   CPDFThemes,
   CPDFViewMode,
   CPDFWidgetType,
 } from "../configuration/CPDFOptions";
 import {
-  CPDFAnnotation,
   CPDFAnnotationAttr,
   CPDFAnnotationAttrUnion,
+} from "../configuration/attributes/CPDFAnnotationAttr";
+import {
   CPDFCheckBoxAttr,
   CPDFComboBoxAttr,
-  CPDFDocument,
-  CPDFEditArea,
-  CPDFEditManager,
   CPDFListBoxAttr,
   CPDFPushButtonAttr,
   CPDFRadioButtonAttr,
-  CPDFRectF,
   CPDFSignatureWidgetAttr,
   CPDFTextFieldAttr,
-  CPDFWidget,
   CPDFWidgetAttr,
-} from "@compdfkit_pdf_sdk/react_native";
+} from "../configuration/attributes/CPDFWidgetAttr";
+import { CPDFAnnotation } from "../annotation/CPDFAnnotation";
+import { CPDFDocument } from "../document/CPDFDocument";
+import { CPDFEditArea } from "../edit/CPDFEditArea";
+import { CPDFEditManager } from "../edit/CPDFEditManager";
+import { CPDFRectF } from "../util/CPDFRectF";
+import { CPDFWidget } from "../annotation/form/CPDFWidget";
 import { CPDFAnnotationHistoryManager } from "../history/CPDFAnnotationHistoryManager";
 import {
   normalizeColorToARGB,
@@ -73,7 +78,7 @@ export interface CPDFReaderViewProps {
   password?: string;
   pageIndex?: number;
   onPageChanged?: (pageIndex: number) => void;
-  saveDocument?: () => void;
+  onSaveDocument?: () => void;
   onPageEditDialogBackPress?: () => void;
   onFullScreenChanged?: (isFullScreen: boolean) => void;
   onTapMainDocArea?: () => void;
@@ -82,6 +87,17 @@ export interface CPDFReaderViewProps {
   onViewCreated?: () => void;
   onCustomToolbarItemTapped?: (identifier: string) => void;
   onCustomContextMenuItemTapped?: (identifier: string, event: any) => void;
+  onSearchBackButtonTapped?: () => void;
+  onAddWatermarkDialogDismissed?: () => void;
+  onAnnotationStyleDialogDismissed?: (
+    event: CPDFAnnotationStyleDialogDismissedEvent
+  ) => void;
+  onFormStyleDialogDismissed?: (
+    event: CPDFFormStyleDialogDismissedEvent
+  ) => void;
+  onContentEditorStyleDialogDismissed?: (
+    event: CPDFContentEditorStyleDialogDismissedEvent
+  ) => void;
   onAnnotationCreationPrepared?: (
     type: CPDFAnnotationType,
     event: CPDFAnnotation | null
@@ -198,17 +214,13 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   };
 
   onChange = (event: any) => {
-    // if (__DEV__) {
-    //   console.log('ComPDFKit onChange---:')
-    //   console.log(JSON.stringify(event.nativeEvent, null, 2));
-    // }
     if ("onPageChanged" in event.nativeEvent) {
       if (this.props.onPageChanged) {
         this.props.onPageChanged(event.nativeEvent.onPageChanged);
       }
-    } else if ("saveDocument" in event.nativeEvent) {
-      if (this.props.saveDocument) {
-        this.props.saveDocument();
+    } else if ("onSaveDocument" in event.nativeEvent) {
+      if (this.props.onSaveDocument) {
+        this.props.onSaveDocument();
       }
     } else if ("onPageEditDialogBackPress" in event.nativeEvent) {
       if (this.props.onPageEditDialogBackPress) {
@@ -242,6 +254,32 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
       if (this.props.onCustomToolbarItemTapped) {
         this.props.onCustomToolbarItemTapped(
           event.nativeEvent.onCustomToolbarItemTapped
+        );
+      }
+    } else if ("onSearchBackButtonTapped" in event.nativeEvent) {
+      if (this.props.onSearchBackButtonTapped) {
+        this.props.onSearchBackButtonTapped();
+      }
+    } else if ("onAddWatermarkDialogDismissed" in event.nativeEvent) {
+      if (this.props.onAddWatermarkDialogDismissed) {
+        this.props.onAddWatermarkDialogDismissed();
+      }
+    } else if ("onAnnotationStyleDialogDismissed" in event.nativeEvent) {
+      if (this.props.onAnnotationStyleDialogDismissed) {
+        this.props.onAnnotationStyleDialogDismissed(
+          event.nativeEvent.onAnnotationStyleDialogDismissed
+        );
+      }
+    } else if ("onFormStyleDialogDismissed" in event.nativeEvent) {
+      if (this.props.onFormStyleDialogDismissed) {
+        this.props.onFormStyleDialogDismissed(
+          event.nativeEvent.onFormStyleDialogDismissed
+        );
+      }
+    } else if ("onContentEditorStyleDialogDismissed" in event.nativeEvent) {
+      if (this.props.onContentEditorStyleDialogDismissed) {
+        this.props.onContentEditorStyleDialogDismissed(
+          event.nativeEvent.onContentEditorStyleDialogDismissed
         );
       }
     } else if ("annotationsCreated" in event.nativeEvent) {
@@ -634,7 +672,6 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
       var themesColor: string = await CPDFViewManager.getReadBackgroundColor(
         tag
       );
-      console.log("ComPDFKit themesColor:", themesColor);
       let theme: CPDFThemes;
       switch (themesColor) {
         case "#FFFFFFFF":
@@ -943,11 +980,11 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Please see [CPDFViewMode] for available modes.
    *
    * @example
-   * await pdfReaderRef.current?.setPreviewMode(CPDFViewMode.VIEWER);
+   * await pdfReaderRef.current?.setViewMode(CPDFViewMode.VIEWER);
    * @param viewMode The view mode to display
    * @returns
    */
-  setPreviewMode = (viewMode: CPDFViewMode): Promise<void> => {
+  setViewMode = (viewMode: CPDFViewMode): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
       return CPDFViewManager.setPreviewMode(tag, viewMode);
@@ -956,12 +993,19 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   };
 
   /**
-   * Get the currently displayed mode
+   * @deprecated Use setViewMode() instead.
+   */
+  setPreviewMode = (viewMode: CPDFViewMode): Promise<void> => {
+    return this.setViewMode(viewMode);
+  };
+
+  /**
+   * Get the currently displayed mode.
    * @example
-   * const mode = await pdfReaderRef.current?.getPreviewMode();
+   * const mode = await pdfReaderRef.current?.getViewMode();
    * @returns
    */
-  getPreviewMode = async (): Promise<CPDFViewMode> => {
+  getViewMode = async (): Promise<CPDFViewMode> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
       var modeStr = await CPDFViewManager.getPreviewMode(tag);
@@ -974,6 +1018,13 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
       }
     }
     return Promise.resolve(CPDFViewMode.VIEWER);
+  };
+
+  /**
+   * @deprecated Use getViewMode() instead.
+   */
+  getPreviewMode = async (): Promise<CPDFViewMode> => {
+    return this.getViewMode();
   };
 
   /**
@@ -1063,6 +1114,22 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   };
 
   /**
+   * Displays the document information view, where users can inspect document metadata.
+   *
+   * @example
+   * await pdfReaderRef.current?.showDocumentInfoView();
+   *
+   * @returns
+   */
+  showDocumentInfoView = (): Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.showDocumentInfoView(tag);
+    }
+    return Promise.resolve();
+  };
+
+  /**
    * Enters snip mode, allowing users to capture screenshots.
    *
    * @example
@@ -1107,10 +1174,16 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   };
 
   /**
-   * Reload all pages; this method will keep the current page number position unchanged.
+   * Reloads all pages while preserving the current reading position.
+   *
+   * On Android, this keeps the current viewport anchored to the same visual position
+   * after the refresh. For example, if the viewer is currently showing page 2 at about
+   * 20% scroll progress, the same position remains visible after reloading.
+   * On iOS, this falls back to `reloadPages()` because the native implementation does
+   * not expose a position-preserving reload path.
    * @returns
    */
-  reloadPages2 = (): Promise<void> => {
+  reloadPagesPreservingPosition = (): Promise<void> => {
     if (Platform.OS === "ios") {
       return this.reloadPages();
     }
@@ -1119,6 +1192,13 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
       return CPDFViewManager.reloadPages2(tag);
     }
     return Promise.resolve();
+  };
+
+  /**
+   * @deprecated Use reloadPagesPreservingPosition() instead.
+   */
+  reloadPages2 = (): Promise<void> => {
+    return this.reloadPagesPreservingPosition();
   };
 
   /**
@@ -1134,7 +1214,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   setAnnotationMode = async (type: CPDFAnnotationType): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
-      if ((await this.getPreviewMode()) != CPDFViewMode.ANNOTATIONS) {
+      if ((await this.getViewMode()) != CPDFViewMode.ANNOTATIONS) {
         return Promise.reject(
           "setAnnotationMode() method only support CPDFViewMode.ANNOTATIONS mode"
         );
@@ -1172,7 +1252,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   setFormCreationMode = async (type: CPDFWidgetType): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
-      if ((await this.getPreviewMode()) != CPDFViewMode.FORMS) {
+      if ((await this.getViewMode()) != CPDFViewMode.FORMS) {
         return Promise.reject(
           "setFormCreationMode() method only support CPDFViewMode.FORMS mode"
         );
@@ -1646,8 +1726,6 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   ): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
-      console.log("Updating default annotation style with:", attr);
-
       // Normalize hex colors to ARGB format
       const normalizedAttr = normalizeColorsInAnnotationAttr(attr);
       return CPDFViewManager.updateDefaultAnnotationStyle(tag, normalizedAttr);

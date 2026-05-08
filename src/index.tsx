@@ -8,11 +8,8 @@
  */
 
 import { ComPDFKit } from "./core/ComPDFKitModule";
-import { getDefaultConfig } from "./core/DefaultConfig";
 import { menus, botaMenus } from "./core/ConfigHelpers";
 import PDFReaderContext from "./core/PDFReaderContext";
-
-ComPDFKit.getDefaultConfig = getDefaultConfig;
 
 // === Options & Configs ===
 export * from "./configuration/CPDFOptions";
@@ -106,7 +103,7 @@ export type { CPDFBookmark } from "./document/CPDFBookmark";
 
 // === Core Exports ===
 export { ComPDFKit };
-export { getDefaultConfig };
+export { getDefaultConfig } from "./core/DefaultConfig";
 export { menus, botaMenus };
 export type { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
 

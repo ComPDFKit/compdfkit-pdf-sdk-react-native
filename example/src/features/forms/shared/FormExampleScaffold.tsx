@@ -27,10 +27,10 @@ type FormRouteName =
   | 'CPDFFillFormExample'
   | 'CPDFEditFormDefaultStyleExample'
   | 'CPDFFormDataImportExportExample'
-  | 'CPDFFormFieldOperationsExample'
+  | 'CPDFListFormFieldsExample'
   | 'CPDFCustomFormCreationExample'
   | 'CPDFApiFormCreationModeExample'
-  | 'CPDFFormInterceptActionExample';
+  | 'CPDFFieldSelectionObservationExample';
 
 type FormExampleRoute = RouteProp<AppStackParamList, FormRouteName>;
 

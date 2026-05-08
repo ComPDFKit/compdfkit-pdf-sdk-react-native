@@ -19,8 +19,11 @@ import {
 import {
   CPDFAnnotation,
   CPDFAnnotationType,
+  CPDFAnnotationStyleDialogDismissedEvent,
+  CPDFContentEditorStyleDialogDismissedEvent,
   CPDFEditArea,
   CPDFEvent,
+  CPDFFormStyleDialogDismissedEvent,
   CPDFReaderView,
   CPDFWidget,
   ComPDFKit,
@@ -85,6 +88,35 @@ export default function EventListenerExampleScreen() {
       default:
         break;
     }
+  };
+
+  const onSearchBackButtonTapped = () => {
+    Logger.log('Search back button tapped');
+  };
+
+  const onAddWatermarkDialogDismissed = () => {
+     Logger.log('Add watermark dialog dismissed');
+  };
+
+  const onAnnotationStyleDialogDismissed = (
+    event: CPDFAnnotationStyleDialogDismissedEvent,
+  ) => {
+    Logger.log('Annotation style dialog dismissed:');
+    Logger.log(JSON.stringify(event, null, 2));
+  };
+
+  const onFormStyleDialogDismissed = (
+    event: CPDFFormStyleDialogDismissedEvent,
+  ) => {
+    Logger.log('Form style dialog dismissed:');
+    Logger.log(JSON.stringify(event, null, 2));
+  };
+
+  const onContentEditorStyleDialogDismissed = (
+    event: CPDFContentEditorStyleDialogDismissedEvent,
+  ) => {
+    Logger.log('Content editor style dialog dismissed:');
+    Logger.log(JSON.stringify(event, null, 2));
   };
 
   const bindEventListeners = () => {
@@ -221,6 +253,15 @@ export default function EventListenerExampleScreen() {
             },
           })}
           onIOSClickBackPressed={handleBack}
+          onSearchBackButtonTapped={onSearchBackButtonTapped}
+          onAddWatermarkDialogDismissed={onAddWatermarkDialogDismissed}
+          onAnnotationStyleDialogDismissed={
+            onAnnotationStyleDialogDismissed
+          }
+          onFormStyleDialogDismissed={onFormStyleDialogDismissed}
+          onContentEditorStyleDialogDismissed={
+            onContentEditorStyleDialogDismissed
+          }
           onViewCreated={bindEventListeners}
         />
       </View>

@@ -23,10 +23,6 @@ import {
   type AnnotationExampleAction,
 } from '../shared/AnnotationExampleScaffold';
 import {
-  annotationExampleMenuActions,
-  toAnnotationExampleAction,
-} from '../shared/annotationExampleActionRegistry';
-import {
   fetchAllAnnotations,
 } from '../shared/annotationExampleActions';
 import { getDefaultAnnotationDocument } from '../shared/defaultDocument';

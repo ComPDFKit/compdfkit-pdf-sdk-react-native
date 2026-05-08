@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFAnnotationType, CPDFConfigTool } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFAnnotationType, CPDFConfigTool } from "../CPDFOptions";
 import { CPDFAnnotationAttr } from "../attributes/CPDFAnnotationAttr";
 
 /**

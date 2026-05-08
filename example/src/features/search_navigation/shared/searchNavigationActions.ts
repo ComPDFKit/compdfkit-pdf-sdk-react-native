@@ -8,7 +8,6 @@
  */
 
 import { CPDFReaderView } from '@compdfkit_pdf_sdk/react_native';
-import { Logger } from '../../../util/logger';
 
 export async function showSearchTextView(reader: CPDFReaderView) {
   await reader.showSearchTextView();

@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { ColorAlpha, CPDFAlignment, CPDFConfigTool, CPDFContentEditorType, FontSize, HexColor } from "@compdfkit_pdf_sdk/react_native";
+import { ColorAlpha, CPDFAlignment, CPDFConfigTool, CPDFContentEditorType, FontSize, HexColor } from "../CPDFOptions";
 
 /**
  * @class CPDFContentEditorConfig

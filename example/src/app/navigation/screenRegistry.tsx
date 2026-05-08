@@ -13,6 +13,7 @@ import type { NativeStackNavigationOptions } from '@react-navigation/native-stac
 import AddAnnotationExampleScreen from '../../features/annotations/examples/AddAnnotationExampleScreen';
 import AnnotationAppearanceExampleScreen from '../../features/annotations/examples/AnnotationAppearanceExampleScreen';
 import AnnotationModeExampleScreen from '../../features/annotations/examples/AnnotationModeExampleScreen';
+import AnnotationSelectionObservationExampleScreen from '../../features/annotations/examples/AnnotationSelectionObservationExampleScreen';
 import DeleteAnnotationExampleScreen from '../../features/annotations/examples/DeleteAnnotationExampleScreen';
 import EditAnnotationExampleScreen from '../../features/annotations/examples/EditAnnotationExampleScreen';
 import EditDefaultStyleExampleScreen from '../../features/annotations/examples/EditDefaultStyleExampleScreen';
@@ -21,16 +22,17 @@ import XfdfOperationsExampleScreen from '../../features/annotations/examples/Xfd
 import InterceptAnnotationActionExampleScreen from '../../features/annotations/intercept/InterceptAnnotationActionExampleScreen';
 import ContentEditingModeExampleScreen from '../../features/content_editor/examples/ContentEditingModeExampleScreen';
 import EditorHistoryExampleScreen from '../../features/content_editor/examples/EditorHistoryExampleScreen';
+import EditorSelectionObservationExampleScreen from '../../features/content_editor/examples/EditorSelectionObservationExampleScreen';
 import ImageEditingExampleScreen from '../../features/content_editor/examples/ImageEditingExampleScreen';
 import TextEditingExampleScreen from '../../features/content_editor/examples/TextEditingExampleScreen';
 import ApiFormCreationModeExampleScreen from '../../features/forms/examples/ApiFormCreationModeExampleScreen';
 import CreateFormFieldsExampleScreen from '../../features/forms/examples/CreateFormFieldsExampleScreen';
 import CustomFormCreationExampleScreen from '../../features/forms/examples/CustomFormCreationExampleScreen';
 import EditFormDefaultStyleExampleScreen from '../../features/forms/examples/EditFormDefaultStyleExampleScreen';
+import FieldSelectionObservationExampleScreen from '../../features/forms/examples/FieldSelectionObservationExampleScreen';
 import FillFormExampleScreen from '../../features/forms/examples/FillFormExampleScreen';
 import FormDataImportExportExampleScreen from '../../features/forms/examples/FormDataImportExportExampleScreen';
-import FormFieldOperationsExampleScreen from '../../features/forms/examples/FormFieldOperationsExampleScreen';
-import FormInterceptActionExampleScreen from '../../features/forms/examples/FormInterceptActionExampleScreen';
+import ListFormFieldsExampleScreen from '../../features/forms/examples/ListFormFieldsExampleScreen';
 import { EXAMPLE_ROUTES } from '../../examples/shared/exampleRoutes';
 import DeletePageExampleScreen from '../../features/pages/examples/DeletePageExampleScreen';
 import InsertPageExampleScreen from '../../features/pages/examples/InsertPageExampleScreen';
@@ -156,6 +158,11 @@ export const exampleScreens: ScreenDefinition[] = [
   {
     name: EXAMPLE_ROUTES.annotationList,
     component: ListAnnotationsExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.annotationSelectionObservation,
+    component: AnnotationSelectionObservationExampleScreen,
     options: { headerShown: false },
   },
   {
@@ -289,6 +296,11 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
+    name: EXAMPLE_ROUTES.contentEditorSelectionObservation,
+    component: EditorSelectionObservationExampleScreen,
+    options: { headerShown: false },
+  },
+  {
     name: EXAMPLE_ROUTES.formCreateFields,
     component: CreateFormFieldsExampleScreen,
     options: { headerShown: false },
@@ -309,8 +321,8 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
-    name: EXAMPLE_ROUTES.formFieldOperations,
-    component: FormFieldOperationsExampleScreen,
+    name: EXAMPLE_ROUTES.formList,
+    component: ListFormFieldsExampleScreen,
     options: { headerShown: false },
   },
   {
@@ -324,8 +336,8 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
-    name: EXAMPLE_ROUTES.formInterceptAction,
-    component: FormInterceptActionExampleScreen,
+    name: EXAMPLE_ROUTES.formFieldSelectionObservation,
+    component: FieldSelectionObservationExampleScreen,
     options: { headerShown: false },
   },
   {

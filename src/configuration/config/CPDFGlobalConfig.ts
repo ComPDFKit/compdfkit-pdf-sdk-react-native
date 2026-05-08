@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFBotaTabs, CPDFSignatureType, CPDFThemeMode, HexColor } from "@compdfkit_pdf_sdk/react_native";
+import { CPDFBotaTabs, CPDFSignatureType, CPDFThemeMode, HexColor } from "../CPDFOptions";
 import { CPDFWatermarkConfig } from "./CPDFWatermarkConfig";
 
 export type CPDFBotaMenuItem<T extends string = string> = {

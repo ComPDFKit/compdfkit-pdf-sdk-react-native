@@ -16,7 +16,7 @@ import {
   DashGap,
   FontSize,
   HexColor
-} from "@compdfkit_pdf_sdk/react_native";
+} from "../CPDFOptions";
 
 export interface CPDFBorderStyleAttr {
   style: CPDFBorderStyle;

@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { Platform } from 'react-native';
 
 import {
   enableTextEditMode,
@@ -32,11 +33,15 @@ export default function TextEditingExampleScreen() {
           label: 'Disable Edit Mode',
           onPress: disableEditMode,
         },
-        {
-          key: 'insert-sample-text',
-          label: 'Insert Text',
-          onPress: insertSampleText,
-        },
+        ...(Platform.OS === 'ios'
+          ? []
+          : [
+              {
+                key: 'insert-sample-text',
+                label: 'Insert Text',
+                onPress: insertSampleText,
+              },
+            ]),
       ]}
     />
   );
