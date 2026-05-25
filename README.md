@@ -1,12 +1,10 @@
 # ComPDF SDK for React Native
 
-As part of the KDAN ecosystem, [ComPDF SDK for React Native](https://www.compdf.com/react-native?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) helps developers add advanced PDF viewing, annotation, editing, and signing features to React Native applications on Android and iOS.
+As part of the KDAN ecosystem, [ComPDF SDK for React Native](https://www.compdf.com/react-native?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) helps developers add advanced PDF viewing, annotation, editing, and signing features to React Native applications on Android and iOS.
 
 It offers a native-backed React Native integration so teams can deliver mobile PDF workflows without building document tooling from scratch.
 
-[ComPDF SDK](https://www.compdf.com/?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) seamlessly operates on [Web](https://www.compdf.com/web?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), [Windows](https://www.compdf.com/windows?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), [Android](https://www.compdf.com/android?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), [iOS](https://www.compdf.com/ios?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), [Mac](https://www.compdf.com/contact-sales?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), and [Server](https://www.compdf.com/server?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), with support for cross-platform frameworks such as [React Native](https://www.compdf.com/react-native?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), [Flutter](https://www.compdf.com/flutter?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native), etc.
-
-
+[ComPDF SDK](https://www.compdf.com/?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) seamlessly operates on [Web](https://www.compdf.com/web?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Windows](https://www.compdf.com/windows?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Android](https://www.compdf.com/android?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [iOS](https://www.compdf.com/ios?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Mac](https://www.compdf.com/contact-sales?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), and [Server](https://www.compdf.com/server?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), with support for cross-platform frameworks such as [React Native](https://www.compdf.com/react-native?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Flutter](https://www.compdf.com/flutter?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), etc.
 
 If you find ComPDF SDK useful, please consider giving us a ⭐ **Star** on GitHub — it helps us grow and improve! Got questions or ideas? Join the conversation in our [Discussions](https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/discussions).
 
@@ -20,13 +18,12 @@ If you find ComPDF SDK useful, please consider giving us a ⭐ **Star** on GitHu
 
 * **Fully Customizable UI:** Design a unique interface for your products with fully customizable UI source code by a high-performing SDK.
 
-* **[Comprehensive PDF Features:](https://www.compdf.com/pdf-sdk/features-list?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)** Supports generation, viewing, annotation, page editing, content editing, conversion, OCR, redaction, signing, forms, parsing, measurement, compression, comparison, color separation, batch processing, and more.
+* **[Comprehensive PDF Features:](https://www.compdf.com/pdf-sdk/features-list?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)** Supports generation, viewing, annotation, page editing, content editing, conversion, OCR, redaction, signing, forms, parsing, measurement, compression, comparison, color separation, batch processing, and more.
 
 * **Faster Time-to-Market:** Comprehensive SDK libraries save your time and expenses and roll out your applications and projects.
 
 * **High-quality Service:** We provide 24/7 professional one-to-one technical support, including onsite service and remote assistance via phone and email.
 
----
 
 ## Table of Contents
 
@@ -38,20 +35,17 @@ If you find ComPDF SDK useful, please consider giving us a ⭐ **Star** on GitHu
 - [Configuration](#configuration)
 - [API](#api)
 - [Changelog](#changelog)
-- [Free Trial & License](#free-trial)
+- [Free Trial and License](#free-trial-and-license)
 - [Support](#support)
 
-****
 
 ## Related
 
-- [ComPDF SDK for React Native Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)
-- [ComPDF SDK for Flutter](https://github.com/ComPDFKit/compdfkit-pdf-sdk-flutter)
-- [ComPDF SDK for iOS](https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift)
-- [ComPDF SDK for Android](https://github.com/ComPDFKit/compdfkit-pdf-sdk-android)
-- [React Native Package on npm](https://www.npmjs.com/package/@compdfkit_pdf_sdk/react_native)
-
-****
+* [ComPDF SDK for React Native Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
+* [ComPDF SDK for Flutter](https://github.com/ComPDFKit/compdfkit-pdf-sdk-flutter)
+* [ComPDF SDK for iOS](https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift)
+* [ComPDF SDK for Android](https://github.com/ComPDFKit/compdfkit-pdf-sdk-android)
+* [React Native Package on npm](https://www.npmjs.com/package/@compdfkit_pdf_sdk/react_native)
 
 ## Requirements
 
@@ -59,9 +53,9 @@ Before starting the integration, please ensure the following prerequisites are m
 
 ### Get ComPDF License Key
 
-ComPDF offers a [30-day free trial license](https://www.compdf.com/pricing?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) for testing your project. Get one online without contacting sales.
+ComPDF offers a [30-day free trial license](https://www.compdf.com/pricing?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) for testing your project. Get one online without contacting sales.
 
-If you require advanced PDF features beyond the free trial license, please [contact us](https://www.compdf.com/contact-sales?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) to obtain a commercial license.
+If you require advanced PDF features beyond the free trial license, please [contact us](https://www.compdf.com/contact-sales?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) to obtain a commercial license.
 
 ### Download the PDF SDK
 
@@ -73,31 +67,29 @@ Download the ComPDF ReactNative PDF SDK from [Github](https://github.com/ComPDFK
 
 Please install the following required packages:
 
-- A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
-- The [latest stable version of Android Studio](https://developer.android.com/studio)
-- The [Android NDK](https://developer.android.com/ndk/downloads) (version 21 or higher)
-- An [Android Virtual Device](https://developer.android.com/studio/run/managing-avds.html) or a hardware device
+* A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
+* The [latest stable version of Android Studio](https://developer.android.com/studio)
+* The [Android NDK](https://developer.android.com/ndk/downloads) (version 21 or higher)
+* An [Android Virtual Device](https://developer.android.com/studio/run/managing-avds.html) or a hardware device
 
 Operating Environment Requirements:
 
-- Android minSdkVersion of 21 or higher.
-- ComPDF SDK 2.0.1 or higher.
+* Android minSdkVersion of 21 or higher.
+* ComPDF SDK 2.0.1 or higher.
 
 #### iOS
 
 Please install the following required packages:
 
-- A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
-- The [latest stable version of Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
-- The [latest stable version of CocoaPods](https://github.com/CocoaPods/CocoaPods/releases). Follow the [CocoaPods installation guide](https://guides.cocoapods.org/using/getting-started.html#installation) to install it.
+* A [development environment](https://reactnative.dev/docs/environment-setup) for running React Native projects using the React Native CLI (not the Expo CLI)
+* The [latest stable version of Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+* The [latest stable version of CocoaPods](https://github.com/CocoaPods/CocoaPods/releases). Follow the [CocoaPods installation guide](https://guides.cocoapods.org/using/getting-started.html#installation) to install it.
 
 Operating Environment Requirements:
 
-- ComPDF SDK 2.0.1 or higher.
-- React Native dependency to version 3.0.0 or higher.
-- iOS 12.0 or higher.
-
-****
+* ComPDF SDK 2.0.1 or higher.
+* React Native dependency to version 3.0.0 or higher.
+* iOS 12.0 or higher.
 
 ## Build a React Native PDF Viewer
 
@@ -139,7 +131,7 @@ Add the official plugin to your Expo config:
 }
 ```
 
-Use this plugin-driven flow for Expo and EAS Build instead of manually editing `ios/Podfile`. For the full setup, check out [how to use ComPDF React Native SDK with Expo](https://www.compdf.com/guides/pdf-sdk/react-native/how-to-use-compdfkit-react-native-sdk-with-expo?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native).
+Use this plugin-driven flow for Expo and EAS Build instead of manually editing `ios/Podfile`. For the full setup, check out [how to use ComPDF React Native SDK with Expo](https://www.compdf.com/guides/pdf-sdk/react-native/how-to-use-compdfkit-react-native-sdk-with-expo?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit).
 
 ### Installing-the-ComPDF-Dependency
 
@@ -268,9 +260,9 @@ ComPDF SDK currently supports two authentication methods to verify license keys:
 
 *Learn about:*
 
-*[What is the authentication mechanism of ComPDF?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)*
+*[What is the authentication mechanism of ComPDF?](https://www.compdf.com/faq/authentication-mechanism-of-compdfkit-license?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)*
 
-*[What are the differences between Online Authentication and Offline Authentication?](https://www.compdf.com/faq/the-differences-between-online-authentication-and-offline-authentication?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)*
+*[What are the differences between Online Authentication and Offline Authentication?](https://www.compdf.com/faq/the-differences-between-online-authentication-and-offline-authentication?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)*
 
 Accurately obtaining the license key is crucial for the application of the license.
 
@@ -523,38 +515,36 @@ ComPDFKit.openDocument(samplePDF, '', config)
 />
 ```
 
----
 
 ## API
 
 APIs are available on the [API](API.md)
 
----
+
 
 ## Changelog
 
-Keep up with the latest updates, improvements, and bug fixes for ComPDF SDK for React Native: [View React Native Changelog](https://www.compdf.com/pdf-sdk/changelog-react-native?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)
+Keep up with the latest updates, improvements, and bug fixes for ComPDF SDK for React Native: [View React Native Changelog](https://www.compdf.com/pdf-sdk/changelog-react-native?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
 
----
 
-## Free Trial
+## Free Trial and License
 
-[ComPDF SDK for React Native](https://www.compdf.com/?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) offers a **30-day free trial** so you can evaluate core PDF capabilities in your own application.
+[ComPDF SDK for React Native](https://www.compdf.com/?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) offers a **30-day free trial** so you can evaluate core PDF capabilities in your own application.
 
 To get started:
 
-1. Apply for a [free trial](https://www.compdf.com/pricing?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)
+1. Apply for a [free trial](https://www.compdf.com/pricing?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
 2. Review supported trial features and licensing details
 3. Follow the integration and license steps above to activate the SDK in your project
 
-For custom deployments, advanced features, or volume licensing, please [contact our sales team](https://www.compdf.com/contact-sales?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native)
+For custom deployments, advanced features, or volume licensing, please [contact our sales team](https://www.compdf.com/contact-sales?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
 
----
+
 
 ## Support
 
-[ComPDF](https://www.compdf.com/?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) has a professional R&D team that produces comprehensive technical documentation and guides to help developers. Also, you can get an immediate response when reporting your problems to our support team.
+[ComPDF](https://www.compdf.com/?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) has a professional R&D team that produces comprehensive technical documentation and guides to help developers. Also, you can get an immediate response when reporting your problems to our support team.
 
-- For detailed information, please visit our [Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) page.
-- For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native).
-- To get more details and an accurate quote, please contact our [Sales Team](https://www.compdf.com/contact-sales?utm_source=github_readme_sdk_react_native&utm_medium=referral&utm_campaign=github_readme_sdk_react_native) or [send an email](mailto:support@compdf.com).
+* For detailed information, please visit our [Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) page.
+* For technical assistance, please reach out to our [Technical Support](https://www.compdf.com/support?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit).
+* To get more details and an accurate quote, please contact our [Sales Team](https://www.compdf.com/contact-sales?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) or [send an email](mailto:support@compdf.com).
