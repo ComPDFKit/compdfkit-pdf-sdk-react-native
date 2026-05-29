@@ -550,8 +550,7 @@ final class RnDocumentOps {
       CPDFPageIndicatorView indicatorView = pdfView.indicatorView;
       indicatorView.setTotalPage(document.getPageCount());
       indicatorView.setCurrentPageIndex(pdfView.getCPdfReaderView().getPageNum());
-      pdfView.slideBar.setPageCount(document.getPageCount());
-      pdfView.slideBar.requestLayout();
+      pdfView.refreshSlideBarDocumentState();
     }
   }
 }

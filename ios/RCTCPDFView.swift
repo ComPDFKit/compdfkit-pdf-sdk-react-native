@@ -27,6 +27,7 @@ protocol RCTCPDFViewDelegate: AnyObject {
   func onContentEditorHistoryChanged(_ cpdfView: RCTCPDFView, pageIndex: Int)
   func onIOSClickBackPressed(_ cpdfView: RCTCPDFView)
   func onAnnotationAddChanged(_ cpdfView: RCTCPDFView, annotationData: [String: Any])
+  func onPencilDrawingCompleted(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onFormFieldAddChanged(_ cpdfView: RCTCPDFView, formData: [String: Any])
   func onAnnotationSelectedChanged(_ cpdfView: RCTCPDFView, annotationData: [String: Any], isSelected: Bool)
   func onFormFieldSelectedChanged(_ cpdfView: RCTCPDFView, formData: [String: Any], isSelected: Bool)
@@ -72,6 +73,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
   private var navigationController : CNavigationController?
   private var hasRegisteredNotificationObservers = false
   private var hasCleanedUp = false
+  private var hasReportedAttachment = false
   
   init() {
     super.init(frame: CGRect(x: 0, y: 0, width: 500, height: 400))
@@ -90,6 +92,14 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
 
     if newSuperview == nil {
       cleanupLifecycle()
+    }
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+
+    if window != nil {
+      notifyCPDFViewAttachedIfReady()
     }
   }
   
@@ -134,6 +144,23 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     navigationController = nil
     pdfViewController = nil
     delegate = nil
+  }
+
+  private func notifyCPDFViewAttachedIfReady(retryCount: Int = 6) {
+    guard !hasReportedAttachment, !hasCleanedUp, pdfViewController != nil else {
+      return
+    }
+
+    guard let reactTag = reactTag, reactTag.intValue != 0 else {
+      guard retryCount > 0 else { return }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+        self?.notifyCPDFViewAttachedIfReady(retryCount: retryCount - 1)
+      }
+      return
+    }
+
+    hasReportedAttachment = true
+    delegate?.cpdfViewAttached(self)
   }
 
   private func annotationDialogType(for annotationMode: CPDFViewAnnotationMode) -> String? {
@@ -301,7 +328,7 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     
     addSubview(navigationController?.view ?? UIView())
     
-    self.delegate?.cpdfViewAttached(self)
+    notifyCPDFViewAttachedIfReady()
     
     if success {
       document.stopAccessingSecurityScopedResource()
@@ -1266,6 +1293,13 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     self.delegate?.onAnnotationAddChanged(self, annotationData: dict)
   }
   
+  func PDFViewBaseControllerPencilDrawingCompleted(_ baseController: CPDFViewBaseController, pageIndex: Int) {
+    self.delegate?.onPencilDrawingCompleted(self, payload: [
+      "type": "pencil",
+      "pageIndex": pageIndex
+    ])
+  }
+
   func PDFViewBaseControllerAnndotationSelect(_ baseController: CPDFViewBaseController, forAnnotation annotation: CPDFAnnotation, isSelected: Bool) {
     let page = annotation.page
     let pageUtil = RCTCPDFPageUtil(page: page)

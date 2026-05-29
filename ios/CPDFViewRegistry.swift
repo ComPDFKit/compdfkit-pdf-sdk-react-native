@@ -37,6 +37,11 @@ final class CPDFViewRegistry {
     pruneReleasedViews()
   }
 
+  func unregister(view: RCTCPDFView) {
+    views = views.filter { $0.value.view !== view }
+    pruneReleasedViews()
+  }
+
   func view(for tag: Int) -> RCTCPDFView? {
     let view = views[tag]?.view
     if view == nil {

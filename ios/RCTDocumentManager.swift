@@ -15,12 +15,43 @@ import ComPDFKit
 
 @objc(CPDFViewManager)
 class RCTDocumentManager: NSObject, RCTBridgeModule {
+  @objc var bridge: RCTBridge?
+
   static func moduleName() -> String! {
     return "RCTDocumentManager"
   }
 
   func cpdfView(for tag: Int) -> RCTCPDFView? {
-    CPDFViewRegistry.shared.view(for: tag)
+    if let view = CPDFViewRegistry.shared.view(for: tag) {
+      return view
+    }
+
+    guard Thread.isMainThread else {
+      return nil
+    }
+
+    let reactTag = NSNumber(value: tag)
+    guard let nativeView = bridge?.uiManager.view(forReactTag: reactTag),
+          let cpdfView = findCPDFView(in: nativeView) else {
+      return nil
+    }
+
+    CPDFViewRegistry.shared.register(cpdfView, for: tag)
+    return cpdfView
+  }
+
+  private func findCPDFView(in view: UIView) -> RCTCPDFView? {
+    if let cpdfView = view as? RCTCPDFView {
+      return cpdfView
+    }
+
+    for subview in view.subviews {
+      if let cpdfView = findCPDFView(in: subview) {
+        return cpdfView
+      }
+    }
+
+    return nil
   }
 
   func rejectMissingView(tag: Int, reject: RCTPromiseRejectBlock) {

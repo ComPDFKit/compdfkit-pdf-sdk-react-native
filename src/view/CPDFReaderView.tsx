@@ -287,6 +287,11 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
         "annotationsCreated",
         CPDFAnnotationFactory.create(event.nativeEvent.annotationsCreated)
       );
+    } else if ("pencilDrawingCompleted" in event.nativeEvent) {
+      this._triggerEvent(
+        "pencilDrawingCompleted",
+        event.nativeEvent.pencilDrawingCompleted
+      );
     } else if ("annotationsSelected" in event.nativeEvent) {
       this._triggerEvent(
         "annotationsSelected",

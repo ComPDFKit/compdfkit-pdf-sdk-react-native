@@ -169,6 +169,7 @@ export function getDefaultConfig(
         CPDFAnnotationType.STRIKEOUT,
         CPDFAnnotationType.INK,
         CPDFAnnotationType.INK_ERASER,
+        CPDFAnnotationType.PENCIL,
         CPDFAnnotationType.CIRCLE,
         CPDFAnnotationType.SQUARE,
         CPDFAnnotationType.ARROW,

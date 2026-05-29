@@ -185,6 +185,12 @@ export default function EventListenerExampleScreen() {
         setSelectEditArea(null);
       },
     );
+
+    pdfReaderRef.current?.addEventListener(CPDFEvent.PENCIL_DRAWING_COMPLETED, annotation => {
+      Logger.log('Pencil Drawing Completed:');
+      Logger.log(JSON.stringify(annotation, null, 2));
+    });
+
   };
 
   return (

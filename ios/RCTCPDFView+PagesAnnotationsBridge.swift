@@ -101,7 +101,7 @@ extension RCTCPDFView {
   }
 
   func setAnnotationMode(mode: String) {
-    pdfViewController?.annotationBar?.annotationToolBarSwitch(annotationMode(from: mode))
+    pdfViewController?.annotationBar?.annotationToolBarSwitch(annotationMode(from: mode), notifyPencilDrawingCompleted: true)
   }
 
   func getAnnotationMode(completionHandler: @escaping (String) -> Void) {

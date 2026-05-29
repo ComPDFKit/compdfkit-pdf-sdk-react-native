@@ -37,9 +37,12 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
   }
 
   func cpdfViewDetached(_ cpdfView: RCTCPDFView) {
-    guard let reactTag = cpdfView.reactTag else { return }
-    viewRegistry.unregister(tag: reactTag.intValue)
-    print("ComPDFKitRN-iOS RCTCPDFReaderView detached: tag=\(reactTag.intValue), cachedViews=\(viewRegistry.count)")
+    if let reactTag = cpdfView.reactTag {
+      viewRegistry.unregister(tag: reactTag.intValue)
+    }
+
+    viewRegistry.unregister(view: cpdfView)
+    print("ComPDFKitRN-iOS RCTCPDFReaderView detached: cachedViews=\(viewRegistry.count)")
   }
 
   func saveDocumentChange(_ cpdfView: RCTCPDFView) {
@@ -115,6 +118,15 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     if let onChange = cpdfView.onChange {
       let eventBody: [String: Any] = [
         "annotationsCreated": annotationData
+      ]
+      onChange(eventBody)
+    }
+  }
+
+  func onPencilDrawingCompleted(_ cpdfView: RCTCPDFView, payload: [String : Any]) {
+    if let onChange = cpdfView.onChange {
+      let eventBody: [String: Any] = [
+        "pencilDrawingCompleted": payload
       ]
       onChange(eventBody)
     }
