@@ -70,6 +70,18 @@ export const annotationsCategory: CategoryInfo = {
       },
     },
     {
+      id: 'annotation-reply',
+      name: 'Annotation Replies',
+      description: 'Manage replies and review states',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.annotationReply,
+      visual: {
+        badge: 'AR',
+        accentColor: '#00838F',
+        backgroundColor: '#E0F7FA',
+      },
+    },
+    {
       id: 'edit-annotation',
       name: 'Edit Annotation',
       description: 'Modify annotation properties',

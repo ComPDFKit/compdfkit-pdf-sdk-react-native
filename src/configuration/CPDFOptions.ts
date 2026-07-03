@@ -633,6 +633,12 @@ export const CPDFEvent = {
     PENCIL_DRAWING_COMPLETED: 'pencilDrawingCompleted',
 
     /**
+     * Fired when a pencil drawing is discarded.
+     * Data type: { type: 'pencil'; pageIndex: number }.
+     */
+    PENCIL_DRAWING_DISCARDED: 'pencilDrawingDiscarded',
+
+    /**
      * Fired when an annotation is selected.
      * Data type: CPDFAnnotation and its subclasses.
      */
@@ -695,6 +701,15 @@ export interface CPDFEventDataMap {
    * Returns the drawing type and zero-based page index.
    */
   [CPDFEvent.PENCIL_DRAWING_COMPLETED]: {
+    type: 'pencil';
+    pageIndex: number;
+  };
+
+  /**
+   * Fired when a pencil drawing is discarded.
+   * Returns the drawing type and zero-based page index.
+   */
+  [CPDFEvent.PENCIL_DRAWING_DISCARDED]: {
     type: 'pencil';
     pageIndex: number;
   };

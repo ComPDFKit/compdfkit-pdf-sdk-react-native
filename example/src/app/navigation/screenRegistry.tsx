@@ -13,6 +13,7 @@ import type { NativeStackNavigationOptions } from '@react-navigation/native-stac
 import AddAnnotationExampleScreen from '../../features/annotations/examples/AddAnnotationExampleScreen';
 import AnnotationAppearanceExampleScreen from '../../features/annotations/examples/AnnotationAppearanceExampleScreen';
 import AnnotationModeExampleScreen from '../../features/annotations/examples/AnnotationModeExampleScreen';
+import AnnotationReplyExampleScreen from '../../features/annotations/examples/AnnotationReplyExampleScreen';
 import AnnotationSelectionObservationExampleScreen from '../../features/annotations/examples/AnnotationSelectionObservationExampleScreen';
 import DeleteAnnotationExampleScreen from '../../features/annotations/examples/DeleteAnnotationExampleScreen';
 import EditAnnotationExampleScreen from '../../features/annotations/examples/EditAnnotationExampleScreen';
@@ -25,6 +26,8 @@ import EditorHistoryExampleScreen from '../../features/content_editor/examples/E
 import EditorSelectionObservationExampleScreen from '../../features/content_editor/examples/EditorSelectionObservationExampleScreen';
 import ImageEditingExampleScreen from '../../features/content_editor/examples/ImageEditingExampleScreen';
 import TextEditingExampleScreen from '../../features/content_editor/examples/TextEditingExampleScreen';
+import ImageExtractionExampleScreen from '../../features/content_extraction/examples/ImageExtractionExampleScreen';
+import PageTextExtractionExampleScreen from '../../features/content_extraction/examples/PageTextExtractionExampleScreen';
 import ApiFormCreationModeExampleScreen from '../../features/forms/examples/ApiFormCreationModeExampleScreen';
 import CreateFormFieldsExampleScreen from '../../features/forms/examples/CreateFormFieldsExampleScreen';
 import CustomFormCreationExampleScreen from '../../features/forms/examples/CustomFormCreationExampleScreen';
@@ -32,6 +35,7 @@ import EditFormDefaultStyleExampleScreen from '../../features/forms/examples/Edi
 import FieldSelectionObservationExampleScreen from '../../features/forms/examples/FieldSelectionObservationExampleScreen';
 import FillFormExampleScreen from '../../features/forms/examples/FillFormExampleScreen';
 import FormDataImportExportExampleScreen from '../../features/forms/examples/FormDataImportExportExampleScreen';
+import InterceptWidgetActionExampleScreen from '../../features/forms/examples/InterceptWidgetActionExampleScreen';
 import ListFormFieldsExampleScreen from '../../features/forms/examples/ListFormFieldsExampleScreen';
 import { EXAMPLE_ROUTES } from '../../examples/shared/exampleRoutes';
 import DeletePageExampleScreen from '../../features/pages/examples/DeletePageExampleScreen';
@@ -45,7 +49,7 @@ import OutlineNavigationExampleScreen from '../../features/search_navigation/exa
 import PageNavigationExampleScreen from '../../features/search_navigation/examples/PageNavigationExampleScreen';
 import ShowHideSearchExampleScreen from '../../features/search_navigation/examples/ShowHideSearchExampleScreen';
 import TextSearchApiExampleScreen from '../../features/search_navigation/examples/TextSearchApiExampleScreen';
-import AddWatermarkExampleScreen from '../../features/security/examples/AddWatermarkExampleScreen';
+import WatermarkOperationsExampleScreen from '../../features/security/examples/WatermarkOperationsExampleScreen';
 import DigitalSignatureExampleScreen from '../../features/security/examples/DigitalSignatureExampleScreen';
 import DocumentPermissionsExampleScreen from '../../features/security/examples/DocumentPermissionsExampleScreen';
 import RemovePasswordExampleScreen from '../../features/security/examples/RemovePasswordExampleScreen';
@@ -171,6 +175,11 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
+    name: EXAMPLE_ROUTES.annotationReply,
+    component: AnnotationReplyExampleScreen,
+    options: { headerShown: false },
+  },
+  {
     name: EXAMPLE_ROUTES.annotationEdit,
     component: EditAnnotationExampleScreen,
     options: { headerShown: false },
@@ -206,8 +215,8 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
-    name: EXAMPLE_ROUTES.securityAddWatermark,
-    component: AddWatermarkExampleScreen,
+    name: EXAMPLE_ROUTES.securityWatermarkOperations,
+    component: WatermarkOperationsExampleScreen,
     options: { headerShown: false },
   },
   {
@@ -248,6 +257,16 @@ export const exampleScreens: ScreenDefinition[] = [
   {
     name: EXAMPLE_ROUTES.pageThumbnail,
     component: PageThumbnailExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.contentExtractionPageText,
+    component: PageTextExtractionExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.contentExtractionImages,
+    component: ImageExtractionExampleScreen,
     options: { headerShown: false },
   },
   {
@@ -328,6 +347,11 @@ export const exampleScreens: ScreenDefinition[] = [
   {
     name: EXAMPLE_ROUTES.formCustomCreation,
     component: CustomFormCreationExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.formInterceptWidgetAction,
+    component: InterceptWidgetActionExampleScreen,
     options: { headerShown: false },
   },
   {

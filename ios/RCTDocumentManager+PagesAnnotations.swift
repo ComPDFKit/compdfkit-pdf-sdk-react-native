@@ -138,6 +138,168 @@ extension RCTDocumentManager {
       }
     }
   }
+
+  @objc(
+    addAnnotationReply: withPageIndex: withAnnotId: withContent: withTitle: withResolver: withRejecter:
+  )
+  func addAnnotationReply(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    content: String,
+    title: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.addAnnotationReply(
+        pageIndex: pageIndex,
+        annotId: annotId,
+        content: content,
+        title: title
+      ) { reply in
+        resolve(reply)
+      }
+    }
+  }
+
+  @objc(getAnnotationReplies: withPageIndex: withAnnotId: withResolver: withRejecter:)
+  func getAnnotationReplies(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.getAnnotationReplies(pageIndex: pageIndex, annotId: annotId) { replies in
+        resolve(replies)
+      }
+    }
+  }
+
+  @objc(
+    updateAnnotationReply: withPageIndex: withReplyId: withContent: withTitle: withIdentity: withResolver: withRejecter:
+  )
+  func updateAnnotationReply(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    replyId: String,
+    content: String,
+    title: String?,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.updateAnnotationReply(
+        pageIndex: pageIndex,
+        replyId: replyId,
+        content: content,
+        title: title,
+        identity: identity
+      ) { success in
+        resolve(success)
+      }
+    }
+  }
+
+  @objc(removeAnnotationReply: withPageIndex: withReplyId: withIdentity: withResolver: withRejecter:)
+  func removeAnnotationReply(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    replyId: String,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.removeAnnotationReply(pageIndex: pageIndex, replyId: replyId, identity: identity) { success in
+        resolve(success)
+      }
+    }
+  }
+
+  @objc(removeAllAnnotationReplies: withPageIndex: withAnnotId: withResolver: withRejecter:)
+  func removeAllAnnotationReplies(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.removeAllAnnotationReplies(pageIndex: pageIndex, annotId: annotId) { success in
+        resolve(success)
+      }
+    }
+  }
+
+  @objc(setAnnotationMarkState: withPageIndex: withAnnotId: withState: withIdentity: withResolver: withRejecter:)
+  func setAnnotationMarkState(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    state: String,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.setAnnotationMarkState(pageIndex: pageIndex, annotId: annotId, state: state, identity: identity) { success in
+        resolve(success)
+      }
+    }
+  }
+
+  @objc(getAnnotationMarkState: withPageIndex: withAnnotId: withIdentity: withResolver: withRejecter:)
+  func getAnnotationMarkState(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.getAnnotationMarkState(pageIndex: pageIndex, annotId: annotId, identity: identity) { state in
+        resolve(state)
+      }
+    }
+  }
+
+  @objc(setAnnotationReviewState: withPageIndex: withAnnotId: withState: withIdentity: withResolver: withRejecter:)
+  func setAnnotationReviewState(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    state: String,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.setAnnotationReviewState(pageIndex: pageIndex, annotId: annotId, state: state, identity: identity) { success in
+        resolve(success)
+      }
+    }
+  }
+
+  @objc(getAnnotationReviewState: withPageIndex: withAnnotId: withIdentity: withResolver: withRejecter:)
+  func getAnnotationReviewState(
+    forCPDFViewTag tag : Int,
+    pageIndex: Int,
+    annotId: String,
+    identity: [String: Any]?,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.getAnnotationReviewState(pageIndex: pageIndex, annotId: annotId, identity: identity) { state in
+        resolve(state)
+      }
+    }
+  }
   
   @objc(removeWidget: withPageIndex: withWidgetId: withResolver: withRejecter:)
   func removeWidget(
@@ -481,6 +643,49 @@ extension RCTDocumentManager {
     withCPDFViewSync(tag: tag, reject: reject) { view in
       view.getSearchText(pageIndex: pageIndex, location: location, length: length) { text in
         resolve(text)
+      }
+    }
+  }
+
+  @objc(getPageText: withPageIndex: withResolver: withRejecter:)
+  func getPageText(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFViewSync(tag: tag, reject: reject) { view in
+      view.getPageText(pageIndex: pageIndex) { text in
+        resolve(text)
+      }
+    }
+  }
+
+  @objc(getPageTextInRect: withPageIndex: withRect: withResolver: withRejecter:)
+  func getPageTextInRect(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    rect: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFViewSync(tag: tag, reject: reject) { view in
+      view.getPageTextInRect(pageIndex: pageIndex, rect: rect) { text in
+        resolve(text)
+      }
+    }
+  }
+
+  @objc(getPageTextLines: withPageIndex: withResolver: withRejecter:)
+  func getPageTextLines(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFViewSync(tag: tag, reject: reject) { view in
+      view.getPageTextLines(pageIndex: pageIndex) { lines in
+        resolve(lines)
       }
     }
   }

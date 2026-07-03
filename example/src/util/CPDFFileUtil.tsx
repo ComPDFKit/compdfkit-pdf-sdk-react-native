@@ -76,11 +76,7 @@ export class CPDFFileUtil {
          */
         await RNFS.copyFileAssets(assetPath, destPath);
       } else if (Platform.OS === "ios") {
-        /**
-         * iOS:
-         * assets are located in the main bundle
-         */
-        const srcPath = `${RNFS.MainBundlePath}/${assetPath}`;
+        const srcPath = await CPDFFileUtil.resolveIOSAssetPath(assetPath);
         await RNFS.copyFile(srcPath, destPath);
       } else {
         throw new Error(`Unsupported platform: ${Platform.OS}`);
@@ -92,6 +88,24 @@ export class CPDFFileUtil {
       Logger.error("Error copying asset file:", error);
       throw error;
     }
+  }
+
+  private static async resolveIOSAssetPath(assetPath: string): Promise<string> {
+    const fileName = assetPath.split("/").pop() || assetPath;
+    const candidates = [
+      `${RNFS.MainBundlePath}/${assetPath}`,
+      `${RNFS.MainBundlePath}/${fileName}`,
+      `${RNFS.MainBundlePath}/assets/${assetPath}`,
+      `${RNFS.MainBundlePath}/assets/assets/${assetPath}`,
+    ];
+
+    for (const path of candidates) {
+      if (await RNFS.exists(path)) {
+        return path;
+      }
+    }
+
+    throw new Error(`iOS asset not found: ${assetPath}`);
   }
 
   static copyAssetsFolderToStorage = async (assetsFolder: string) => {

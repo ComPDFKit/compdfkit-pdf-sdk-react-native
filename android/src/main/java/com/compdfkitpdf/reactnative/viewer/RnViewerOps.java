@@ -38,10 +38,17 @@ final class RnViewerOps {
     this.reactContext = reactContext;
   }
 
+  private boolean isAvailable(RnPdfViewContext context) {
+    return context != null && context.readerView != null && context.document != null && context.viewCtrl != null;
+  }
+
   /**
    * Sets the display page index.
    */
   void setDisplayPageIndex(RnPdfViewContext context, int pageIndex, ReadableArray array) {
+    if (!isAvailable(context)) {
+      return;
+    }
     List<RectF> androidRectList = new ArrayList<>();
     if (array != null && array.size() > 0) {
       for (int i = 0; i < array.size(); i++) {
@@ -67,6 +74,9 @@ final class RnViewerOps {
    * Returns the current page index.
    */
   int getCurrentPageIndex(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return 0;
+    }
     return context.readerView.getPageNum();
   }
 
@@ -74,6 +84,9 @@ final class RnViewerOps {
    * Returns whether the current state has change.
    */
   boolean hasChange(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.document.hasChanges();
   }
 
@@ -81,6 +94,9 @@ final class RnViewerOps {
    * Sets the scale.
    */
   void setScale(RnPdfViewContext context, float scale) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setScale(scale);
   }
 
@@ -88,6 +104,9 @@ final class RnViewerOps {
    * Returns the scale.
    */
   float getScale(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return 1.0f;
+    }
     return context.readerView.getScale();
   }
 
@@ -95,6 +114,9 @@ final class RnViewerOps {
    * Sets the can scale.
    */
   void setCanScale(RnPdfViewContext context, boolean canScale) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setCanScale(canScale);
   }
 
@@ -102,6 +124,9 @@ final class RnViewerOps {
    * Sets the widget background color.
    */
   void setWidgetBackgroundColor(RnPdfViewContext context, String color) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.viewCtrl.setBackgroundColor(Color.parseColor(color));
   }
 
@@ -109,6 +134,9 @@ final class RnViewerOps {
    * Sets the read background color.
    */
   void setReadBackgroundColor(RnPdfViewContext context, String color, String displayMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setReadBackgroundColor(Color.parseColor(color));
     CPDFViewCtrl viewCtrl = context.viewCtrl;
     switch (displayMode) {
@@ -137,6 +165,9 @@ final class RnViewerOps {
    * Returns the read background color.
    */
   String getReadBackgroundColor(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return "#000000";
+    }
     return "#" + Integer.toHexString(context.readerView.getReadBackgroundColor()).toUpperCase();
   }
 
@@ -144,6 +175,9 @@ final class RnViewerOps {
    * Sets the form field highlight.
    */
   void setFormFieldHighlight(RnPdfViewContext context, boolean isFormFieldHighlight) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setFormFieldHighlight(isFormFieldHighlight);
   }
 
@@ -151,6 +185,9 @@ final class RnViewerOps {
    * Returns whether form field highlight.
    */
   boolean isFormFieldHighlight(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isFormFieldHighlight();
   }
 
@@ -158,6 +195,9 @@ final class RnViewerOps {
    * Sets the link highlight.
    */
   void setLinkHighlight(RnPdfViewContext context, boolean isLinkHighlight) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setLinkHighlight(isLinkHighlight);
   }
 
@@ -165,6 +205,9 @@ final class RnViewerOps {
    * Returns whether link highlight.
    */
   boolean isLinkHighlight(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isLinkHighlight();
   }
 
@@ -172,6 +215,9 @@ final class RnViewerOps {
    * Sets the vertical mode.
    */
   void setVerticalMode(RnPdfViewContext context, boolean isVerticalMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setVerticalMode(isVerticalMode);
     context.viewCtrl.updateScaleForLayout();
   }
@@ -180,6 +226,9 @@ final class RnViewerOps {
    * Returns whether vertical mode.
    */
   boolean isVerticalMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isVerticalMode();
   }
 
@@ -187,6 +236,9 @@ final class RnViewerOps {
    * Sets the page spacing.
    */
   void setPageSpacing(RnPdfViewContext context, int spacing) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setPageSpacing(spacing);
     context.readerView.reloadPages();
   }
@@ -195,6 +247,9 @@ final class RnViewerOps {
    * Sets the continue mode.
    */
   void setContinueMode(RnPdfViewContext context, boolean isContinueMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setContinueMode(isContinueMode);
     context.viewCtrl.updateScaleForLayout();
   }
@@ -203,6 +258,9 @@ final class RnViewerOps {
    * Returns whether continue mode.
    */
   boolean isContinueMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isContinueMode();
   }
 
@@ -210,6 +268,9 @@ final class RnViewerOps {
    * Sets the double page mode.
    */
   void setDoublePageMode(RnPdfViewContext context, boolean isDoublePageMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setDoublePageMode(isDoublePageMode);
     context.readerView.setCoverPageMode(false);
     context.viewCtrl.updateScaleForLayout();
@@ -219,6 +280,9 @@ final class RnViewerOps {
    * Returns whether double page mode.
    */
   boolean isDoublePageMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isDoublePageMode();
   }
 
@@ -226,6 +290,9 @@ final class RnViewerOps {
    * Sets the cover page mode.
    */
   void setCoverPageMode(RnPdfViewContext context, boolean isCoverPageMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setDoublePageMode(isCoverPageMode);
     context.readerView.setCoverPageMode(isCoverPageMode);
     context.viewCtrl.updateScaleForLayout();
@@ -235,6 +302,9 @@ final class RnViewerOps {
    * Returns whether cover page mode.
    */
   boolean isCoverPageMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isCoverPageMode();
   }
 
@@ -242,6 +312,9 @@ final class RnViewerOps {
    * Sets the crop mode.
    */
   void setCropMode(RnPdfViewContext context, boolean isCropMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setCropMode(isCropMode);
   }
 
@@ -249,6 +322,9 @@ final class RnViewerOps {
    * Returns whether crop mode.
    */
   boolean isCropMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isCropMode();
   }
 
@@ -256,6 +332,9 @@ final class RnViewerOps {
    * Sets the page same width.
    */
   void setPageSameWidth(RnPdfViewContext context, boolean isPageSameWidth) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setPageSameWidth(isPageSameWidth);
     context.readerView.reloadPages();
   }
@@ -264,6 +343,9 @@ final class RnViewerOps {
    * Returns whether page in screen.
    */
   boolean isPageInScreen(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isPageInScreen(pageIndex);
   }
 
@@ -271,6 +353,9 @@ final class RnViewerOps {
    * Sets the fixed scroll.
    */
   void setFixedScroll(RnPdfViewContext context, boolean isFixedScroll) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setFixedScroll(isFixedScroll);
   }
 
@@ -278,6 +363,9 @@ final class RnViewerOps {
    * Sets the preview mode.
    */
   void setPreviewMode(RnPdfViewContext context, String previewMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.setPreviewMode(CPreviewMode.fromAlias(previewMode));
   }
 
@@ -285,6 +373,9 @@ final class RnViewerOps {
    * Returns the preview mode.
    */
   CPreviewMode getPreviewMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return CPreviewMode.Viewer;
+    }
     return context.view.documentFragment.pdfToolBar.getMode();
   }
 
@@ -292,6 +383,9 @@ final class RnViewerOps {
    * Handles show thumbnail view.
    */
   void showThumbnailView(RnPdfViewContext context, boolean editMode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showPageEdit(false, editMode);
   }
 
@@ -299,6 +393,9 @@ final class RnViewerOps {
    * Handles show bota view.
    */
   void showBotaView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showBOTA();
   }
 
@@ -306,6 +403,9 @@ final class RnViewerOps {
    * Handles show add watermark view.
    */
   void showAddWatermarkView(RnPdfViewContext context, @Nullable CPDFWatermarkConfig config) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CPDFWatermarkConfig defaultConfig =
       context.viewCtrl.getCPDFConfiguration().globalConfig.watermark;
     if (config == null) {
@@ -318,6 +418,9 @@ final class RnViewerOps {
    * Handles show security view.
    */
   void showSecurityView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showSecurityDialog();
   }
 
@@ -325,6 +428,9 @@ final class RnViewerOps {
    * Handles show display setting view.
    */
   void showDisplaySettingView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showDisplaySettings(context.viewCtrl);
   }
 
@@ -332,6 +438,9 @@ final class RnViewerOps {
    * Handles show document info view.
    */
   void showDocumentInfoView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showDocumentInfo(context.view.documentFragment.pdfView);
   }
 
@@ -339,6 +448,9 @@ final class RnViewerOps {
    * Handles enter snip mode.
    */
   void enterSnipMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.enterSnipMode();
   }
 
@@ -346,6 +458,9 @@ final class RnViewerOps {
    * Handles exit snip mode.
    */
   void exitSnipMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.exitSnipMode();
   }
 
@@ -353,6 +468,9 @@ final class RnViewerOps {
    * Clears display rect.
    */
   void clearDisplayRect(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setDisplayPageRectangles(null);
     context.readerView.setShowDisplayPageRect(false);
   }
@@ -361,6 +479,9 @@ final class RnViewerOps {
    * Dismisses context menu.
    */
   void dismissContextMenu(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CPDFReaderView readerView = context.readerView;
     if (readerView.getContextMenuShowListener() != null) {
       readerView.getContextMenuShowListener().dismissContextMenu();
@@ -371,6 +492,9 @@ final class RnViewerOps {
    * Handles show search text view.
    */
   void showSearchTextView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.showTextSearchView();
   }
 
@@ -378,6 +502,9 @@ final class RnViewerOps {
    * Handles hide search text view.
    */
   void hideSearchTextView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.hideTextSearchView();
   }
 
@@ -385,6 +512,9 @@ final class RnViewerOps {
    * Saves current ink.
    */
   void saveCurrentInk(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.getInkDrawHelper().onSave();
   }
 
@@ -392,6 +522,9 @@ final class RnViewerOps {
    * Converts screen rect f.
    */
   private RectF convertScreenRectF(CPDFReaderView readerView, int pageIndex, RectF pageRectF) {
+    if (readerView == null || readerView.getPDFDocument() == null) {
+      return pageRectF;
+    }
     CPDFPage page = readerView.getPDFDocument().pageAtIndex(pageIndex);
     RectF screenPageRect = readerView.getPageSize(pageIndex);
     return page.convertRectFromPage(readerView.isCropMode(), screenPageRect.width(),

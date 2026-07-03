@@ -205,6 +205,41 @@ RCT_EXTERN_METHOD(getPageCount:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(createWatermark:(NSInteger) tag
+                  withInfo:(NSDictionary) info
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getWatermarkCount:(NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getWatermark:(NSInteger) tag
+                  withIndex:(NSInteger) index
+                  withOptions:(NSDictionary) options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getWatermarks:(NSInteger) tag
+                  withOptions:(NSDictionary) options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateWatermark:(NSInteger) tag
+                  withIndex:(NSInteger) index
+                  withInfo:(NSDictionary) info
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeWatermark:(NSInteger) tag
+                  withIndex:(NSInteger) index
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeAllWatermarks:(NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(checkOwnerUnlocked:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -269,6 +304,12 @@ RCT_EXTERN_METHOD(splitDocumentPages:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(extractImages:(NSInteger)tag
+                  withDirectoryPath:(NSString *) directoryPath
+                  withPages:(NSArray *) pages
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(insertBlankPage:(NSInteger)tag
                   withPageIndex:(NSInteger) pageIndex
                   withPageWidth:(nonnull NSNumber *) pageWidth
@@ -287,6 +328,12 @@ RCT_EXTERN_METHOD(insertImagePage: (NSInteger)tag
 
 RCT_EXTERN_METHOD(removePages: (NSInteger)tag
                   withPageIndexes:(NSArray *) pageIndexes
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(copyPage: (NSInteger)tag
+                  withPageIndex:(NSInteger) pageIndex
+                  withInsertIndex:(NSInteger) insertIndex
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -362,6 +409,72 @@ RCT_EXTERN_METHOD(reloadPages:(NSInteger)tag
 RCT_EXTERN_METHOD(removeAnnotation:(NSInteger)tag
                   withPageIndex:(NSInteger)pageIndex
                   withAnnotId:(NSString *)uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addAnnotationReply:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withContent:(NSString *)content
+                  withTitle:(NSString *)title
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getAnnotationReplies:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateAnnotationReply:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withReplyId:(NSString *)uuid
+                  withContent:(NSString *)content
+                  withTitle:(NSString *)title
+                  withIdentity:(NSDictionary *)identity
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeAnnotationReply:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withReplyId:(NSString *)uuid
+                  withIdentity:(NSDictionary *)identity
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(removeAllAnnotationReplies:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setAnnotationMarkState:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withState:(NSString *)state
+                  withIdentity:(NSDictionary *)identity
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getAnnotationMarkState:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withIdentity:(NSDictionary *)identity
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setAnnotationReviewState:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withState:(NSString *)state
+                  withIdentity:(NSDictionary *)identity
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getAnnotationReviewState:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withAnnotId:(NSString *)uuid
+                  withIdentity:(NSDictionary *)identity
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -481,6 +594,22 @@ RCT_EXTERN_METHOD(getSearchText: (NSInteger)tag
                    withLength: (NSInteger) length
                    withResolver:(RCTPromiseResolveBlock)resolve
                    withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPageText: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPageTextInRect: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withRect: (NSDictionary *) rect
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPageTextLines: (NSInteger)tag
+                  withPageIndex: (NSInteger) pageIndex
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getPageSize : (NSInteger)tag
                   withPageIndex: (NSInteger) pageIndex

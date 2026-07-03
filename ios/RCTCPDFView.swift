@@ -28,6 +28,7 @@ protocol RCTCPDFViewDelegate: AnyObject {
   func onIOSClickBackPressed(_ cpdfView: RCTCPDFView)
   func onAnnotationAddChanged(_ cpdfView: RCTCPDFView, annotationData: [String: Any])
   func onPencilDrawingCompleted(_ cpdfView: RCTCPDFView, payload: [String: Any])
+  func onPencilDrawingDiscarded(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onFormFieldAddChanged(_ cpdfView: RCTCPDFView, formData: [String: Any])
   func onAnnotationSelectedChanged(_ cpdfView: RCTCPDFView, annotationData: [String: Any], isSelected: Bool)
   func onFormFieldSelectedChanged(_ cpdfView: RCTCPDFView, formData: [String: Any], isSelected: Bool)
@@ -43,6 +44,7 @@ protocol RCTCPDFViewDelegate: AnyObject {
   func onContentEditorStyleDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onWatermarkDialogDismissed(_ cpdfView: RCTCPDFView, payload: [String: Any])
   func onInterceptAnnotationDoAction(_ cpdfView: RCTCPDFView, annotation: [String: Any])
+  func onInterceptWidgetDoAction(_ cpdfView: RCTCPDFView, widget: [String: Any])
 }
 
 extension Bundle {
@@ -1150,6 +1152,99 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
       completionHandler(false)
     }
   }
+
+  func extractImages(
+    directoryPath: String,
+    pages: [Int],
+    completionHandler: @escaping ([String: Any]) -> Void,
+    failureHandler: @escaping (String, String) -> Void
+  ) {
+    guard !directoryPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+      failureHandler("EXTRACT_IMAGES_FAIL", "directory_path is empty")
+      return
+    }
+
+    guard let document = self.pdfViewController?.pdfListView?.document else {
+      failureHandler("EXTRACT_IMAGES_FAIL", "Document unavailable")
+      return
+    }
+
+    guard let indexSet = self.extractImageIndexSet(pages: pages, pageCount: Int(document.pageCount)) else {
+      let invalidPage = pages.first { $0 < 0 || $0 >= Int(document.pageCount) } ?? -1
+      failureHandler("EXTRACT_IMAGES_FAIL", "Invalid page index: \(invalidPage)")
+      return
+    }
+
+    DispatchQueue.global(qos: .userInitiated).async {
+      do {
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: directoryPath) {
+          var isDirectory: ObjCBool = false
+          fileManager.fileExists(atPath: directoryPath, isDirectory: &isDirectory)
+          if !isDirectory.boolValue {
+            DispatchQueue.main.async {
+              failureHandler("EXTRACT_IMAGES_FAIL", "directory_path is not a directory: \(directoryPath)")
+            }
+            return
+          }
+        } else {
+          try fileManager.createDirectory(
+            atPath: directoryPath,
+            withIntermediateDirectories: true,
+            attributes: nil
+          )
+        }
+
+        _ = document.extractImage(fromPages: indexSet, toPath: directoryPath)
+        let imagePaths = self.filePaths(in: directoryPath)
+        let result: [String: Any] = [
+          "success": true,
+          "count": imagePaths.count,
+          "directory_path": directoryPath,
+          "image_paths": imagePaths,
+        ]
+
+        DispatchQueue.main.async {
+          completionHandler(result)
+        }
+      } catch {
+        DispatchQueue.main.async {
+          failureHandler("EXTRACT_IMAGES_FAIL", error.localizedDescription)
+        }
+      }
+    }
+  }
+
+  private func extractImageIndexSet(pages: [Int], pageCount: Int) -> IndexSet? {
+    if pages.isEmpty {
+      return IndexSet(integersIn: 0..<pageCount)
+    }
+
+    var indexSet = IndexSet()
+    for page in pages {
+      guard page >= 0 && page < pageCount else {
+        return nil
+      }
+      indexSet.insert(page)
+    }
+    return indexSet
+  }
+
+  private func filePaths(in directoryPath: String) -> [String] {
+    guard let fileNames = try? FileManager.default.contentsOfDirectory(atPath: directoryPath) else {
+      return []
+    }
+
+    return fileNames.compactMap { fileName in
+      let path = (directoryPath as NSString).appendingPathComponent(fileName)
+      var isDirectory: ObjCBool = false
+      if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+         !isDirectory.boolValue {
+        return path
+      }
+      return nil
+    }.sorted()
+  }
   
   func insertBlankPage(pageIndex: Int, pageWidth: Float, pageHeight: Float, completionHandler: @escaping (Bool) -> Void) {
     if let pdfListView = self.pdfViewController?.pdfListView {
@@ -1199,6 +1294,39 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         indexSet.insert(page)
       }
       let success = pdfListView.document.removePage(at: indexSet)
+      completionHandler(success)
+    } else {
+      completionHandler(false)
+    }
+  }
+
+  func copyPage(pageIndex: Int, insertIndex: Int, completionHandler: @escaping (Bool) -> Void) {
+    if let pdfListView = self.pdfViewController?.pdfListView {
+      let pageCount = Int(pdfListView.document.pageCount)
+      guard pageIndex >= 0 && pageIndex < pageCount else {
+        completionHandler(false)
+        return
+      }
+
+      let normalizedInsertIndex = insertIndex == -1 ? pageCount : insertIndex
+      guard normalizedInsertIndex >= 0 && normalizedInsertIndex <= pageCount else {
+        completionHandler(false)
+        return
+      }
+
+      let tempDocument = CPDFDocument()
+      let sourceIndexSet = IndexSet(integer: pageIndex)
+      let importedToTemp = tempDocument?.importPages(sourceIndexSet, from: pdfListView.document, at: 0) ?? false
+      guard importedToTemp, let copiedDocument = tempDocument else {
+        completionHandler(false)
+        return
+      }
+
+      let copiedIndexSet = IndexSet(integer: 0)
+      let success = pdfListView.document.importPages(copiedIndexSet, from: copiedDocument, at: UInt(normalizedInsertIndex))
+      if success {
+        pdfListView.layoutDocumentView()
+      }
       completionHandler(success)
     } else {
       completionHandler(false)
@@ -1300,6 +1428,13 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
     ])
   }
 
+  func PDFViewBaseControllerPencilDrawingDiscarded(_ baseController: CPDFViewBaseController, pageIndex: Int) {
+    self.delegate?.onPencilDrawingDiscarded(self, payload: [
+      "type": "pencil",
+      "pageIndex": pageIndex
+    ])
+  }
+
   func PDFViewBaseControllerAnndotationSelect(_ baseController: CPDFViewBaseController, forAnnotation annotation: CPDFAnnotation, isSelected: Bool) {
     let page = annotation.page
     let pageUtil = RCTCPDFPageUtil(page: page)
@@ -1356,6 +1491,12 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
         let dict = pageUtil.getAnnotation(FormAnnotation: linkAnnotation)
         self.delegate?.onAutoShowAnnotationChanged(self, annotationData: ["type": "link", "annotation": dict])
       }
+    } else if annotationMode == .note, let noteAnnotation = annotation as? CPDFTextAnnotation {
+      let page = noteAnnotation.page
+      let pageUtil = RCTCPDFPageUtil(page: page)
+      pageUtil.pageIndex = Int(page?.pageIndexInteger ?? 0)
+      let dict = pageUtil.getAnnotation(FormAnnotation: noteAnnotation)
+      self.delegate?.onAutoShowAnnotationChanged(self, annotationData: ["type": "note", "annotation": dict])
     }
   }
   
@@ -1447,6 +1588,17 @@ class RCTCPDFView: UIView, CPDFViewBaseControllerDelete {
       pageUtil.pageIndex = Int(page?.pageIndexInteger ?? 0)
       let dict = pageUtil.getAnnotation(FormAnnotation: annotation!)
       self.delegate?.onInterceptAnnotationDoAction(self, annotation: dict)
+  }
+  
+  func PDFViewBaseControllerInterceptWidgetDoAction(_ baseController: CPDFViewBaseController, forAnnotation annotation: CPDFWidgetAnnotation?) {
+      if annotation == nil {
+          return
+      }
+      let page = annotation?.page
+      let pageUtil = RCTCPDFPageUtil(page: page)
+      pageUtil.pageIndex = Int(page?.pageIndexInteger ?? 0)
+      let dict = pageUtil.getForm(FormAnnotation: annotation!)
+      self.delegate?.onInterceptWidgetDoAction(self, widget: dict)
   }
   
   // MARK: - Notification

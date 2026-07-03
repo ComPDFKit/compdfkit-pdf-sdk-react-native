@@ -191,6 +191,11 @@ export default function EventListenerExampleScreen() {
       Logger.log(JSON.stringify(annotation, null, 2));
     });
 
+    pdfReaderRef.current?.addEventListener(CPDFEvent.PENCIL_DRAWING_DISCARDED, annotation => {
+      Logger.log('Pencil Drawing Discarded:');
+      Logger.log(JSON.stringify(annotation, null, 2));
+    });
+
   };
 
   return (

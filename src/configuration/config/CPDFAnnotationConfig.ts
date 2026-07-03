@@ -63,6 +63,13 @@ export interface CPDFAnnotationConfig {
     autoShowLinkDialog?: boolean;
 
     /**
+     * Whether to automatically show the default edit dialog immediately after creating a Note annotation.
+     * Default is true. When false, the default dialog is not shown and
+     * onAnnotationCreationPrepared receives the created CPDFNoteAnnotation.
+     */
+    autoShowNoteEditDialog?: boolean;
+
+    /**
      * {@link CPDFViewMode.ANNOTATIONS} mode, list of annotation functions shown at the bottom of the view.
      */
     availableTypes?: CPDFAnnotationType[];

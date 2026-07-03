@@ -17,6 +17,11 @@ import {
 } from "../configuration/CPDFOptions";
 import { CPDFPage, CPDFPageSize } from "../page/CPDFPage";
 import { CPDFAnnotation } from "../annotation/CPDFAnnotation";
+import {
+  CPDFAnnotationMarkState,
+  CPDFAnnotationReviewState,
+  CPDFReplyAnnotation,
+} from "../annotation/CPDFReplyAnnotation";
 import { CPDFImageAnnotation } from "../annotation/CPDFImageAnnotation";
 import { CPDFWidget } from "../annotation/form/CPDFWidget";
 import { CPDFTextSearcher } from "../page/CPDFTextSearcher";
@@ -29,10 +34,67 @@ import { CPDFBookmark } from "./CPDFBookmark";
 import { CPDFEditorTextAttr } from "../configuration/config/CPDFContentEditorConfig";
 import { CPDFEditArea } from "../edit/CPDFEditArea";
 import { CPDFSignatureWidget } from "../annotation/form/CPDFSignatureWidget";
+import {
+  CPDFWatermark,
+  toNativeWatermark,
+} from "./CPDFWatermark";
 const { CPDFViewManager } = NativeModules;
 
 const DEFAULT_ANNOTATION_RENDER_SCALE = 3.0;
 const DEFAULT_ANNOTATION_RENDER_QUALITY = 100;
+
+export type CPDFExtractImageResult = {
+  success: boolean;
+  count: number;
+  directoryPath: string;
+  imagePaths: string[];
+};
+
+type NativeExtractImageResult = {
+  success?: unknown;
+  count?: unknown;
+  directory_path?: unknown;
+  image_paths?: unknown;
+};
+
+type NativeReplyPayload = Record<string, unknown>;
+
+type ReplyIdentity = {
+  nativeId?: string;
+  replyKey?: string;
+  parentUuid?: string;
+};
+
+function stringOrUndefined(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function normalizeExtractImageResult(
+  result: unknown,
+  fallbackDirectoryPath: string
+): CPDFExtractImageResult {
+  const nativeResult = (result && typeof result === "object")
+    ? result as NativeExtractImageResult
+    : {};
+  const imagePaths = Array.isArray(nativeResult.image_paths)
+    ? nativeResult.image_paths.filter((path): path is string => typeof path === "string")
+    : [];
+  const count = typeof nativeResult.count === "number" && Number.isFinite(nativeResult.count)
+    ? nativeResult.count
+    : imagePaths.length;
+  const directoryPath = typeof nativeResult.directory_path === "string"
+    ? nativeResult.directory_path
+    : fallbackDirectoryPath;
+
+  return {
+    success: typeof nativeResult.success === "boolean"
+      ? nativeResult.success
+      : imagePaths.length > 0,
+    count,
+    directoryPath,
+    imagePaths,
+  };
+}
 
 function createAnnotationRenderOptions(
   options: CPDFAnnotationRenderOptions = {}
@@ -98,6 +160,8 @@ export class CPDFDocument {
 
   private _textSearcher: CPDFTextSearcher;
 
+  private _replyIdentities = new WeakMap<CPDFReplyAnnotation, ReplyIdentity>();
+
   constructor(viewerRef: any) {
     this._viewerRef = viewerRef;
     this._textSearcher = new CPDFTextSearcher(this._viewerRef);
@@ -109,6 +173,29 @@ export class CPDFDocument {
    */
   get textSearcher() {
     return this._textSearcher;
+  }
+
+  private _replyFromNative(payload: NativeReplyPayload): CPDFReplyAnnotation {
+    const reply = CPDFReplyAnnotation.fromJson(payload);
+    this._replyIdentities.set(reply, {
+      nativeId: stringOrUndefined(payload.nativeId ?? payload.native_id),
+      replyKey: stringOrUndefined(payload.replyKey ?? payload.reply_key),
+      parentUuid: stringOrUndefined(payload.parentUuid ?? payload.parent_uuid),
+    });
+    return reply;
+  }
+
+  private _replyIdentity(reply: CPDFReplyAnnotation): ReplyIdentity {
+    return this._replyIdentities.get(reply) ?? {};
+  }
+
+  private _replyIdentityPayload(reply: CPDFReplyAnnotation) {
+    const identity = this._replyIdentity(reply);
+    return {
+      native_id: identity.nativeId ?? null,
+      reply_key: identity.replyKey ?? null,
+      parent_uuid: identity.parentUuid ?? null,
+    };
   }
 
   /**
@@ -268,6 +355,142 @@ export class CPDFDocument {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
       return CPDFViewManager.getPageCount(tag);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Creates a document watermark. This changes the current document in memory
+   * and does not save it to disk automatically.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.createWatermark(
+   *   createTextWatermark({
+   *     textContent: 'Confidential',
+   *     pages: [0, 1],
+   *     textColor: '#FF0000',
+   *     fontSize: 28,
+   *     opacity: 0.75,
+   *   })
+   * );
+   */
+  createWatermark = (watermark: CPDFWatermark): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.createWatermark(tag, toNativeWatermark(watermark));
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  // /**
+  //  * Returns the number of watermarks in the current document.
+  //  *
+  //  * @example
+  //  * const count = await pdfReaderRef.current?._pdfDocument.getWatermarkCount();
+  //  */
+  // getWatermarkCount = (): Promise<number> => {
+  //   const tag = findNodeHandle(this._viewerRef);
+  //   if (tag != null) {
+  //     return CPDFViewManager.getWatermarkCount(tag);
+  //   }
+  //   return Promise.reject("Unable to find the native view reference");
+  // };
+
+  // /**
+  //  * Returns a watermark at the given 0-based index, or null when not found.
+  //  *
+  //  * @example
+  //  * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0, {
+  //  *   exportImage: true,
+  //  * });
+  //  */
+  // getWatermark = async (
+  //   index: number,
+  //   options: { exportImage?: boolean } = {}
+  // ): Promise<CPDFWatermark | null> => {
+  //   const tag = findNodeHandle(this._viewerRef);
+  //   if (tag != null) {
+  //     const result = await CPDFViewManager.getWatermark(tag, index, {
+  //       export_image: options.exportImage ?? false,
+  //     });
+  //     return result == null ? null : fromNativeWatermark(result as NativeWatermarkPayload);
+  //   }
+  //   return Promise.reject("Unable to find the native view reference");
+  // };
+
+  // /**
+  //  * Returns all watermarks in the current document.
+  //  *
+  //  * @example
+  //  * const watermarks = await pdfReaderRef.current?._pdfDocument.getWatermarks({
+  //  *   exportImages: false,
+  //  * });
+  //  */
+  // getWatermarks = async (
+  //   options: { exportImages?: boolean } = {}
+  // ): Promise<CPDFWatermark[]> => {
+  //   const tag = findNodeHandle(this._viewerRef);
+  //   if (tag != null) {
+  //     const result = await CPDFViewManager.getWatermarks(tag, {
+  //       export_images: options.exportImages ?? false,
+  //     });
+  //     return Array.isArray(result)
+  //       ? result.map((item) => fromNativeWatermark(item as NativeWatermarkPayload))
+  //       : [];
+  //   }
+  //   return Promise.reject("Unable to find the native view reference");
+  // };
+
+  // /**
+  //  * Updates the watermark at the given 0-based index.
+  //  *
+  //  * @example
+  //  * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0);
+  //  * if (watermark) {
+  //  *   await pdfReaderRef.current?._pdfDocument.updateWatermark(
+  //  *     watermark.index,
+  //  *     copyWatermark(watermark, { opacity: 0.45 })
+  //  *   );
+  //  * }
+  //  */
+  // updateWatermark = (
+  //   index: number,
+  //   watermark: CPDFWatermark
+  // ): Promise<boolean> => {
+  //   const tag = findNodeHandle(this._viewerRef);
+  //   if (tag != null) {
+  //     const payload = toNativeWatermark(watermark, {
+  //       allowEmptyImagePath: true,
+  //     });
+  //     return CPDFViewManager.updateWatermark(tag, index, payload);
+  //   }
+  //   return Promise.reject("Unable to find the native view reference");
+  // };
+
+  // /**
+  //  * Removes one watermark at the given 0-based index.
+  //  *
+  //  * @example
+  //  * const removed = await pdfReaderRef.current?._pdfDocument.removeWatermark(0);
+  //  */
+  // removeWatermark = (index: number): Promise<boolean> => {
+  //   const tag = findNodeHandle(this._viewerRef);
+  //   if (tag != null) {
+  //     return CPDFViewManager.removeWatermark(tag, index);
+  //   }
+  //   return Promise.reject("Unable to find the native view reference");
+  // };
+
+  /**
+   * Removes all watermarks in the current document.
+   *
+   * @example
+   * const removedAll = await pdfReaderRef.current?._pdfDocument.removeAllWatermarks();
+   */
+  removeAllWatermarks = (): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.removeAllWatermarks(tag);
     }
     return Promise.reject("Unable to find the native view reference");
   };
@@ -610,6 +833,39 @@ export class CPDFDocument {
   };
 
   /**
+   * Extracts images from the current document into the specified output directory.
+   *
+   * The output path is a directory, not a single file path. The SDK writes images
+   * directly into this directory, creates it when needed, and does not clear
+   * existing files or create an extra child directory for each call.
+   *
+   * @example
+   * const result = await pdfReaderRef.current?._pdfDocument.extractImages(
+   *   '/data/user/0/com.example/files/extracted-images',
+   *   [0]
+   * );
+   *
+   * @param directoryPath The actual output directory where extracted images are saved.
+   * @param pages Zero-based page indexes. Empty or null means all pages.
+   * @returns A structured result containing success, count, directoryPath, and imagePaths.
+   */
+  extractImages = (
+    directoryPath: string,
+    pages: Array<number> | null = []
+  ): Promise<CPDFExtractImageResult> => {
+    if (directoryPath.trim().length === 0) {
+      return Promise.reject(new Error("extractImages(): directoryPath is required."));
+    }
+
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.extractImages(tag, directoryPath, pages ?? [])
+        .then((result: unknown) => normalizeExtractImageResult(result, directoryPath));
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
    * Retrieves the path of the current document.
    * On Android, if the document was opened via a URI, the URI will be returned.
    *
@@ -744,6 +1000,31 @@ export class CPDFDocument {
   }
 
   /**
+   * Copies a page and inserts the duplicated page at the target index.
+   *
+   * Both indexes are zero-based. `pageIndex` must point to an existing page.
+   * `insertIndex` accepts `0..pageCount`, and `-1` appends the copied page to
+   * the end of the current document.
+   *
+   * @param pageIndex - The zero-based index of the source page to duplicate.
+   * @param insertIndex - The zero-based insertion index for the copied page, or `-1` to append.
+   * @returns A Promise that resolves to `true` if the page was copied successfully, or `false` otherwise.
+   *
+   * @example
+   * const copied = await pdfReaderRef.current?._pdfDocument.copyPage(0, -1);
+   * if (copied) {
+  *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   * }
+   */
+  copyPage(pageIndex: number, insertIndex: number): Promise<boolean> {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.copyPage(tag, pageIndex, insertIndex);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  }
+
+  /**
    * Moves a page from one index to another within the current document.
    *
    * This operation reorders pages so that the page originally at `fromIndex` will be placed
@@ -788,6 +1069,298 @@ export class CPDFDocument {
       new Error("Unable to find the native view reference")
     );
   }
+
+  /**
+   * Adds a plain reply to an annotation.
+   *
+   * Mark and review state replies are managed by dedicated state APIs and are
+   * not created by this method.
+   *
+   * @example
+   * const annotations = await pdfReaderRef.current?._pdfDocument
+   *   .pageAtIndex(0)
+   *   .getAnnotations();
+   * const reply = await pdfReaderRef.current?._pdfDocument.addAnnotationReply(
+   *   annotations[0],
+   *   { content: 'Please review this highlight.', title: 'ComPDFKit' }
+   * );
+   *
+   * @param annotation The parent annotation to reply to.
+   * @param options Reply content and optional author/title.
+   * @returns The created plain reply annotation, or null if creation failed.
+   */
+  addAnnotationReply = async (
+    annotation: CPDFAnnotation,
+    options: { content: string; title?: string }
+  ): Promise<CPDFReplyAnnotation | null> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const reply = await CPDFViewManager.addAnnotationReply(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        options.content,
+        options.title ?? ""
+      );
+      return reply?.uuid ? this._replyFromNative(reply) : null;
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Gets all replies attached to an annotation.
+   *
+   * Returned reply objects include their content, markState, and reviewState.
+   * Native mark/review state replies are implementation details and are not
+   * exposed through a public replyType field.
+   *
+   * @example
+   * const replies = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReplies(annotation);
+   *
+   * @param annotation The parent annotation.
+   * @returns Replies attached to the annotation.
+   */
+  getAnnotationReplies = async (
+    annotation: CPDFAnnotation
+  ): Promise<CPDFReplyAnnotation[]> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const replies = await CPDFViewManager.getAnnotationReplies(
+        tag,
+        annotation.page,
+        annotation.uuid
+      );
+      return Array.isArray(replies)
+        ? replies.map((item) => this._replyFromNative(item))
+        : [];
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Updates a plain annotation reply.
+   *
+   * @example
+   * const replies = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReplies(annotation);
+   * await pdfReaderRef.current?._pdfDocument.updateAnnotationReply(replies[0], {
+   *   content: 'Updated reply content.',
+   * });
+   *
+   * @param reply The plain reply annotation to update.
+   * @param options Updated reply content and optional author/title.
+   * @returns `true` when the reply was updated.
+   */
+  updateAnnotationReply = (
+    reply: CPDFReplyAnnotation,
+    options: { content: string; title?: string }
+  ): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.updateAnnotationReply(
+        tag,
+        reply.page,
+        reply.uuid,
+        options.content,
+        options.title ?? "",
+        this._replyIdentityPayload(reply)
+      );
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Removes a plain annotation reply.
+   *
+   * @example
+   * const replies = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReplies(annotation);
+   * await pdfReaderRef.current?._pdfDocument.removeAnnotationReply(replies[0]);
+   *
+   * @param reply The plain reply annotation to remove.
+   * @returns `true` when the reply was removed.
+   */
+  removeAnnotationReply = (reply: CPDFReplyAnnotation): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.removeAnnotationReply(
+        tag,
+        reply.page,
+        reply.uuid,
+        this._replyIdentityPayload(reply)
+      );
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Removes all plain replies attached to an annotation.
+   *
+   * Mark and review state replies are preserved.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument
+   *   .removeAllAnnotationReplies(annotation);
+   *
+   * @param annotation The parent annotation.
+   * @returns `true` when all plain replies were removed.
+   */
+  removeAllAnnotationReplies = (
+    annotation: CPDFAnnotation
+  ): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.removeAllAnnotationReplies(
+        tag,
+        annotation.page,
+        annotation.uuid
+      );
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Sets the mark state of an annotation or annotation reply.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.setAnnotationMarkState(
+   *   annotation,
+   *   CPDFAnnotationMarkState.MARKED
+   * );
+   *
+   * const replies = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReplies(annotation);
+   * if (replies?.length) {
+   *   await pdfReaderRef.current?._pdfDocument.setAnnotationMarkState(
+   *     replies[0],
+   *     CPDFAnnotationMarkState.UNMARKED
+   *   );
+   * }
+   *
+   * @param annotation The annotation or reply annotation to update.
+   * @param state The mark state.
+   * @returns `true` when the state was updated.
+   */
+  setAnnotationMarkState = (
+    annotation: CPDFAnnotation,
+    state: CPDFAnnotationMarkState
+  ): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.setAnnotationMarkState(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        state,
+        annotation instanceof CPDFReplyAnnotation
+          ? this._replyIdentityPayload(annotation)
+          : null
+      );
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Gets the mark state of an annotation or annotation reply.
+   *
+   * @example
+   * const state = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationMarkState(annotation);
+   *
+   * @param annotation The annotation or reply annotation to query.
+   * @returns The current mark state.
+   */
+  getAnnotationMarkState = async (
+    annotation: CPDFAnnotation
+  ): Promise<CPDFAnnotationMarkState> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const state = await CPDFViewManager.getAnnotationMarkState(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        annotation instanceof CPDFReplyAnnotation
+          ? this._replyIdentityPayload(annotation)
+          : null
+      );
+      return state === CPDFAnnotationMarkState.MARKED
+        ? CPDFAnnotationMarkState.MARKED
+        : CPDFAnnotationMarkState.UNMARKED;
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Sets the review state of an annotation or annotation reply.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.setAnnotationReviewState(
+   *   annotation,
+   *   CPDFAnnotationReviewState.ACCEPTED
+   * );
+   *
+   * const replies = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReplies(annotation);
+   * if (replies?.length) {
+   *   await pdfReaderRef.current?._pdfDocument.setAnnotationReviewState(
+   *     replies[0],
+   *     CPDFAnnotationReviewState.COMPLETED
+   *   );
+   * }
+   *
+   * @param annotation The annotation or reply annotation to update.
+   * @param state The review state.
+   * @returns `true` when the state was updated.
+   */
+  setAnnotationReviewState = (
+    annotation: CPDFAnnotation,
+    state: CPDFAnnotationReviewState
+  ): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.setAnnotationReviewState(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        state,
+        annotation instanceof CPDFReplyAnnotation
+          ? this._replyIdentityPayload(annotation)
+          : null
+      );
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
+
+  /**
+   * Gets the review state of an annotation or annotation reply.
+   *
+   * @example
+   * const state = await pdfReaderRef.current?._pdfDocument
+   *   .getAnnotationReviewState(annotation);
+   *
+   * @param annotation The annotation or reply annotation to query.
+   * @returns The current review state.
+   */
+  getAnnotationReviewState = async (
+    annotation: CPDFAnnotation
+  ): Promise<CPDFAnnotationReviewState> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const state = await CPDFViewManager.getAnnotationReviewState(
+        tag,
+        annotation.page,
+        annotation.uuid,
+        annotation instanceof CPDFReplyAnnotation
+          ? this._replyIdentityPayload(annotation)
+          : null
+      );
+      return Object.values(CPDFAnnotationReviewState).includes(state)
+        ? state
+        : CPDFAnnotationReviewState.NONE;
+    }
+    return Promise.reject(new Error("Unable to find the native view reference"));
+  };
 
   /**
    * Removes a form widget from the current page.

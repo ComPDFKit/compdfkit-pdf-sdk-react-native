@@ -83,6 +83,7 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
   private static final String EVENT_FORM_STYLE_DIALOG_DISMISSED = "onFormStyleDialogDismissed";
   private static final String EVENT_CONTENT_EDITOR_STYLE_DIALOG_DISMISSED = "onContentEditorStyleDialogDismissed";
   private static final String EVENT_INTERCEPT_ANNOTATION_ACTION = "onInterceptAnnotationAction";
+  private static final String EVENT_INTERCEPT_WIDGET_ACTION = "onInterceptWidgetAction";
   private static final String CUSTOM_EVENT_SEARCH_BACK_BUTTON_TAPPED = "SearchBackButtonTapped";
 
   private static final String EVENT_ADD_WATERMARK_DIALOG_DISMISSED = "onAddWatermarkDialogDismissed";
@@ -286,7 +287,7 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
           }
         });
 
-        readerView.setSelectAnnotCallback(new CPDFSelectAnnotCallback() {
+        pdfView.addOnPDFSelectAnnotChangeListener(new CPDFSelectAnnotCallback() {
           /**
            * Handles on annotation selected.
            */
@@ -345,6 +346,8 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
           WritableMap map = createEvent();
           if (type == CAnnotationType.PIC){
             map.putString("type", "pictures");
+          } else if (type == CAnnotationType.TEXT) {
+            map.putString("type", "note");
           }else {
             map.putString("type", type.name().toLowerCase());
           }
@@ -423,6 +426,18 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
           }
         }
         break;
+      case CPDFCustomEventType.INTERCEPT_WIDGET_DO_ACTION:
+        if (map.containsKey(CPDFCustomEventField.WIDGET)){
+          CPDFAnnotation widget = (CPDFAnnotation) map.get(CPDFCustomEventField.WIDGET);
+          if (widget != null){
+            WritableMap widgetData = getAnnotData(
+              documentFragment.pdfView.getCPdfReaderView()
+                .getPDFDocument(),
+              widget);
+            emitMapEvent(EVENT_INTERCEPT_WIDGET_ACTION, widgetData);
+          }
+        }
+        break;
       default:
 //                    methodChannel.invokeMethod("onCustomEvent", extraMap);
         break;
@@ -454,13 +469,15 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
     CPDFCustomEventCallbackHelper.getInstance().removeCustomEventCallback(this);
     Log.i("ComPDFKit", "RnPdfView-onDetachedFromWindow()");
     getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+    pageUtil.setDocument(null);
   }
 
   /**
    * Returns the cpdf page util.
    */
   public RnPageCodec getCPDFPageUtil() {
-    pageUtil.setDocument(getCPDFReaderView().getPDFDocument());
+    CPDFReaderView readerView = getCPDFReaderView();
+    pageUtil.setDocument(readerView == null ? null : readerView.getPDFDocument());
     return pageUtil;
   }
 
@@ -499,6 +516,9 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
    * Returns the cpdf reader view.
    */
   public CPDFReaderView getCPDFReaderView() {
+    if (documentFragment == null || documentFragment.pdfView == null) {
+      return null;
+    }
     return documentFragment.pdfView.getCPdfReaderView();
   }
 

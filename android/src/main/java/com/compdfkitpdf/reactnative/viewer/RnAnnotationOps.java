@@ -22,6 +22,7 @@ import com.compdfkit.core.edit.CPDFEditArea;
 import com.compdfkit.core.edit.CPDFEditManager;
 import com.compdfkit.core.undo.CPDFUndoManager;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
+import com.compdfkit.tools.common.utils.annotation.CAnnotationCreationContext;
 import com.compdfkit.tools.common.utils.annotation.CPDFAnnotationManager;
 import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfproperties.pdfstyle.CAnnotStyle;
@@ -59,10 +60,19 @@ final class RnAnnotationOps {
     this.reactContext = reactContext;
   }
 
+  private boolean isAvailable(@Nullable RnPdfViewContext context) {
+    return context != null && context.document != null && context.readerView != null
+      && context.pageUtil != null && context.view != null && context.viewCtrl != null
+      && context.view.documentFragment != null;
+  }
+
   /**
    * Returns the annotations.
    */
   WritableArray getAnnotations(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return Arguments.createArray();
+    }
     return context.pageUtil.getAnnotations(pageIndex);
   }
 
@@ -70,6 +80,9 @@ final class RnAnnotationOps {
    * Returns the forms.
    */
   WritableArray getForms(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return Arguments.createArray();
+    }
     return context.pageUtil.getWidgets(pageIndex);
   }
 
@@ -77,6 +90,9 @@ final class RnAnnotationOps {
    * Sets the text widget text.
    */
   void setTextWidgetText(RnPdfViewContext context, int pageIndex, String uuid, String text) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.pageUtil.setTextWidgetText(pageIndex, uuid, text);
   }
 
@@ -84,6 +100,9 @@ final class RnAnnotationOps {
    * Updates ap.
    */
   void updateAp(RnPdfViewContext context, int pageIndex, String uuid) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CPDFPageView pageView = (CPDFPageView) context.readerView.getChild(pageIndex);
     if (pageView == null) {
       return;
@@ -107,6 +126,9 @@ final class RnAnnotationOps {
    * Sets the widget is checked.
    */
   void setWidgetIsChecked(RnPdfViewContext context, int pageIndex, String uuid, boolean checked) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.pageUtil.setChecked(pageIndex, uuid, checked);
   }
 
@@ -115,6 +137,9 @@ final class RnAnnotationOps {
    */
   boolean addWidgetImageSignature(RnPdfViewContext context, int pageIndex, String uuid,
     String imagePath) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.pageUtil.addWidgetImageSignature(pageIndex, uuid, imagePath);
   }
 
@@ -122,6 +147,9 @@ final class RnAnnotationOps {
    * Removes annotation.
    */
   boolean removeAnnotation(RnPdfViewContext context, int pageIndex, String uuid) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
     if (annotation == null) {
       return false;
@@ -136,9 +164,131 @@ final class RnAnnotationOps {
   }
 
   /**
+   * Adds a plain annotation reply.
+   */
+  WritableMap addAnnotationReply(RnPdfViewContext context, int pageIndex, String uuid,
+    String content, String title) {
+    if (!isAvailable(context)) {
+      return Arguments.createMap();
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
+    WritableMap reply = context.pageUtil.addAnnotationReply(annotation, content, title);
+    return reply;
+  }
+
+  /**
+   * Gets plain annotation replies.
+   */
+  WritableArray getAnnotationReplies(RnPdfViewContext context, int pageIndex, String uuid) {
+    if (!isAvailable(context)) {
+      return Arguments.createArray();
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
+    return context.pageUtil.getAnnotationReplies(annotation);
+  }
+
+  /**
+   * Updates a plain annotation reply.
+   */
+  boolean updateAnnotationReply(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String content, String title) {
+    if (!isAvailable(context)) {
+      return false;
+    }
+    boolean result = context.pageUtil.updateAnnotationReply(pageIndex, uuid, nativeId, replyKey,
+      parentUuid, content, title);
+    return result;
+  }
+
+  /**
+   * Removes a plain annotation reply.
+   */
+  boolean removeAnnotationReply(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    if (!isAvailable(context)) {
+      return false;
+    }
+    boolean result = context.pageUtil.removeAnnotationReply(pageIndex, uuid, nativeId, replyKey,
+      parentUuid);
+    return result;
+  }
+
+  /**
+   * Removes all plain annotation replies.
+   */
+  boolean removeAllAnnotationReplies(RnPdfViewContext context, int pageIndex, String uuid) {
+    if (!isAvailable(context)) {
+      return false;
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
+    boolean result = context.pageUtil.removeAllAnnotationReplies(annotation);
+    return result;
+  }
+
+  /**
+   * Sets the annotation mark state.
+   */
+  boolean setAnnotationMarkState(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String state) {
+    if (!isAvailable(context)) {
+      return false;
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotationOrReply(pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+    boolean result = context.pageUtil.setAnnotationMarkState(annotation, state);
+    return result;
+  }
+
+  /**
+   * Gets the annotation mark state.
+   */
+  String getAnnotationMarkState(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    if (!isAvailable(context)) {
+      return "unmarked";
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotationOrReply(pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+    return context.pageUtil.getAnnotationMarkState(annotation);
+  }
+
+  /**
+   * Sets the annotation review state.
+   */
+  boolean setAnnotationReviewState(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String state) {
+    if (!isAvailable(context)) {
+      return false;
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotationOrReply(pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+    boolean result = context.pageUtil.setAnnotationReviewState(annotation, state);
+    return result;
+  }
+
+  /**
+   * Gets the annotation review state.
+   */
+  String getAnnotationReviewState(RnPdfViewContext context, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    if (!isAvailable(context)) {
+      return "none";
+    }
+    CPDFAnnotation annotation = context.pageUtil.getAnnotationOrReply(pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+    return context.pageUtil.getAnnotationReviewState(annotation);
+  }
+
+  /**
    * Sets the annotation mode.
    */
   void setAnnotationMode(RnPdfViewContext context, String mode) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CAnnotationType type;
     try {
       switch (mode) {
@@ -162,6 +312,9 @@ final class RnAnnotationOps {
    * Returns the annotation mode.
    */
   String getAnnotationMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return "unknown";
+    }
     CAnnotationType annotationType =
       context.view.documentFragment.annotationToolbar.toolListAdapter.getCurrentAnnotType();
     switch (annotationType) {
@@ -178,22 +331,31 @@ final class RnAnnotationOps {
    * Returns annotation can undo.
    */
   boolean annotationCanUndo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFUndoManager manager = context.readerView.getUndoManager();
-    return manager.canUndo();
+    return manager != null && manager.canUndo();
   }
 
   /**
    * Returns annotation can redo.
    */
   boolean annotationCanRedo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFUndoManager manager = context.readerView.getUndoManager();
-    return manager.canRedo();
+    return manager != null && manager.canRedo();
   }
 
   /**
    * Handles annotation undo.
    */
   void annotationUndo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CPDFUndoManager manager = context.readerView.getUndoManager();
     if (manager == null || !manager.canUndo()) {
       return;
@@ -209,6 +371,9 @@ final class RnAnnotationOps {
    * Handles annotation redo.
    */
   void annotationRedo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CPDFUndoManager manager = context.readerView.getUndoManager();
     if (manager == null || !manager.canRedo()) {
       return;
@@ -224,6 +389,10 @@ final class RnAnnotationOps {
    * Handles change edit type.
    */
   void changeEditType(RnPdfViewContext context, int type, Promise promise) {
+    if (!isAvailable(context)) {
+      promise.reject("1001", "DocumentView is unavailable");
+      return;
+    }
     if (context.readerView.getViewMode() != ViewMode.PDFEDIT
       && context.readerView.getViewMode() != ViewMode.ALL) {
       promise.reject("1002",
@@ -244,6 +413,9 @@ final class RnAnnotationOps {
    * Returns editor can undo.
    */
   boolean editorCanUndo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFEditManager editManager = context.readerView.getEditManager();
     return editManager != null && editManager.canUndo();
   }
@@ -252,6 +424,9 @@ final class RnAnnotationOps {
    * Returns editor can redo.
    */
   boolean editorCanRedo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFEditManager editManager = context.readerView.getEditManager();
     return editManager != null && editManager.canRedo();
   }
@@ -260,6 +435,9 @@ final class RnAnnotationOps {
    * Returns editor undo.
    */
   boolean editorUndo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFEditManager editManager = context.readerView.getEditManager();
     if (editManager == null) {
       return false;
@@ -276,6 +454,9 @@ final class RnAnnotationOps {
    * Returns editor redo.
    */
   boolean editorRedo(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     CPDFEditManager editManager = context.readerView.getEditManager();
     if (editManager == null) {
       return false;
@@ -292,6 +473,9 @@ final class RnAnnotationOps {
    * Sets the form creation mode.
    */
   void setFormCreationMode(RnPdfViewContext context, String formType) {
+    if (!isAvailable(context)) {
+      return;
+    }
     WidgetType type = CPDFConfigurationUtils.getWidgetType(formType);
     context.view.documentFragment.formToolBar.switchFormMode(type);
   }
@@ -300,6 +484,9 @@ final class RnAnnotationOps {
    * Returns the form creation mode.
    */
   String getFormCreationMode(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return "unknown";
+    }
     switch (context.readerView.getCurrentFocusedFormType()) {
       case Widget_TextField:
         return "textField";
@@ -324,6 +511,9 @@ final class RnAnnotationOps {
    * Handles verify digital signature status.
    */
   void verifyDigitalSignatureStatus(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.verifyDocumentSignStatus();
   }
 
@@ -331,6 +521,9 @@ final class RnAnnotationOps {
    * Handles hide digital signature view.
    */
   void hideDigitalSignatureView(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.view.documentFragment.hideDigitalSignStatusView();
   }
 
@@ -338,6 +531,9 @@ final class RnAnnotationOps {
    * Sets the annotations visible.
    */
   void setAnnotationsVisible(RnPdfViewContext context, boolean visible) {
+    if (!isAvailable(context)) {
+      return;
+    }
     context.readerView.setAnnotationsVisible(visible);
   }
 
@@ -345,6 +541,9 @@ final class RnAnnotationOps {
    * Returns are annotations visible.
    */
   boolean areAnnotationsVisible(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return false;
+    }
     return context.readerView.isAnnotationsVisible();
   }
 
@@ -352,6 +551,9 @@ final class RnAnnotationOps {
    * Handles show default annotation properties view.
    */
   void showDefaultAnnotationPropertiesView(RnPdfViewContext context, String annotType) {
+    if (!isAvailable(context)) {
+      return;
+    }
     CAnnotationType type = RnEnumConverter.strongToAnnotationType(annotType);
     context.view.documentFragment.annotationToolbar.showAnnotStyleDialog(type.getStyleType());
   }
@@ -360,6 +562,9 @@ final class RnAnnotationOps {
    * Handles show annotation properties view.
    */
   void showAnnotationPropertiesView(RnPdfViewContext context, ReadableMap annotMap) {
+    if (!isAvailable(context)) {
+      return;
+    }
     int pageIndex = annotMap.getInt("page");
     String uuid = annotMap.getString("uuid");
     CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
@@ -383,6 +588,9 @@ final class RnAnnotationOps {
    * Handles show edit area properties view.
    */
   void showEditAreaPropertiesView(RnPdfViewContext context, ReadableMap editAreaMap) {
+    if (!isAvailable(context)) {
+      return;
+    }
     int pageIndex = editAreaMap.getInt("page");
     String uuid = editAreaMap.getString("uuid");
     String areaType = editAreaMap.getString("type");
@@ -399,7 +607,7 @@ final class RnAnnotationOps {
    * Prepares next signature.
    */
   void prepareNextSignature(@Nullable RnPdfViewContext context, String imagePath) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return;
     }
     CStyleManager styleManager = new CStyleManager(context.viewCtrl);
@@ -412,7 +620,7 @@ final class RnAnnotationOps {
    * Prepares next image.
    */
   void prepareNextImage(@Nullable RnPdfViewContext context, String imagePath) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return;
     }
     CStyleManager styleManager = new CStyleManager(context.viewCtrl);
@@ -425,7 +633,7 @@ final class RnAnnotationOps {
    * Prepares next stamp.
    */
   void prepareNextStamp(@Nullable RnPdfViewContext context, ReadableMap stampMap) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return;
     }
     String stampType = stampMap.getString("type");
@@ -458,7 +666,7 @@ final class RnAnnotationOps {
    * Returns fetch default annotation style.
    */
   WritableMap fetchDefaultAnnotationStyle(@Nullable RnPdfViewContext context) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return Arguments.createMap();
     }
     HashMap<String, Object> map = RnAttrUtils.getDefaultAnnotAttr(context.viewCtrl);
@@ -469,7 +677,7 @@ final class RnAnnotationOps {
    * Updates default annotation style.
    */
   void updateDefaultAnnotationStyle(@Nullable RnPdfViewContext context, ReadableMap styleMap) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return;
     }
     Map<String, Object> map = styleMap.toHashMap();
@@ -489,7 +697,7 @@ final class RnAnnotationOps {
    * Returns fetch default widget style.
    */
   ReadableMap fetchDefaultWidgetStyle(@Nullable RnPdfViewContext context) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return Arguments.createMap();
     }
     HashMap<String, Object> map = RnAttrUtils.getDefaultWidgetAttr(context.viewCtrl);
@@ -500,7 +708,7 @@ final class RnAnnotationOps {
    * Updates default widget style.
    */
   void updateDefaultWidgetStyle(@Nullable RnPdfViewContext context, ReadableMap styleMap) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return;
     }
     Map<String, Object> map = styleMap.toHashMap();
@@ -515,9 +723,11 @@ final class RnAnnotationOps {
    * Removes edit area.
    */
   void removeEditArea(@Nullable RnPdfViewContext context, int pageIndex, String uuid, String type) {
-    if (context != null) {
+    if (isAvailable(context)) {
       RnEditAreaMapper.removeEditArea(context.document, pageIndex, uuid, type);
-      context.readerView.getContextMenuShowListener().dismissContextMenu();
+      if (context.readerView.getContextMenuShowListener() != null) {
+        context.readerView.getContextMenuShowListener().dismissContextMenu();
+      }
     }
   }
 
@@ -525,7 +735,7 @@ final class RnAnnotationOps {
    * Creates new text area.
    */
   boolean createNewTextArea(@Nullable RnPdfViewContext context, ReadableMap textAreaMap) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       return false;
     }
     HashMap<String, Object> map = textAreaMap.toHashMap();
@@ -553,7 +763,8 @@ final class RnAnnotationOps {
    */
   void createNewImageArea(@Nullable RnPdfViewContext context, ReadableMap imageAreaMap,
     Promise promise) {
-    if (context == null) {
+    if (!isAvailable(context)) {
+      promise.reject("CREATE_IMAGE_AREA_FAIL", "DocumentView is unavailable");
       return;
     }
     HashMap<String, Object> map = imageAreaMap.toHashMap();
@@ -578,6 +789,10 @@ final class RnAnnotationOps {
    * Updates annotation.
    */
   void updateAnnotation(RnPdfViewContext context, ReadableMap annotMap, Promise promise) {
+    if (!isAvailable(context)) {
+      promise.reject("UPDATE_ANNOTATION_FAIL", "DocumentView is unavailable");
+      return;
+    }
     int pageIndex = annotMap.getInt("page");
     String uuid = annotMap.getString("uuid");
     CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
@@ -608,6 +823,10 @@ final class RnAnnotationOps {
    * Updates widget.
    */
   void updateWidget(RnPdfViewContext context, ReadableMap widgetMap, Promise promise) {
+    if (!isAvailable(context)) {
+      promise.reject("UPDATE_WIDGET_FAIL", "DocumentView is unavailable");
+      return;
+    }
     int pageIndex = widgetMap.getInt("page");
     String uuid = widgetMap.getString("uuid");
     CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
@@ -635,13 +854,21 @@ final class RnAnnotationOps {
    * Adds annotations.
    */
   void addAnnotations(RnPdfViewContext context, ReadableArray annotationsArray) {
-    context.pageUtil.addAnnotations(context.readerView, annotationsArray);
+    if (!isAvailable(context)) {
+      return;
+    }
+    CAnnotationCreationContext.runProgrammatic(
+      () -> context.pageUtil.addAnnotations(context.readerView, annotationsArray));
   }
 
   /**
    * Adds widgets.
    */
   void addWidgets(RnPdfViewContext context, ReadableArray widgetsArray) {
-    context.pageUtil.addWidgets(context.readerView, widgetsArray);
+    if (!isAvailable(context)) {
+      return;
+    }
+    CAnnotationCreationContext.runProgrammatic(
+      () -> context.pageUtil.addWidgets(context.readerView, widgetsArray));
   }
 }

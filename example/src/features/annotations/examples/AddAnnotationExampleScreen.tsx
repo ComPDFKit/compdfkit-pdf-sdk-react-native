@@ -11,7 +11,7 @@ import React, { useRef, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import {
   CPDFReaderView,
-  CPDFViewMode,
+  CPDFToolbarAction,
   ComPDFKit,
 } from '@compdfkit_pdf_sdk/react_native';
 
@@ -35,14 +35,41 @@ export default function AddAnnotationExampleScreen() {
       document={document}
       readerRef={readerRef}
       configuration={ComPDFKit.getDefaultConfig({
-        modeConfig: {
-          initialViewMode: CPDFViewMode.ANNOTATIONS,
-          uiVisibilityMode: 'automatic',
-        },
-        toolbarConfig: {
-          annotationToolbarVisible: true,
-        },
-      })}
+      modeConfig: {
+        initialViewMode: 'viewer',
+        availableViewModes: []
+      },
+      toolbarConfig: {
+        annotationToolbarVisible: false, // hide annotation toolbar
+        showInkToggleButton: false,
+        toolbarLeftItems: [],
+        toolbarRightItems: ['search', 'menu'],
+        customMoreMenuItems: [
+          {
+            action: CPDFToolbarAction.DOCUMENT_INFO,
+            title: "Document Info"
+          },
+          {
+            action: CPDFToolbarAction.CUSTOM,
+            title: 'Share',
+            icon: 'pdf_share',
+            identifier: 'custom_share'
+          },
+          {
+            action: CPDFToolbarAction.VIEW_SETTINGS,
+            title: "View Settings"
+          }
+        ],
+      },
+      formsConfig: {
+        availableTypes: [],   // disable editing of all form fields
+        availableTools: [],
+      },
+      annotationsConfig: {
+        availableTypes: [],   // disable annotation editing
+        availableTools: [],
+      },
+    })}
       actions={annotationExampleScreenActions.addExample}
       onBackPress={() => navigation.goBack()}
     />

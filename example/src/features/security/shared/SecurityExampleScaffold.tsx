@@ -21,7 +21,7 @@ import { getDefaultSecurityDocument } from './defaultDocument';
 type SecurityRouteName =
   | 'CPDFSetPasswordExample'
   | 'CPDFRemovePasswordExample'
-  | 'CPDFAddWatermarkExample'
+  | 'CPDFWatermarkOperationsExample'
   | 'CPDFDocumentPermissionsExample'
   | 'CPDFDigitalSignatureExample';
 

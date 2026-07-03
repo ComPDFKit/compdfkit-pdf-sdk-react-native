@@ -12,6 +12,7 @@ export type CategoryId =
   | 'annotations'
   | 'forms'
   | 'pages'
+  | 'content_extraction'
   | 'security'
   | 'content_editor'
   | 'widget_controller'

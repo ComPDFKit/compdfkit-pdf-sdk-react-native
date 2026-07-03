@@ -533,6 +533,40 @@ const fontSubset = true;
 const result = await pdfReaderRef.current?._pdfDocument.saveAs(savePath, removeSecurity, fontSubset);
 ```
 
+#### createWatermark
+
+Creates a text or image watermark in the current document. This API modifies the in-memory document only; call `save()` or `saveAs()` when you need to persist the change.
+
+```tsx
+import { createTextWatermark, createImageWatermark } from '@compdfkit_pdf_sdk/react_native';
+
+await pdfReaderRef.current?._pdfDocument.createWatermark(
+  createTextWatermark({
+    textContent: 'Confidential',
+    pages: [0, 1],
+    textColor: '#FF0000',
+    fontSize: 28,
+    opacity: 0.75,
+  })
+);
+
+await pdfReaderRef.current?._pdfDocument.createWatermark(
+  createImageWatermark({
+    imagePath: '/path/to/logo.png',
+    pages: [0],
+    scale: 0.5,
+  })
+);
+```
+
+#### removeAllWatermarks
+
+Removes all watermarks in the current document.
+
+```tsx
+const removedAll = await pdfReaderRef.current?._pdfDocument.removeAllWatermarks();
+```
+
 #### onSaveDocument
 
 function, optional
@@ -1314,6 +1348,36 @@ const savePath = '/data/user/0/com.compdfkit.flutter.example/cache/temp/PDF_Docu
 // Pages to extract from the current document
 const pages = [0, 1, 2];
 const result = await pdfReaderRef.current?.splitDocumentPages(savePath, pages);
+```
+
+#### extractImages
+
+Extracts images from the current document into an output directory.
+
+The `directoryPath` argument is a directory path, not a single file path. The SDK writes images directly into this directory, creates it when needed, and does not clear existing files, create an extra child directory, or filter old files already in the directory.
+
+Parameters:
+
+| Name          | Type                | Description                                                          |
+| ------------- | ------------------- | -------------------------------------------------------------------- |
+| directoryPath | string              | The actual output directory where extracted images will be saved.    |
+| pages         | Array[number] \| null | Zero-based page indexes. Empty, omitted, or null means all pages. |
+
+Returns a Promise.
+
+| Name          | Type          | Description                                               |
+| ------------- | ------------- | --------------------------------------------------------- |
+| success       | bool          | Whether the native extraction operation completed.        |
+| count         | number        | Number of files returned from the output directory scan.  |
+| directoryPath | string        | The output directory used for extraction.                 |
+| imagePaths    | Array[string] | Full paths of image files found in the output directory.  |
+
+```tsx
+const directoryPath = '/data/user/0/com.example/files/extracted-images';
+const result = await pdfReaderRef.current?._pdfDocument.extractImages(
+  directoryPath,
+  [0, 2]
+);
 ```
 
 #### insertBlankPage

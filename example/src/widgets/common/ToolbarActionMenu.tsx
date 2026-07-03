@@ -70,6 +70,17 @@ export function ToolbarActionMenu({ actions }: ToolbarActionMenuProps) {
     };
   }, [menuVisible]);
 
+  useEffect(() => {
+    if (!menuVisible) {
+      return undefined;
+    }
+
+    const frame = requestAnimationFrame(runOpenAnimation);
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [menuVisible]);
+
   if (actions.length === 0) {
     return null;
   }
@@ -110,9 +121,12 @@ export function ToolbarActionMenu({ actions }: ToolbarActionMenuProps) {
 
   const openMenu = () => {
     triggerRef.current?.measureInWindow((x, y, width, height) => {
+      backdropOpacity.setValue(0);
+      menuOpacity.setValue(0);
+      menuTranslateY.setValue(-8);
+      menuScale.setValue(0.98);
       setAnchorFrame({ x, y, width, height });
       setMenuVisible(true);
-      requestAnimationFrame(runOpenAnimation);
     });
   };
 

@@ -11,6 +11,20 @@ import { CPDFAnnotationType } from "../configuration/CPDFOptions";
 import { safeParseEnumValue } from "../util/CPDFEnumUtils";
 import { CPDFRectF } from "../util/CPDFRectF";
 
+export enum CPDFAnnotationMarkState {
+    MARKED = "marked",
+    UNMARKED = "unmarked",
+}
+
+export enum CPDFAnnotationReviewState {
+    ACCEPTED = "accepted",
+    REJECTED = "rejected",
+    CANCELLED = "cancelled",
+    COMPLETED = "completed",
+    NONE = "none",
+    ERROR = "error",
+}
+
 /**
  * @class CPDFAnnotation
  * @group Annotations
@@ -20,6 +34,8 @@ import { CPDFRectF } from "../util/CPDFRectF";
  * @property { string } [content] annotation content.
  * @property { string } [uuid] annotation uuid.
  * @property { Date } [createDate] annotation create date.
+ * @property { CPDFAnnotationMarkState } [markState] annotation mark state.
+ * @property { CPDFAnnotationReviewState } [reviewState] annotation review state.
  * @property { CPDFRectF } [rect] annotation rect.
  */
 export class CPDFAnnotation {
@@ -35,6 +51,10 @@ export class CPDFAnnotation {
     readonly uuid: string;
     
     createDate : Date | null = null;
+
+    markState: CPDFAnnotationMarkState = CPDFAnnotationMarkState.UNMARKED;
+
+    reviewState: CPDFAnnotationReviewState = CPDFAnnotationReviewState.NONE;
     
     rect : CPDFRectF | null = null;
 
@@ -45,6 +65,16 @@ export class CPDFAnnotation {
         this.content = params.content ?? "";
         this.uuid = params.uuid ?? "";
         this.createDate = params.createDate != null ? new Date(params.createDate) : null;
+        this.markState = safeParseEnumValue(
+            params.markState,
+            Object.values(CPDFAnnotationMarkState),
+            CPDFAnnotationMarkState.UNMARKED
+        );
+        this.reviewState = safeParseEnumValue(
+            params.reviewState,
+            Object.values(CPDFAnnotationReviewState),
+            CPDFAnnotationReviewState.NONE
+        );
         this.rect = params.rect ?? null;
     }
 

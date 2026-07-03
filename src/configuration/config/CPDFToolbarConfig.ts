@@ -23,6 +23,13 @@ export interface CPDFToolbarConfig {
   mainToolbarVisible?: boolean;
 
   /**
+   * Set whether to display the top toolbar mode-switch title and entry.
+   *
+   * Default: true
+   */
+  mainToolbarTitleVisible?: boolean;
+
+  /**
    * Set whether to display the annotation toolbar
    */
   annotationToolbarVisible?: boolean;

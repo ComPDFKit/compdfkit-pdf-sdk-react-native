@@ -36,8 +36,23 @@ export type { CPDFEventDataMap } from "./configuration/CPDFOptions";
 
 // === Document & Pages ===
 export { CPDFDocument } from "./document/CPDFDocument";
+export type { CPDFExtractImageResult } from "./document/CPDFDocument";
+export {
+  createTextWatermark,
+  createImageWatermark,
+  copyWatermark,
+  fromNativeWatermark,
+  toNativeWatermark,
+} from "./document/CPDFWatermark";
+export type {
+  CPDFWatermark,
+  CPDFWatermarkType,
+  CPDFWatermarkVerticalAlignment,
+  CPDFWatermarkHorizontalAlignment,
+} from "./document/CPDFWatermark";
 export * from "./page/CPDFPage";
 export * from "./page/CPDFSearchOptions";
+export * from "./page/CPDFTextLine";
 export * from "./page/CPDFTextRange";
 export * from "./page/CPDFTextSearcher";
 export { CPDFFontName } from "./document/CPDFFontName";
@@ -53,6 +68,11 @@ export { CPDFUriAction } from "./document/action/CPDFUriAction";
 
 // === Annotations ===
 export { CPDFAnnotation } from "./annotation/CPDFAnnotation";
+export {
+  CPDFAnnotationMarkState,
+  CPDFAnnotationReviewState,
+  CPDFReplyAnnotation,
+} from "./annotation/CPDFReplyAnnotation";
 export { CPDFCircleAnnotation } from "./annotation/CPDFCircleAnnotation";
 export { CPDFFreeTextAnnotation } from "./annotation/CPDFFreeTextAnnotation";
 export { CPDFImageAnnotation } from "./annotation/CPDFImageAnnotation";

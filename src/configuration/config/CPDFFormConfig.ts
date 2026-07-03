@@ -44,6 +44,19 @@ export interface CPDFFormConfig {
     showCreatePushButtonOptionsDialog?: boolean;
 
     /**
+     * Whether to intercept all form widget click actions.
+     * Default: false
+     */
+    interceptAllFormWidgetActions?: boolean;
+
+    /**
+     * Form widget types whose click actions should be intercepted.
+     * Values should use {@link CPDFWidgetType}, such as `listBox`, `comboBox`, or `signaturesFields`.
+     * Default: []
+     */
+    interceptFormWidgetActions?: CPDFWidgetType[];
+
+    /**
      * Form default attribute configuration
      */
     initAttribute?: CPDFWidgetAttr;

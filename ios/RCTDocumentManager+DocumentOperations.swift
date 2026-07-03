@@ -94,6 +94,99 @@ extension RCTDocumentManager {
       }
     }
   }
+
+  @objc(createWatermark: withInfo: withResolver: withRejecter:)
+  func createWatermark(
+    forCPDFViewTag tag: Int,
+    info: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      do {
+        resolve(try view.createWatermark(info: info as? [String: Any] ?? [:]))
+      } catch {
+        reject("WATERMARK_FAIL", error.localizedDescription, error)
+      }
+    }
+  }
+
+  @objc(getWatermarkCount: withResolver: withRejecter:)
+  func getWatermarkCount(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.getWatermarkCount())
+    }
+  }
+
+  @objc(getWatermark: withIndex: withOptions: withResolver: withRejecter:)
+  func getWatermark(
+    forCPDFViewTag tag: Int,
+    index: Int,
+    options: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.getWatermark(index: index, exportImage: options["export_image"] as? Bool ?? false) as Any)
+    }
+  }
+
+  @objc(getWatermarks: withOptions: withResolver: withRejecter:)
+  func getWatermarks(
+    forCPDFViewTag tag: Int,
+    options: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.getWatermarks(exportImages: options["export_images"] as? Bool ?? false))
+    }
+  }
+
+  @objc(updateWatermark: withIndex: withInfo: withResolver: withRejecter:)
+  func updateWatermark(
+    forCPDFViewTag tag: Int,
+    index: Int,
+    info: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      do {
+        let success = try view.updateWatermark(index: index, info: info as? [String: Any] ?? [:])
+        resolve(success)
+      } catch {
+        reject("WATERMARK_FAIL", error.localizedDescription, error)
+      }
+    }
+  }
+
+  @objc(removeWatermark: withIndex: withResolver: withRejecter:)
+  func removeWatermark(
+    forCPDFViewTag tag: Int,
+    index: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.removeWatermark(index: index))
+    }
+  }
+
+  @objc(removeAllWatermarks: withResolver: withRejecter:)
+  func removeAllWatermarks(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.removeAllWatermarks())
+    }
+  }
   
   @objc(checkOwnerUnlocked: withResolver: withRejecter:)
   func checkOwnerUnlocked(
@@ -285,6 +378,25 @@ extension RCTDocumentManager {
       }
     }
   }
+
+  @objc(
+    extractImages: withDirectoryPath: withPages: withResolver: withRejecter:
+  )
+  func extractImages(
+    forCPDFViewTag tag : Int,
+    directoryPath: String,
+    pages: [Int],
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.extractImages(directoryPath: directoryPath, pages: pages) { result in
+        resolve(result)
+      } failureHandler: { code, message in
+        reject(code, message, nil)
+      }
+    }
+  }
   
   @objc(
     insertBlankPage: withPageIndex: withPageWidth: withPageHeight: withResolver: withRejecter:
@@ -338,6 +450,21 @@ extension RCTDocumentManager {
       view.removePages(indexes: pageIndexes, completionHandler: { success in
         resolve(success)
       })
+    }
+  }
+
+  @objc(copyPage: withPageIndex: withInsertIndex: withResolver: withRejecter:)
+  func copyPage(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    insertIndex: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.copyPage(pageIndex: pageIndex, insertIndex: insertIndex) { success in
+        resolve(success)
+      }
     }
   }
   

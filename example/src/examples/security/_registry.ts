@@ -44,13 +44,13 @@ export const securityCategory: CategoryInfo = {
       },
     },
     {
-      id: 'add-watermark',
-      name: 'Add Watermark',
-      description: 'Add text or image watermark',
+      id: 'watermark-operations',
+      name: 'Watermark Operations',
+      description: 'Create, inspect, update, and remove watermarks',
       routeType: EXAMPLE_ROUTE_TYPES.screen,
-      routeName: EXAMPLE_ROUTES.securityAddWatermark,
+      routeName: EXAMPLE_ROUTES.securityWatermarkOperations,
       visual: {
-        badge: 'AW',
+        badge: 'WM',
         accentColor: '#00796B',
         backgroundColor: '#E0F2F1',
       },

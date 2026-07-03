@@ -12,8 +12,12 @@ import {
   CPDFDocumentPermissionInfo,
   CPDFDocumentPermissions,
   CPDFReaderView,
+  createImageWatermark,
+  createTextWatermark,
 } from '@compdfkit_pdf_sdk/react_native';
+import { Alert } from 'react-native';
 import { Logger } from '../../../util/logger';
+import { CPDFFileUtil } from '../../../util/CPDFFileUtil';
 
 export type DocumentPermissionsSnapshot = {
   fileName: string;
@@ -127,6 +131,62 @@ export async function showAddWatermarkView(reader: CPDFReaderView) {
     image: 'tools_logo',
     opacity: 255,
   });
+}
+
+export async function createTextWatermarkExample(reader: CPDFReaderView) {
+  const success = await reader._pdfDocument.createWatermark(
+    createTextWatermark({
+      textContent: 'ComPDFKit RN',
+      pages: [0,1,2],
+      textColor: '#D33A2C',
+      fontSize: 28,
+      rotation: 35,
+      opacity: 0.75,
+      horizontalAlignment: 'left',
+      verticalAlignment: 'bottom',
+      horizontalOffset: 32,
+      verticalOffset: 40,
+      isFront: true,
+    }),
+  );
+  Logger.log('createTextWatermark:', success);
+  if (!success) {
+    Alert.alert('Create Text Watermark', 'Failed to create text watermark.');
+  }
+  return success;
+}
+
+export async function createImageWatermarkExample(reader: CPDFReaderView) {
+  const imagePath = await CPDFFileUtil.copyAssetToDevice(
+    'sign/signature_1.png',
+    'signature_1_watermark.png',
+  );
+  const success = await reader._pdfDocument.createWatermark(
+    createImageWatermark({
+      imagePath,
+      pages: [0,1,2],
+      scale: 0.35,
+      rotation: 0,
+      opacity: 0.8,
+      horizontalAlignment: 'center',
+      verticalAlignment: 'center',
+      isFront: true,
+    }),
+  );
+  Logger.log('createImageWatermark:', success, imagePath);
+  if (!success) {
+    Alert.alert('Create Image Watermark', 'Failed to create image watermark.');
+  }
+  return success;
+}
+
+export async function removeAllWatermarksExample(reader: CPDFReaderView) {
+  const success = await reader._pdfDocument.removeAllWatermarks();
+  Logger.log('removeAllWatermarks:', success);
+  if (!success) {
+    Alert.alert('Remove All Watermarks', 'No document available.');
+  }
+  return success;
 }
 
 export async function logDocumentPermissions(reader: CPDFReaderView) {

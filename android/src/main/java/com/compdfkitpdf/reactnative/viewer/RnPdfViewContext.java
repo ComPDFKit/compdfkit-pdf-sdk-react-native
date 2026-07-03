@@ -32,9 +32,9 @@ final class RnPdfViewContext {
   RnPdfViewContext(RnPdfView view) {
     this.view = view;
     this.readerView = view.getCPDFReaderView();
-    this.document = readerView.getPDFDocument();
+    this.document = readerView == null ? null : readerView.getPDFDocument();
     this.pageUtil = view.getCPDFPageUtil();
     this.pageUtil.setDocument(document);
-    this.viewCtrl = view.documentFragment.pdfView;
+    this.viewCtrl = view.documentFragment == null ? null : view.documentFragment.pdfView;
   }
 }

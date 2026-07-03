@@ -28,6 +28,7 @@ import com.compdfkit.tools.common.utils.glide.wrapper.impl.CPDFDocumentPageWrapp
 import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkit.ui.textsearch.ITextSearcher;
 import com.compdfkitpdf.reactnative.codec.RnPageCodec;
+import com.compdfkitpdf.reactnative.util.RnPageTextMapper;
 import com.compdfkitpdf.reactnative.util.RnSearchResultMapper;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -55,10 +56,17 @@ final class RnSearchRenderOps {
     this.reactContext = reactContext;
   }
 
+  private boolean isAvailable(@Nullable RnPdfViewContext context) {
+    return context != null && context.document != null && context.readerView != null;
+  }
+
   /**
    * Searches text.
    */
   WritableArray searchText(RnPdfViewContext context, String keywords, int searchOptions) {
+    if (!isAvailable(context)) {
+      return Arguments.createArray();
+    }
     ITextSearcher textSearcher = context.readerView.getTextSearcher();
     return RnSearchResultMapper.search(context.document, textSearcher, keywords, searchOptions);
   }
@@ -67,6 +75,9 @@ final class RnSearchRenderOps {
    * Clears search result.
    */
   void clearSearchResult(RnPdfViewContext context) {
+    if (!isAvailable(context)) {
+      return;
+    }
     RnSearchResultMapper.clearSearch(reactContext, context.viewCtrl, context.document);
   }
 
@@ -74,6 +85,9 @@ final class RnSearchRenderOps {
    * Handles selection text.
    */
   void selectionText(RnPdfViewContext context, int pageIndex, int textRangeIndex) {
+    if (!isAvailable(context)) {
+      return;
+    }
     RnSearchResultMapper.selection(reactContext, context.viewCtrl, context.document, pageIndex,
       textRangeIndex);
   }
@@ -82,13 +96,49 @@ final class RnSearchRenderOps {
    * Returns the search text.
    */
   String getSearchText(RnPdfViewContext context, int pageIndex, int location, int length) {
+    if (!isAvailable(context)) {
+      return "";
+    }
     return RnSearchResultMapper.getText(context.document, pageIndex, location, length);
+  }
+
+  /**
+   * Returns all text on a page.
+   */
+  String getPageText(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return "";
+    }
+    return RnPageTextMapper.getPageText(context.document, pageIndex);
+  }
+
+  /**
+   * Returns text inside a page rectangle.
+   */
+  String getPageTextInRect(RnPdfViewContext context, int pageIndex, ReadableMap rect) {
+    if (!isAvailable(context)) {
+      return "";
+    }
+    return RnPageTextMapper.getPageTextInRect(context.document, pageIndex, rect);
+  }
+
+  /**
+   * Returns page text lines.
+   */
+  WritableArray getPageTextLines(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return Arguments.createArray();
+    }
+    return RnPageTextMapper.getPageTextLines(context.document, pageIndex);
   }
 
   /**
    * Returns the page size.
    */
   WritableMap getPageSize(RnPdfViewContext context, int pageIndex) {
+    if (!isAvailable(context)) {
+      return null;
+    }
     try {
       RectF rectF = context.document.getPageSize(pageIndex);
       WritableMap map = Arguments.createMap();
@@ -106,6 +156,10 @@ final class RnSearchRenderOps {
   void renderPage(RnPdfViewContext context, int pageIndex, int width, int height,
     String backgroundColor, boolean drawAnnot, boolean drawForm, String pageCompression,
     Promise promise) {
+    if (!isAvailable(context)) {
+      promise.reject("RENDER_PAGE_FAIL", "Document unavailable");
+      return;
+    }
     CPDFDocument document = context.document;
     CPDFDocumentPageWrapper pageWrapper = new CPDFDocumentPageWrapper(document, pageIndex);
     pageWrapper.setBackgroundColor(Color.parseColor(backgroundColor));
@@ -159,7 +213,7 @@ final class RnSearchRenderOps {
    */
   void renderAnnotationAppearance(@Nullable RnPdfViewContext context, int pageIndex, String uuid,
     ReadableMap optionsMap, Promise promise) {
-    if (context == null) {
+    if (!isAvailable(context)) {
       promise.reject(RENDER_ANNOTATION_APPEARANCE_FAIL,
         "Unable to find the native view reference");
       return;

@@ -103,6 +103,7 @@ export interface CPDFReaderViewProps {
     event: CPDFAnnotation | null
   ) => void;
   onInterceptAnnotationActionCallback?: (annotation: CPDFAnnotation) => void;
+  onInterceptWidgetActionCallback?: (widget: CPDFWidget) => void;
   style?: any;
 }
 
@@ -292,6 +293,11 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
         "pencilDrawingCompleted",
         event.nativeEvent.pencilDrawingCompleted
       );
+    } else if ("pencilDrawingDiscarded" in event.nativeEvent) {
+      this._triggerEvent(
+        "pencilDrawingDiscarded",
+        event.nativeEvent.pencilDrawingDiscarded
+      );
     } else if ("annotationsSelected" in event.nativeEvent) {
       this._triggerEvent(
         "annotationsSelected",
@@ -385,6 +391,12 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
         const data = event.nativeEvent.onInterceptAnnotationAction;
         const annotation = CPDFAnnotationFactory.create(data);
         this.props.onInterceptAnnotationActionCallback(annotation);
+      }
+    } else if ("onInterceptWidgetAction" in event.nativeEvent) {
+      if (this.props.onInterceptWidgetActionCallback) {
+        const data = event.nativeEvent.onInterceptWidgetAction;
+        const widget = CPDFWidgetFactory.create(data);
+        this.props.onInterceptWidgetActionCallback(widget);
       }
     }
   };

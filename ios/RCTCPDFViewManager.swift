@@ -132,6 +132,15 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     }
   }
 
+  func onPencilDrawingDiscarded(_ cpdfView: RCTCPDFView, payload: [String : Any]) {
+    if let onChange = cpdfView.onChange {
+      let eventBody: [String: Any] = [
+        "pencilDrawingDiscarded": payload
+      ]
+      onChange(eventBody)
+    }
+  }
+
   func onFormFieldAddChanged(_ cpdfView: RCTCPDFView, formData: [String : Any]) {
     if let onChange = cpdfView.onChange {
       let eventBody: [String: Any] = [
@@ -274,6 +283,15 @@ class RCTCPDFReaderView: RCTViewManager, RCTCPDFViewDelegate {
     if let onChange = cpdfView.onChange {
       let eventBody: [String: Any] = [
         "onInterceptAnnotationAction" : annotation
+      ]
+      onChange(eventBody)
+    }
+  }
+  
+  func onInterceptWidgetDoAction(_ cpdfView: RCTCPDFView, widget: [String : Any]) {
+    if let onChange = cpdfView.onChange {
+      let eventBody: [String: Any] = [
+        "onInterceptWidgetAction" : widget
       ]
       onChange(eventBody)
     }

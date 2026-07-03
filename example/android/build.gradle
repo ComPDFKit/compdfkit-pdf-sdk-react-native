@@ -12,12 +12,23 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-
   }
   dependencies {
     classpath("com.android.tools.build:gradle")
     classpath("com.facebook.react:react-native-gradle-plugin")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+  }
+}
+
+allprojects {
+  repositories {
+    mavenLocal {
+      content {
+        includeGroup "com.compdf"
+      }
+    }
+    google()
+    mavenCentral()
   }
 }
 

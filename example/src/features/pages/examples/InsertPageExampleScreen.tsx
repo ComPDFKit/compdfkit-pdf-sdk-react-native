@@ -9,7 +9,7 @@
 
 import React from 'react';
 
-import { insertBlankPage, insertImagePage } from '../shared/pageExampleActions';
+import { copyFirstPage, insertBlankPage, insertImagePage } from '../shared/pageExampleActions';
 import { PageExampleScaffold } from '../shared/PageExampleScaffold';
 
 export default function InsertPageExampleScreen() {
@@ -27,6 +27,11 @@ export default function InsertPageExampleScreen() {
           key: 'insert-image-page',
           label: 'Insert Image Page',
           onPress: insertImagePage,
+        },
+        {
+          key: 'copy-page',
+          label: 'Copy Page',
+          onPress: copyFirstPage,
         },
       ]}
     />

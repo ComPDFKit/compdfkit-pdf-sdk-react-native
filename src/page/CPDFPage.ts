@@ -11,6 +11,8 @@ import { CPDFAnnotationFactory } from '../annotation/CPDFAnnotationFactory';
 import { CPDFAnnotation } from '../annotation/CPDFAnnotation';
 import { CPDFWidgetFactory } from '../annotation/form/CPDFWidgetFactory';
 import { CPDFWidget } from '../annotation/form/CPDFWidget';
+import type { CPDFRectF } from '../util/CPDFRectF';
+import { CPDFTextLine } from './CPDFTextLine';
 const { CPDFViewManager } = NativeModules;
 
 /**
@@ -32,6 +34,82 @@ export class CPDFPage {
     constructor(viewerRef: any, pageIndex: number) {
         this.pageIndex = pageIndex;
         this._viewerRef = viewerRef;
+    }
+
+    /**
+     * Retrieves all text on the current page.
+     * @example
+     * const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(0);
+     * const text = await page?.getAllText();
+     */
+    getAllText = async (): Promise<string> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            try {
+                return await CPDFViewManager.getPageText(tag, this.pageIndex);
+            } catch (e) {
+                return '';
+            }
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Retrieves text inside the specified rectangle on the current page.
+     * @param rect The rectangle in page coordinates.
+     */
+    getTextInRect = async (rect: CPDFRectF): Promise<string> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            try {
+                return await CPDFViewManager.getPageTextInRect(tag, this.pageIndex, rect);
+            } catch (e) {
+                return '';
+            }
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Retrieves all text lines on the current page.
+     */
+    getTextLines = async (): Promise<CPDFTextLine[]> => {
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            try {
+                const data = await CPDFViewManager.getPageTextLines(tag, this.pageIndex);
+                if (!Array.isArray(data)) {
+                    return [];
+                }
+                return data.map((item: any) => CPDFTextLine.fromJson(item));
+            } catch (e) {
+                return [];
+            }
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
+    }
+
+    /**
+     * Retrieves text for a line returned by [getTextLines].
+     * @param line The text line to extract.
+     */
+    getTextByLine = async (line: CPDFTextLine): Promise<string> => {
+        if (line.pageIndex !== this.pageIndex) {
+            return Promise.reject(
+                new Error(
+                    `The line pageIndex (${line.pageIndex}) does not match this pageIndex (${this.pageIndex}).`
+                )
+            );
+        }
+        const tag = findNodeHandle(this._viewerRef);
+        if (tag != null) {
+            try {
+                return await CPDFViewManager.getSearchText(tag, line.pageIndex, line.location, line.length);
+            } catch (e) {
+                return '';
+            }
+        }
+        return Promise.reject(new Error('Unable to find the native view reference'));
     }
 
     /**

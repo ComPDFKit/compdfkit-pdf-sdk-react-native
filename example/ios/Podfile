@@ -18,8 +18,8 @@ end
 
 target 'CompdfkitPdfExample' do
   config = use_native_modules!
-  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.8'
-  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.8'
+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.9'
+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.9'
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -40,5 +40,15 @@ target 'CompdfkitPdfExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'fmt'
+
+      target.build_configurations.each do |config|
+        # fmt 11.0.2 fails to compile with Apple Clang's C++20 consteval checks.
+        # RCT-Folly pins this fmt version, so keep the workaround scoped to fmt.
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+      end
+    end
   end
 end

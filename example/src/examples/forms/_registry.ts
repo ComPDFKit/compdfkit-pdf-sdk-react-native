@@ -92,6 +92,18 @@ export const formsCategory: CategoryInfo = {
       },
     },
     {
+      id: 'intercept-widget-action',
+      name: 'Intercept Widget Action',
+      description: 'Intercept form widget taps and handle custom actions',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.formInterceptWidgetAction,
+      visual: {
+        badge: 'IW',
+        accentColor: '#0F766E',
+        backgroundColor: '#CCFBF1',
+      },
+    },
+    {
       id: 'api-form-creation-mode',
       name: 'API Form Creation Mode',
       description: 'Enter form creation mode via API and create fields',

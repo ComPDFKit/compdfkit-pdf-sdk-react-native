@@ -11,6 +11,7 @@ package com.compdfkitpdf.reactnative.modules;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.compdfkit.tools.common.pdf.config.CPDFWatermarkConfig;
 import com.compdfkitpdf.reactnative.util.RnFileUtils;
 import com.compdfkitpdf.reactnative.viewer.RnPdfViewManager;
@@ -181,6 +182,14 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
       values[i] = array.getInt(i);
     }
     return values;
+  }
+
+  @Nullable
+  private String identityString(@Nullable ReadableMap identity, String key) {
+    if (identity == null || !identity.hasKey(key) || identity.isNull(key)) {
+      return null;
+    }
+    return identity.getString(key);
   }
 
   /**
@@ -609,6 +618,69 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   }
 
   /**
+   * Creates a document watermark.
+   */
+  @ReactMethod
+  public void createWatermark(int tag, ReadableMap info, Promise promise) {
+    runOnUiThread(promise, "WATERMARK_FAIL",
+      () -> mPDFViewInstance.createWatermark(tag, info, promise));
+  }
+
+  /**
+   * Returns the watermark count.
+   */
+  @ReactMethod
+  public void getWatermarkCount(int tag, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.getWatermarkCount(tag));
+  }
+
+  /**
+   * Returns a watermark by index.
+   */
+  @ReactMethod
+  public void getWatermark(int tag, int index, ReadableMap options, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.getWatermark(
+      tag,
+      index,
+      options != null && options.hasKey("export_image") && options.getBoolean("export_image")));
+  }
+
+  /**
+   * Returns all watermarks.
+   */
+  @ReactMethod
+  public void getWatermarks(int tag, ReadableMap options, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.getWatermarks(
+      tag,
+      options != null && options.hasKey("export_images") && options.getBoolean("export_images")));
+  }
+
+  /**
+   * Updates a watermark.
+   */
+  @ReactMethod
+  public void updateWatermark(int tag, int index, ReadableMap info, Promise promise) {
+    runOnUiThread(promise, "WATERMARK_FAIL",
+      () -> mPDFViewInstance.updateWatermark(tag, index, info, promise));
+  }
+
+  /**
+   * Removes a watermark.
+   */
+  @ReactMethod
+  public void removeWatermark(int tag, int index, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.removeWatermark(tag, index));
+  }
+
+  /**
+   * Removes all watermarks.
+   */
+  @ReactMethod
+  public void removeAllWatermarks(int tag, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.removeAllWatermarks(tag));
+  }
+
+  /**
    * Saves as.
    */
   @ReactMethod
@@ -731,6 +803,17 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   }
 
   /**
+   * Handles image extraction.
+   */
+  @ReactMethod
+  public void extractImages(int tag, String directoryPath, ReadableArray pagesArray, Promise promise) {
+    runOnUiThread(promise, () -> {
+      int[] pages = toIntArray(pagesArray);
+      mPDFViewInstance.extractImages(tag, directoryPath, pages, promise);
+    });
+  }
+
+  /**
    * Returns the annotations.
    */
   @ReactMethod
@@ -787,6 +870,109 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   public void removeAnnotation(int tag, int pageIndex, String uuid, Promise promise) {
     resolveValue(promise, "REMOVE_ANNOTATION_FAIL",
       () -> mPDFViewInstance.removeAnnotation(tag, pageIndex, uuid));
+  }
+
+  /**
+   * Adds a plain annotation reply.
+   */
+  @ReactMethod
+  public void addAnnotationReply(int tag, int pageIndex, String uuid, String content,
+    String title, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.addAnnotationReply(tag, pageIndex, uuid, content, title));
+  }
+
+  /**
+   * Gets plain annotation replies.
+   */
+  @ReactMethod
+  public void getAnnotationReplies(int tag, int pageIndex, String uuid, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.getAnnotationReplies(tag, pageIndex, uuid));
+  }
+
+  /**
+   * Updates a plain annotation reply.
+   */
+  @ReactMethod
+  public void updateAnnotationReply(int tag, int pageIndex, String uuid, String content,
+    String title, @Nullable ReadableMap identity, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.updateAnnotationReply(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid"), content, title));
+  }
+
+  /**
+   * Removes a plain annotation reply.
+   */
+  @ReactMethod
+  public void removeAnnotationReply(int tag, int pageIndex, String uuid,
+    @Nullable ReadableMap identity,
+    Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.removeAnnotationReply(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid")));
+  }
+
+  /**
+   * Removes all plain annotation replies.
+   */
+  @ReactMethod
+  public void removeAllAnnotationReplies(int tag, int pageIndex, String uuid, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.removeAllAnnotationReplies(tag, pageIndex, uuid));
+  }
+
+  /**
+   * Sets the annotation mark state.
+   */
+  @ReactMethod
+  public void setAnnotationMarkState(int tag, int pageIndex, String uuid, String state,
+    @Nullable ReadableMap identity, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.setAnnotationMarkState(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid"), state));
+  }
+
+  /**
+   * Gets the annotation mark state.
+   */
+  @ReactMethod
+  public void getAnnotationMarkState(int tag, int pageIndex, String uuid,
+    @Nullable ReadableMap identity,
+    Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.getAnnotationMarkState(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid")));
+  }
+
+  /**
+   * Sets the annotation review state.
+   */
+  @ReactMethod
+  public void setAnnotationReviewState(int tag, int pageIndex, String uuid, String state,
+    @Nullable ReadableMap identity, Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.setAnnotationReviewState(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid"), state));
+  }
+
+  /**
+   * Gets the annotation review state.
+   */
+  @ReactMethod
+  public void getAnnotationReviewState(int tag, int pageIndex, String uuid,
+    @Nullable ReadableMap identity,
+    Promise promise) {
+    resolveValue(promise, "ANNOTATION_REPLY_FAIL",
+      () -> mPDFViewInstance.getAnnotationReviewState(tag, pageIndex, uuid,
+        identityString(identity, "native_id"), identityString(identity, "reply_key"),
+        identityString(identity, "parent_uuid")));
   }
 
   /**
@@ -889,6 +1075,33 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getSearchText(int tag, int pageIndex, int location, int length, Promise promise) {
     resolveValue(promise, () -> mPDFViewInstance.getSearchText(tag, pageIndex, location, length));
+  }
+
+  /**
+   * Returns all text on a page.
+   */
+  @ReactMethod
+  public void getPageText(int tag, int pageIndex, Promise promise) {
+    resolveValue(promise, "GET_PAGE_TEXT_FAIL",
+      () -> mPDFViewInstance.getPageText(tag, pageIndex));
+  }
+
+  /**
+   * Returns text inside a page rectangle.
+   */
+  @ReactMethod
+  public void getPageTextInRect(int tag, int pageIndex, ReadableMap rect, Promise promise) {
+    resolveValue(promise, "GET_PAGE_TEXT_IN_RECT_FAIL",
+      () -> mPDFViewInstance.getPageTextInRect(tag, pageIndex, rect));
+  }
+
+  /**
+   * Returns page text lines.
+   */
+  @ReactMethod
+  public void getPageTextLines(int tag, int pageIndex, Promise promise) {
+    resolveValue(promise, "GET_PAGE_TEXT_LINES_FAIL",
+      () -> mPDFViewInstance.getPageTextLines(tag, pageIndex));
   }
 
   /**
@@ -1097,6 +1310,15 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   public void removePages(int tag, ReadableArray pageIndices, Promise promise){
     resolveValue(promise, "REMOVE_PAGES_FAIL",
       () -> mPDFViewInstance.removePages(tag, toIntArray(pageIndices)));
+  }
+
+  /**
+   * Handles copy page.
+   */
+  @ReactMethod
+  public void copyPage(int tag, int pageIndex, int insertIndex, Promise promise) {
+    resolveValue(promise, "COPY_PAGE_FAIL",
+      () -> mPDFViewInstance.copyPage(tag, pageIndex, insertIndex));
   }
 
   /**

@@ -28,6 +28,7 @@ type CustomToolbarRoute = RouteProp<
 >;
 
 const customToolbarConfig: CPDFToolbarConfig = {
+  mainToolbarTitleVisible: false,
   customToolbarLeftItems: [
     {
       action: 'back',

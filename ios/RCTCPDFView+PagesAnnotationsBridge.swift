@@ -15,6 +15,10 @@ import ComPDFKit
 import ComPDFKit_Tools
 
 extension RCTCPDFView {
+  private func identityValue(_ identity: [String: Any]?, _ key: String) -> String? {
+    return identity?[key] as? String
+  }
+
   func getAnnotations(pageIndex: Int, completionHandler: @escaping ([[String: Any]]) -> Void) {
     let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
     pageUtil.pageIndex = pageIndex
@@ -69,6 +73,148 @@ extension RCTCPDFView {
     pdfViewController?.pdfListView?.updateActiveAnnotations([])
     pdfViewController?.pdfListView?.setNeedsDisplayForVisiblePages()
     completionHandler(true)
+  }
+
+  func addAnnotationReply(
+    pageIndex: Int,
+    annotId: String,
+    content: String,
+    title: String,
+    completionHandler: @escaping ([String: Any]?) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let reply = pageUtil.addAnnotationReply(uuid: annotId, content: content, title: title)
+    completionHandler(reply)
+  }
+
+  func getAnnotationReplies(
+    pageIndex: Int,
+    annotId: String,
+    completionHandler: @escaping ([[String: Any]]) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    completionHandler(pageUtil.getAnnotationReplies(uuid: annotId))
+  }
+
+  func updateAnnotationReply(
+    pageIndex: Int,
+    replyId: String,
+    content: String,
+    title: String?,
+    identity: [String: Any]?,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let result = pageUtil.updateAnnotationReply(
+      uuid: replyId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid"),
+      content: content,
+      title: title
+    )
+    completionHandler(result)
+  }
+
+  func removeAnnotationReply(
+    pageIndex: Int,
+    replyId: String,
+    identity: [String: Any]?,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let result = pageUtil.removeAnnotationReply(
+      uuid: replyId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid")
+    )
+    completionHandler(result)
+  }
+
+  func removeAllAnnotationReplies(
+    pageIndex: Int,
+    annotId: String,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let result = pageUtil.removeAllAnnotationReplies(uuid: annotId)
+    completionHandler(result)
+  }
+
+  func setAnnotationMarkState(
+    pageIndex: Int,
+    annotId: String,
+    state: String,
+    identity: [String: Any]?,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let result = pageUtil.setAnnotationMarkState(
+      uuid: annotId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid"),
+      state: state
+    )
+    completionHandler(result)
+  }
+
+  func getAnnotationMarkState(
+    pageIndex: Int,
+    annotId: String,
+    identity: [String: Any]?,
+    completionHandler: @escaping (String) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    completionHandler(pageUtil.getAnnotationMarkState(
+      uuid: annotId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid")
+    ))
+  }
+
+  func setAnnotationReviewState(
+    pageIndex: Int,
+    annotId: String,
+    state: String,
+    identity: [String: Any]?,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    let result = pageUtil.setAnnotationReviewState(
+      uuid: annotId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid"),
+      state: state
+    )
+    completionHandler(result)
+  }
+
+  func getAnnotationReviewState(
+    pageIndex: Int,
+    annotId: String,
+    identity: [String: Any]?,
+    completionHandler: @escaping (String) -> Void
+  ) {
+    let pageUtil = RCTCPDFPageUtil(page: getPage(UInt(pageIndex)))
+    pageUtil.pageIndex = pageIndex
+    completionHandler(pageUtil.getAnnotationReviewState(
+      uuid: annotId,
+      nativeId: identityValue(identity, "native_id"),
+      replyKey: identityValue(identity, "reply_key"),
+      parentUuid: identityValue(identity, "parent_uuid")
+    ))
   }
 
   func removeWidget(pageIndex: Int, widgetId: String, completionHandler: @escaping (Bool) -> Void) {
@@ -269,6 +415,38 @@ extension RCTCPDFView {
       length: length
     )
     completionHandler(text ?? "")
+  }
+
+  func getPageText(pageIndex: Int, completionHandler: @escaping (String) -> Void) {
+    let text = CPDFPageTextUtil.getPageText(
+      from: pdfViewController?.pdfListView?.document,
+      pageIndex: pageIndex
+    )
+    completionHandler(text)
+  }
+
+  func getPageTextInRect(
+    pageIndex: Int,
+    rect: NSDictionary,
+    completionHandler: @escaping (String) -> Void
+  ) {
+    let text = CPDFPageTextUtil.getPageTextInRect(
+      from: pdfViewController?.pdfListView?.document,
+      pageIndex: pageIndex,
+      rectInfo: rect as? [String: Any]
+    )
+    completionHandler(text)
+  }
+
+  func getPageTextLines(
+    pageIndex: Int,
+    completionHandler: @escaping ([[String: Any]]) -> Void
+  ) {
+    let lines = CPDFPageTextUtil.getPageTextLines(
+      from: pdfViewController?.pdfListView?.document,
+      pageIndex: pageIndex
+    )
+    completionHandler(lines)
   }
 
   func getPageSize(pageIndex: Int, completionHandler: @escaping (NSDictionary) -> Void) {

@@ -17,14 +17,17 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import com.compdfkit.core.annotation.CPDFAnnotation;
 import com.compdfkit.core.annotation.CPDFAnnotation.Type;
+import com.compdfkit.core.annotation.CPDFReplyAnnotation;
 import com.compdfkit.core.annotation.form.CPDFCheckboxWidget;
 import com.compdfkit.core.annotation.form.CPDFRadiobuttonWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
+import com.compdfkit.core.common.CPDFDate;
 import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.edit.CPDFEditImageArea;
 import com.compdfkit.core.edit.CPDFEditPathArea;
 import com.compdfkit.core.page.CPDFPage;
+import com.compdfkit.core.utils.TTimeUtil;
 import com.compdfkit.ui.edit.CPDFEditTextSelections;
 import com.compdfkit.ui.reader.CPDFPageView;
 import com.compdfkit.ui.reader.CPDFReaderView;
@@ -49,6 +52,7 @@ import com.compdfkitpdf.reactnative.codec.widget.RnTextFieldWidgetCodec;
 import com.compdfkitpdf.reactnative.codec.widget.RnWidgetCodec;
 import com.compdfkitpdf.reactnative.util.RnEditAreaMapper;
 import com.compdfkitpdf.reactnative.util.RnEnumConverter;
+import com.compdfkit.tools.common.utils.date.CDateUtil;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -59,11 +63,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Coordinates annotation and widget codecs for page-level React Native data exchange.
  */
 public class RnPageCodec {
+
+  private static final String REPLY_STABLE_ID_PREFIX = "compdfkit-react-native-reply:";
 
   private CPDFDocument document;
 
@@ -218,12 +225,40 @@ public class RnPageCodec {
    * Returns the annotation.
    */
   public CPDFAnnotation getAnnotation(int pageIndex, String annotPtr) {
+    if (annotPtr == null) {
+      return null;
+    }
+    long targetPtr;
+    try {
+      targetPtr = Long.parseLong(annotPtr);
+    } catch (NumberFormatException e) {
+      return null;
+    }
     for (CPDFAnnotation annotation : getPageAnnotations(pageIndex)) {
-      if (annotation.getAnnotPtr() == Long.parseLong(annotPtr)) {
+      if (annotation.getAnnotPtr() == targetPtr) {
         return annotation;
       }
     }
     return null;
+  }
+
+  /**
+   * Returns the annotation or reply annotation.
+   */
+  public CPDFAnnotation getAnnotationOrReply(int pageIndex, String annotPtr) {
+    return getAnnotationOrReply(pageIndex, annotPtr, null, null, null);
+  }
+
+  /**
+   * Returns the annotation or reply annotation.
+   */
+  public CPDFAnnotation getAnnotationOrReply(int pageIndex, String annotPtr,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    CPDFAnnotation annotation = getAnnotation(pageIndex, annotPtr);
+    if (annotation != null) {
+      return annotation;
+    }
+    return getReplyAnnotation(pageIndex, annotPtr, nativeId, replyKey, parentUuid);
   }
 
 
@@ -241,6 +276,169 @@ public class RnPageCodec {
   }
 
   /**
+   * Adds a plain annotation reply.
+   */
+  public WritableMap addAnnotationReply(CPDFAnnotation annotation, @Nullable String content,
+    @Nullable String title) {
+    if (annotation == null || !annotation.isValid()) {
+      return Arguments.createMap();
+    }
+    CPDFReplyAnnotation reply = annotation.createReplyAnnotation();
+    if (reply == null || !reply.isValid()) {
+      return Arguments.createMap();
+    }
+    if (content != null) {
+      reply.setContent(content);
+    }
+    if (title != null && !title.isEmpty()) {
+      reply.setTitle(title);
+    }
+    ensureReplyStableId(reply);
+    reply.setRecentlyModifyDate(TTimeUtil.getCurrentDate());
+    return getReplyAnnotationData(reply, annotation, getReplyIndex(annotation, reply));
+  }
+
+  /**
+   * Gets plain annotation replies.
+   */
+  public WritableArray getAnnotationReplies(CPDFAnnotation annotation) {
+    WritableArray replies = Arguments.createArray();
+    if (annotation == null || !annotation.isValid()) {
+      return replies;
+    }
+    CPDFReplyAnnotation[] replyAnnotations = annotation.getAllReplyAnnotations();
+    if (replyAnnotations == null) {
+      return replies;
+    }
+    for (int i = 0; i < replyAnnotations.length; i++) {
+      CPDFReplyAnnotation reply = replyAnnotations[i];
+      if (reply == null || !reply.isValid()) {
+        continue;
+      }
+      replies.pushMap(getReplyAnnotationData(reply, annotation, i));
+    }
+    return replies;
+  }
+
+  /**
+   * Updates a plain annotation reply.
+   */
+  public boolean updateAnnotationReply(int pageIndex, String replyPtr, @Nullable String content,
+    @Nullable String title) {
+    return updateAnnotationReply(pageIndex, replyPtr, null, null, null, content, title);
+  }
+
+  /**
+   * Updates a plain annotation reply.
+   */
+  public boolean updateAnnotationReply(int pageIndex, String replyPtr, @Nullable String nativeId,
+    @Nullable String replyKey, @Nullable String parentUuid, @Nullable String content,
+    @Nullable String title) {
+    CPDFReplyAnnotation reply = getReplyAnnotation(pageIndex, replyPtr, nativeId, replyKey,
+      parentUuid);
+    if (reply == null || !reply.isValid()) {
+      return false;
+    }
+    if (content != null) {
+      reply.setContent(content);
+    }
+    if (title != null && !title.isEmpty()) {
+      reply.setTitle(title);
+    }
+    reply.setRecentlyModifyDate(TTimeUtil.getCurrentDate());
+    return true;
+  }
+
+  /**
+   * Removes a plain annotation reply.
+   */
+  public boolean removeAnnotationReply(int pageIndex, String replyPtr) {
+    return removeAnnotationReply(pageIndex, replyPtr, null, null, null);
+  }
+
+  /**
+   * Removes a plain annotation reply.
+   */
+  public boolean removeAnnotationReply(int pageIndex, String replyPtr, @Nullable String nativeId,
+    @Nullable String replyKey, @Nullable String parentUuid) {
+    CPDFReplyAnnotation reply = getReplyAnnotation(pageIndex, replyPtr, nativeId, replyKey,
+      parentUuid);
+    if (reply == null || !reply.isValid()) {
+      return false;
+    }
+    CPDFPage page = reply.pdfPage != null ? reply.pdfPage : document.pageAtIndex(pageIndex);
+    return page != null && page.deleteAnnotation(reply);
+  }
+
+  /**
+   * Removes all plain annotation replies.
+   */
+  public boolean removeAllAnnotationReplies(CPDFAnnotation annotation) {
+    if (annotation == null || !annotation.isValid()) {
+      return false;
+    }
+    CPDFReplyAnnotation[] replyAnnotations = annotation.getAllReplyAnnotations();
+    if (replyAnnotations == null || replyAnnotations.length == 0) {
+      return true;
+    }
+    boolean result = true;
+    for (CPDFReplyAnnotation reply : replyAnnotations) {
+      if (reply == null || !reply.isValid()) {
+        continue;
+      }
+      CPDFPage page = reply.pdfPage != null ? reply.pdfPage : document.pageAtIndex(
+        annotation.pdfPage.getPageNum());
+      if (page == null) {
+        result = false;
+        continue;
+      }
+      result = page.deleteAnnotation(reply) && result;
+    }
+    return result;
+  }
+
+  /**
+   * Sets the annotation mark state.
+   */
+  public boolean setAnnotationMarkState(CPDFAnnotation annotation, @Nullable String state) {
+    if (annotation == null || !annotation.isValid()) {
+      return false;
+    }
+    return annotation.setMarkedAnnotState(stringToMarkState(state));
+  }
+
+  /**
+   * Gets the annotation mark state.
+   */
+  public String getAnnotationMarkState(CPDFAnnotation annotation) {
+    if (annotation == null || !annotation.isValid()) {
+      return "unmarked";
+    }
+    CPDFAnnotation.MarkState state = annotation.getMarkedAnnotState();
+    return state == CPDFAnnotation.MarkState.MARKED ? "marked" : "unmarked";
+  }
+
+  /**
+   * Sets the annotation review state.
+   */
+  public boolean setAnnotationReviewState(CPDFAnnotation annotation, @Nullable String state) {
+    if (annotation == null || !annotation.isValid()) {
+      return false;
+    }
+    return annotation.setReviewAnnotState(stringToReviewState(state));
+  }
+
+  /**
+   * Gets the annotation review state.
+   */
+  public String getAnnotationReviewState(CPDFAnnotation annotation) {
+    if (annotation == null || !annotation.isValid()) {
+      return "none";
+    }
+    return reviewStateToString(annotation.getReviewAnnotState());
+  }
+
+  /**
    * Returns the annotation data.
    */
   public WritableMap getAnnotationData(CPDFAnnotation annotation) {
@@ -249,7 +447,12 @@ public class RnPageCodec {
     }
     RnAnnotationCodec rcpdfAnnotation = resolveAnnotationCodec(annotation);
     if (rcpdfAnnotation != null) {
-      return rcpdfAnnotation.getAnnotation(annotation);
+      WritableMap map = rcpdfAnnotation.getAnnotation(annotation);
+      if (map != null && map.hasKey("type")) {
+        map.putString("markState", getAnnotationMarkState(annotation));
+        map.putString("reviewState", getAnnotationReviewState(annotation));
+      }
+      return map;
     }
     return Arguments.createMap();
   }
@@ -266,6 +469,219 @@ public class RnPageCodec {
       return rcpdfWidget.getWidget(widget);
     }
     return Arguments.createMap();
+  }
+
+  /**
+   * Returns the reply annotation.
+   */
+  public CPDFReplyAnnotation getReplyAnnotation(int pageIndex, String annotPtr) {
+    return getReplyAnnotation(pageIndex, annotPtr, null, null, null);
+  }
+
+  /**
+   * Returns the reply annotation.
+   */
+  public CPDFReplyAnnotation getReplyAnnotation(int pageIndex, String replyId,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    if (document == null || replyId == null) {
+      return null;
+    }
+    CPDFReplyAnnotation reply = getReplyAnnotationFromPage(pageIndex, replyId, nativeId, replyKey,
+      parentUuid);
+    if (reply != null) {
+      return reply;
+    }
+    int pageCount = document.getPageCount();
+    for (int i = 0; i < pageCount; i++) {
+      if (i == pageIndex) {
+        continue;
+      }
+      reply = getReplyAnnotationFromPage(i, replyId, nativeId, replyKey, parentUuid);
+      if (reply != null) {
+        return reply;
+      }
+    }
+    return null;
+  }
+
+  private CPDFReplyAnnotation getReplyAnnotationFromPage(int pageIndex, String replyId,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    for (CPDFAnnotation annotation : getPageAnnotations(pageIndex)) {
+      if (annotation == null || !annotation.isValid()) {
+        continue;
+      }
+      CPDFReplyAnnotation[] replies = annotation.getAllReplyAnnotations();
+      if (replies == null) {
+        continue;
+      }
+      for (int i = 0; i < replies.length; i++) {
+        CPDFReplyAnnotation reply = replies[i];
+        if (isTargetReply(annotation, reply, i, replyId, nativeId, replyKey, parentUuid)) {
+          return reply;
+        }
+      }
+    }
+    return null;
+  }
+
+  private WritableMap getReplyAnnotationData(CPDFReplyAnnotation reply) {
+    return getReplyAnnotationData(reply, null, -1);
+  }
+
+  private WritableMap getReplyAnnotationData(CPDFReplyAnnotation reply,
+    @Nullable CPDFAnnotation parent, int replyIndex) {
+    WritableMap map = Arguments.createMap();
+    if (reply == null || !reply.isValid()) {
+      return map;
+    }
+    String nativeId = reply.getAnnotPtr() + "";
+    String parentUuid = parent != null ? parent.getAnnotPtr() + "" : "";
+    String stableId = reply.getName();
+    map.putString("type", "unknown");
+    map.putInt("page", reply.pdfPage.getPageNum());
+    map.putString("title", reply.getTitle());
+    map.putString("content", reply.getContent());
+    map.putString("uuid", hasText(stableId) ? stableId : nativeId);
+    map.putString("nativeId", nativeId);
+    map.putString("replyKey", buildReplyKey(parent, reply, replyIndex));
+    map.putString("parentUuid", parentUuid);
+    RectF rect = reply.getRect();
+    if (rect != null) {
+      map.putMap("rect", toRectMap(rect));
+    }
+    if (reply.getCreationDate() != null) {
+      map.putDouble("createDate", CDateUtil.transformToTimestamp(reply.getCreationDate()));
+    }
+    if (reply.getRecentlyModifyDate() != null) {
+      map.putDouble("modifyDate", CDateUtil.transformToTimestamp(reply.getRecentlyModifyDate()));
+    }
+    map.putString("markState", getAnnotationMarkState(reply));
+    map.putString("reviewState", getAnnotationReviewState(reply));
+    return map;
+  }
+
+  private boolean isTargetReply(@Nullable CPDFAnnotation parent, @Nullable CPDFReplyAnnotation reply,
+    int replyIndex, @Nullable String replyId, @Nullable String nativeId,
+    @Nullable String replyKey, @Nullable String parentUuid) {
+    if (reply == null || !reply.isValid()) {
+      return false;
+    }
+    String stableId = reply.getName();
+    if (hasText(stableId) && stableId.equals(replyId)) {
+      return true;
+    }
+    String runtimeId = reply.getAnnotPtr() + "";
+    if (runtimeId.equals(replyId) || runtimeId.equals(nativeId)) {
+      return true;
+    }
+    if (hasText(replyKey) && replyKey.equals(buildReplyKey(parent, reply, replyIndex))) {
+      return true;
+    }
+    return hasText(parentUuid) && parent != null && parentUuid.equals(parent.getAnnotPtr() + "")
+      && runtimeId.equals(replyId);
+  }
+
+  private String ensureReplyStableId(CPDFReplyAnnotation reply) {
+    String name = reply.getName();
+    if (hasText(name)) {
+      return name;
+    }
+    String stableId = REPLY_STABLE_ID_PREFIX + UUID.randomUUID();
+    if (reply.setName(stableId)) {
+      return stableId;
+    }
+    name = reply.getName();
+    return hasText(name) ? name : "";
+  }
+
+  private int getReplyIndex(CPDFAnnotation parent, CPDFReplyAnnotation targetReply) {
+    CPDFReplyAnnotation[] replies = parent.getAllReplyAnnotations();
+    if (replies == null) {
+      return -1;
+    }
+    for (int i = 0; i < replies.length; i++) {
+      CPDFReplyAnnotation reply = replies[i];
+      if (reply != null && reply.isValid() && reply.getAnnotPtr() == targetReply.getAnnotPtr()) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private String buildReplyKey(@Nullable CPDFAnnotation parent, @Nullable CPDFReplyAnnotation reply,
+    int replyIndex) {
+    if (reply == null || !reply.isValid()) {
+      return "";
+    }
+    String parentUuid = parent != null ? parent.getAnnotPtr() + "" : "";
+    RectF rect = reply.getRect();
+    return parentUuid + "|" + replyIndex + "|" + safeString(reply.getTitle()) + "|"
+      + safeString(reply.getContent()) + "|" + dateToMillis(reply.getCreationDate()) + "|"
+      + dateToMillis(reply.getRecentlyModifyDate()) + "|" + rectKey(rect);
+  }
+
+  private long dateToMillis(@Nullable CPDFDate date) {
+    return date == null ? 0L : CDateUtil.transformToTimestamp(date);
+  }
+
+  private String rectKey(@Nullable RectF rect) {
+    if (rect == null) {
+      return "";
+    }
+    return rect.left + "," + rect.top + "," + rect.right + "," + rect.bottom;
+  }
+
+  private String safeString(@Nullable String value) {
+    return value == null ? "" : value;
+  }
+
+  private boolean hasText(@Nullable String value) {
+    return value != null && !value.isEmpty();
+  }
+
+  private CPDFAnnotation.MarkState stringToMarkState(@Nullable String state) {
+    if ("marked".equals(state)) {
+      return CPDFAnnotation.MarkState.MARKED;
+    }
+    return CPDFAnnotation.MarkState.UNMARKED;
+  }
+
+  private CPDFAnnotation.ReviewState stringToReviewState(@Nullable String state) {
+    if ("accepted".equals(state)) {
+      return CPDFAnnotation.ReviewState.REVIEW_ACCEPTED;
+    }
+    if ("rejected".equals(state)) {
+      return CPDFAnnotation.ReviewState.REVIEW_REJECTED;
+    }
+    if ("cancelled".equals(state)) {
+      return CPDFAnnotation.ReviewState.REVIEW_CANCELLED;
+    }
+    if ("completed".equals(state)) {
+      return CPDFAnnotation.ReviewState.REVIEW_COMPLETED;
+    }
+    if ("error".equals(state)) {
+      return CPDFAnnotation.ReviewState.REVIEW_ERROR;
+    }
+    return CPDFAnnotation.ReviewState.REVIEW_NONE;
+  }
+
+  private String reviewStateToString(CPDFAnnotation.ReviewState state) {
+    if (state == CPDFAnnotation.ReviewState.REVIEW_ACCEPTED) {
+      return "accepted";
+    }
+    if (state == CPDFAnnotation.ReviewState.REVIEW_REJECTED) {
+      return "rejected";
+    }
+    if (state == CPDFAnnotation.ReviewState.REVIEW_CANCELLED) {
+      return "cancelled";
+    }
+    if (state == CPDFAnnotation.ReviewState.REVIEW_COMPLETED) {
+      return "completed";
+    }
+    if (state == CPDFAnnotation.ReviewState.REVIEW_ERROR) {
+      return "error";
+    }
+    return "none";
   }
 
 

@@ -2,6 +2,7 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+
   }
 
   dependencies {
@@ -68,12 +69,19 @@ repositories {
   google()
 }
 
+configurations.matching { config ->
+  config.name.toLowerCase().contains("unittest")
+}.configureEach {
+  exclude group: "androidx.window", module: "window"
+  exclude group: "androidx.window", module: "window-core"
+  exclude group: "androidx.window", module: "window-core-android"
+}
 
 dependencies {
   compileOnly fileTree(include: ['*.jar','*.aar'], dir: 'libs')
   implementation "com.facebook.react:react-android:+"
 
-  api("com.compdf:compdfkit-tools:2.6.8")
+  api("com.compdf:compdfkit-tools:2.6.9")
 
   api 'com.github.bumptech.glide:glide:4.15.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
@@ -81,4 +89,5 @@ dependencies {
   api 'androidx.appcompat:appcompat:1.6.1'
   api 'com.google.android.material:material:1.8.0'
   api 'androidx.constraintlayout:constraintlayout:2.1.4'
+  testImplementation 'junit:junit:4.13.2'
 }

@@ -11,6 +11,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PDFReaderContext, {
+  CPDFReaderViewProps,
   CPDFReaderView,
   CPDFViewMode,
   ComPDFKit,
@@ -47,6 +48,7 @@ type FormExampleScaffoldProps = {
   configuration?: string;
   bottomAccessory?: ReactNode;
   onViewCreated?: (reader: CPDFReaderView) => void;
+  readerViewProps?: Pick<CPDFReaderViewProps, 'onInterceptWidgetActionCallback'>;
   children?: (context: {
     pdfReader: CPDFReaderView | null;
     pdfReaderRef: React.RefObject<CPDFReaderView | null>;
@@ -60,6 +62,7 @@ export function FormExampleScaffold({
   configuration,
   bottomAccessory,
   onViewCreated,
+  readerViewProps,
   children,
 }: FormExampleScaffoldProps) {
   const pdfReaderRef = useRef<CPDFReaderView>(null);
@@ -135,6 +138,7 @@ export function FormExampleScaffold({
                 }
               }}
               configuration={resolvedConfiguration}
+              {...readerViewProps}
             />
             {children?.({ pdfReader, pdfReaderRef })}
           </View>

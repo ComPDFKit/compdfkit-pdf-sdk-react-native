@@ -1,19 +1,36 @@
+## 2.6.9
+1. Added support for ComPDFKit PDF SDK for iOS V2.6.9.
+2. Added support for ComPDFKit PDF SDK for Android V2.6.9.
+3. Added APIs for managing annotation replies and review states.
+4. Added page text extraction APIs and image extraction APIs.
+5. Added a page copy API.
+6. Added document watermark APIs for creating text or image watermarks, removing all watermarks, and opening the native Add Watermark view.
+7. Added support for intercepting form widget click actions.
+8. Added support for intercepting Note annotation creation and automatically showing the edit dialog after Note annotation creation.
+9. Added `mainToolbarTitleVisible` configuration to show or hide the main toolbar mode-switch title.
+10. Added a callback event for discarded Pencil drawings on iOS.
+11. Added and improved examples for content extraction, page copy, annotation replies and review states, form widget action interception, and Note annotation creation.
+12. Fixed an Android crash caused by a `getPageCount` lifecycle race.
+13. Fixed an issue on iOS where the bottom toolbar state could be incorrect after search ends.
+14. Fixed Android form dialogs appearing after programmatic annotation or widget additions.
+
 ## 2.6.8
 1. Upgraded the iOS ComPDFKit PDF SDK to version 2.6.8.
 2. Upgraded the Android ComPDFKit PDF SDK to version 2.6.8.
 3. Added a new callback event for Pencil drawing completion on iOS.
-4. Optimized the scrollbar layout logic. In horizontal scrolling mode, the scrollbar will now be displayed at the bottom.
-5. Optimized the progress synchronization of the side slider on Android to ensure it follows the page progress in real time.
-6. Optimized the selection state detection logic for image annotations on Android.
-7. Reverted the related changes for exception handling during native library loading on Android.
-8. Fixed an issue where HTML rich text content in text fields was displayed incorrectly on Android.
-9. Fixed a potential crash issue when switching content editing modes on Android.
-10. Fixed an issue on Android where image annotations could not be added via the camera on some devices in the Tools module.
-11. Fixed an issue where highlighted areas of text search results were inaccurate in some documents on Android.
-12. Fixed an issue on iOS where the watermark and security share system dialog would immediately close after being opened.
-13. Fixed an issue on iOS where the system drawing panel was not closed in time when switching between `ink` and `pencil` using `controller.setAnnotationMode()`.
-14. Fixed an issue on iOS where the back and settings buttons in the search toolbar were not displayed after setting `mainToolbarVisible=false`.
-15. Fixed `CPDFReaderView` command Promise errors on iOS New Architecture.
+4. Added document watermark APIs for creating, reading, updating, and removing text or image watermarks.
+5. Optimized the scrollbar layout logic. In horizontal scrolling mode, the scrollbar will now be displayed at the bottom.
+6. Optimized the progress synchronization of the side slider on Android to ensure it follows the page progress in real time.
+7. Optimized the selection state detection logic for image annotations on Android.
+8. Reverted the related changes for exception handling during native library loading on Android.
+9. Fixed an issue where HTML rich text content in text fields was displayed incorrectly on Android.
+10. Fixed a potential crash issue when switching content editing modes on Android.
+11. Fixed an issue on Android where image annotations could not be added via the camera on some devices in the Tools module.
+12. Fixed an issue where highlighted areas of text search results were inaccurate in some documents on Android.
+13. Fixed an issue on iOS where the watermark and security share system dialog would immediately close after being opened.
+14. Fixed an issue on iOS where the system drawing panel was not closed in time when switching between `ink` and `pencil` using `controller.setAnnotationMode()`.
+15. Fixed an issue on iOS where the back and settings buttons in the search toolbar were not displayed after setting `mainToolbarVisible=false`.
+16. Fixed `CPDFReaderView` command Promise errors on iOS New Architecture.
 
 
 ## 2.6.6

@@ -1,0 +1,423 @@
+/**
+ * Copyright © 2014-2026 PDF Technologies, Inc. All Rights Reserved.
+ *
+ * THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+ * AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE ComPDFKit LICENSE AGREEMENT.
+ * UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ * This notice may not be removed from this file.
+ */
+
+import { StyleSheet } from 'react-native';
+
+import type { AppTheme } from '../../../theme/appTheme';
+
+export function createAnnotationReplyStyles(appTheme: AppTheme) {
+  return StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0,0,0,0.28)',
+    },
+    sheetWrap: {
+      justifyContent: 'flex-end',
+    },
+    sheet: {
+      height: '72%',
+      backgroundColor: appTheme.colors.surface,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      overflow: 'hidden',
+    },
+    pickerSheet: {
+      height: '56%',
+    },
+    emptySheet: {
+      height: undefined,
+    },
+    emptySheetContent: {
+      alignItems: 'center',
+      padding: 24,
+    },
+    emptyIcon: {
+      width: 48,
+      height: 48,
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      color: appTheme.colors.textSecondary,
+      fontSize: 28,
+      fontWeight: '700',
+      borderRadius: 24,
+      borderWidth: 1,
+      borderColor: appTheme.colors.outline,
+      marginBottom: 12,
+    },
+    emptyTitle: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.titleSmall,
+      fontWeight: '700',
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    emptyDescription: {
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodyMedium,
+      lineHeight: 20,
+      marginBottom: 16,
+      textAlign: 'center',
+    },
+    header: {
+      minHeight: 64,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: appTheme.colors.outlineVariant,
+    },
+    headerButton: {
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerButtonLabel: {
+      color: appTheme.colors.textPrimary,
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    closeIcon: {
+      width: 20,
+      height: 20,
+      tintColor: appTheme.colors.textPrimary,
+    },
+    headerTitle: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.titleSmall,
+      fontWeight: '700',
+    },
+    headerSubtitle: {
+      marginTop: 2,
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodySmall,
+    },
+    rowMain: {
+      flex: 1,
+      minWidth: 0,
+    },
+    listContent: {
+      padding: 12,
+      gap: 8,
+    },
+    annotationRow: {
+      minHeight: 92,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      borderRadius: 8,
+      backgroundColor: appTheme.colors.surfaceAlt,
+    },
+    rowTitle: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+      fontWeight: '700',
+    },
+    rowSubtitle: {
+      marginTop: 3,
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodySmall,
+    },
+    replyCount: {
+      minWidth: 28,
+      textAlign: 'center',
+      color: appTheme.colors.primary,
+      fontSize: appTheme.typography.titleSmall,
+      fontWeight: '700',
+    },
+    chipRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 5,
+      marginTop: 6,
+    },
+    stateChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: appTheme.colors.outlineVariant,
+      backgroundColor: appTheme.colors.surfaceVariant,
+    },
+    stateChipValue: {
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.labelSmall,
+      fontWeight: '700',
+    },
+    threadHeader: {
+      minHeight: 104,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: appTheme.colors.outlineVariant,
+    },
+    replyList: {
+      padding: 12,
+      gap: 10,
+      flexGrow: 1,
+    },
+    replyBubble: {
+      padding: 14,
+      borderRadius: 8,
+      backgroundColor: appTheme.colors.surfaceAlt,
+    },
+    replyHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
+    },
+    replyAuthor: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+      fontWeight: '700',
+    },
+    replyContent: {
+      marginTop: 10,
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+      lineHeight: 20,
+    },
+    replyMeta: {
+      marginTop: 12,
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodySmall,
+    },
+    moreButton: {
+      width: 34,
+      height: 34,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    moreButtonLabel: {
+      color: appTheme.colors.textPrimary,
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    composer: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: 8,
+      paddingHorizontal: 14,
+      paddingTop: 10,
+      paddingBottom: 14,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: appTheme.colors.outlineVariant,
+      backgroundColor: appTheme.colors.surface,
+    },
+    inputShell: {
+      flex: 1,
+      minHeight: 44,
+      maxHeight: 104,
+      justifyContent: 'center',
+      paddingHorizontal: 14,
+      borderRadius: 22,
+      borderWidth: 1,
+      borderColor: appTheme.colors.outlineVariant,
+      backgroundColor: appTheme.colors.surfaceVariant,
+    },
+    input: {
+      minHeight: 40,
+      maxHeight: 96,
+      paddingVertical: 8,
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+    },
+    sendButton: {
+      width: 48,
+      height: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 24,
+      backgroundColor: appTheme.colors.surfaceVariant,
+    },
+    sendButtonDisabled: {
+      opacity: 0.45,
+    },
+    sendButtonLabel: {
+      color: appTheme.colors.textSecondary,
+      fontSize: 24,
+      fontWeight: '700',
+    },
+    textButton: {
+      minHeight: 32,
+      paddingHorizontal: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 8,
+      backgroundColor: appTheme.colors.surfaceVariant,
+    },
+    textButtonLabel: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.labelSmall,
+      fontWeight: '700',
+    },
+    primaryButton: {
+      minHeight: 38,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 8,
+      backgroundColor: appTheme.colors.primary,
+    },
+    deleteButton: {
+      backgroundColor: '#DC2626',
+    },
+    primaryButtonLabel: {
+      color: appTheme.colors.inverseText,
+      fontSize: appTheme.typography.labelMedium,
+      fontWeight: '700',
+    },
+    message: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      color: '#B91C1C',
+      fontSize: appTheme.typography.bodySmall,
+    },
+    loading: {
+      padding: 16,
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodyMedium,
+    },
+    empty: {
+      alignSelf: 'center',
+      marginTop: 48,
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodyMedium,
+    },
+    dialogBackdrop: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+      backgroundColor: 'rgba(0,0,0,0.32)',
+    },
+    bottomSheetBackdrop: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0,0,0,0.32)',
+    },
+    popupBackdrop: {
+      flex: 1,
+      alignItems: 'flex-end',
+      paddingTop: '36%',
+      paddingRight: 72,
+      backgroundColor: 'rgba(0,0,0,0.08)',
+    },
+    dialog: {
+      width: '100%',
+      maxWidth: 420,
+      paddingHorizontal: 24,
+      paddingTop: 28,
+      paddingBottom: 20,
+      borderRadius: 28,
+      backgroundColor: appTheme.colors.surface,
+    },
+    dialogTitle: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.titleSmall,
+      fontWeight: '700',
+      marginBottom: 12,
+    },
+    dialogMessage: {
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodyMedium,
+      marginBottom: 16,
+    },
+    dialogFieldLabel: {
+      color: appTheme.colors.textSecondary,
+      fontSize: appTheme.typography.bodySmall,
+      marginTop: 10,
+      marginBottom: 2,
+    },
+    dialogInput: {
+      minHeight: 42,
+      marginBottom: 12,
+      paddingHorizontal: 0,
+      paddingVertical: 9,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: appTheme.colors.outline,
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+    },
+    dialogTextArea: {
+      minHeight: 96,
+      textAlignVertical: 'top',
+    },
+    dialogActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: 10,
+      marginTop: 6,
+    },
+    actionSheet: {
+      width: '100%',
+      maxWidth: 420,
+      padding: 12,
+      borderRadius: 8,
+      backgroundColor: appTheme.colors.surface,
+    },
+    bottomActionSheet: {
+      width: '100%',
+      paddingHorizontal: 12,
+      paddingTop: 12,
+      paddingBottom: 24,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      backgroundColor: appTheme.colors.surface,
+    },
+    popupActionSheet: {
+      width: 260,
+      paddingVertical: 18,
+      paddingHorizontal: 22,
+      borderRadius: 4,
+      backgroundColor: appTheme.colors.surface,
+      shadowColor: '#000',
+      shadowOpacity: 0.18,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 8,
+    },
+    actionSheetHeader: {
+      minHeight: 48,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 12,
+    },
+    actionRow: {
+      minHeight: 56,
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      borderRadius: 8,
+    },
+    actionLabel: {
+      color: appTheme.colors.textPrimary,
+      fontSize: appTheme.typography.bodyMedium,
+      fontWeight: '600',
+    },
+    dangerText: {
+      color: '#DC2626',
+      fontSize: appTheme.typography.bodyMedium,
+      fontWeight: '700',
+    },
+  });
+}
+
+export type AnnotationReplyStyles = ReturnType<typeof createAnnotationReplyStyles>;

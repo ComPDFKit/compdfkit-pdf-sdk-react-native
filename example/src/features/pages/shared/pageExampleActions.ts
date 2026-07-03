@@ -87,6 +87,22 @@ export async function removeSamplePages(reader: CPDFReaderView) {
 }
 
 /**
+ * Copies the first page and appends the duplicated page to the document end.
+ *
+ * Uses `CPDFDocument.copyPage(pageIndex, insertIndex)` with `insertIndex = -1`
+ * to reuse the native append-to-end convention. Refreshes the viewer while
+ * preserving the current reading position after a successful copy.
+ */
+export async function copyFirstPage(reader: CPDFReaderView) {
+  const result = await reader._pdfDocument.copyPage(0, -1);
+  if (result) {
+    await reader.reloadPagesPreservingPosition();
+  }
+  Logger.log('copyPage:', result);
+  return result;
+}
+
+/**
  * Rotates the first page by 90° clockwise.
  *
  * Retrieves the current rotation via `CPDFPage.getRotation()`, then sets

@@ -8,7 +8,16 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import PDFReaderContext, {
   CPDFReaderView,
   ComPDFKit,
@@ -24,6 +33,7 @@ import PDFReaderContext, {
   CPDFUriAction,
   CPDFGoToAction,
   CPDFLinkAnnotation,
+  CPDFNoteAnnotation,
 } from "@compdfkit_pdf_sdk/react_native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -65,6 +75,9 @@ const CPDFCustomAnnotationCreateExampleScreen = () => {
   const [pushButtonModalVisible, setPushButtonModalVisible] = useState(false);
   const [pushButtonPageCount, setPushButtonPageCount] = useState(0);
   const [currentPushButton, setCurrentPushButton] = useState<CPDFPushbuttonWidget | null>(null);
+  const [noteModalVisible, setNoteModalVisible] = useState(false);
+  const [noteContent, setNoteContent] = useState('');
+  const [currentNoteAnnotation, setCurrentNoteAnnotation] = useState<CPDFNoteAnnotation | null>(null);
 
   const [samplePDF] = useState(
     route.params?.document ||
@@ -174,11 +187,48 @@ const CPDFCustomAnnotationCreateExampleScreen = () => {
         handleImageSelected();
         break;
       case CPDFAnnotationType.LINK:
-        handleLinkSelected(event!);
+        if (event) {
+          handleLinkSelected(event);
+        }
+        break;
+      case CPDFAnnotationType.NOTE:
+        if (event) {
+          handleNoteSelected(event);
+        }
         break;
       default:
         break;
     }
+  };
+
+  const handleNoteSelected = (annotation: CPDFAnnotation) => {
+    const noteAnnotation = annotation as CPDFNoteAnnotation;
+    setCurrentNoteAnnotation(noteAnnotation);
+    setNoteContent(noteAnnotation.content ?? '');
+    setNoteModalVisible(true);
+  };
+
+  const resetNoteDialog = () => {
+    setNoteModalVisible(false);
+    setCurrentNoteAnnotation(null);
+    setNoteContent('');
+  };
+
+  const handleNoteConfirm = async () => {
+    if (pdfReaderRef.current && currentNoteAnnotation) {
+      currentNoteAnnotation.update({ content: noteContent });
+      Logger.log('Updated note annotation content');
+      await pdfReaderRef.current._pdfDocument.updateAnnotation(currentNoteAnnotation);
+    }
+    resetNoteDialog();
+  };
+
+  const handleNoteCancel = async () => {
+    if (pdfReaderRef.current && currentNoteAnnotation) {
+      Logger.log('Remove note annotation after custom dialog cancel');
+      await pdfReaderRef.current._pdfDocument.removeAnnotation(currentNoteAnnotation);
+    }
+    resetNoteDialog();
   };
 
   const handleLinkSelected = async (annotation: CPDFAnnotation) => {
@@ -345,10 +395,12 @@ const CPDFCustomAnnotationCreateExampleScreen = () => {
             configuration={ComPDFKit.getDefaultConfig({
               annotationsConfig: {
                 autoShowLinkDialog: false,
+                autoShowNoteEditDialog: false,
                 autoShowPicPicker: false,
                 autoShowSignPicker: false,
                 autoShowStampPicker: false,
                 availableTypes: [
+                  CPDFAnnotationType.NOTE,
                   CPDFAnnotationType.SIGNATURE,
                   CPDFAnnotationType.STAMP,
                   CPDFAnnotationType.PICTURES,
@@ -406,8 +458,76 @@ const CPDFCustomAnnotationCreateExampleScreen = () => {
           }}
           onConfirm={handleFormOptionsConfirm}
         />
+        <NoteContentModal
+          visible={noteModalVisible}
+          value={noteContent}
+          onChangeText={setNoteContent}
+          onCancel={handleNoteCancel}
+          onConfirm={handleNoteConfirm}
+        />
       </SafeAreaView>
     </PDFReaderContext.Provider>
+  );
+};
+
+type NoteContentModalProps = {
+  visible: boolean;
+  value: string;
+  onChangeText: (text: string) => void;
+  onCancel: () => void | Promise<void>;
+  onConfirm: () => void | Promise<void>;
+};
+
+const NoteContentModal = ({
+  visible,
+  value,
+  onChangeText,
+  onCancel,
+  onConfirm,
+}: NoteContentModalProps) => {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => {
+        void onCancel();
+      }}
+    >
+      <View style={styles.noteBackdrop}>
+        <View style={styles.noteDialog}>
+          <Text style={styles.noteTitle}>Note</Text>
+          <TextInput
+            value={value}
+            onChangeText={onChangeText}
+            placeholder="Input note content"
+            placeholderTextColor="#8A94A6"
+            multiline
+            textAlignVertical="top"
+            autoFocus
+            style={styles.noteInput}
+          />
+          <View style={styles.noteActions}>
+            <Pressable
+              style={[styles.noteButton, styles.noteCancelButton]}
+              onPress={() => {
+                void onCancel();
+              }}
+            >
+              <Text style={styles.noteCancelText}>Cancel</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.noteButton, styles.noteConfirmButton]}
+              onPress={() => {
+                void onConfirm();
+              }}
+            >
+              <Text style={styles.noteConfirmText}>Confirm</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
@@ -434,6 +554,62 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: 14,
     color: "black",
+  },
+  noteBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+    padding: 24,
+  },
+  noteDialog: {
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+  },
+  noteTitle: {
+    color: "#111827",
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  noteInput: {
+    minHeight: 120,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: "#111827",
+    fontSize: 15,
+  },
+  noteActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 16,
+  },
+  noteButton: {
+    minWidth: 88,
+    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    alignItems: "center",
+    marginLeft: 12,
+  },
+  noteCancelButton: {
+    backgroundColor: "#F3F4F6",
+  },
+  noteConfirmButton: {
+    backgroundColor: "#1460F3",
+  },
+  noteCancelText: {
+    color: "#374151",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  noteConfirmText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 

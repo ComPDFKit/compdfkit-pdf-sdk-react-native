@@ -131,6 +131,7 @@ export function getDefaultConfig(
     },
     toolbarConfig: {
       mainToolbarVisible: true,
+      mainToolbarTitleVisible: true,
       annotationToolbarVisible: true,
       showInkToggleButton: true,
       formToolbarVisible: true,
@@ -157,6 +158,7 @@ export function getDefaultConfig(
       annotationAuthor: "",
       autoShowSignPicker: true,
       autoShowLinkDialog: true,
+      autoShowNoteEditDialog: true,
       autoShowPicPicker: true,
       autoShowStampPicker: true,
       interceptLinkAction: false,
@@ -298,6 +300,8 @@ export function getDefaultConfig(
       showCreateComboBoxOptionsDialog: true,
       showCreateListBoxOptionsDialog: true,
       showCreatePushButtonOptionsDialog: true,
+      interceptAllFormWidgetActions: false,
+      interceptFormWidgetActions: [],
       availableTypes: [
         CPDFWidgetType.TEXT_FIELD,
         CPDFWidgetType.CHECKBOX,

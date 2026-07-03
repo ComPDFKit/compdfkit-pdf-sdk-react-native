@@ -16,13 +16,13 @@ import {
   StyleSheet,
   FlatList,
   Text,
-  Platform,
   Alert,
   ActivityIndicator,
   ImageSourcePropType,
 } from "react-native";
 import RNFS from "react-native-fs";
 import { Logger } from '../../../../util/logger';
+import { CPDFFileUtil } from '../../../../util/CPDFFileUtil';
 
 interface SignatureListModalProps {
   visible: boolean;
@@ -37,8 +37,7 @@ interface SignatureImage {
   preview: ImageSourcePropType; 
 }
 
-const getAssetPath = (fileName: string) =>
-  Platform.OS === "android" ? `sign/${fileName}` : fileName;
+const getAssetPath = (fileName: string) => `sign/${fileName}`;
 
 const SIGNATURE_FILES = [
   {
@@ -78,49 +77,8 @@ export const SignatureListModal: React.FC<SignatureListModalProps> = ({
     imageName: string
   ): Promise<string> => {
     try {
-      // 1️⃣ Target directory
       const destDir = `${RNFS.DocumentDirectoryPath}/signatures`;
-
-      // 2️⃣ Ensure the directory exists
-      const dirExists = await RNFS.exists(destDir);
-      if (!dirExists) {
-        await RNFS.mkdir(destDir);
-        Logger.log("Created signatures directory:", destDir);
-      }
-
-      // 3️⃣ Target file path
-      const destPath = `${destDir}/${imageName}`;
-
-      // 4️⃣ Return directly if the file already exists
-      const fileExists = await RNFS.exists(destPath);
-      if (fileExists) {
-        Logger.log("Signature file already exists:", destPath);
-        return destPath;
-      }
-
-      Logger.log("Copying from:", imageSource, "to:", destPath);
-
-      // 5️⃣ Copy logic based on platform
-      if (Platform.OS === "android") {
-        /**
-         * Android:
-         * imageSource must be a relative path under the assets directory
-         * Example: images/sign.png
-         */
-        await RNFS.copyFileAssets(imageSource, destPath);
-      } else if (Platform.OS === "ios") {
-        /**
-         * iOS:
-         * assets are located in the main bundle
-         */
-        const srcPath = `${RNFS.MainBundlePath}/${imageSource}`;
-        await RNFS.copyFile(srcPath, destPath);
-      } else {
-        throw new Error(`Unsupported platform: ${Platform.OS}`);
-      }
-
-      Logger.log("Signature image copied to:", destPath);
-      return destPath;
+      return await CPDFFileUtil.copyAssetToDevice(imageSource, imageName, destDir);
     } catch (error) {
       Logger.error("Error copying signature image:", error);
       throw error;

@@ -83,7 +83,7 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
       mDocumentViews.put(v.getId(), documentView);
       try {
         CPDFReaderView readerView = documentView.getCPDFReaderView();
-        if (readerView.getPDFDocument() != null) {
+        if (readerView != null && readerView.getPDFDocument() != null) {
           readerView.reloadPages2();
         }
       } catch (Exception e) {
@@ -99,8 +99,10 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
       RnPdfView documentView = (RnPdfView) v;
       try {
         CPDFReaderView readerView = documentView.getCPDFReaderView();
-        readerView.getContextMenuShowListener()
-          .dismissContextMenu();
+        if (readerView != null && readerView.getContextMenuShowListener() != null) {
+          readerView.getContextMenuShowListener()
+            .dismissContextMenu();
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -175,7 +177,19 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
   @Nullable
   private RnPdfViewContext findContext(int tag) {
     RnPdfView view = mDocumentViews.get(tag);
-    return view == null ? null : new RnPdfViewContext(view);
+    if (view == null) {
+      return null;
+    }
+    try {
+      CPDFReaderView readerView = view.getCPDFReaderView();
+      if (readerView == null || readerView.getPDFDocument() == null) {
+        return null;
+      }
+      RnPdfViewContext context = new RnPdfViewContext(view);
+      return context.document == null ? null : context;
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   /**
@@ -555,7 +569,56 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
    * Returns the page count.
    */
   public int getPageCount(int tag) {
-    return documentOps.getPageCount(requireContext(tag));
+    return documentOps.getPageCount(findContext(tag));
+  }
+
+  /**
+   * Creates a watermark.
+   */
+  public void createWatermark(int tag, ReadableMap info, Promise promise) {
+    documentOps.createWatermark(requireContext(tag), info, promise);
+  }
+
+  /**
+   * Returns the watermark count.
+   */
+  public int getWatermarkCount(int tag) {
+    return documentOps.getWatermarkCount(requireContext(tag));
+  }
+
+  /**
+   * Returns a watermark.
+   */
+  public WritableMap getWatermark(int tag, int index, boolean exportImage) {
+    return documentOps.getWatermark(requireContext(tag), index, exportImage);
+  }
+
+  /**
+   * Returns all watermarks.
+   */
+  public WritableArray getWatermarks(int tag, boolean exportImages) {
+    return documentOps.getWatermarks(requireContext(tag), exportImages);
+  }
+
+  /**
+   * Updates a watermark.
+   */
+  public void updateWatermark(int tag, int index, ReadableMap info, Promise promise) {
+    documentOps.updateWatermark(requireContext(tag), index, info, promise);
+  }
+
+  /**
+   * Removes a watermark.
+   */
+  public boolean removeWatermark(int tag, int index) {
+    return documentOps.removeWatermark(requireContext(tag), index);
+  }
+
+  /**
+   * Removes all watermarks.
+   */
+  public boolean removeAllWatermarks(int tag) {
+    return documentOps.removeAllWatermarks(requireContext(tag));
   }
 
   /**
@@ -654,6 +717,13 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
   }
 
   /**
+   * Handles image extraction.
+   */
+  public void extractImages(int tag, String directoryPath, int[] pages, Promise promise) {
+    documentOps.extractImages(requireContext(tag), directoryPath, pages, promise);
+  }
+
+  /**
    * Returns the document path.
    */
   public String getDocumentPath(int tag) {
@@ -710,6 +780,85 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
   }
 
   /**
+   * Adds a plain annotation reply.
+   */
+  public WritableMap addAnnotationReply(int tag, int pageIndex, String uuid, String content,
+    String title) {
+    return annotationOps.addAnnotationReply(requireContext(tag), pageIndex, uuid, content, title);
+  }
+
+  /**
+   * Gets plain annotation replies.
+   */
+  public WritableArray getAnnotationReplies(int tag, int pageIndex, String uuid) {
+    return annotationOps.getAnnotationReplies(requireContext(tag), pageIndex, uuid);
+  }
+
+  /**
+   * Updates a plain annotation reply.
+   */
+  public boolean updateAnnotationReply(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String content, String title) {
+    return annotationOps.updateAnnotationReply(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid, content, title);
+  }
+
+  /**
+   * Removes a plain annotation reply.
+   */
+  public boolean removeAnnotationReply(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    return annotationOps.removeAnnotationReply(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+  }
+
+  /**
+   * Removes all plain annotation replies.
+   */
+  public boolean removeAllAnnotationReplies(int tag, int pageIndex, String uuid) {
+    return annotationOps.removeAllAnnotationReplies(requireContext(tag), pageIndex, uuid);
+  }
+
+  /**
+   * Sets the annotation mark state.
+   */
+  public boolean setAnnotationMarkState(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String state) {
+    return annotationOps.setAnnotationMarkState(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid, state);
+  }
+
+  /**
+   * Gets the annotation mark state.
+   */
+  public String getAnnotationMarkState(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    return annotationOps.getAnnotationMarkState(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+  }
+
+  /**
+   * Sets the annotation review state.
+   */
+  public boolean setAnnotationReviewState(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid,
+    String state) {
+    return annotationOps.setAnnotationReviewState(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid, state);
+  }
+
+  /**
+   * Gets the annotation review state.
+   */
+  public String getAnnotationReviewState(int tag, int pageIndex, String uuid,
+    @Nullable String nativeId, @Nullable String replyKey, @Nullable String parentUuid) {
+    return annotationOps.getAnnotationReviewState(requireContext(tag), pageIndex, uuid, nativeId,
+      replyKey, parentUuid);
+  }
+
+  /**
    * Removes widget.
    */
   public boolean removeWidget(int tag, int pageIndex, String uuid) {
@@ -736,6 +885,13 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
    */
   public boolean removePages(int tag, int[] pages) {
     return documentOps.removePages(requireContext(tag), pages);
+  }
+
+  /**
+   * Copies a page.
+   */
+  public boolean copyPage(int tag, int pageIndex, int insertIndex) {
+    return documentOps.copyPage(requireContext(tag), pageIndex, insertIndex);
   }
 
   /**
@@ -813,6 +969,27 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
    */
   public String getSearchText(int tag, int pageIndex, int location, int length) {
     return searchRenderOps.getSearchText(requireContext(tag), pageIndex, location, length);
+  }
+
+  /**
+   * Returns all text on a page.
+   */
+  public String getPageText(int tag, int pageIndex) {
+    return searchRenderOps.getPageText(requireContext(tag), pageIndex);
+  }
+
+  /**
+   * Returns text inside a page rectangle.
+   */
+  public String getPageTextInRect(int tag, int pageIndex, ReadableMap rect) {
+    return searchRenderOps.getPageTextInRect(requireContext(tag), pageIndex, rect);
+  }
+
+  /**
+   * Returns page text lines.
+   */
+  public WritableArray getPageTextLines(int tag, int pageIndex) {
+    return searchRenderOps.getPageTextLines(requireContext(tag), pageIndex);
   }
 
   /**
