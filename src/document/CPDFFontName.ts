@@ -8,11 +8,13 @@
  */
 
 
+/** Properties describing an imported or available PDF font. */
 export interface CPDFFontNameProps {
     familyName: string;
     styleNames: string[];
 }
 
+/** A font family and its available style names. */
 export class CPDFFontName {
     readonly familyName: string;
     readonly styleNames: string[];

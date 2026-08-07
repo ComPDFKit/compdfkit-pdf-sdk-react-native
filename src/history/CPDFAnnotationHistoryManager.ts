@@ -32,6 +32,7 @@ const { CPDFViewManager } = NativeModules;
  *   // Update UI based on undo/redo availability
  * });
  * ```
+ * @group Annotations
  */
 export class CPDFAnnotationHistoryManager extends CPDFHistoryManagerBase {
 

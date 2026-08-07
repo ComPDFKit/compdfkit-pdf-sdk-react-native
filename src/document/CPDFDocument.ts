@@ -36,6 +36,8 @@ import { CPDFEditArea } from "../edit/CPDFEditArea";
 import { CPDFSignatureWidget } from "../annotation/form/CPDFSignatureWidget";
 import {
   CPDFWatermark,
+  NativeWatermarkPayload,
+  fromNativeWatermark,
   toNativeWatermark,
 } from "./CPDFWatermark";
 const { CPDFViewManager } = NativeModules;
@@ -43,6 +45,7 @@ const { CPDFViewManager } = NativeModules;
 const DEFAULT_ANNOTATION_RENDER_SCALE = 3.0;
 const DEFAULT_ANNOTATION_RENDER_QUALITY = 100;
 
+/** Result returned when images are extracted from a PDF document. */
 export type CPDFExtractImageResult = {
   success: boolean;
   count: number;
@@ -155,6 +158,13 @@ function normalizeDocumentInfo(info: CPDFInfo): CPDFInfo {
   };
 }
 
+/**
+ * Provides document-level operations for the PDF reader.
+ *
+ * @group Document
+ * @since 3.0.0
+ * @remarks Operations that require a mounted native reader reject when the reader reference is unavailable.
+ */
 export class CPDFDocument {
   private _viewerRef: any;
 
@@ -170,6 +180,7 @@ export class CPDFDocument {
   /**
    * Get the text searcher for the current document.
    * @returns The text searcher instance for the current document.
+   * @group Text and Search
    */
   get textSearcher() {
     return this._textSearcher;
@@ -202,6 +213,7 @@ export class CPDFDocument {
    * Get the page object at the specified index
    * @param pageIndex The index of the page to retrieve
    * @returns The page object at the specified index
+   * @group Pages
    */
   pageAtIndex = (pageIndex: number): CPDFPage => {
     return new CPDFPage(this._viewerRef, pageIndex);
@@ -228,6 +240,7 @@ export class CPDFDocument {
    * ```
    * @param password The password for the document, which can be null or empty.
    * @returns A promise that resolves to `true` if the document is successfully opened, otherwise `false`.
+   * @group Document Lifecycle
    */
   open = (
     document: string,
@@ -245,7 +258,8 @@ export class CPDFDocument {
    * Gets the file name of the PDF document.
    * @example
    * const fileName = await pdfReaderRef.current?._pdfDocument.getFileName();
-   * @returns
+   * @returns A promise that resolves to the current PDF file name.
+   * @group Document Information
    */
   getFileName = (): Promise<string> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -259,7 +273,8 @@ export class CPDFDocument {
    * Checks if the PDF document is encrypted.
    * @example
    * const isEncrypted = await pdfReaderRef.current?._pdfDocument.isEncrypted();
-   * @returns
+   * @returns A promise that resolves to `true` when the document is encrypted.
+   * @group Document Information
    */
   isEncrypted = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -274,7 +289,8 @@ export class CPDFDocument {
    * This is a time-consuming operation that depends on the document size.
    * @example
    * const isImageDoc = await pdfReaderRef.current?._pdfDocument.isImageDoc();
-   * @returns
+   * @returns A promise that resolves to `true` when the document contains image content.
+   * @group Document Information
    */
   isImageDoc = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -293,7 +309,8 @@ export class CPDFDocument {
    *
    * @example
    * const permissions = await pdfReaderRef.current?._pdfDocument.getPermissions();
-   * @returns
+   * @returns A promise that resolves to the permissions available for the current document.
+   * @group Document Information
    */
   getPermissions = async (): Promise<CPDFDocumentPermissions> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -315,7 +332,8 @@ export class CPDFDocument {
    *
    * @example
    * const unlocked = await pdfReaderRef.current?._pdfDocument.checkOwnerUnlocked();
-   * @returns
+   * @returns A promise that resolves to `true` when owner permissions are unlocked.
+   * @group Document Information
    */
   checkOwnerUnlocked = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -334,6 +352,7 @@ export class CPDFDocument {
    *
    * @param password password The owner password to be verified.
    * @returns A promise that resolves to `true` if the owner password is correct, otherwise `false`.
+   * @group Security
    */
   checkOwnerPassword = (password: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -349,7 +368,8 @@ export class CPDFDocument {
    * @example
    * const pageCount = await pdfReaderRef.current?._pdfDocument.getPageCount();
    *
-   * @returns
+   * @returns A promise that resolves to the total number of pages in the document.
+   * @group Document Information
    */
   getPageCount = (): Promise<number> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -373,6 +393,7 @@ export class CPDFDocument {
    *     opacity: 0.75,
    *   })
    * );
+   * @group Watermarks
    */
   createWatermark = (watermark: CPDFWatermark): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -382,110 +403,120 @@ export class CPDFDocument {
     return Promise.reject("Unable to find the native view reference");
   };
 
-  // /**
-  //  * Returns the number of watermarks in the current document.
-  //  *
-  //  * @example
-  //  * const count = await pdfReaderRef.current?._pdfDocument.getWatermarkCount();
-  //  */
-  // getWatermarkCount = (): Promise<number> => {
-  //   const tag = findNodeHandle(this._viewerRef);
-  //   if (tag != null) {
-  //     return CPDFViewManager.getWatermarkCount(tag);
-  //   }
-  //   return Promise.reject("Unable to find the native view reference");
-  // };
+  /**
+   * Returns the number of watermarks in the current document.
+   *
+   * @example
+   * const count = await pdfReaderRef.current?._pdfDocument.getWatermarkCount();
+   * @group Watermarks
+   */
+  getWatermarkCount = (): Promise<number> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.getWatermarkCount(tag);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
 
-  // /**
-  //  * Returns a watermark at the given 0-based index, or null when not found.
-  //  *
-  //  * @example
-  //  * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0, {
-  //  *   exportImage: true,
-  //  * });
-  //  */
-  // getWatermark = async (
-  //   index: number,
-  //   options: { exportImage?: boolean } = {}
-  // ): Promise<CPDFWatermark | null> => {
-  //   const tag = findNodeHandle(this._viewerRef);
-  //   if (tag != null) {
-  //     const result = await CPDFViewManager.getWatermark(tag, index, {
-  //       export_image: options.exportImage ?? false,
-  //     });
-  //     return result == null ? null : fromNativeWatermark(result as NativeWatermarkPayload);
-  //   }
-  //   return Promise.reject("Unable to find the native view reference");
-  // };
+  /**
+   * Returns a watermark at the given 0-based index, or null when not found.
+   *
+   * @example
+   * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0, {
+   *   exportImage: true,
+   * });
+   * @group Watermarks
+   */
+  getWatermark = async (
+    index: number,
+    options: { exportImage?: boolean } = {}
+  ): Promise<CPDFWatermark | null> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getWatermark(tag, index, {
+        export_image: options.exportImage ?? false,
+      });
+      return result == null
+        ? null
+        : fromNativeWatermark(result as NativeWatermarkPayload);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
 
-  // /**
-  //  * Returns all watermarks in the current document.
-  //  *
-  //  * @example
-  //  * const watermarks = await pdfReaderRef.current?._pdfDocument.getWatermarks({
-  //  *   exportImages: false,
-  //  * });
-  //  */
-  // getWatermarks = async (
-  //   options: { exportImages?: boolean } = {}
-  // ): Promise<CPDFWatermark[]> => {
-  //   const tag = findNodeHandle(this._viewerRef);
-  //   if (tag != null) {
-  //     const result = await CPDFViewManager.getWatermarks(tag, {
-  //       export_images: options.exportImages ?? false,
-  //     });
-  //     return Array.isArray(result)
-  //       ? result.map((item) => fromNativeWatermark(item as NativeWatermarkPayload))
-  //       : [];
-  //   }
-  //   return Promise.reject("Unable to find the native view reference");
-  // };
+  /**
+   * Returns all watermarks in the current document.
+   *
+   * @example
+   * const watermarks = await pdfReaderRef.current?._pdfDocument.getWatermarks({
+   *   exportImages: false,
+   * });
+   * @group Watermarks
+   */
+  getWatermarks = async (
+    options: { exportImages?: boolean } = {}
+  ): Promise<CPDFWatermark[]> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getWatermarks(tag, {
+        export_images: options.exportImages ?? false,
+      });
+      return Array.isArray(result)
+        ? result.map((item) =>
+            fromNativeWatermark(item as NativeWatermarkPayload)
+          )
+        : [];
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
 
-  // /**
-  //  * Updates the watermark at the given 0-based index.
-  //  *
-  //  * @example
-  //  * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0);
-  //  * if (watermark) {
-  //  *   await pdfReaderRef.current?._pdfDocument.updateWatermark(
-  //  *     watermark.index,
-  //  *     copyWatermark(watermark, { opacity: 0.45 })
-  //  *   );
-  //  * }
-  //  */
-  // updateWatermark = (
-  //   index: number,
-  //   watermark: CPDFWatermark
-  // ): Promise<boolean> => {
-  //   const tag = findNodeHandle(this._viewerRef);
-  //   if (tag != null) {
-  //     const payload = toNativeWatermark(watermark, {
-  //       allowEmptyImagePath: true,
-  //     });
-  //     return CPDFViewManager.updateWatermark(tag, index, payload);
-  //   }
-  //   return Promise.reject("Unable to find the native view reference");
-  // };
+  /**
+   * Updates the watermark at the given 0-based index.
+   *
+   * @example
+   * const watermark = await pdfReaderRef.current?._pdfDocument.getWatermark(0);
+   * if (watermark) {
+   *   await pdfReaderRef.current?._pdfDocument.updateWatermark(
+   *     watermark.index,
+   *     copyWatermark(watermark, { opacity: 0.45 })
+   *   );
+   * }
+   * @group Watermarks
+   */
+  updateWatermark = (
+    index: number,
+    watermark: CPDFWatermark
+  ): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const payload = toNativeWatermark(watermark, {
+        allowEmptyImagePath: true,
+      });
+      return CPDFViewManager.updateWatermark(tag, index, payload);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
 
-  // /**
-  //  * Removes one watermark at the given 0-based index.
-  //  *
-  //  * @example
-  //  * const removed = await pdfReaderRef.current?._pdfDocument.removeWatermark(0);
-  //  */
-  // removeWatermark = (index: number): Promise<boolean> => {
-  //   const tag = findNodeHandle(this._viewerRef);
-  //   if (tag != null) {
-  //     return CPDFViewManager.removeWatermark(tag, index);
-  //   }
-  //   return Promise.reject("Unable to find the native view reference");
-  // };
+  /**
+   * Removes one watermark at the given 0-based index.
+   *
+   * @example
+   * const removed = await pdfReaderRef.current?._pdfDocument.removeWatermark(0);
+   * @group Watermarks
+   */
+  removeWatermark = (index: number): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.removeWatermark(tag, index);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
 
   /**
    * Removes all watermarks in the current document.
    *
    * @example
    * const removedAll = await pdfReaderRef.current?._pdfDocument.removeAllWatermarks();
+   * @group Watermarks
    */
   removeAllWatermarks = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -501,7 +532,8 @@ export class CPDFDocument {
    *
    * @example
    * const result = await pdfReaderRef.current?._pdfDocument.removePassword();
-   * @returns
+   * @returns A promise that resolves to `true` when the passwords are removed; otherwise, `false`.
+   * @group Security
    */
   removePassword = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -534,6 +566,7 @@ export class CPDFDocument {
    * @param allowsCopying Whether copying is allowed (true or false).
    * @param encryptAlgo The encryption algorithm to use (e.g., `CPDFDocumentEncryptAlgo.rc4`).
    * @returns A promise that resolves to `true` if the password is successfully set, otherwise `false`.
+   * @group Security
    */
   setPassword = (
     userPassword: string,
@@ -560,7 +593,8 @@ export class CPDFDocument {
    *
    * @example
    * const encryptAlgo = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
-   * @returns
+   * @returns A promise that resolves to the document encryption algorithm.
+   * @group Security
    */
   getEncryptAlgo = async (): Promise<CPDFDocumentEncryptAlgo> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -589,6 +623,7 @@ export class CPDFDocument {
    *          `true`: The document has been modified,
    *          `false`: The document has not been modified.
    *          If the native view reference cannot be found, a rejected Promise will be returned.
+   * @group Document Lifecycle
    */
   hasChange = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -605,6 +640,7 @@ export class CPDFDocument {
    * const exportXfdfFilePath = await pdfReaderRef.current?._pdfDocument.exportAnnotations();
    *
    * @returns The path of the XFDF file if export is successful; an empty string if the export fails.
+   * @group Import and Export
    */
   exportAnnotations = (): Promise<string> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -620,7 +656,8 @@ export class CPDFDocument {
    * @example
    * const removeResult = await pdfReaderRef.current?._pdfDocument.removeAllAnnotations();
    *
-   * @returns
+   * @returns A promise that resolves to `true` when all annotations are removed; otherwise, `false`.
+   * @group Import and Export
    */
   removeAllAnnotations = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -649,6 +686,7 @@ export class CPDFDocument {
    *
    * @param xfdfFile Path of the XFDF file to be imported.
    * @returns true if the import is successful; otherwise, false.
+   * @group Import and Export
    */
   importAnnotations = (xfdfFile: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -668,6 +706,7 @@ export class CPDFDocument {
    *
    * @param xfdfFile Path of the XFDF file to be imported.
    * @returns true if the import is successful; otherwise, false.
+   * @group Import and Export
    */
   importWidgets = (xfdfFile: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -682,6 +721,7 @@ export class CPDFDocument {
    * @example
    * const exportXfdfFilePath = await pdfReaderRef.current?._pdfDocument.exportWidgets();
    * @returns The path of the XFDF file if export is successful; an empty string if the export fails.
+   * @group Import and Export
    */
   exportWidgets = (): Promise<string> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -697,7 +737,8 @@ export class CPDFDocument {
    * Invokes the system's print service to print the current document.
    * @example
    * await pdfReaderRef.current?._pdfDocument.printDocument();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Import and Export
    */
   printDocument = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -719,8 +760,9 @@ export class CPDFDocument {
    * const savePath = await ComPDFKit.createUri('flatten_test.pdf', 'compdfkit', 'application/pdf');
    * const fontSubset = true;
    * const result = await pdfReaderRef.current?._pdfDocument.flattenAllPages(savePath, fontSubset);
-  * await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   * await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * @returns Returns 'true' if the flattened document is saved successfully, otherwise 'false'.
+   * @group Import and Export
    */
   flattenAllPages = (
     savePath: string,
@@ -748,6 +790,7 @@ export class CPDFDocument {
    * @param removeSecurity Whether to remove the document's password.
    * @param fontSubset Whether to embed font subsets into PDF. Defaults to true.
    * @returns Returns 'true' if the document is saved successfully, otherwise 'false'.
+   * @group Import and Export
    */
   saveAs = (
     savePath: string,
@@ -783,6 +826,7 @@ export class CPDFDocument {
    * - `false` or an error indicates failure
    *
    * @throws If the native view reference cannot be found, the promise will be rejected with an error.
+   * @group Import and Export
    */
   importDocument = (
     filePath: string,
@@ -820,6 +864,7 @@ export class CPDFDocument {
    * @returns A Promise that resolves to `true` if the operation is successful, or `false` if it fails.
    *
    * @throws If the native view reference is not found, the promise will be rejected with an error message.
+   * @group Import and Export
    */
   splitDocumentPages = (
     savePath: string,
@@ -848,6 +893,7 @@ export class CPDFDocument {
    * @param directoryPath The actual output directory where extracted images are saved.
    * @param pages Zero-based page indexes. Empty or null means all pages.
    * @returns A structured result containing success, count, directoryPath, and imagePaths.
+   * @group Images and Fonts
    */
   extractImages = (
     directoryPath: string,
@@ -879,6 +925,7 @@ export class CPDFDocument {
    * If the native view reference is not found, the promise will be rejected with an error.
    *
    * @throws Will reject with an error message if the native view reference cannot be found.
+   * @group Document Information
    */
   getDocumentPath = (): Promise<string> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -906,6 +953,7 @@ export class CPDFDocument {
    * const result = await pdfReaderRef.current?._pdfDocument.insertBlankPage(0, pageSize);
    * @returns A Promise that resolves to a boolean value indicating the success or failure of the blank page insertion.
    *   Resolves to `true` if the insertion was successful, `false` otherwise.
+   * @group Pages
    */
   insertBlankPage(
     pageIndex: number,
@@ -953,8 +1001,9 @@ export class CPDFDocument {
    * 
    * // need reload pages after inserting image page.
    * if (success) {
-  *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * } 
+   * @group Pages
    */
   insertImagePage(
     pageIndex: number,
@@ -988,8 +1037,9 @@ export class CPDFDocument {
    * const result = await pdfReaderRef.current?._pdfDocument.removePages([0, 2, 5]);
    * // need reload pages after removing pages.
    * if (result){
-  *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * }
+   * @group Pages
    */
   removePages(pageIndices: Array<number>): Promise<boolean> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1013,8 +1063,9 @@ export class CPDFDocument {
    * @example
    * const copied = await pdfReaderRef.current?._pdfDocument.copyPage(0, -1);
    * if (copied) {
-  *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * }
+   * @group Pages
    */
   copyPage(pageIndex: number, insertIndex: number): Promise<boolean> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1039,8 +1090,9 @@ export class CPDFDocument {
    * const moved = await pdfReaderRef.current?._pdfDocument.movePage(4, 1);
    * // need reload pages after moving page.
    * if (moved){
-  *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
+   *     await pdfReaderRef.current?.reloadPagesPreservingPosition();
    * }
+   * @group Pages
    */
   movePage(fromIndex: number, toIndex: number): Promise<boolean> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1055,6 +1107,7 @@ export class CPDFDocument {
    * @param annotation The annotation to be removed.
    * @example
    * await pdfReaderRef?.current?._pdfDocument.removeAnnotation(annotation);
+   * @group Annotations
    */
   removeAnnotation(annotation: CPDFAnnotation): Promise<boolean> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1088,6 +1141,7 @@ export class CPDFDocument {
    * @param annotation The parent annotation to reply to.
    * @param options Reply content and optional author/title.
    * @returns The created plain reply annotation, or null if creation failed.
+   * @group Annotation Replies
    */
   addAnnotationReply = async (
     annotation: CPDFAnnotation,
@@ -1120,6 +1174,7 @@ export class CPDFDocument {
    *
    * @param annotation The parent annotation.
    * @returns Replies attached to the annotation.
+   * @group Annotation Replies
    */
   getAnnotationReplies = async (
     annotation: CPDFAnnotation
@@ -1151,6 +1206,7 @@ export class CPDFDocument {
    * @param reply The plain reply annotation to update.
    * @param options Updated reply content and optional author/title.
    * @returns `true` when the reply was updated.
+   * @group Annotation Replies
    */
   updateAnnotationReply = (
     reply: CPDFReplyAnnotation,
@@ -1180,6 +1236,7 @@ export class CPDFDocument {
    *
    * @param reply The plain reply annotation to remove.
    * @returns `true` when the reply was removed.
+   * @group Annotation Replies
    */
   removeAnnotationReply = (reply: CPDFReplyAnnotation): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1205,6 +1262,7 @@ export class CPDFDocument {
    *
    * @param annotation The parent annotation.
    * @returns `true` when all plain replies were removed.
+   * @group Annotation Replies
    */
   removeAllAnnotationReplies = (
     annotation: CPDFAnnotation
@@ -1241,6 +1299,7 @@ export class CPDFDocument {
    * @param annotation The annotation or reply annotation to update.
    * @param state The mark state.
    * @returns `true` when the state was updated.
+   * @group Annotations
    */
   setAnnotationMarkState = (
     annotation: CPDFAnnotation,
@@ -1270,6 +1329,7 @@ export class CPDFDocument {
    *
    * @param annotation The annotation or reply annotation to query.
    * @returns The current mark state.
+   * @group Annotations
    */
   getAnnotationMarkState = async (
     annotation: CPDFAnnotation
@@ -1312,6 +1372,7 @@ export class CPDFDocument {
    * @param annotation The annotation or reply annotation to update.
    * @param state The review state.
    * @returns `true` when the state was updated.
+   * @group Annotations
    */
   setAnnotationReviewState = (
     annotation: CPDFAnnotation,
@@ -1341,6 +1402,7 @@ export class CPDFDocument {
    *
    * @param annotation The annotation or reply annotation to query.
    * @returns The current review state.
+   * @group Annotations
    */
   getAnnotationReviewState = async (
     annotation: CPDFAnnotation
@@ -1368,7 +1430,8 @@ export class CPDFDocument {
    * await pdfReaderRef?.current?._pdfDocument.removeWidget(widget);
    * @see CPDFWidget - Base class for all form widgets
    * @param widget The widget to be removed.
-   * @returns
+   * @returns A promise that resolves to the requested state.
+   * @group Forms
    */
   removeWidget(widget: CPDFWidget): Promise<boolean> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1389,6 +1452,7 @@ export class CPDFDocument {
    * @throws Error If the native view reference cannot be found.
    * @remarks This method retrieves the dimensions of a specific page in the PDF document.
    * @since 2.5.0
+   * @group Pages
    */
   getPageSize = async (pageIndex: number): Promise<CPDFPageSize> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1443,6 +1507,7 @@ export class CPDFDocument {
    * - For iOS, only the basic rendering parameters are supported.
    *
    * @since 2.5.0
+   * @group Pages
    */
   renderPage({
     pageIndex,
@@ -1501,6 +1566,7 @@ export class CPDFDocument {
    *   );
    * }
    * ```
+   * @group Annotations
    */
   renderAnnotationAppearance = (
     annotation: CPDFAnnotation,
@@ -1534,6 +1600,7 @@ export class CPDFDocument {
    * console.log(info.title);
    * @see CPDFInfo - Document information class
    * @returns A promise that resolves to a `CPDFInfo` object containing the document information.
+   * @group Document Information
    */
   getInfo = (): Promise<CPDFInfo> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1554,6 +1621,7 @@ export class CPDFDocument {
    * console.log(majorVersion);
    * 
    * @returns a Promise that resolves to the major version number.
+   * @group Document Information
    */
   getMajorVersion = (): Promise<number> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1571,6 +1639,7 @@ export class CPDFDocument {
    * const minorVersion = await pdfReaderRef?.current?._pdfDocument.getMinorVersion();
    * console.log(minorVersion);
    * @returns a Promise that resolves to the minor version number.
+   * @group Document Information
    */
   getMinorVersion = (): Promise<number> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1587,6 +1656,7 @@ export class CPDFDocument {
    * @example
    * const permissionsInfo = await pdfReaderRef?.current?._pdfDocument.getPermissionsInfo();
    * @returns a Promise that resolves to the CPDFDocumentPermissionInfo object.
+   * @group Document Information
    */
   getPermissionsInfo = (): Promise<CPDFDocumentPermissionInfo> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1604,7 +1674,8 @@ export class CPDFDocument {
    * const outlineRoot = await pdfReaderRef?.current?._pdfDocument.getOutlineRoot();
    * 
    * @see CPDFOutline - Document outline class
-   * @returns 
+   * @returns A promise that resolves to the outline root, or `null` when no outline is available.
+   * @group Bookmarks and Outline
    */
   getOutlineRoot = (): Promise<CPDFOutline | null> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1625,7 +1696,8 @@ export class CPDFDocument {
    * }
    * 
    * @see CPDFOutline - Document outline class
-   * @returns 
+   * @returns A promise that resolves to the newly created outline root, or `null` if it cannot be created.
+   * @group Bookmarks and Outline
    */
   newOutlineRoot = (): Promise<CPDFOutline | null> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1646,6 +1718,7 @@ export class CPDFDocument {
    * @param pageIndex  Target page index for the outline destination.
    * @example
    * await pdfReaderRef.current?._pdfDocument.addOutline('parent_outline_id', 'New Section', -1, 0);
+   * @group Bookmarks and Outline
    */
   addOutline = (parentUuid: string, title: string, insertIndex: number = -1, pageIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1667,6 +1740,7 @@ export class CPDFDocument {
    * @param outlineId UUID of the outline to remove.
    * @example
    * await pdfReaderRef.current?._pdfDocument.removeOutline(outline.uuid);
+   * @group Bookmarks and Outline
    */
   removeOutline = (outlineId: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1685,6 +1759,7 @@ export class CPDFDocument {
    * @param newPageIndex New destination page index.
    * @example
    * await pdfReaderRef.current?._pdfDocument.updateOutline(id, 'Chapter 1', 0);
+   * @group Bookmarks and Outline
    */
   updateOutline = (outlineId: string, newTitle: string, newPageIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1703,6 +1778,7 @@ export class CPDFDocument {
    * @param insertIndex Insert position within new parent's children. Use -1 to append.
    * @example
    * await pdfReaderRef.current?._pdfDocument.moveOutline(outlineId, parentId, -1);
+   * @group Bookmarks and Outline
    */
   moveOutline = (outlineId: string, newParentId: string, insertIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1722,6 +1798,7 @@ export class CPDFDocument {
    * const bookmarks = await pdfReaderRef.current?._pdfDocument.getBookmarks();
    * console.log('Number of bookmarks:', bookmarks.length);
    * @see CPDFBookmark
+   * @group Bookmarks and Outline
    */
   getBookmarks = (): Promise<CPDFBookmark[]> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1743,6 +1820,7 @@ export class CPDFDocument {
    * const removeResult = await pdfReaderRef.current?._pdfDocument.removeBookmark(2);
    * @param pageIndex The index of the page whose bookmark should be removed.
    * @returns A promise that resolves to `true` if the bookmark was successfully removed, otherwise `false`.
+   * @group Bookmarks and Outline
    */
   removeBookmark = (pageIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1760,7 +1838,8 @@ export class CPDFDocument {
    * @example
    * const hasBookmark = await pdfReaderRef.current?._pdfDocument.hasBookmark(2);
    * @param pageIndex The index of the page to check for a bookmark. 
-   * @returns 
+   * @returns A promise that resolves to whether the specified page has a bookmark.
+   * @group Bookmarks and Outline
    */
   hasBookmark = (pageIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1780,6 +1859,7 @@ export class CPDFDocument {
    * @param title The title of the bookmark to be added.
    * @param pageIndex The index of the page where the bookmark should be added.
    * @returns A promise that resolves to `true` if the bookmark was successfully added, otherwise `false`.
+   * @group Bookmarks and Outline
    */
   addBookmark = (title: string, pageIndex: number): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1798,6 +1878,7 @@ export class CPDFDocument {
    * const updateResult = await pdfReaderRef.current?._pdfDocument.updateBookmark(bookmark);
    * @param bookmark The bookmark object containing updated information.
    * @returns A promise that resolves to `true` if the bookmark was successfully updated, otherwise `false`.
+   * @group Bookmarks and Outline
    */
   updateBookmark = (bookmark: CPDFBookmark): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1810,20 +1891,21 @@ export class CPDFDocument {
   }
 
   /**
- * Removes the specified edit area from the document.
- *
- * @example
- * // first addEventListener to listen for edit area selected event
- * pdfReaderRef.current?.addEventListener('onEditAreaSelected', (editArea : CPDFEditArea) => {
- *    // store the selected edit area
- *    this.selectedEditArea = editArea;
- * });
- * // then remove the selected edit area
- * await pdfReaderRef.current?.removeEditArea(editArea);
- *
- * @param editArea The edit area to be removed.
- * @returns
- */
+   * Removes the specified edit area from the document.
+   *
+   * @example
+   * // first addEventListener to listen for edit area selected event
+   * pdfReaderRef.current?.addEventListener('onEditAreaSelected', (editArea : CPDFEditArea) => {
+   *    // store the selected edit area
+   *    this.selectedEditArea = editArea;
+   * });
+   * // then remove the selected edit area
+   * await pdfReaderRef.current?.removeEditArea(editArea);
+   *
+   * @param editArea The edit area to be removed.
+   * @returns A promise that resolves when the operation completes.
+   * @group Content Editing
+   */
   removeEditArea = (editArea: CPDFEditArea): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
@@ -1849,7 +1931,8 @@ export class CPDFDocument {
    * await pdfReaderRef.current?._pdfDocument.updateAnnotation(annotation);
    * @see CPDFAnnotation - Base class for all annotations
    * @param annotation The annotation to be updated.
-   * @returns 
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   updateAnnotation = (annotation: CPDFAnnotation): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1862,6 +1945,7 @@ export class CPDFDocument {
     return Promise.resolve();
   };
 
+  /** @group Forms */
   updateWidget = (widget: CPDFWidget): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
@@ -1902,6 +1986,7 @@ export class CPDFDocument {
 
    * @returns true if the text area was created successfully, otherwise false
    * @throws Throws an error if not running on Android platform
+   * @group Content Editing
    */
   createNewTextArea = async (options: {
     pageIndex: number;
@@ -1963,6 +2048,7 @@ export class CPDFDocument {
 
    * @returns true if the image area was created successfully, otherwise false
    * @throws Throws an error if not running on Android platform
+   * @group Content Editing
    */
   createNewImageArea = async (options: {
     pageIndex: number;
@@ -1992,18 +2078,19 @@ export class CPDFDocument {
   };
 
   /**
-     * Adds an image signature to the widget.
-     * @param imagePath The path of the image to be added as a signature.
-     * @example
-     * android support uri format:
-     * await pdfDocument.addSignatureImage(signatureWidget, 'content://media/external/images/media/123');
-     * file path:
-     * const result = await pdfDocument.addSignatureImage(signatureWidget, '/path/to/image');
-     * if (result) {
-     *   await pdfDocument.updateAp(signatureWidget);
-     * }
-     * @returns 
-     */
+   * Adds an image signature to the widget.
+   * @param imagePath The path of the image to be added as a signature.
+   * @example
+   * android support uri format:
+   * await pdfDocument.addSignatureImage(signatureWidget, 'content://media/external/images/media/123');
+   * file path:
+   * const result = await pdfDocument.addSignatureImage(signatureWidget, '/path/to/image');
+   * if (result) {
+   *   await pdfDocument.updateAp(signatureWidget);
+   * }
+   * @returns A promise that resolves to `true` when the signature image is added; otherwise, `false`.
+   * @group Forms
+   */
   addSignatureImage = (signatureWidget: CPDFSignatureWidget, imagePath: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
@@ -2017,8 +2104,9 @@ export class CPDFDocument {
    * 
    * @example
    * await pdfDocument.updateAp(signatureWidget);
-   * @param widget
-   * @returns 
+   * @param widget The form widget whose properties or appearance will be updated.
+   * @returns A promise that resolves to `true` when the widget appearance is updated; otherwise, `false`.
+   * @group Forms
    */
   updateAp = (widget: CPDFWidget): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -2049,8 +2137,9 @@ export class CPDFDocument {
    * ];
    * await pdfReaderRef.current?._pdfDocument.addAnnotations(annotations);
    * @see CPDFAnnotation - Base class for all annotations
-   * @param annotations 
-   * @returns 
+   * @param annotations The annotations to add to the document.
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   addAnnotations = (annotations: CPDFAnnotation[]): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -2189,8 +2278,9 @@ export class CPDFDocument {
    * await pdfReaderRef.current?._pdfDocument.addWidgets(widgets);
    * 
    * @see CPDFWidget - Base class for all form widgets
-   * @param widgets 
-   * @returns 
+   * @param widgets The form widgets to add to the document.
+   * @returns A promise that resolves when the operation completes.
+   * @group Forms
    */
   addWidgets = (widgets: CPDFWidget[]): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);

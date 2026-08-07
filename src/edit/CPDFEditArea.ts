@@ -9,7 +9,11 @@
 
 import { CPDFEditType } from "../configuration/CPDFOptions";
 
-
+/**
+ * Base model for a content-editor area on a PDF page.
+ *
+ * @group Edit
+ */
 export class CPDFEditArea {
 
   readonly type: CPDFEditType;

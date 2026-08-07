@@ -721,8 +721,7 @@ final class RnDocumentOps {
           promise.reject(ERROR_WATERMARK_FAIL, "Failed to create watermark");
           return;
         }
-        boolean success = watermark.update();
-        watermark.release();
+        boolean success = watermark.create();
         reloadPagesIfAttached(context);
         promise.resolve(success);
       });
@@ -733,8 +732,7 @@ final class RnDocumentOps {
       promise.reject(ERROR_WATERMARK_FAIL, "Failed to create watermark");
       return;
     }
-    boolean success = watermark.update();
-    watermark.release();
+    boolean success = watermark.create();
     reloadPagesIfAttached(context);
     promise.resolve(success);
   }
@@ -1111,12 +1109,8 @@ final class RnDocumentOps {
     if (!isValidInsertIndex(normalizedInsertIndex, pageCount)) {
       return false;
     }
-    CPDFDocument tempDocument = CPDFDocument.createDocument(reactContext);
-    boolean importedToTemp = tempDocument.importPages(document, new int[] { pageIndex }, 0);
-    if (!importedToTemp) {
-      return false;
-    }
-    boolean copied = document.importPages(tempDocument, new int[] { 0 }, normalizedInsertIndex);
+    CPDFPage copiedPage = document.copyPage(pageIndex, normalizedInsertIndex);
+    boolean copied = copiedPage != null && copiedPage.isValid();
     if (copied) {
       context.readerView.reloadPages();
       updatePageIndicatorView(document, context.viewCtrl);

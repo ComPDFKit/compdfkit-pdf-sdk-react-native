@@ -12,8 +12,13 @@ import React from 'react';
 import {
   createImageWatermarkExample,
   createTextWatermarkExample,
+  getAllWatermarksExample,
+  getFirstWatermarkExample,
+  getWatermarkCountExample,
   removeAllWatermarksExample,
+  removeFirstWatermarkExample,
   showAddWatermarkView,
+  updateFirstWatermarkExample,
 } from '../shared/securityActions';
 import { SecurityExampleScaffold } from '../shared/SecurityExampleScaffold';
 
@@ -21,17 +26,42 @@ export default function WatermarkOperationsExampleScreen() {
   return (
     <SecurityExampleScaffold
       title="Watermark Operations"
-      subtitle="Create watermarks, remove all watermarks, and open the native watermark flow."
+      subtitle="Create, inspect, update, and remove document watermarks, or open the native watermark flow."
       actions={[
         {
           key: 'create-text-watermark',
-          label: 'Create Text Watermark',
+          label: 'Add Text Watermark',
           onPress: createTextWatermarkExample,
         },
         {
           key: 'create-image-watermark',
-          label: 'Create Image Watermark',
+          label: 'Add Image Watermark',
           onPress: createImageWatermarkExample,
+        },
+        {
+          key: 'get-watermark-count',
+          label: 'Get Watermark Count',
+          onPress: getWatermarkCountExample,
+        },
+        {
+          key: 'get-first-watermark',
+          label: 'Get First Watermark',
+          onPress: getFirstWatermarkExample,
+        },
+        {
+          key: 'get-all-watermarks',
+          label: 'Get All Watermarks',
+          onPress: getAllWatermarksExample,
+        },
+        {
+          key: 'update-first-watermark',
+          label: 'Update First Watermark',
+          onPress: updateFirstWatermarkExample,
+        },
+        {
+          key: 'remove-first-watermark',
+          label: 'Remove First Watermark',
+          onPress: removeFirstWatermarkExample,
         },
         {
           key: 'remove-all-watermarks',

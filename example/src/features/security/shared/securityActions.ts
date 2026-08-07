@@ -12,6 +12,7 @@ import {
   CPDFDocumentPermissionInfo,
   CPDFDocumentPermissions,
   CPDFReaderView,
+  copyWatermark,
   createImageWatermark,
   createTextWatermark,
 } from '@compdfkit_pdf_sdk/react_native';
@@ -136,23 +137,16 @@ export async function showAddWatermarkView(reader: CPDFReaderView) {
 export async function createTextWatermarkExample(reader: CPDFReaderView) {
   const success = await reader._pdfDocument.createWatermark(
     createTextWatermark({
-      textContent: 'ComPDFKit RN',
-      pages: [0,1,2],
-      textColor: '#D33A2C',
-      fontSize: 28,
-      rotation: 35,
-      opacity: 0.75,
+      textContent: 'ComPDF',
+      pages: [0, 1, 2],
+      textColor: '#FF0000',
+      fontSize: 56,
+      rotation: 0,
       horizontalAlignment: 'left',
       verticalAlignment: 'bottom',
-      horizontalOffset: 32,
-      verticalOffset: 40,
-      isFront: true,
     }),
   );
   Logger.log('createTextWatermark:', success);
-  if (!success) {
-    Alert.alert('Create Text Watermark', 'Failed to create text watermark.');
-  }
   return success;
 }
 
@@ -164,28 +158,74 @@ export async function createImageWatermarkExample(reader: CPDFReaderView) {
   const success = await reader._pdfDocument.createWatermark(
     createImageWatermark({
       imagePath,
-      pages: [0,1,2],
-      scale: 0.35,
-      rotation: 0,
-      opacity: 0.8,
+      pages: [0, 1, 2],
+      opacity: 1,
+      scale: 0.6,
+      rotation: 45,
       horizontalAlignment: 'center',
       verticalAlignment: 'center',
-      isFront: true,
     }),
   );
   Logger.log('createImageWatermark:', success, imagePath);
-  if (!success) {
-    Alert.alert('Create Image Watermark', 'Failed to create image watermark.');
+  return success;
+}
+
+export async function getWatermarkCountExample(reader: CPDFReaderView) {
+  const count = await reader._pdfDocument.getWatermarkCount();
+  Logger.log('getWatermarkCount:', count);
+  Alert.alert('Get Watermark Count', `Watermark count: ${count}`);
+  return count;
+}
+
+export async function getFirstWatermarkExample(reader: CPDFReaderView) {
+  const watermark = await reader._pdfDocument.getWatermark(0);
+  Logger.log('getWatermark:', watermark);
+  Alert.alert(
+    'Get First Watermark',
+    watermark
+      ? `First watermark: #${watermark.index} (${watermark.type})`
+      : 'No watermark found',
+  );
+  return watermark;
+}
+
+export async function getAllWatermarksExample(reader: CPDFReaderView) {
+  const watermarks = await reader._pdfDocument.getWatermarks();
+  Logger.log('getWatermarks:', watermarks);
+  Alert.alert('Get All Watermarks', `Watermarks: ${watermarks.length}`);
+  return watermarks;
+}
+
+export async function updateFirstWatermarkExample(reader: CPDFReaderView) {
+  const watermark = await reader._pdfDocument.getWatermark(0);
+  if (!watermark) {
+    Logger.log('updateWatermark: no watermark found');
+    return false;
   }
+
+  const success = await reader._pdfDocument.updateWatermark(
+    watermark.index,
+    copyWatermark(watermark, { opacity: 0.5, textColor: '#0000FF' }),
+  );
+  Logger.log('updateWatermark:', success);
+  return success;
+}
+
+export async function removeFirstWatermarkExample(reader: CPDFReaderView) {
+  const watermark = await reader._pdfDocument.getWatermark(0);
+  if (!watermark) {
+    Logger.log('removeWatermark: no watermark found');
+    return false;
+  }
+
+  const success = await reader._pdfDocument.removeWatermark(watermark.index);
+  Logger.log('removeWatermark:', success);
   return success;
 }
 
 export async function removeAllWatermarksExample(reader: CPDFReaderView) {
   const success = await reader._pdfDocument.removeAllWatermarks();
   Logger.log('removeAllWatermarks:', success);
-  if (!success) {
-    Alert.alert('Remove All Watermarks', 'No document available.');
-  }
   return success;
 }
 

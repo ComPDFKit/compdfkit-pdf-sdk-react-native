@@ -1,0 +1,93 @@
+{
+  "entryPoints": [
+    "src/index.tsx"
+  ],
+  "out": "docs",
+  "tsconfig": "./tsconfig.typedoc.json",
+  "cleanOutputDir": true,
+  "exclude": [
+    "**/examples/**/*"
+  ],
+  "name": "ComPDF React Native",
+  "readme": "typedoc.md",
+  "customCss": "typedoc.css",
+  "projectDocuments": [
+    "React Native Integration Guide.md"
+  ],
+  "includeVersion": true,
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeNotDocumented": false,
+  "excludeExternals": true,
+  "groupReferencesByType": true,
+  "useFirstParagraphOfCommentAsSummary": true,
+  "treatWarningsAsErrors": true,
+  "intentionallyNotExported": [
+    "ComPDFKitModule",
+    "NativeWatermarkPayload",
+    "CPDFWatermarkPatch"
+  ],
+  "disableSources": true,
+  "hideGenerator": true,
+  "searchInComments": true,
+  "navigation": {
+    "includeGroups": true,
+    "includeCategories": true
+  },
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Core",
+    "Document",
+    "Viewer",
+    "Annotations",
+    "Forms",
+    "Edit",
+    "Page",
+    "Configuration",
+    "Utils",
+    "*"
+  ],
+  "groupOrder": [
+    "Classes",
+    "Interfaces",
+    "Type Aliases",
+    "Functions",
+    "*"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Function",
+    "Variable",
+    "Enum"
+  ],
+  "highlightLanguages": [
+    "typescript",
+    "javascript",
+    "tsx",
+    "jsx",
+    "json",
+    "bash",
+    "shell",
+    "diff",
+    "ruby"
+  ],
+  "navigationLinks": {
+    "GitHub": "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native",
+    "ComPDF": "https://www.compdf.com"
+  },
+  "externalSymbolLinkMappings": {
+    "@types/react": {
+      "React.Component": "https://react.dev/reference/react/Component",
+      "React.Component.render": "https://react.dev/reference/react/Component#render",
+      "React.ComponentLifecycle.componentDidMount": "https://react.dev/reference/react/Component#componentdidmount",
+      "React.NewLifecycle.getSnapshotBeforeUpdate": "https://react.dev/reference/react/Component#getsnapshotbeforeupdate",
+      "React.StaticLifecycle.getDerivedStateFromProps": "https://react.dev/reference/react/Component#static-getderivedstatefromprops",
+      "React.Component.setState": "https://react.dev/reference/react/Component#setstate"
+    }
+  }
+}

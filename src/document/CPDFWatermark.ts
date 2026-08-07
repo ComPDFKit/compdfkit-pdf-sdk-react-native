@@ -26,6 +26,7 @@ export type CPDFWatermark = {
   verticalSpacing?: number;
 };
 
+/** @internal */
 export type NativeWatermarkPayload = {
   index?: unknown;
   type?: unknown;
@@ -48,6 +49,7 @@ export type NativeWatermarkPayload = {
   vertical_spacing?: unknown;
 };
 
+/** @internal */
 export type CPDFWatermarkPatch = Partial<CPDFWatermark>;
 
 function asNumber(value: unknown, fallback: number): number {

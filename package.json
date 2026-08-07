@@ -1,6 +1,6 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native",
-  "version": "2.6.9",
+  "version": "3.0.0",
   "description": "ComPDFKit for React Native is a comprehensive SDK that allows you to quickly add PDF functionality to Android, iOS, and React Native applications.",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -55,7 +55,8 @@
     "prepare": "yarn build",
     "release": "yarn prepare && release-it",
     "docs": "typedoc",
-    "docs:md": "typedoc"
+    "docs:html": "typedoc",
+    "docs:check": "node tool/docs/validate-docs.mjs && typedoc --emit none"
   },
   "keywords": [
     "react-native",

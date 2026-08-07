@@ -10,6 +10,27 @@
 import { CPDFDisplayMode, CPDFThemes, HexColor } from "../CPDFOptions";
 
 /**
+ * Accessibility configuration for the reader view.
+ *
+ * Since v3.0.0, this configuration is currently only effective on Android.
+ *
+ * @group Configuration
+ */
+export interface CPDFAccessibilityConfig {
+    /**
+     * Whether hardware keyboard navigation is enabled.
+     * Default: false
+     */
+    keyboardNavigationEnabled?: boolean;
+
+    /**
+     * Whether TalkBack support is enabled.
+     * Default: false
+     */
+    talkBackEnabled?: boolean;
+}
+
+/**
  * @group Configuration
  */
 export interface CPDFReaderViewConfig  {
@@ -101,6 +122,13 @@ export interface CPDFReaderViewConfig  {
      * Default value: true
      */
     enableDoubleTapZoom?: boolean;
+
+    /**
+     * Accessibility configuration for hardware keyboard navigation and TalkBack.
+     *
+     * Since v3.0.0, this configuration is currently only effective on Android.
+     */
+    accessibilityConfig?: CPDFAccessibilityConfig;
 
     /**
      * UI style customizations for various interactive elements in the reader view.

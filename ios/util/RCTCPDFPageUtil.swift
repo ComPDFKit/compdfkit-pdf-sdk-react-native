@@ -257,8 +257,8 @@ class RCTCPDFPageUtil: NSObject {
     replyDict["title"] = reply.userName()
     replyDict["page"] = pageIndex
     replyDict["content"] = reply.contents
-    if reply.modificationDate() != nil {
-      replyDict["modifyDate"] = Int(reply.modificationDate().timeIntervalSince1970 * 1000)
+    if let modificationDate = reply.modificationDate() {
+      replyDict["modifyDate"] = Int(modificationDate.timeIntervalSince1970 * 1000)
     }
     if let markReply = findStateReply(annotation: reply, type: .mark) {
       replyDict["markState"] = markStateString(from: markReply.getAnnotState())
@@ -393,10 +393,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = markupAnnotation.contents
               
-              if markupAnnotation.modificationDate() != nil {
+              if let modificationDate = markupAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      markupAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               annotaionDict["color"] = markupAnnotation.color?
@@ -422,10 +421,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = circleAnnotation.contents
               
-              if circleAnnotation.modificationDate() != nil {
+              if let modificationDate = circleAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      circleAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -463,10 +461,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = squareAnnotation.contents
               
-              if squareAnnotation.modificationDate() != nil {
+              if let modificationDate = squareAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      squareAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -504,10 +501,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = lineAnnotation.contents
               
-              if lineAnnotation.modificationDate() != nil {
+              if let modificationDate = lineAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      lineAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -550,10 +546,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = inkAnnotation.contents
               
-              if inkAnnotation.modificationDate() != nil {
+              if let modificationDate = inkAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      inkAnnotation
-                          .modificationDate().timeIntervalSince1970  * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               annotaionDict["color"] = inkAnnotation.color?.toHexString()
@@ -608,10 +603,9 @@ class RCTCPDFPageUtil: NSObject {
                   noteAnnotation.opacity * 255.0
               )
               
-              if noteAnnotation.modificationDate() != nil {
+              if let modificationDate = noteAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      noteAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
           
@@ -630,10 +624,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = freeTextAnnotation.contents
               
-              if freeTextAnnotation.modificationDate() != nil {
+              if let modificationDate = freeTextAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      freeTextAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               annotaionDict["color"] = freeTextAnnotation.color?
@@ -669,10 +662,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["title"] = stampAnnotation.userName()
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = stampAnnotation.contents
-              if stampAnnotation.modificationDate() != nil {
+              if let modificationDate = stampAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      stampAnnotation
-                          .modificationDate().timeIntervalSince1970  * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -711,10 +703,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = linkAnnotation.contents
               
-              if linkAnnotation.modificationDate() != nil {
+              if let modificationDate = linkAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      linkAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -746,10 +737,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = mediaAnnotation.contents
               
-              if mediaAnnotation.modificationDate() != nil {
+              if let modificationDate = mediaAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      mediaAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -767,10 +757,9 @@ class RCTCPDFPageUtil: NSObject {
               annotaionDict["page"] = pageIndex
               annotaionDict["content"] = signatureAnnotation.contents
               
-              if signatureAnnotation.modificationDate() != nil {
+              if let modificationDate = signatureAnnotation.modificationDate() {
                   annotaionDict["createDate"] = Int(
-                      signatureAnnotation
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               
@@ -821,10 +810,9 @@ class RCTCPDFPageUtil: NSObject {
               formDict["title"] = buttonWidget.fieldName()
               formDict["page"] = pageIndex
               
-              if buttonWidget.modificationDate() != nil {
+              if let modificationDate = buttonWidget.modificationDate() {
                   formDict["createDate"] = Int(
-                      buttonWidget
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               formDict["rect"] = getAnnotationRect(
@@ -884,10 +872,9 @@ class RCTCPDFPageUtil: NSObject {
               formDict["page"] = pageIndex
               formDict["text"] = textFieldWidget.stringValue
               
-              if textFieldWidget.modificationDate() != nil {
+              if let modificationDate = textFieldWidget.modificationDate() {
                   formDict["createDate"] = Int(
-                      textFieldWidget
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
 
@@ -920,10 +907,9 @@ class RCTCPDFPageUtil: NSObject {
               formDict["title"] = choiceWidget.fieldName()
               formDict["page"] = pageIndex
               
-              if choiceWidget.modificationDate() != nil {
+              if let modificationDate = choiceWidget.modificationDate() {
                   formDict["createDate"] = Int(
-                      choiceWidget
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
               formDict["rect"] = getAnnotationRect(
@@ -964,10 +950,9 @@ class RCTCPDFPageUtil: NSObject {
               formDict["title"] = signatureWidget.fieldName()
               formDict["page"] = pageIndex
               
-              if signatureWidget.modificationDate() != nil {
+              if let modificationDate = signatureWidget.modificationDate() {
                   formDict["createDate"] = Int(
-                      signatureWidget
-                          .modificationDate().timeIntervalSince1970 * 1000
+                      modificationDate.timeIntervalSince1970 * 1000
                   )
               }
  
@@ -1361,7 +1346,7 @@ class RCTCPDFPageUtil: NSObject {
                       case "uri":
                           if let uri = actionDict["uri"] as? String {
                               let urlAction = CPDFURLAction(url: uri)
-                              pushButtonWidget.action = urlAction
+                            pushButtonWidget.setAction(urlAction)
                           }
                       case "goTo":
                           if let destPageIndex = actionDict["pageIndex"] as? Int{
@@ -1371,7 +1356,7 @@ class RCTCPDFPageUtil: NSObject {
                                       pageIndex: destPageIndex
                                   )
                               )
-                              pushButtonWidget.action = gotoAction
+                              pushButtonWidget.setAction(gotoAction)
                           }
                       default:
                           break;
@@ -1557,7 +1542,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              let text = CPDFTextAnnotation(document: document)
+              let text = CPDFTextAnnotation(page: page, document: document)
               text?.contents = content
               text?.bounds = rect
               if !title.isEmpty {
@@ -1577,7 +1562,11 @@ class RCTCPDFPageUtil: NSObject {
               if let alpha = annot["alpha"] as? Double {
                   text?.opacity = CGFloat(alpha / 255.0)
               }
-              page.addAnnotation(text!)
+              if let text = text {
+                  page.updateAndAddAnnotation(text)
+              } else {
+                  overallSuccess = false
+              }
 
           case "highlight", "underline", "squiggly", "strikeout":
               print("ComPDFKit-Flutter: Received markup annotation [\(index)]: \(annot)")
@@ -1611,7 +1600,7 @@ class RCTCPDFPageUtil: NSObject {
                       markupType = .highlight
                   }
 
-                  if let markup = CPDFMarkupAnnotation(document: document, markupType: markupType) {
+                  if let markup = CPDFMarkupAnnotation(page: page, document: document, markupType: markupType) {
                       // set color
                       if let colorHex = annot["color"] as? String {
                           markup.color = ColorHelper.colorWithHexString(hex: colorHex)
@@ -1636,7 +1625,7 @@ class RCTCPDFPageUtil: NSObject {
                           markup.setModificationDate(Date())
                       }
 
-                      page.addAnnotation(markup)
+                      page.updateAndAddAnnotation(markup)
                   } else {
                       overallSuccess = false
                   }
@@ -1648,7 +1637,7 @@ class RCTCPDFPageUtil: NSObject {
                       continue
                   }
 
-                  if let freeText = CPDFFreeTextAnnotation(document: document) {
+                  if let freeText = CPDFFreeTextAnnotation(page: page, document: document) {
                       freeText.contents = content
                       freeText.bounds = rect
                       if !title.isEmpty {
@@ -1678,7 +1667,7 @@ class RCTCPDFPageUtil: NSObject {
                       } else {
                           freeText.setModificationDate(Date())
                       }
-                      page.addAnnotation(freeText)
+                      page.updateAndAddAnnotation(freeText)
                   } else {
                       overallSuccess = false
                   }
@@ -1689,7 +1678,7 @@ class RCTCPDFPageUtil: NSObject {
                       continue
                   }
 
-                  if let line = CPDFLineAnnotation(document: document) {
+                  if let line = CPDFLineAnnotation(page: page, document: document) {
                       // If points provided, use them. Expecting [[x,y], [x,y]]
                       if let points = annot["points"] as? [[Any]], points.count >= 2 {
                           if let sx = points[0][0] as? Double, let sy = points[0][1] as? Double,
@@ -1742,7 +1731,7 @@ class RCTCPDFPageUtil: NSObject {
                       } else {
                           line.setModificationDate(Date())
                       }
-                      page.addAnnotation(line)
+                      page.updateAndAddAnnotation(line)
                   } else {
                       overallSuccess = false
                   }
@@ -1753,7 +1742,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let circle = CPDFCircleAnnotation(document: document) {
+              if let circle = CPDFCircleAnnotation(page: page, document: document) {
                   circle.bounds = rect
                   if !title.isEmpty {
                       circle.setUserName(title)
@@ -1792,7 +1781,7 @@ class RCTCPDFPageUtil: NSObject {
                       circle.setModificationDate(Date())
                   }
 
-                  page.addAnnotation(circle)
+                  page.updateAndAddAnnotation(circle)
               } else {
                   overallSuccess = false
               }
@@ -1803,7 +1792,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let square = CPDFSquareAnnotation(document: document) {
+              if let square = CPDFSquareAnnotation(page: page, document: document) {
                   square.bounds = rect
                   if !title.isEmpty {
                       square.setUserName(title)
@@ -1839,7 +1828,7 @@ class RCTCPDFPageUtil: NSObject {
                   } else {
                       square.setModificationDate(Date())
                   }
-                  page.addAnnotation(square)
+                  page.updateAndAddAnnotation(square)
               } else {
                   overallSuccess = false
               }
@@ -1856,9 +1845,10 @@ class RCTCPDFPageUtil: NSObject {
               switch stampType {
               case "standard":
                   let standardStamp = annot["standardStamp"] as? String ?? "Approved"
-                  stampAnnotation = CPDFStampAnnotation(document: document, type: CPDFEnumConvertUtil.stringToStandardStamp(standardStamp))
-                  let adJustRect = computeAdjustedRect(sourceRect: stampAnnotation!.bounds, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
-                  stampAnnotation?.bounds = adJustRect
+                  stampAnnotation = CPDFStampAnnotation(page: page, document: document, standardType: CPDFEnumConvertUtil.stringToStandardStamp(standardStamp))
+                  if let stampAnnotation = stampAnnotation {
+                      stampAnnotation.bounds = computeAdjustedRect(sourceRect: stampAnnotation.bounds, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
+                  }
               case "text":
                   if let textStampAttr = annot["textStamp"] as? [String: Any] {
                       let content = textStampAttr["content"] as? String ?? ""
@@ -1866,10 +1856,11 @@ class RCTCPDFPageUtil: NSObject {
                       let shapeStr = textStampAttr["shape"] as? String ?? "rect"
                       let colorStr = textStampAttr["color"] as? String ?? "white"
                       
-                      stampAnnotation = CPDFStampAnnotation(document: document, text: content, detailText: date, style: CPDFEnumConvertUtil.stringToStampStyle(colorStr),
+                      stampAnnotation = CPDFStampAnnotation(page: page, document: document, text: content, detailText: date, style: CPDFEnumConvertUtil.stringToStampStyle(colorStr),
                                                             shape: CPDFEnumConvertUtil.stringToStampShape(shapeStr))
-                      let adJustRect = computeAdjustedRect(sourceRect: stampAnnotation!.bounds, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
-                      stampAnnotation?.bounds = adJustRect
+                      if let stampAnnotation = stampAnnotation {
+                          stampAnnotation.bounds = computeAdjustedRect(sourceRect: stampAnnotation.bounds, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
+                      }
                   } else {
                       stampAnnotation = nil
                   }
@@ -1877,7 +1868,7 @@ class RCTCPDFPageUtil: NSObject {
                   if let image = Self.resolvedImage(from: annot) {
                       let sourceRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
                       let adJustRect = computeAdjustedRect(sourceRect: sourceRect, left: rect.origin.x, top: rect.origin.y, right: rect.origin.x + rect.size.width, bottom: rect.origin.y + rect.size.height)
-                      stampAnnotation = CPDFStampAnnotation(document: document, image: image)
+                      stampAnnotation = CPDFStampAnnotation(page: page, document: document, image: image)
                       stampAnnotation?.bounds = adJustRect
                   } else {
                       CPDFUtil.log("addAnnotations - failed to resolve image stamp data")
@@ -1887,19 +1878,19 @@ class RCTCPDFPageUtil: NSObject {
                   stampAnnotation = nil
               }
               
-              if(stampAnnotation != nil){
+              if let stampAnnotation = stampAnnotation {
                   
                   if !title.isEmpty {
-                      stampAnnotation?.setUserName(title)
+                      stampAnnotation.setUserName(title)
                   }
-                  stampAnnotation?.contents = content
+                  stampAnnotation.contents = content
                   if let createDateInt = annot["createDate"] as? Int {
                       let createDate = Date(timeIntervalSince1970: TimeInterval(createDateInt) / 1000.0)
-                      stampAnnotation?.setModificationDate(createDate)
+                      stampAnnotation.setModificationDate(createDate)
                   } else {
-                      stampAnnotation?.setModificationDate(Date())
+                      stampAnnotation.setModificationDate(Date())
                   }
-                  page.addAnnotation(stampAnnotation!)
+                  page.updateAndAddAnnotation(stampAnnotation)
               }else {
                   overallSuccess = false
               }
@@ -1910,7 +1901,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let signature = CPDFSignatureAnnotation(document: document) {
+              if let signature = CPDFSignatureAnnotation(page: page, document: document) {
                   
                   
                   if !title.isEmpty {
@@ -1932,7 +1923,7 @@ class RCTCPDFPageUtil: NSObject {
                       signature.setModificationDate(Date())
                   }
 
-                  page.addAnnotation(signature)
+                  page.updateAndAddAnnotation(signature)
               } else {
                   overallSuccess = false
               }
@@ -1943,7 +1934,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let ink = CPDFInkAnnotation(document: document) {
+              if let ink = CPDFInkAnnotation(page: page, document: document) {
                   // Set basic properties
                   if !title.isEmpty {
                       ink.setUserName(title)
@@ -1997,7 +1988,7 @@ class RCTCPDFPageUtil: NSObject {
                       ink.setModificationDate(Date())
                   }
                   
-                  page.addAnnotation(ink)
+                  page.updateAndAddAnnotation(ink)
               } else {
                   overallSuccess = false
               }
@@ -2008,7 +1999,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let link = CPDFLinkAnnotation(document: document) {
+              if let link = CPDFLinkAnnotation(page: page, document: document) {
                   // Set bounds
                   link.bounds = rect
                   
@@ -2053,7 +2044,7 @@ class RCTCPDFPageUtil: NSObject {
                       link.setModificationDate(Date())
                   }
                   
-                  page.addAnnotation(link)
+                  page.updateAndAddAnnotation(link)
               } else {
                   overallSuccess = false
               }
@@ -2064,7 +2055,7 @@ class RCTCPDFPageUtil: NSObject {
                   continue
               }
 
-              if let soundAnnotation = CPDFSoundAnnotation(document: document) {
+              if let soundAnnotation = CPDFSoundAnnotation(page: page, document: document) {
                   // Set bounds
                   soundAnnotation.bounds = rect
                   
@@ -2087,7 +2078,7 @@ class RCTCPDFPageUtil: NSObject {
                       soundAnnotation.setModificationDate(Date())
                   }
                   
-                  page.addAnnotation(soundAnnotation)
+                  page.updateAndAddAnnotation(soundAnnotation)
               } else {
                   overallSuccess = false
               }
@@ -2137,7 +2128,7 @@ class RCTCPDFPageUtil: NSObject {
           
           switch type {
           case "textField":
-              guard let textWidget = CPDFTextWidgetAnnotation(document: document) else {
+              guard let textWidget = CPDFTextWidgetAnnotation(page: page, document: document) else {
                   CPDFUtil.log("addWidgets - failed to create textField")
                   overallSuccess = false
                   continue
@@ -2169,13 +2160,13 @@ class RCTCPDFPageUtil: NSObject {
               if let alignment = widgetDict["alignment"] as? String {
                   textWidget.alignment = CPDFEnumConvertUtil.stringToTextAlignment(alignment)
               }
-              page.addAnnotation(textWidget)
+              page.updateAndAddAnnotation(textWidget)
               
           case "checkBox", "radioButton":
               
               let controlType = type == "checkBox" ? CPDFWidgetControlType.checkBoxControl : CPDFWidgetControlType.radioButtonControl
               
-              guard let checkBoxWidget = CPDFButtonWidgetAnnotation(document: document, controlType: controlType) else {
+              guard let checkBoxWidget = CPDFButtonWidgetAnnotation(page: page, document: document, controlType: controlType) else {
                   CPDFUtil.log("addWidgets - failed to create \(type)")
                   overallSuccess = false
                   continue
@@ -2199,13 +2190,13 @@ class RCTCPDFPageUtil: NSObject {
               if let checkColorHex = widgetDict["checkColor"] as? String {
                   checkBoxWidget.fontColor = ColorHelper.colorWithHexString(hex: checkColorHex)
               }
-              page.addAnnotation(checkBoxWidget)
+              page.updateAndAddAnnotation(checkBoxWidget)
               
           case "listBox", "comboBox":
               
               let isListChoice = type == "listBox"
               
-              guard let choiceWidget = CPDFChoiceWidgetAnnotation(document: document, listChoice: isListChoice) else {
+              guard let choiceWidget = CPDFChoiceWidgetAnnotation(page: page, document: document, listChoice: isListChoice) else {
                   CPDFUtil.log("addWidgets - failed to create listBox")
                   overallSuccess = false
                   continue
@@ -2246,10 +2237,10 @@ class RCTCPDFPageUtil: NSObject {
                   choiceWidget.cFont = CPDFFont(familyName: familyName, fontStyle: styleName)
               }
               
-              page.addAnnotation(choiceWidget)
+              page.updateAndAddAnnotation(choiceWidget)
               
           case "signaturesFields":
-              guard let signatureWidget = CPDFSignatureWidgetAnnotation(document: document) else {
+              guard let signatureWidget = CPDFSignatureWidgetAnnotation(page: page, document: document) else {
                   CPDFUtil.log("addWidgets - failed to create signaturesFields")
                   overallSuccess = false
                   continue
@@ -2263,10 +2254,10 @@ class RCTCPDFPageUtil: NSObject {
               signatureWidget.borderWidth = CGFloat(borderWidth)
               signatureWidget.setModificationDate(createDate)
               
-              page.addAnnotation(signatureWidget)
+              page.updateAndAddAnnotation(signatureWidget)
               
           case "pushButton":
-              guard let pushButtonWidget = CPDFButtonWidgetAnnotation(document: document, controlType: .pushButtonControl) else {
+              guard let pushButtonWidget = CPDFButtonWidgetAnnotation(page: page, document: document, controlType: .pushButtonControl) else {
                   CPDFUtil.log("addWidgets - failed to create pushButton")
                   overallSuccess = false
                   continue
@@ -2302,13 +2293,13 @@ class RCTCPDFPageUtil: NSObject {
                       if let destPageIndex = actionDict["pageIndex"] as? Int {
                           if let destination = CPDFDestination(document: document, pageIndex: destPageIndex) {
                               let action = CPDFGoToAction(destination: destination)
-                              pushButtonWidget.action = action
+                              pushButtonWidget.setAction(action)
                           }
                       }
                   case "uri":
                       if let urlStr = actionDict["uri"] as? String {
                           let action = CPDFURLAction(url: urlStr)
-                          pushButtonWidget.action = action
+                          pushButtonWidget.setAction(action)
                       }
                   default:
                       break
@@ -2316,7 +2307,7 @@ class RCTCPDFPageUtil: NSObject {
               }else{
                   CPDFUtil.log("addWidgets - pushButton missing action")
               }
-              page.addAnnotation(pushButtonWidget)
+              page.updateAndAddAnnotation(pushButtonWidget)
               
           default:
               CPDFUtil.log("addWidgets - unhandled type \(type)")

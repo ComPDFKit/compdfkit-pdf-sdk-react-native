@@ -1,0 +1,389 @@
+/* Flat, brand-aligned styling for the generated TypeDoc site. */
+@layer compdfkit-docs {
+  :root {
+    --dim-toolbar-contents-height: 3.5rem;
+    --compdf-primary: #1460f3;
+    --compdf-primary-soft: #ebf2ff;
+    --compdf-secondary: #7c3aed;
+    --compdf-tertiary: #16a34a;
+    --compdf-page: #ffffff;
+    --compdf-surface: #ffffff;
+    --compdf-surface-alt: #f5f7fa;
+    --compdf-outline: #e5e7eb;
+    --compdf-outline-strong: #d1d5db;
+    --compdf-text: #1a1a1a;
+    --compdf-text-secondary: #6b7280;
+
+    --color-background: var(--compdf-page);
+    --color-background-secondary: var(--compdf-surface);
+    --color-background-active: var(--compdf-primary-soft);
+    --color-active-menu-item: var(--compdf-primary-soft);
+    --color-accent: var(--compdf-outline);
+    --color-text: var(--compdf-text);
+    --color-contrast-text: var(--compdf-text);
+    --color-text-aside: var(--compdf-text-secondary);
+    --color-link: var(--compdf-primary);
+    --color-focus-outline: var(--compdf-primary);
+  }
+
+  :root[data-theme="dark"] {
+    --compdf-primary: #3b82f6;
+    --compdf-primary-soft: #1c2a4a;
+    --compdf-secondary: #a78bfa;
+    --compdf-tertiary: #22c55e;
+    --compdf-page: #0b111a;
+    --compdf-surface: #111827;
+    --compdf-surface-alt: #1a2230;
+    --compdf-outline: #2a3342;
+    --compdf-outline-strong: #334155;
+    --compdf-text: #f3f4f6;
+    --compdf-text-secondary: #a0a9b6;
+  }
+
+  body {
+    background: var(--compdf-page);
+    color: var(--compdf-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+      "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  a {
+    color: var(--compdf-primary);
+  }
+
+  a:hover {
+    color: var(--compdf-primary);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .container {
+    max-width: 1440px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .tsd-page-toolbar {
+    background: color-mix(in srgb, var(--compdf-surface) 96%, transparent);
+    border-bottom: 1px solid var(--compdf-outline);
+    box-shadow: none;
+    backdrop-filter: blur(12px);
+  }
+
+  .tsd-toolbar-contents > .title {
+    color: var(--compdf-text);
+    font-size: 0.9375rem;
+    font-weight: 650;
+    letter-spacing: 0;
+  }
+
+  #tsd-toolbar-links {
+    gap: 20px;
+  }
+
+  #tsd-toolbar-links a {
+    color: var(--compdf-text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 550;
+  }
+
+  #tsd-toolbar-links a:hover {
+    color: var(--compdf-text);
+    text-decoration: none;
+  }
+
+  .container-main {
+    margin-top: 32px;
+    margin-bottom: 48px;
+  }
+
+  .col-content {
+    min-width: 0;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .col-content > * {
+    max-width: 880px;
+  }
+
+  .tsd-page-title {
+    border-bottom: 1px solid var(--compdf-outline);
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+  }
+
+  .tsd-page-title h1 {
+    color: var(--compdf-text);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .tsd-breadcrumb {
+    color: var(--compdf-text-secondary);
+    font-size: 0.8125rem;
+    margin-bottom: 8px;
+  }
+
+  .site-menu {
+    border-right: 1px solid var(--compdf-outline);
+    padding-right: 24px;
+  }
+
+  .page-menu {
+    border-left: 1px solid var(--compdf-outline);
+    padding-left: 24px;
+  }
+
+  .site-menu,
+  .page-menu,
+  .tsd-navigation {
+    color: var(--compdf-text-secondary);
+    font-size: 0.8125rem;
+  }
+
+  .site-menu wbr,
+  .page-menu wbr {
+    display: none;
+  }
+
+  .site-menu .tsd-navigation a,
+  .site-menu .tsd-small-nested-navigation a,
+  .page-menu .tsd-page-navigation a {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .site-menu .tsd-navigation a span,
+  .site-menu .tsd-small-nested-navigation a span,
+  .page-menu .tsd-page-navigation a span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tsd-navigation a {
+    border-left: 2px solid transparent;
+    border-radius: 0;
+    padding-left: 10px;
+    transition: background-color 150ms ease, border-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .tsd-navigation a:hover {
+    background: var(--compdf-surface-alt);
+    color: var(--compdf-text);
+    text-decoration: none;
+  }
+
+  .tsd-navigation a.current {
+    background: var(--compdf-primary-soft);
+    border-left-color: var(--compdf-primary);
+    color: var(--compdf-primary);
+    font-weight: 600;
+  }
+
+  .tsd-panel,
+  .tsd-panel.tsd-typography,
+  .tsd-panel.tsd-member,
+  .tsd-panel-group.tsd-index-group {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .tsd-panel.tsd-member {
+    border-top: 1px solid var(--compdf-outline);
+    margin-bottom: 40px;
+    padding-top: 24px;
+  }
+
+  .tsd-panel > h1,
+  .tsd-panel > h2,
+  .tsd-panel > h3 {
+    border-bottom-color: var(--compdf-outline);
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .tsd-typography h1,
+  .tsd-typography h2,
+  .tsd-typography h3,
+  .tsd-accordion-summary {
+    color: var(--compdf-text);
+  }
+
+  .tsd-typography h2 {
+    font-size: 1.35rem;
+    margin-top: 36px;
+  }
+
+  .tsd-typography h3 {
+    font-size: 1.05rem;
+    margin-top: 28px;
+  }
+
+  .tsd-typography p,
+  .tsd-typography li {
+    color: var(--compdf-text-secondary);
+  }
+
+  .tsd-typography strong {
+    color: var(--compdf-text);
+  }
+
+  .tsd-tag-example {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .tsd-accordion-summary {
+    font-weight: 650;
+  }
+
+  .tsd-signature {
+    background: var(--compdf-surface-alt);
+    border: 1px solid var(--compdf-outline);
+    border-left: 3px solid var(--compdf-primary);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  pre {
+    background: var(--compdf-surface-alt);
+    border: 1px solid var(--compdf-outline);
+    border-radius: 4px;
+    line-height: 1.55;
+    overflow-x: auto;
+    padding: 16px;
+  }
+
+  code {
+    background: var(--compdf-primary-soft);
+    border-radius: 3px;
+    color: var(--compdf-text);
+    padding: 0.1em 0.3em;
+  }
+
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+
+  .tsd-typography table {
+    border: 1px solid var(--compdf-outline);
+    border-collapse: separate;
+    border-radius: 4px;
+    border-spacing: 0;
+    overflow: hidden;
+  }
+
+  .tsd-typography th {
+    background: var(--compdf-surface-alt);
+    color: var(--compdf-text);
+    font-weight: 600;
+  }
+
+  .tsd-typography tr:nth-child(even) {
+    background: transparent;
+  }
+
+  .tsd-typography td,
+  .tsd-typography th {
+    border-color: var(--compdf-outline);
+  }
+
+  #tsd-search[open] {
+    background: var(--compdf-surface);
+    border: 1px solid var(--compdf-outline-strong);
+    border-radius: 6px;
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
+  }
+
+  #tsd-search-input:focus-visible {
+    border-color: var(--compdf-primary);
+    box-shadow: 0 0 0 3px rgba(20, 96, 243, 0.16);
+  }
+
+  :where(a, button, input, summary):focus-visible {
+    outline: 2px solid var(--compdf-primary);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 1200px) {
+    .container-main {
+      grid-template-columns: 300px minmax(0, 1fr) 220px;
+    }
+  }
+
+  @media (min-width: 770px) and (max-width: 1199px) {
+    .container-main {
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .col-content {
+      padding-left: 36px;
+      padding-right: 16px;
+    }
+  }
+
+  @media (max-width: 769px) {
+    body {
+      overflow-x: hidden;
+    }
+
+    html:not(.has-menu) .col-sidebar {
+      display: none;
+    }
+
+    .container {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .container-main {
+      margin-top: 20px;
+      margin-bottom: 32px;
+    }
+
+    .col-content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .tsd-page-title {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+    }
+
+    .tsd-page-title h1 {
+      font-size: 1.625rem;
+    }
+
+    .site-menu,
+    .page-menu {
+      border: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

@@ -1,3 +1,32 @@
+## 3.0.0
+1. Added support for ComPDF PDF SDK for iOS V3.0.0.
+2. Added support for ComPDF PDF SDK for Android V3.0.0.
+3. Added APIs for deleting, editing, and updating watermarks.
+4. Added Android accessibility support for TalkBack and hardware keyboard navigation, configurable through `CPDFReaderViewConfig.accessibilityConfig`.
+5. Raised the minimum Android version to Android 6.0 (API 23).
+6. Added Japanese language support.
+7. Added hybrid Undo/Redo history support for Ink annotations, allowing strokes and document annotation operations to be undone and redone in their actual operation order.
+8. Added mutually exclusive selection support for RadioButton form fields within the same group on Android.
+9. Added multithreaded PDF page rendering support on Android.
+10. Added `pageSameWidth` preview mode and maximum zoom scale configuration for PDFView on iOS.
+11. Fixed the UI layering of drag controls while zooming in content editing and annotation modes on iOS.
+12. Improved text selection and page scrolling interactions on iOS.
+13. Improved inconsistent appearance stream (AP) rendering for text annotations on iOS.
+14. Fixed incorrect watermark rotation angles and watermark property updates not taking effect after repeated changes on iOS.
+15. Fixed an issue that prevented opening web links on certain iOS versions.
+16. Fixed page same-width display not taking effect in landscape continuous reading mode on Android.
+17. Improved current page number callback behavior in Android two-page reading mode.
+18. Improved Android reader gesture recognition to prevent swiping from unintentionally triggering page turns when pages are zoomed in.
+19. Fixed incorrect page position and sizing when switching fullscreen mode on Android.
+20. Fixed text and Markup selections being removed while scrolling or double-tap zooming on Android.
+
+
+## 2.6.10
+1. Added support for ComPDFKit PDF SDK for iOS V2.6.10
+2. Added support for ComPDFKit PDF SDK for Android V2.6.10
+3. Fixed an issue where unsigned signature field labels did not rotate with the page.
+
+
 ## 2.6.9
 1. Added support for ComPDFKit PDF SDK for iOS V2.6.9.
 2. Added support for ComPDFKit PDF SDK for Android V2.6.9.

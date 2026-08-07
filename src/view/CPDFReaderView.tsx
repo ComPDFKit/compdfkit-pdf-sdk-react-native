@@ -72,6 +72,11 @@ const { CPDFViewManager } = NativeModules;
  *  />
  */
 
+/**
+ * Props used to configure and observe the native PDF reader view.
+ *
+ * @group Viewer
+ */
 export interface CPDFReaderViewProps {
   configuration: string;
   document: string;
@@ -107,17 +112,30 @@ export interface CPDFReaderViewProps {
   style?: any;
 }
 
+/**
+ * Native PDF reader component for viewing and editing a document.
+ *
+ * @group Viewer
+ * @since 3.0.0
+ * @remarks Supported on Android and iOS. Platform-specific methods document their limitations.
+ */
 export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
+  /** @internal */
   _viewerRef: any;
 
+  /** @group Document Lifecycle */
   _pdfDocument: CPDFDocument;
 
+  /** @group Annotations */
   _annotationsHistoryManager: CPDFAnnotationHistoryManager;
 
+  /** @group Content Editing */
   _editManager: CPDFEditManager;
 
+  /** @internal */
   _eventListeners: Map<string, Array<Function>> = new Map();
 
+  /** @internal */
   static defaultProps = {
     password: "",
     pageIndex: 0,
@@ -132,6 +150,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     this._editManager = new CPDFEditManager(this._viewerRef);
   }
 
+  /** @internal */
   _setNativeRef = (ref: any) => {
     this._viewerRef = ref;
     this._pdfDocument = new CPDFDocument(this._viewerRef);
@@ -164,6 +183,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @param event The event type to listen for
    * @param callback The callback function with typed event data
+   * @group Events
    */
   addEventListener<K extends keyof CPDFEventDataMap>(
     event: K,
@@ -182,6 +202,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Remove an event listener for a specific event.
    * @param event The event type to stop listening for
    * @param callback The callback function to remove
+   * @group Events
    */
   removeEventListener<K extends keyof CPDFEventDataMap>(
     event: K,
@@ -214,6 +235,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
     }
   };
 
+  /** @internal */
   onChange = (event: any) => {
     if ("onPageChanged" in event.nativeEvent) {
       if (this.props.onPageChanged) {
@@ -407,6 +429,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * const saveResult = await pdfReaderRef.current.save();
    *
    * @returns true or false
+   * @group Document Lifecycle
    */
   save = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -421,11 +444,12 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setMargins(10,10,10,10);
    *
-   * @param left
-   * @param top
-   * @param right
-   * @param bottom
-   * @returns
+   * @param left The left reading-area margin.
+   * @param top The top reading-area margin.
+   * @param right The right reading-area margin.
+   * @param bottom The bottom reading-area margin.
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setMargins = (
     left: number,
@@ -442,14 +466,14 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    *
-   * @deprecated This method is deprecated and will be removed in future versions.
-   * Use `_pdfDocument.removeAllAnnotations()` instead.
+   * @deprecated Use `_pdfDocument.removeAllAnnotations()` instead.
    *
    * Delete all comments in the current document
    * @example
    * const removeResult = await pdfReaderRef.current?.removeAllAnnotations();
    *
-   * @returns
+   * @returns A promise that resolves to `true` when all annotations are removed; otherwise, `false`.
+   * @group Deprecated
    */
   removeAllAnnotations = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -461,8 +485,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    *
-   * @deprecated This method is deprecated and will be removed in future versions.
-   * Use `_pdfDocument.importAnnotations()` instead.
+   * @deprecated Use `_pdfDocument.importAnnotations()` instead.
    *
    * Imports annotations from the specified XFDF file into the current PDF document.
    * @example
@@ -484,6 +507,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @param xfdfFile Path of the XFDF file to be imported.
    * @returns true if the import is successful; otherwise, false.
+   * @group Deprecated
    */
   importAnnotations = (xfdfFile: string): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -495,8 +519,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    *
-   * @deprecated This method is deprecated and will be removed in future versions.
-   * Use `_pdfDocument.exportAnnotations()` instead.
+   * @deprecated Use `_pdfDocument.exportAnnotations()` instead.
    *
    * Exports annotations from the current PDF document to an XFDF file.
    *
@@ -504,6 +527,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * const exportXfdfFilePath = await pdfReaderRef.current?.exportAnnotations();
    *
    * @returns The path of the XFDF file if export is successful; an empty string if the export fails.
+   * @group Deprecated
    */
   exportAnnotations = (): Promise<string> => {
     return this._pdfDocument.exportAnnotations();
@@ -518,7 +542,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @param pageIndex The index of the page to jump.
    * @param options Options for page display
    * @param options.rectList The rects to be visible in the page. The rect is in PDF coordinate system.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Navigation
    */
   setDisplayPageIndex = (
     pageIndex: number,
@@ -538,7 +563,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const pageIndex = await pdfReaderRef.current?.getCurrentPageIndex();
    *
-   * @returns
+   * @returns A promise that resolves to the current zero-based page index.
+   * @group Navigation
    */
   getCurrentPageIndex = (): Promise<number> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -549,8 +575,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
   };
 
   /**
-   * @deprecated This method is deprecated and will be removed in future versions.
-   * Use `_pdfDocument.hasChange()` instead.
+   * @deprecated Use `_pdfDocument.hasChange()` instead.
    *
    * Checks whether the document has been modified
    *
@@ -561,6 +586,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *          `true`: The document has been modified,
    *          `false`: The document has not been modified.
    *          If the native view reference cannot be found, a rejected Promise will be returned.
+   * @group Document Lifecycle
    */
   hasChange = (): Promise<boolean> => {
     return this._pdfDocument.hasChange();
@@ -573,8 +599,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setScale(2.0);
    *
-   * @param scale
+   * @param scale The zoom scale to apply.
    * @returns Returns a Promise.
+   * @group View Settings
    */
   setScale = (scale: number): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -591,6 +618,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * const scale = await pdfReaderRef.current?.getScale();
    *
    * @returns Returns the zoom ratio of the current page.
+   * @group View Settings
    */
   getScale = (): Promise<number> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -607,8 +635,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setCanScale(false);
    *
-   * @param canScale
-   * @returns
+   * @param canScale Whether pinch-to-zoom is enabled.
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setCanScale = (canScale: boolean): Promise<void> => {
     if (Platform.OS != "android") {
@@ -629,8 +658,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setReadBackgroundColor(CPDFThemes.LIGHT);
    *
-   * @param theme
-   * @returns
+   * @param theme The reading background theme to apply.
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setReadBackgroundColor = (theme: CPDFThemes): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -665,7 +695,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @param color The background color to set (in hex format).
    * @example
    * await pdfReaderRef.current?.setBackgroundColor('#285BA8FF');
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setBackgroundColor = (color: string): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -681,7 +712,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @example
    * CPDFThemes theme = await pdfReaderRef.current?.getReadBackgroundColor();
-   * @returns
+   * @returns A promise that resolves to the current reading background theme.
+   * @group View Settings
    */
   getReadBackgroundColor = async (): Promise<CPDFThemes> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -716,7 +748,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setFormFieldHighlight(true);
    * @param isFormFieldHighlight true to display highlight Form Field.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setFormFieldHighlight = (isFormFieldHighlight: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -730,7 +763,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Whether to display highlight Form Field.
    * @example
    * const isFormFieldHighlight = await pdfReaderRef.current?.isFormFieldHighlight();
-   * @returns
+   * @returns A promise that resolves to whether form field highlighting is enabled.
+   * @group View Settings
    */
   isFormFieldHighlight = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -745,7 +779,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setLinkHighlight(true);
    * @param isLinkHighlight Whether to highlight Link.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setLinkHighlight = (isLinkHighlight: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -759,7 +794,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Whether to display highlight Link.
    * @example
    * const isLinkHighlight = await pdfReaderRef.current?.isLinkHighlight();
-   * @returns
+   * @returns A promise that resolves to whether link highlighting is enabled.
+   * @group View Settings
    */
   isLinkHighlight = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -774,7 +810,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setVerticalMode(true);
    * @param isVerticalMode Whether it is vertical scroll mode.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setVerticalMode = (isVerticalMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -788,7 +825,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Whether it is vertical scroll mode.
    * @example
    * await pdfReaderRef.current?.isVerticalMode();
-   * @returns
+   * @returns A promise that resolves to whether vertical scrolling is enabled.
+   * @group View Settings
    */
   isVerticalMode = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -805,7 +843,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setPageSpacing(10);
    * @param pageSpacing The space between pages, in pixels.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setPageSpacing = (pageSpacing: number): Promise<void> => {
     if (Platform.OS === "ios") {
@@ -825,7 +864,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setContinueMode(true);
    * @param isContinueMode Whether it is continuous scroll mode.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setContinueMode = (isContinueMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -839,7 +879,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Whether it is continuous scroll mode.
    * @example
    * await pdfReaderRef.current?.isContinueMode();
-   * @returns
+   * @returns A promise that resolves to whether continuous scrolling is enabled.
+   * @group View Settings
    */
   isContinueMode = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -854,7 +895,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setDoublePageMode(true);
    * @param isDoublePageMode Whether it is double page mode.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setDoublePageMode = (isDoublePageMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -869,6 +911,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.isDoublePageMode();
    * @returns Returns `true` if double page display is enabled, otherwise returns `false`
+   * @group View Settings
    */
   isDoublePageMode = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -883,7 +926,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setCoverPageMode(true);
    * @param isCoverPageMode Whether to display the document in cover form
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setCoverPageMode = (isCoverPageMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -898,6 +942,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.isCoverPageMode();
    * @returns Returns `true` if the document cover is displayed, otherwise returns `false`
+   * @group View Settings
    */
   isCoverPageMode = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -911,7 +956,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setCropMode(true);
    * @param isCropMode Whether it is crop mode.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setCropMode = (isCropMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -925,6 +971,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.isCropMode();
    * @returns Returns `true` if the current mode is clipping mode, otherwise returns `false`
+   * @group View Settings
    */
   isCropMode = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -942,7 +989,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * await pdfReaderRef.current?.setPageSameWidth(true);
    *
    * @param isPageSameWidth true: All pages keep the same width, the original state keeps the same width as readerView; false: Show in the actual width of page
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setPageSameWidth = (isPageSameWidth: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -956,8 +1004,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Gets whether the specified [pageIndex] is displayed on the screen
    * @example
    * const isPageInScreen = await pdfReaderRef.current?.isPageInScreen(1);
-   * @param pageIndex
-   * @returns
+   * @param pageIndex The zero-based page index to check.
+   * @returns A promise that resolves to whether the specified page is currently visible.
+   * @group View Settings
    */
   isPageInScreen = (pageIndex: number): Promise<boolean> => {
     if (Platform.OS === "ios") {
@@ -977,7 +1026,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setFixedScroll(true);
    * @param isFixedScroll Whether to fix scrolling
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setFixedScroll = (isFixedScroll: boolean): Promise<void> => {
     if (Platform.OS != "android") {
@@ -999,7 +1049,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setViewMode(CPDFViewMode.VIEWER);
    * @param viewMode The view mode to display
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   setViewMode = (viewMode: CPDFViewMode): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1011,6 +1062,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    * @deprecated Use setViewMode() instead.
+   * @group Deprecated
    */
   setPreviewMode = (viewMode: CPDFViewMode): Promise<void> => {
     return this.setViewMode(viewMode);
@@ -1020,7 +1072,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Get the currently displayed mode.
    * @example
    * const mode = await pdfReaderRef.current?.getViewMode();
-   * @returns
+   * @returns A promise that resolves to the current view mode.
+   * @group View Settings
    */
   getViewMode = async (): Promise<CPDFViewMode> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1039,6 +1092,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    * @deprecated Use getViewMode() instead.
+   * @group Deprecated
    */
   getPreviewMode = async (): Promise<CPDFViewMode> => {
     return this.getViewMode();
@@ -1052,7 +1106,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * await pdfReaderRef.current?.showThumbnailView(true);
    *
    * @param editMode Whether to enable edit mode
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Navigation
    */
   showThumbnailView = (editMode: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1068,7 +1123,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showBotaView();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Navigation
    */
   showBotaView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1084,7 +1140,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showAddWatermarkView();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   showAddWatermarkView = (config?: CPDFWatermarkConfig): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1104,7 +1161,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showSecurityView();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   showSecurityView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1120,7 +1178,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showDisplaySettingView();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   showDisplaySettingView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1136,7 +1195,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showDocumentInfoView();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   showDocumentInfoView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1152,7 +1212,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.enterSnipMode();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   enterSnipMode = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1168,7 +1229,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.exitSnipMode();
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Dialogs and UI
    */
   exitSnipMode = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1180,7 +1242,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    * Reloads all pages in the readerview.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Document Lifecycle
    */
   reloadPages = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1198,7 +1261,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * 20% scroll progress, the same position remains visible after reloading.
    * On iOS, this falls back to `reloadPages()` because the native implementation does
    * not expose a position-preserving reload path.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Document Lifecycle
    */
   reloadPagesPreservingPosition = (): Promise<void> => {
     if (Platform.OS === "ios") {
@@ -1213,6 +1277,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /**
    * @deprecated Use reloadPagesPreservingPosition() instead.
+   * @group Deprecated
    */
   reloadPages2 = (): Promise<void> => {
     return this.reloadPagesPreservingPosition();
@@ -1226,7 +1291,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setAnnotationMode(CPDFAnnotationType.HIGHLIGHT);
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   setAnnotationMode = async (type: CPDFAnnotationType): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1248,7 +1314,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const annotationMode = await pdfReaderRef.current?.getAnnotationMode();
    *
-   * @returns
+   * @returns A promise that resolves to the current annotation mode.
+   * @group Annotations
    */
   getAnnotationMode = async (): Promise<CPDFAnnotationType> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1264,7 +1331,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setFormCreationMode(CPDFWidgetType.TEXT_FIELD);
    * @param type The type of form field to create.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Forms
    */
   setFormCreationMode = async (type: CPDFWidgetType): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1285,6 +1353,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const formCreationMode = await pdfReaderRef.current?.getFormCreationMode();
    * @returns get current form creation mode.
+   * @group Forms
    */
   getFormCreationMode = (): Promise<CPDFWidgetType> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1299,7 +1368,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * This method is only available in [CPDFViewMode.FORMS] mode.
    * @example
    * await pdfReaderRef.current?.exitFormCreationMode();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Forms
    */
   exitFormCreationMode = (): Promise<void> => {
     return this.setFormCreationMode(CPDFWidgetType.UNKNOWN);
@@ -1310,7 +1380,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * If the document contains a digital signature, a status bar will be displayed at the top of the document.
    * @example
    * await pdfReaderRef.current?.verifyDigitalSignatureStatus();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Digital Signatures
    */
   verifyDigitalSignatureStatus = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1324,7 +1395,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Hide the digital signature status view.
    * @example
    * await pdfReaderRef.current?.hideDigitalSignStatusView();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Digital Signatures
    */
   hideDigitalSignStatusView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1338,7 +1410,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * Clear the display area, making it completely white without displaying any content.
    * @example
    * await pdfReaderRef.current?.clearDisplayRect();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group View Settings
    */
   clearDisplayRect = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1353,6 +1426,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.dismissContextMenu();
    * @returns Dismiss the context menu if it is displayed.
+   * @group Dialogs and UI
    */
   dismissContextMenu = (): Promise<void> => {
     if (Platform.OS === "ios") {
@@ -1372,6 +1446,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showSearchTextView();
    * @returns Show the search text view.
+   * @group Navigation
    */
   showSearchTextView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1386,6 +1461,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.hideSearchTextView();
    * @returns Hide the search text view.
+   * @group Navigation
    */
   hideSearchTextView = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1400,7 +1476,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @example
    * await pdfReaderRef.current?.saveCurrentInk();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   saveCurrentInk = (): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1415,7 +1492,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @example
    * await pdfReaderRef.current?.saveCurrentPencil();
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   saveCurrentPencil(): Promise<void> {
     if (Platform.OS === "android") {
@@ -1435,6 +1513,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.setAnnotationsVisible(true);
    * @param visible whether annotations should be visible
+   * @group Annotations
    */
   setAnnotationsVisible = (visible: boolean): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1449,6 +1528,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const visible = await pdfReaderRef.current?.isAnnotationsVisible();
    * @returns {Promise<boolean>}
+   * @group Annotations
    */
   isAnnotationsVisible = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1467,7 +1547,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * await pdfReaderRef.current?.showDefaultAnnotationPropertiesView(CPDFAnnotationType.HIGHLIGHT);
    *
    * @param type The type of annotation for which to display the properties panel.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   showDefaultAnnotationPropertiesView = (
     type: CPDFAnnotationType
@@ -1502,7 +1583,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * await pdfReaderRef.current?.showAnnotationPropertiesView(annotation);
    * @param annotation The annotation for which to display the properties panel.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   showAnnotationPropertiesView = (
     annotation: CPDFAnnotation
@@ -1538,8 +1620,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * @example
    * await pdfReaderRef.current?.showWidgetPropertiesView(widget);
-   * @param widget
-   * @returns
+   * @param widget The form widget whose properties or appearance will be updated.
+   * @returns A promise that resolves when the operation completes.
+   * @group Forms
    */
   showWidgetPropertiesView = (widget: CPDFWidget): Promise<void> => {
     if (
@@ -1567,7 +1650,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * await pdfReaderRef.current?.showEditAreaPropertiesView(editArea);
    *
    * @param editArea The edit area for which to display the properties panel.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Content Editing
    */
   showEditAreaPropertiesView = (editArea: CPDFEditArea): Promise<void> => {
     if (editArea.type === CPDFEditType.PATH) {
@@ -1595,8 +1679,9 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * // now, when the user taps the page, the signature will be inserted using the specified image
    * ```
-   * @param signaturePath
-   * @returns
+   * @param signaturePath The local path of the signature image to insert.
+   * @returns A promise that resolves when the operation completes.
+   * @group Digital Signatures
    */
   prepareNextSignature = (signaturePath: string): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1629,7 +1714,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * - textStamp
    * A `CPDFTextStamp` instance that defines custom text, colors, font size, and other properties.
    *
-   * @returns
+   * @returns A promise that resolves when the operation completes.
    * A `Promise<void>` that resolves when the native side has been notified.
    *
    * @throws
@@ -1657,6 +1742,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *   },
    * });
    * ```
+   * @group Annotations
    */
   prepareNextStamp = (options: CPDFPrepareNextStampOptions): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1697,7 +1783,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *
    * // now, when the user taps the page, the image annotation will be inserted using the specified image
    * ```
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   prepareNextImage = (imagePath: string): Promise<void> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1714,6 +1801,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const defaultStyle = await pdfReaderRef.current?.fetchDefaultAnnotationStyle();
    * @returns The current default annotation style; returns an empty object if the native view is unavailable.
+   * @group Annotations
    */
   fetchDefaultAnnotationStyle = (): Promise<CPDFAnnotationAttr> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -1736,7 +1824,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    *   }
    * await pdfReaderRef.current?.updateDefaultAnnotationStyle(noteAttr);
    * @param attr The annotation attributes to update.
-   * @returns
+   * @returns A promise that resolves when the operation completes.
+   * @group Annotations
    */
   updateDefaultAnnotationStyle = (
     attr: CPDFAnnotationAttrUnion
@@ -1756,6 +1845,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @example
    * const defaultWidgetStyle = await pdfReaderRef.current?.fetchDefaultWidgetStyle();
    * @returns The current default widget style; returns an empty object if the native view is unavailable.
+   * @group Forms
    */
   fetchDefaultWidgetStyle(): Promise<CPDFWidgetAttr> {
     const tag = findNodeHandle(this._viewerRef);
@@ -1785,7 +1875,8 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
    * @see CPDFComboBoxAttr
    * @see CPDFPushButtonAttr
    * @see CPDFSignatureWidgetAttr
-   * @returns
+   * @returns A promise that resolves when the default widget style is updated.
+   * @group Forms
    */
   updateDefaultWidgetStyle(
     attr:
@@ -1808,6 +1899,7 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
 
 
+  /** @internal */
   render() {
     {
       return (

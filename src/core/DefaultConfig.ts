@@ -113,6 +113,15 @@ const DEFAULT_ANDROID_UI_STYLE: CPDFUIStyle = {
 };
 
 
+/**
+ * Creates the default reader configuration and applies the provided overrides.
+ * The returned value is a JSON string accepted by `CPDFReaderView`.
+ *
+ * @param overrides Partial configuration values to merge into the platform defaults.
+ * @returns A serialized `CPDFConfiguration` JSON string.
+ * @group Core
+ * @since 3.0.0
+ */
 export function getDefaultConfig(
   overrides: Partial<CPDFConfiguration> = {}
 ): string {
@@ -400,6 +409,10 @@ export function getDefaultConfig(
       enableCreateEditTextInput: true,
       enableCreateImagePickerDialog: true,
       enableDoubleTapZoom: false,
+      accessibilityConfig: {
+        keyboardNavigationEnabled: false,
+        talkBackEnabled: false,
+      },
       uiStyle: isAndroid ? DEFAULT_ANDROID_UI_STYLE : DEFAULT_IOS_UI_STYLE,
     },
     global: {

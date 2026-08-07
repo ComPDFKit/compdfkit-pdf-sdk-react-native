@@ -12,11 +12,13 @@ import CPDFFontName from "../document/CPDFFontName";
 import type { CPDFConfiguration } from "../configuration/CPDFConfiguration";
 import { getDefaultConfig } from "./DefaultConfig";
 
+/** @internal */
 type NativeCPDFFontName = {
   familyName: string;
   styleNames: string[];
 };
 
+/** @internal */
 interface NativeComPDFKitModule {
   /**
    * Get the version number of the ComPDFKit SDK.
@@ -190,6 +192,12 @@ interface NativeComPDFKitModule {
   getFonts(): Promise<NativeCPDFFontName[]>;
 }
 
+/**
+ * Global ComPDFKit SDK APIs for initialization, configuration, and file helpers.
+ *
+ * @group Core
+ * @since 3.0.0
+ */
 export interface ComPDFKitModule
   extends Omit<NativeComPDFKitModule, "createUri" | "getFonts"> {
   /**

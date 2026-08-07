@@ -8,6 +8,11 @@
  */
 
 
+/**
+ * Image conversion and image-data helpers used by annotation APIs.
+ *
+ * @group Utilities
+ */
 export class CPDFImageUtil {
 
 

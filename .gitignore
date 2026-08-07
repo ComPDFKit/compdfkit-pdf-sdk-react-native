@@ -80,9 +80,9 @@ android/keystores/debug.keystore
 lib/
 .github/
 /example/ios/Podfile.lock
-tsconfig.typedoc.json
-typedoc.json
 docs/
+!tool/docs/
+!tool/docs/validate-docs.mjs
 package-lock.json
 
 example/.xcode-build

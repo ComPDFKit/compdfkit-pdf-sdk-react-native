@@ -12,6 +12,11 @@ import { CPDFEditType } from "../configuration/CPDFOptions";
 import { CPDFEditorHistoryManager } from '../history/CPDFEditorHistoryManager';
 const { CPDFViewManager } = NativeModules;
 
+/**
+ * Controls content-editor modes and editing history for the current reader.
+ *
+ * @group Edit
+ */
 export class CPDFEditManager {
 
     private _viewerRef: any;
@@ -45,7 +50,7 @@ export class CPDFEditManager {
      * await manager.changeEditType([CPDFEditType.Text, CPDFEditType.Image]);
      * ```
      * @param editTypes An array of `CPDFEditType` values representing the desired editing modes.
-     * @returns 
+     * @returns A promise that resolves to `true` when the editing modes are changed.
      */
     changeEditType = (editTypes: CPDFEditType[]) : Promise<boolean> => {
         const tag = findNodeHandle(this._viewerRef);

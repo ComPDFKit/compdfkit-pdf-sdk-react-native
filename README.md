@@ -161,7 +161,7 @@ Please install the following required packages:
 
 Operating Environment Requirements:
 
-* Android minSdkVersion of 21 or higher.
+* Android minSdkVersion of 23 or higher.
 * ComPDF SDK 2.0.1 or higher.
 
 #### iOS
@@ -285,8 +285,8 @@ open ios/Podfile
 ```diff
 target 'MyApp' do
     # ...
-+  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.6.6/ComPDFKit.podspec'
-+  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/2.6.6/ComPDFKit_Tools.podspec'
++  pod "ComPDFKit", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/3.0.0/ComPDFKit.podspec'
++  pod "ComPDFKit_Tools", podspec:'https://file.compdf.com/cocoapods/ios/compdfkit_pdf_sdk/3.0.0/ComPDFKit_Tools.podspec'
     # ...
 end
 ```
@@ -296,8 +296,8 @@ end
 ```diff
 target 'MyApp' do
     # ...
-+  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.6'
-+  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '2.6.6'
++  pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.0.0'
++  pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.0.0'
     # ...
 end
 ```
@@ -637,13 +637,13 @@ Keep up with the latest updates, improvements, and bug fixes for ComPDF SDK for 
 ## Related
 
 * More Guides:
-  
+
   - [API Reference for ComPDF SDK (React Native)](https://www.compdf.com/guides/pdf-sdk/react-native/api?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
-  
+
   - [ComPDF SDK for React Native Guides](https://www.compdf.com/guides/pdf-sdk/react-native/overview?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
-  
+
   - [React Native Package on npm](https://www.npmjs.com/package/@compdfkit_pdf_sdk/react_native)
-  
+
   - [API Reference for React Native](https://www.compdf.com/guides/pdf-sdk/react-native/api?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit)
 - More Platforms and Frameworks: [ComPDF SDK](https://www.compdf.com/?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit) seamlessly operates on [Web](https://www.compdf.com/web?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Windows](https://www.compdf.com/windows?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Android](https://www.compdf.com/android?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [iOS](https://www.compdf.com/ios?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Mac](https://www.compdf.com/contact-sales?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), and [Server](https://www.compdf.com/server?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), with support for cross-platform frameworks such as [React Native](https://www.compdf.com/react-native?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), [Flutter](https://www.compdf.com/flutter?utm_source=github&utm_medium=compdfkit-pdf-sdk-react-native&utm_campaign=compdfkit_pdf_sdk_react_native_repo&ref_platform_id=github_compdfkit), etc.
 

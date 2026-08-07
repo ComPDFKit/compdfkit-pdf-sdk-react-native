@@ -20,6 +20,7 @@ const { CPDFViewManager } = NativeModules;
  * const manager = pdfReaderRef.current._editManager;
  * const historyManager = manager.historyManager;
  * ```
+ * @group Edit
  */
 export class CPDFEditorHistoryManager extends CPDFHistoryManagerBase {
 

@@ -24,6 +24,7 @@ const { CPDFViewManager } = NativeModules;
  * const pageIndex = 0;
  * const cpdfPage : CPDFPage = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
  * 
+ * @group Page
  */
 export class CPDFPage {
 
@@ -205,7 +206,7 @@ export class CPDFPage {
      * await page?.removeWidget(widgetToRemove);
      * @see CPDFWidget - Base class for all form widgets
      * @param widget The widget to be removed.
-     * @returns 
+     * @returns A promise that resolves to `true` when the widget is removed.
      */
     removeWidget(widget: CPDFWidget): Promise<boolean> {
         const tag = findNodeHandle(this._viewerRef);
@@ -221,7 +222,7 @@ export class CPDFPage {
      * const pageIndex = 0;
      * const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
      * const rotation = await page?.getRotation();
-     * @returns 
+     * @returns A promise that resolves to the page rotation in degrees.
      */
     getRotation(): Promise<number> {
         const tag = findNodeHandle(this._viewerRef);
@@ -238,7 +239,7 @@ export class CPDFPage {
      * const page = pdfReaderRef?.current?._pdfDocument.pageAtIndex(pageIndex);
      * const success = await page?.setRotation(90);
      * @param rotation The rotation angle in degrees (0, 90, 180, 270). 360 is treated as 0.
-     * @returns 
+     * @returns A promise that resolves to `true` when the rotation is applied.
      */
     setRotation(rotation: number): Promise<boolean> {
         const tag = findNodeHandle(this._viewerRef);

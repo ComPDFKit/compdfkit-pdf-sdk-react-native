@@ -201,18 +201,22 @@ extension RCTCPDFView {
 
   func prepareNextSignature(signaturePath: String, completionHandler: @escaping (Bool) -> Void) {
     guard let image = UIImage(contentsOfFile: signaturePath),
-          let document = pdfViewController?.pdfListView?.document,
-          let annotation = CPDFSignatureAnnotation(document: document) else {
+          let pdfListView = pdfViewController?.pdfListView,
+          let document = pdfListView.document,
+          let page = document.page(at: UInt(pdfListView.currentPageIndex)),
+          let annotation = CPDFSignatureAnnotation(page: page, document: document) else {
       completionHandler(false)
       return
     }
     annotation.setImage(image)
-    pdfViewController?.pdfListView?.addAnnotation = annotation
+    pdfListView.addAnnotation = annotation
     completionHandler(true)
   }
 
   func prepareNextStamp(dict: NSDictionary, completionHandler: @escaping (Bool) -> Void) {
-    guard let document = pdfViewController?.pdfListView?.document else {
+    guard let pdfListView = pdfViewController?.pdfListView,
+          let document = pdfListView.document,
+          let page = document.page(at: UInt(pdfListView.currentPageIndex)) else {
       completionHandler(false)
       return
     }
@@ -221,9 +225,9 @@ extension RCTCPDFView {
     if type == "image" {
       let imagePath = dict["imagePath"] as? String ?? ""
       if let image = UIImage(contentsOfFile: imagePath) {
-        let annotation = CPDFStampAnnotation(document: document, image: image)
+        let annotation = CPDFStampAnnotation(page: page, document: document, image: image)
         if annotation != nil {
-          pdfViewController?.pdfListView?.addAnnotation = annotation
+          pdfListView.addAnnotation = annotation
           completionHandler(true)
           return
         }
@@ -233,8 +237,8 @@ extension RCTCPDFView {
     } else if type == "standard" {
       let stampType = dict["standardStamp"] as? String ?? "Approved"
       let index = CPDFEnumConvertUtil.stringToStandardStamp(stampType)
-      let annotation = CPDFStampAnnotation(document: document, type: index)
-      pdfViewController?.pdfListView?.addAnnotation = annotation
+      let annotation = CPDFStampAnnotation(page: page, document: document, standardType: index)
+      pdfListView.addAnnotation = annotation
       completionHandler(annotation != nil)
       return
     } else if type == "text" {
@@ -243,8 +247,8 @@ extension RCTCPDFView {
       let detailText = textStampDict["date"] as? String ?? ""
       let stampStyle = CPDFEnumConvertUtil.stringToStampStyle(textStampDict["color"] as? String ?? "red")
       let stampShape = CPDFEnumConvertUtil.stringToStampShape(textStampDict["shape"] as? String ?? "rect")
-      let annotation = CPDFStampAnnotation(document: document, text: stampText, detailText: detailText, style: stampStyle, shape: stampShape)
-      pdfViewController?.pdfListView?.addAnnotation = annotation
+      let annotation = CPDFStampAnnotation(page: page, document: document, text: stampText, detailText: detailText, style: stampStyle, shape: stampShape)
+      pdfListView.addAnnotation = annotation
       completionHandler(annotation != nil)
       return
     }
@@ -254,12 +258,14 @@ extension RCTCPDFView {
 
   func prepareNextImage(image: URL, completionHandler: @escaping (Bool) -> Void) {
     guard let uiImage = UIImage(contentsOfFile: image.path),
-          let document = pdfViewController?.pdfListView?.document,
-          let annotation = CPDFStampAnnotation(document: document, image: uiImage) else {
+          let pdfListView = pdfViewController?.pdfListView,
+          let document = pdfListView.document,
+          let page = document.page(at: UInt(pdfListView.currentPageIndex)),
+          let annotation = CPDFStampAnnotation(page: page, document: document, image: uiImage) else {
       completionHandler(false)
       return
     }
-    pdfViewController?.pdfListView?.addAnnotation = annotation
+    pdfListView.addAnnotation = annotation
     completionHandler(true)
   }
 

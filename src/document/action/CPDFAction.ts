@@ -11,6 +11,11 @@ import { CPDFActionType } from "../../configuration/CPDFOptions";
 import { safeParseEnumValue } from "../../util/CPDFEnumUtils";
 
 
+/**
+ * Base model for actions attached to PDF annotations and links.
+ *
+ * @group Document
+ */
 export class CPDFAction {
 
     actionType : CPDFActionType;
