@@ -1,3 +1,11 @@
+## 3.0.1
+1. Added support for ComPDF PDF SDK for iOS V3.0.1.
+2. Added support for ComPDF PDF SDK for Android V3.0.1.
+3. Fixed an issue where text selection and highlight regions were calculated with incorrect heights and extended beyond the top of the text on some rotated pages with hidden OCR text layers.
+4. Improved text selection calculations for rotated pages and scanned OCR documents, resulting in more accurate text selection, selection handle dragging, and Markup annotation placement.
+5. Fixed an issue on iOS where tapping the page to enter full-screen mode immediately exited full-screen mode.
+
+
 ## 3.0.0
 1. Added support for ComPDF PDF SDK for iOS V3.0.0.
 2. Added support for ComPDF PDF SDK for Android V3.0.0.
