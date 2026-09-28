@@ -1,3 +1,10 @@
+## 3.0.2
+1. Added support for ComPDF PDF SDK for iOS V3.0.2.
+2. Added support for ComPDF PDF SDK for Android V3.0.2.
+3. Updated PDFium third-party dependencies and fixed known security vulnerabilities.
+4. Fixed an issue where the rectangle bounds for text search during content editing were incorrect.
+
+
 ## 3.0.1
 1. Added support for ComPDF PDF SDK for iOS V3.0.1.
 2. Added support for ComPDF PDF SDK for Android V3.0.1.
