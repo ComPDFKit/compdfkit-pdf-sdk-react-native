@@ -531,6 +531,30 @@ Switch to content editing mode to edit text and images. This configuration optio
 }
 ```
 
+#### creationConfig
+
+This section controls interactive annotation and form field creation from the reader tools. It does not affect programmatic document APIs such as `addAnnotations()` and `addWidgets()`. It is applied when the reader is created; to change it, recreate the reader with a new configuration.
+
+##### Parameters
+
+| Name                        | Type    | Default | Description |
+| --------------------------- | ------- | ------- | ----------- |
+| continuousCreation          | boolean | true    | Keeps the current annotation or form creation tool active after creating an object. |
+| autoSelectCreatedAnnotation | boolean | true    | Selects the newly created annotation or form field. |
+
+Example:
+
+```tsx
+ComPDFKit.getDefaultConfig({
+  creationConfig: {
+    continuousCreation: false,
+    autoSelectCreatedAnnotation: false,
+  },
+});
+```
+
+When `continuousCreation` is false, the reader exits the current creation tool but remains in the annotation or form mode. When `autoSelectCreatedAnnotation` is false, the newly created object is not selected: no focus frame, editing handles, or property panel is shown and no selection event is emitted. Creation events and form dialogs are unchanged.
+
 #### formsConfig
 
 This section is used to configure the types of forms enabled in the view's bottom toolbar, the form tools available, and the default attributes when adding forms.
@@ -1055,6 +1079,10 @@ The context menu configuration in form mode displays different context menu opti
 
 ```json
 {
+  "creationConfig": {
+    "continuousCreation": true,
+    "autoSelectCreatedAnnotation": true
+  },
   "modeConfig": {
     "initialViewMode": "viewer",
     "uiVisibilityMode": "automatic",
@@ -1584,3 +1612,10 @@ The context menu configuration in form mode displays different context menu opti
   }
 }
 ```
+
+
+### Field-driven digital signing
+
+Configure `formsConfig.interceptFormWidgetActions` with `CPDFWidgetType.SIGNATURES_FIELDS` and handle `onInterceptWidgetActionCallback`. Set `readerViewConfig.formFieldHighlight: true` to highlight the interactive fields. A `CPDFSignatureWidget` exposes read-only `isSigned`; unavailable state from an older bridge must not be treated as unsigned.
+
+The [Digital Signature example](example/src/features/security/digital_signature/README.md) uses these existing configuration keys with separate signing and details dialogs. Embedded TSA configuration belongs to `CPDFSignatureConfig.timestampServerUrl`, and LTV/LTA configuration belongs to `CPDFDocument.addSignatureLtv`; these are not reader configuration keys.

@@ -192,7 +192,7 @@ function createStyles(appTheme: ReturnType<typeof useAppTheme>) {
       padding: 20,
     },
     backdrop: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       backgroundColor: 'rgba(15, 23, 42, 0.44)',
     },
     dialogCard: {

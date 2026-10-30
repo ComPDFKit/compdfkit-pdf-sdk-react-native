@@ -38,6 +38,7 @@ import com.compdfkitpdf.reactnative.codec.annotation.RnInkAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnLineAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnLinkAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnMarkupAnnotationCodec;
+import com.compdfkitpdf.reactnative.codec.annotation.RnRedactAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnNoteAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnSoundAnnotationCodec;
 import com.compdfkitpdf.reactnative.codec.annotation.RnSquareAnnotationCodec;
@@ -106,6 +107,7 @@ public class RnPageCodec {
     map.put(Type.FREETEXT, new RnFreeTextAnnotationCodec());
     map.put(Type.SOUND, new RnSoundAnnotationCodec());
     map.put(Type.LINK, new RnLinkAnnotationCodec());
+    map.put(Type.REDACT, new RnRedactAnnotationCodec());
     return map;
   }
 

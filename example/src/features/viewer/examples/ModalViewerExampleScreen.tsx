@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   CPDFReaderView,
   CPDFToolbarAction,
@@ -16,6 +17,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { AppStackParamList } from '../../../app/navigation/routes';
 import { getDefaultViewerDocument } from '../shared/defaultDocument';
@@ -32,14 +34,23 @@ export default function ModalViewerExampleScreen() {
   const [document] = useState(route.params?.document ?? getDefaultViewerDocument());
 
   return (
-    <CPDFReaderView
-      document={document}
-      onIOSClickBackPressed={() => navigation.goBack()}
-      configuration={ComPDFKit.getDefaultConfig({
-        toolbarConfig: {
-          toolbarLeftItems: [CPDFToolbarAction.BACK],
-        },
-      })}
-    />
+    <SafeAreaView style={styles.safeArea}>
+      <CPDFReaderView
+        document={document}
+        onIOSClickBackPressed={() => navigation.goBack()}
+        configuration={ComPDFKit.getDefaultConfig({
+          toolbarConfig: {
+            toolbarLeftItems: [CPDFToolbarAction.BACK],
+          },
+        })}
+      />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FAFCFF',
+  },
+});

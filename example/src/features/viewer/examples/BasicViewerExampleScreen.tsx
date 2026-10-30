@@ -26,7 +26,7 @@ export default function BasicViewerExampleScreen() {
   const [document] = useState(route.params?.document ?? getDefaultViewerDocument());
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <AppToolbar
           title="Basic Viewer"

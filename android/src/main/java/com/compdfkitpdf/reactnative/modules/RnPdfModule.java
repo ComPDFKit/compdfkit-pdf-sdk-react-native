@@ -21,6 +21,10 @@ import com.compdfkit.core.document.CPDFDocument;
 import com.compdfkit.core.document.CPDFSdk;
 import com.compdfkit.core.font.CPDFFont;
 import com.compdfkit.core.font.CPDFFontName;
+import com.compdfkit.core.signature.CPDFCertInfo;
+import com.compdfkit.core.signature.CPDFOwnerInfo;
+import com.compdfkit.core.signature.CPDFSignature;
+import com.compdfkit.core.signature.CPDFX509;
 import com.compdfkit.tools.common.pdf.CPDFConfigurationUtils;
 import com.compdfkit.tools.common.pdf.CPDFDocumentActivity;
 import com.compdfkit.tools.common.pdf.config.CPDFConfiguration;
@@ -35,6 +39,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -300,6 +305,26 @@ public class RnPdfModule extends ReactContextBaseJavaModule {
     });
 
   }
+
+  @ReactMethod public void generatePkcs12Certificate(ReadableMap request, Promise promise) {
+    try {
+      ReadableMap subject = request.getMap("subject");
+      CPDFOwnerInfo owner = new CPDFOwnerInfo();
+      owner.setCountry(subject.getString("country")); owner.setProvince(subject.getString("state"));
+      owner.setLocality(subject.getString("locality")); owner.setOrgnize(subject.getString("organization"));
+      owner.setOrgnizeUnit(subject.getString("organizational_unit")); owner.setCommonName(subject.getString("common_name"));
+      owner.setEmail(subject.getString("email"));
+      boolean ok = CPDFSignature.generatePKCS12Cert(owner, request.getString("password"), request.getString("output_path"), CPDFSignature.CertUsage.toEnum(request.hasKey("usage") ? request.getInt("usage") : 1));
+      promise.resolve(ok);
+    } catch (Exception e) { promise.reject("INVALID_CERTIFICATE_REQUEST", "Certificate request is incomplete", (Throwable) null); }
+  }
+  @ReactMethod public void checkPkcs12CertificatePassword(String path, String password, Promise promise) { promise.resolve(CPDFSignature.checkPKCS12Password(path, password)); }
+  @ReactMethod public void loadPkcs12Certificate(String path, String password, Promise promise) {
+    CPDFX509 cert = CPDFSignature.getX509ByPKCS12Cert(path, password); if (cert == null || !cert.isValid()) { promise.resolve(null); return; }
+    CPDFCertInfo info = cert.getCertInfo(); WritableMap out = Arguments.createMap(); out.putString("version", info.getVersion()); out.putString("serial_number", info.getSeriaNumber()); out.putString("key_type", info.getKeyType()); out.putString("signature_algorithm", info.getSignatureAlgOid()); out.putString("issuer", info.getIssuer() == null ? null : info.getIssuer().toString()); out.putString("subject", info.getSubject() == null ? null : info.getSubject().toString()); out.putString("valid_from", info.getValidDateBegin()); out.putString("valid_to", info.getValidDateEnd()); out.putString("sha1_digest", info.getSha1Digest()); out.putString("md5_digest", info.getMd5Digest()); out.putBoolean("is_trusted", cert.checkCertificateIsTrusted(mReactContext)); promise.resolve(out);
+  }
+  @ReactMethod public void configureTrustedCertificateDirectories(ReadableMap options, Promise promise) { promise.reject("UNSUPPORTED_CERTIFICATE_DIRECTORY_CONFIGURATION", "Android manages certificate directories inside the application sandbox", (Throwable) null); }
+  @ReactMethod public void addTrustedCertificate(String path, String password, Promise promise) { CPDFX509 cert = CPDFSignature.getX509ByPKCS12Cert(path, password); promise.resolve(cert != null && cert.isValid() && cert.addToTrustedCertificates(mReactContext)); }
 
   /**
    * Handles invalidate.

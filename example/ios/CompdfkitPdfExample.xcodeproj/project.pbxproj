@@ -69,11 +69,13 @@
 		7BBF2B052F284A3600026641 /* stamp_rejected.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BBF2AEB2F284A3600026641 /* stamp_rejected.png */; };
 		7BBF2B072F28601E00026641 /* extraFonts2 in Resources */ = {isa = PBXBuildFile; fileRef = 7BBF2B062F28601E00026641 /* extraFonts2 */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A04200000000000000000001 /* unsigned_signature.pdf in Resources */ = {isa = PBXBuildFile; fileRef = A04200000000000000000002 /* unsigned_signature.pdf */; };
 		C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */ = {isa = PBXBuildFile; fileRef = C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */; };
 		C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FCF5E12C475A9100CEFDBB /* Localizable.strings */; };
 		EC09D8212D3DE887001B2CB3 /* test.xfdf in Resources */ = {isa = PBXBuildFile; fileRef = EC09D8202D3DE886001B2CB3 /* test.xfdf */; };
 		EC4EF3572D36664A00EEA52B /* extraFonts in Resources */ = {isa = PBXBuildFile; fileRef = EC4EF3562D36664A00EEA52B /* extraFonts */; };
 		EC9311762E389CE900F89503 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9311742E389CE900F89503 /* AppDelegate.swift */; };
+		EC9311762E389CE900F89504 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9311742E389CE900F89505 /* SceneDelegate.swift */; };
 		EC9B1FD02F0BDCCF000E5E3A /* Bird.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC9B1FCF2F0BDCCF000E5E3A /* Bird.wav */; };
 		EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */; };
 		EC9B30162D7AC832004E62E0 /* test_sign_pic.png in Resources */ = {isa = PBXBuildFile; fileRef = EC9B30152D7AC832004E62E0 /* test_sign_pic.png */; };
@@ -162,6 +164,7 @@
 		7BBF2B062F28601E00026641 /* extraFonts2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts/extraFonts2; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CompdfkitPdfExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		A04200000000000000000002 /* unsigned_signature.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/unsigned_signature.pdf; sourceTree = "<group>"; };
 		C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/PDF_Document.pdf; sourceTree = "<group>"; };
 		C980F8612E9F3E720056266F /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C9FCF5E22C475A9100CEFDBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -169,6 +172,7 @@
 		EC09D8202D3DE886001B2CB3 /* test.xfdf */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Documents/test.xfdf; sourceTree = "<group>"; };
 		EC4EF3562D36664A00EEA52B /* extraFonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extraFonts; path = ../android/app/src/main/assets/extraFonts; sourceTree = "<group>"; };
 		EC9311742E389CE900F89503 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CompdfkitPdfExample/AppDelegate.swift; sourceTree = "<group>"; };
+		EC9311742E389CE900F89505 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = CompdfkitPdfExample/SceneDelegate.swift; sourceTree = "<group>"; };
 		EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CompdfkitPdfExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EC9B1FCF2F0BDCCF000E5E3A /* Bird.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Audio/Bird.wav; sourceTree = "<group>"; };
 		EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/annot_test.pdf; sourceTree = "<group>"; };
@@ -220,6 +224,7 @@
 			children = (
 				EC9311782E38A34600F89503 /* CompdfkitPdfExample-Bridging-Header.h */,
 				EC9311742E389CE900F89503 /* AppDelegate.swift */,
+				EC9311742E389CE900F89505 /* SceneDelegate.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -326,6 +331,7 @@
 				ECBEE6F22E9E46B4002D0414 /* ic_logo.png */,
 				ECC155E12E0BD80C007D528F /* license_key_rn.xml */,
 				C976AF5F2D8AE00E006B08C3 /* PDF_Document.pdf */,
+				A04200000000000000000002 /* unsigned_signature.pdf */,
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
 				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
 				EC09D8202D3DE886001B2CB3 /* test.xfdf */,
@@ -474,6 +480,7 @@
 			files = (
 				7BBF2B072F28601E00026641 /* extraFonts2 in Resources */,
 				C976AF602D8AE00E006B08C3 /* PDF_Document.pdf in Resources */,
+				A04200000000000000000001 /* unsigned_signature.pdf in Resources */,
 				EC9B1FD02F0BDCCF000E5E3A /* Bird.wav in Resources */,
 				ECC155E22E0BD80C007D528F /* license_key_rn.xml in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
@@ -690,6 +697,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC9311762E389CE900F89503 /* AppDelegate.swift in Sources */,
+				EC9311762E389CE900F89504 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,7 +735,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = CompdfkitPdfExampleTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -751,7 +759,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = CompdfkitPdfExampleTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -781,12 +789,12 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = CompdfkitPdfExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.5;
+				MARKETING_VERSION = 3.2.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -818,12 +826,12 @@
 				DEVELOPMENT_TEAM = 4GGQPGRTSV;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = CompdfkitPdfExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.5;
+				MARKETING_VERSION = 3.2.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -893,7 +901,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD = "";
 				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -907,7 +915,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -915,6 +926,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -923,6 +935,7 @@
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				USE_HERMES = true;
 			};
 			name = Debug;
@@ -971,7 +984,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD = "";
 				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -984,7 +997,10 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -992,6 +1008,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -999,6 +1016,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};

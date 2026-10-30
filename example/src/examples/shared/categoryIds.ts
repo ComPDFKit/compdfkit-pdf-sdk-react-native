@@ -13,6 +13,7 @@ export type CategoryId =
   | 'forms'
   | 'pages'
   | 'content_extraction'
+  | 'document_processing'
   | 'security'
   | 'content_editor'
   | 'widget_controller'

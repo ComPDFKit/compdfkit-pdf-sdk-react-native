@@ -13,11 +13,14 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import com.compdfkit.core.annotation.CPDFAnnotation;
+import com.compdfkit.core.annotation.CPDFRedactAnnotation;
 import com.compdfkit.core.annotation.CPDFStampAnnotation.StandardStamp;
 import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStamp;
 import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStampColor;
 import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStampShape;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
+import com.compdfkit.core.document.CPDFDocument;
+import com.compdfkit.core.page.CPDFPage;
 import com.compdfkit.core.edit.CPDFEditArea;
 import com.compdfkit.core.edit.CPDFEditManager;
 import com.compdfkit.core.undo.CPDFUndoManager;
@@ -161,6 +164,35 @@ final class RnAnnotationOps {
       return true;
     }
     return context.pageUtil.deleteAnnotation(pageIndex, uuid);
+  }
+
+  private static boolean hasRedactions(CPDFDocument document) {
+    for (int i = 0; i < document.getPageCount(); i++) {
+      CPDFPage page = document.pageAtIndex(i);
+      if (page == null) continue;
+      for (CPDFAnnotation annotation : page.getAnnotations()) {
+        if (annotation instanceof CPDFRedactAnnotation) return true;
+      }
+    }
+    return false;
+  }
+
+  boolean applyRedaction(RnPdfViewContext context, int pageIndex, String uuid) {
+    if (!isAvailable(context)) return false;
+    CPDFAnnotation annotation = context.pageUtil.getAnnotation(pageIndex, uuid);
+    if (!(annotation instanceof CPDFRedactAnnotation)) return false;
+    boolean result = ((CPDFRedactAnnotation) annotation).applyRedaction();
+    if (result) context.readerView.reloadPages();
+    return result;
+  }
+
+  boolean applyRedactions(RnPdfViewContext context) {
+    if (!isAvailable(context)) return false;
+    // The SDK reports success even when there is nothing to apply; match iOS and report false.
+    if (!hasRedactions(context.document)) return false;
+    boolean result = context.document.applyRedactions();
+    if (result) context.readerView.reloadPages();
+    return result;
   }
 
   /**

@@ -14,6 +14,40 @@ import UIKit
 import ComPDFKit
 
 extension RCTDocumentManager {
+  @objc(optimizeSaveAsCopy: withOutputPath: withOptions: withFontSubset: withResolver: withRejecter:)
+  func optimizeSaveAsCopy(forCPDFViewTag tag: Int, outputPath: String, options: NSDictionary?, fontSubset: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.optimizeSaveAsCopy(outputPath: outputPath, options: options as? [String: Any]) { result in
+        switch result {
+        case .success(let value):
+          resolve(value)
+        case .failure(let error):
+          reject(error.code, error.message, nil)
+        }
+      }
+    }
+  }
+
+  @objc(getOptimizeOptions: withResolver: withRejecter:)
+  func getOptimizeOptions(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      do {
+        resolve(try view.getOptimizeOptions())
+      } catch let error as RCTCPDFBridgeError {
+        reject(error.code, error.message, nil)
+      } catch {
+        reject("DOCUMENT_INVALID", error.localizedDescription, error)
+      }
+    }
+  }
+
+  @objc(cancelOptimize: withResolver: withRejecter:)
+  func cancelOptimize(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.cancelOptimize()
+      resolve(nil)
+    }
+  }
   @objc(open: withDocument: withPassword: withPageIndex: withResolver: withRejecter:)
   func open(
     forCPDFViewTag tag: Int,
@@ -29,7 +63,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getFileName: withResolver: withRejecter:)
   func getFileName(
     forCPDFViewTag tag : Int,
@@ -42,7 +76,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(isEncrypted: withResolver: withRejecter:)
   func isEncrypted(
     forCPDFViewTag tag : Int,
@@ -55,7 +89,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(isImageDoc: withResolver: withRejecter:)
   func isImageDoc(
     forCPDFViewTag tag : Int,
@@ -68,7 +102,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getPermissions: withResolver: withRejecter:)
   func getPermissions(
     forCPDFViewTag tag : Int,
@@ -81,7 +115,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getPageCount: withResolver: withRejecter:)
   func getPageCount(
     forCPDFViewTag tag : Int,
@@ -91,6 +125,98 @@ extension RCTDocumentManager {
     withCPDFView(tag: tag, reject: reject) { view in
       view.getPageCount { pageCount in
         resolve(pageCount)
+      }
+    }
+  }
+
+  @objc(getHeaderFooter: withResolver: withRejecter:)
+  func getHeaderFooter(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.getHeaderFooter() as Any)
+    }
+  }
+
+  @objc(updateHeaderFooter: withInfo: withResolver: withRejecter:)
+  func updateHeaderFooter(
+    forCPDFViewTag tag: Int,
+    info: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      do {
+        resolve(try view.updateHeaderFooter(info: info as? [String: Any] ?? [:]))
+      } catch {
+        reject("HEADER_FOOTER_FAIL", error.localizedDescription, error)
+      }
+    }
+  }
+
+  @objc(clearHeaderFooter: withResolver: withRejecter:)
+  func clearHeaderFooter(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      resolve(view.clearHeaderFooter())
+    }
+  }
+
+  @objc(getBates: withResolver: withRejecter:)
+  func getBates(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in resolve(view.getBates() as Any) } }
+
+  @objc(updateBates: withInfo: withResolver: withRejecter:)
+  func updateBates(forCPDFViewTag tag: Int, info: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in do { resolve(try view.updateBates(info: info as? [String: Any] ?? [:])) } catch { reject("BATES_FAIL", error.localizedDescription, error) } } }
+
+  @objc(clearBates: withResolver: withRejecter:)
+  func clearBates(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in resolve(view.clearBates()) } }
+
+  @objc(getBackground: withResolver: withRejecter:)
+  func getBackground(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in resolve(view.getBackground() as Any) } }
+  @objc(updateBackground: withInfo: withResolver: withRejecter:)
+  func updateBackground(forCPDFViewTag tag: Int, info: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in do { resolve(try view.updateBackground(info: info as? [String: Any] ?? [:])) } catch { reject("BACKGROUND_FAIL", error.localizedDescription, error) } } }
+  @objc(clearBackground: withResolver: withRejecter:)
+  func clearBackground(forCPDFViewTag tag: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) { withCPDFView(tag: tag, reject: reject) { view in resolve(view.clearBackground()) } }
+
+  @objc(getPdfStandardType: withResolver: withRejecter:)
+  func getPdfStandardType(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      do {
+        resolve(try view.getPdfStandardType())
+      } catch let error as RCTCPDFBridgeError {
+        reject(error.code, error.message, nil)
+      } catch {
+        reject("DOCUMENT_INVALID", error.localizedDescription, error)
+      }
+    }
+  }
+
+  @objc(convertToPdfStandard: withOutputPath: withType: withFontSubset: withResolver: withRejecter:)
+  func convertToPdfStandard(
+    forCPDFViewTag tag: Int,
+    outputPath: NSString,
+    type: NSString,
+    fontSubset: Bool,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.convertToPdfStandard(outputPath: outputPath as String, type: type as String, fontSubset: fontSubset) { result in
+        switch result {
+        case .success(let value):
+          resolve(value)
+        case .failure(let error):
+          reject(error.code, error.message, nil)
+        }
       }
     }
   }
@@ -187,7 +313,7 @@ extension RCTDocumentManager {
       resolve(view.removeAllWatermarks())
     }
   }
-  
+
   @objc(checkOwnerUnlocked: withResolver: withRejecter:)
   func checkOwnerUnlocked(
     forCPDFViewTag tag : Int,
@@ -200,8 +326,8 @@ extension RCTDocumentManager {
       }
     }
   }
-  
-  
+
+
   @objc(checkOwnerPassword: withPassword: withResolver: withRejecter:)
   func checkOwnerPassword(
     forCPDFViewTag tag : Int,
@@ -215,7 +341,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(removePassword: withResolver: withRejecter:)
   func removePassword(
     forCPDFViewTag tag : Int,
@@ -228,7 +354,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(setPassword: withInfo: withResolver: withRejecter:)
   func setPassword(
     forCPDFViewTag tag : Int,
@@ -242,7 +368,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getEncryptAlgo: withResolver: withRejecter:)
   func getEncryptAlgo(
     forCPDFViewTag tag : Int,
@@ -255,7 +381,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(printDocument: withResolver: withRejecter:)
   func printDocument(
     forCPDFViewTag tag : Int,
@@ -267,7 +393,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(importWidgets: withXfdfFile: withResolver: withRejecter:)
   func importWidgets(
     tag : Int,
@@ -283,9 +409,9 @@ extension RCTDocumentManager {
           reject("import_widgets_failed", "Failed to import widgets", nil);
         }
       }
-    } 
+    }
   }
-  
+
   @objc(exportWidgets: withResolver: withRejecter:)
   func exportWidgets(
     tag : Int,
@@ -298,7 +424,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getDocumentPath: withResolver: withRejecter:)
   func getDocumentPath(
     forCPDFViewTag tag : Int,
@@ -311,7 +437,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     flattenAllPages: withSavePath: withFontSubset: withResolver: withRejecter:
   )
@@ -328,7 +454,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     saveAs: withSavePath: withRemoveSecurity: withFontSubset:  withResolver: withRejecter:
   )
@@ -346,7 +472,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(importDocument: withFilePath: withInfo: withResolver: withRejecter:)
   func importDocument(
     forCPDFViewTag tag : Int,
@@ -361,7 +487,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     splitDocumentPages: withSavePath: withPages: withResolver: withRejecter:
   )
@@ -397,7 +523,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     insertBlankPage: withPageIndex: withPageWidth: withPageHeight: withResolver: withRejecter:
   )
@@ -415,7 +541,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     insertImagePage: withPageIndex: withImagePath: withPageWidth: withPageHeight: withResolver: withRejecter:
   )
@@ -436,9 +562,9 @@ extension RCTDocumentManager {
           reject("insert_image_page_failed", "Failed to insert image page", nil)
         }
       })
-    } 
+    }
   }
-  
+
   @objc(removePages: withPageIndexes: withResolver: withRejecter:)
   func removePages(
     forCPDFViewTag tag : Int,
@@ -467,7 +593,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(movePage: withFromIndex: withToIndex: withResolver: withRejecter:)
   func movePage(
     forCPDFViewTag tag : Int,
@@ -482,7 +608,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getInfo: withResolver: withRejecter:)
   func getInfo(
     forCPDFViewTag tag : Int,
@@ -495,7 +621,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getMajorVersion: withResolver: withRejecter:)
   func getMajorVersion(
     forCPDFViewTag tag : Int,
@@ -508,7 +634,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getMinorVersion: withResolver: withRejecter:)
   func getMinorVersion(
     forCPDFViewTag tag : Int,
@@ -521,7 +647,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getPermissionsInfo: withResolver: withRejecter:)
   func getPermissionsInfo(
     forCPDFViewTag tag : Int,
@@ -534,7 +660,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
-  
-  
+
+
+
 }

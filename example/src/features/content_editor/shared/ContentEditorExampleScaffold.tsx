@@ -83,7 +83,7 @@ export function ContentEditorExampleScaffold({
 
   return (
     <PDFReaderContext.Provider value={readyReader}>
-      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <AppToolbar
             title={title}

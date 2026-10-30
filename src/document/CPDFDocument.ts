@@ -34,12 +34,38 @@ import { CPDFBookmark } from "./CPDFBookmark";
 import { CPDFEditorTextAttr } from "../configuration/config/CPDFContentEditorConfig";
 import { CPDFEditArea } from "../edit/CPDFEditArea";
 import { CPDFSignatureWidget } from "../annotation/form/CPDFSignatureWidget";
+import { CPDFLtvReadiness, fromNativeLtvReadiness } from '../signature/CPDFLtvReadiness';
+import { CPDFSignatureLtvOptions, toNativeSignatureLtvOptions } from '../signature/CPDFSignatureLtvOptions';
+import { CPDFSignatureLtvResult, fromNativeSignatureLtvResult } from '../signature/CPDFSignatureLtvResult';
+import type { CPDFDigitalSignature } from "../signature/CPDFDigitalSignature";
+import { fromNativeDigitalSignature } from "../signature/CPDFDigitalSignature";
+import type { CPDFSignatureConfig } from "../signature/CPDFSignatureConfig";
+import { toNativeSignatureConfig } from "../signature/CPDFSignatureConfig";
+import type { CPDFSignatureVerifyResult } from "../signature/CPDFSignatureVerifyResult";
+import { fromNativeVerifyResult } from "../signature/CPDFSignatureVerifyResult";
+import type { CPDFOptimizeOptions } from "./optimize/CPDFOptimizeOptions";
+import { fromNativeOptimizeOptions, toNativeOptimizeOptions } from "./optimize/CPDFOptimizeOptions";
+import type { CPDFOptimizeResult } from "./optimize/CPDFOptimizeResult";
+import { fromNativeOptimizeResult } from "./optimize/CPDFOptimizeResult";
 import {
   CPDFWatermark,
   NativeWatermarkPayload,
   fromNativeWatermark,
   toNativeWatermark,
 } from "./CPDFWatermark";
+import {
+  CPDFHeaderFooter,
+  NativeHeaderFooterPayload,
+  fromNativeHeaderFooter,
+  toNativeHeaderFooter,
+} from './CPDFHeaderFooter';
+import {
+  CPDFPdfStandardType,
+  fromNativePdfStandardType,
+} from './CPDFPdfStandard';
+import { CPDFBates, NativeBatesPayload, fromNativeBates, toNativeBates } from './CPDFBates';
+import { CPDFBackground, NativeBackgroundPayload, fromNativeBackground, toNativeBackground } from './CPDFBackground';
+import { CPDFRedactAnnotation } from '../annotation/CPDFRedactAnnotation';
 const { CPDFViewManager } = NativeModules;
 
 const DEFAULT_ANNOTATION_RENDER_SCALE = 3.0;
@@ -170,6 +196,8 @@ export class CPDFDocument {
 
   private _textSearcher: CPDFTextSearcher;
 
+  private _optimizeProgressListener: ((pageIndex: number) => void) | null = null;
+
   private _replyIdentities = new WeakMap<CPDFReplyAnnotation, ReplyIdentity>();
 
   constructor(viewerRef: any) {
@@ -270,11 +298,13 @@ export class CPDFDocument {
   };
 
   /**
-   * Checks if the PDF document is encrypted.
+   * Returns whether the current document is protected by PDF encryption.
+   *
    * @example
    * const isEncrypted = await pdfReaderRef.current?._pdfDocument.isEncrypted();
-   * @returns A promise that resolves to `true` when the document is encrypted.
-   * @group Document Information
+   *
+   * @returns `true` when the document has user or owner password protection.
+   * @group Security
    */
   isEncrypted = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -328,12 +358,13 @@ export class CPDFDocument {
   };
 
   /**
-   * Check if owner permissions are unlocked
+   * Returns whether the document is currently unlocked with owner permissions.
    *
    * @example
-   * const unlocked = await pdfReaderRef.current?._pdfDocument.checkOwnerUnlocked();
-   * @returns A promise that resolves to `true` when owner permissions are unlocked.
-   * @group Document Information
+   * const ownerUnlocked = await pdfReaderRef.current?._pdfDocument.checkOwnerUnlocked();
+   *
+   * @returns `true` when owner-only operations, such as changing encryption, are available.
+   * @group Security
    */
   checkOwnerUnlocked = (): Promise<boolean> => {
     const tag = findNodeHandle(this._viewerRef);
@@ -344,14 +375,14 @@ export class CPDFDocument {
   };
 
   /**
-   * Whether the owner password is correct.
-   * If the password is correct, the document will be unlocked with full owner permissions.
+   * Verifies an owner password and unlocks owner permissions when it is valid.
    *
    * @example
-   * const check = await pdfReaderRef.current?._pdfDocument.checkOwnerPassword('ownerPassword');
+   * const ownerUnlocked = await pdfReaderRef.current?._pdfDocument
+   *   .checkOwnerPassword('owner-password');
    *
-   * @param password password The owner password to be verified.
-   * @returns A promise that resolves to `true` if the owner password is correct, otherwise `false`.
+   * @param password Owner password to verify.
+   * @returns `true` when the password is valid and owner permissions are unlocked.
    * @group Security
    */
   checkOwnerPassword = (password: string): Promise<boolean> => {
@@ -375,6 +406,477 @@ export class CPDFDocument {
     const tag = findNodeHandle(this._viewerRef);
     if (tag != null) {
       return CPDFViewManager.getPageCount(tag);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Returns the document header and footer configuration, or `null` when absent.
+   *
+   * @example
+   * const headerFooter = await readerRef.current?._pdfDocument.getHeaderFooter();
+   *
+   * @group Document Processing
+   */
+  getHeaderFooter = async (): Promise<CPDFHeaderFooter | null> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getHeaderFooter(tag);
+      return result == null ? null : fromNativeHeaderFooter(result as NativeHeaderFooterPayload);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Replaces the document header and footer configuration.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.updateHeaderFooter({
+   *   pages: [0],
+   *   margin: { left: 24, top: 24, right: 24, bottom: 24 },
+   *   slots: [{ position: 'footer_center', text: 'Page <<1>>', fontSize: 10 }],
+   * });
+   *
+   * @group Document Processing
+   */
+  updateHeaderFooter = (headerFooter: CPDFHeaderFooter): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.updateHeaderFooter(tag, toNativeHeaderFooter(headerFooter));
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Clears all header and footer content from the document.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.clearHeaderFooter();
+   *
+   * @group Document Processing
+   */
+  clearHeaderFooter = (): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.clearHeaderFooter(tag);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Returns the Bates numbering configuration, or `null` when absent.
+   *
+   * @example
+   * const bates = await readerRef.current?._pdfDocument.getBates();
+   *
+   * @group Document Processing
+   */
+  getBates = async (): Promise<CPDFBates | null> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getBates(tag);
+      return result == null ? null : fromNativeBates(result as NativeBatesPayload);
+    }
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Replaces the Bates numbering configuration.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.updateBates({
+   *   pages: [0, 1],
+   *   margin: { left: 24, top: 24, right: 24, bottom: 24 },
+   *   pageOffset: 1,
+   *   slots: [{ position: 'footer_right', text: 'B-<<1>>', fontSize: 10 }],
+   * });
+   *
+   * @group Document Processing
+   */
+  updateBates = (value: CPDFBates): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) return CPDFViewManager.updateBates(tag, toNativeBates(value));
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Clears Bates numbering from the document.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.clearBates();
+   *
+   * @group Document Processing
+   */
+  clearBates = (): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) return CPDFViewManager.clearBates(tag);
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Returns the document background configuration, or `null` when absent.
+   *
+   * @example
+   * const background = await readerRef.current?._pdfDocument.getBackground();
+   *
+   * @group Document Processing
+   */
+  getBackground = async (): Promise<CPDFBackground | null> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getBackground(tag);
+      return result == null
+        ? null
+        : fromNativeBackground(result as NativeBackgroundPayload);
+    }
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Replaces the document background configuration.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.updateBackground({
+   *   pages: [0],
+   *   type: 'color',
+   *   color: '#FFF3E0',
+   *   opacity: 0.5,
+   * });
+   *
+   * @group Document Processing
+   */
+  updateBackground = (value: CPDFBackground): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.updateBackground(tag, toNativeBackground(value));
+    }
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Clears the document background.
+   *
+   * @example
+   * await readerRef.current?._pdfDocument.clearBackground();
+   *
+   * @group Document Processing
+   */
+  clearBackground = (): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) return CPDFViewManager.clearBackground(tag);
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Permanently applies one redaction: the content under it is removed and the area is filled
+   * with its `fillColor` and `overlayText`. This cannot be undone, and the removed content can no
+   * longer be displayed, searched, or copied. Save the document to keep the result.
+   *
+   * @example
+   * const annotations = await pdfReaderRef.current?._pdfDocument.pageAtIndex(0).getAnnotations();
+   * const redaction = annotations?.find((a) => a instanceof CPDFRedactAnnotation);
+   * if (redaction) {
+   *   await pdfReaderRef.current?._pdfDocument.applyRedaction(redaction as CPDFRedactAnnotation);
+   * }
+   *
+   * @param annotation A redaction read from the document (it needs its `page` and `uuid`).
+   * @returns `true` when the redaction was applied; `false` when it no longer exists.
+   * @group Annotations
+   */
+  applyRedaction = (annotation: CPDFRedactAnnotation): Promise<boolean> => {
+    if (!annotation?.uuid || annotation.page < 0) {
+      return Promise.reject(new Error('A redaction read from the document (with page and uuid) is required.'));
+    }
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.applyRedaction(tag, annotation.page, annotation.uuid);
+    }
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Permanently applies every redaction annotation in the document. This cannot be undone.
+   * Save the document to keep the result.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.applyRedactions();
+   *
+   * @returns `true` when at least one redaction was applied.
+   * @group Annotations
+   */
+  applyRedactions = (): Promise<boolean> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) return CPDFViewManager.applyRedactions(tag);
+    return Promise.reject('Unable to find the native view reference');
+  };
+
+  /**
+   * Returns the digital signatures in the document, with signer certificates and,
+   * on iOS, the modifications made after signing (Android reports an empty list).
+   *
+   * @example
+   * const signatures = await pdfReaderRef.current?._pdfDocument.getDigitalSignatures();
+   *
+   * @group Security
+   */
+  getDigitalSignatures = async (): Promise<CPDFDigitalSignature[]> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    const values = await CPDFViewManager.getDigitalSignatures(tag);
+    return Array.isArray(values) ? values.map(fromNativeDigitalSignature) : [];
+  };
+
+  /**
+   * Verifies the signature at `signatureIndex`: signer identity, document integrity,
+   * certificate trust and expiry, and the timestamp authority.
+   *
+   * @example
+   * const result = await pdfReaderRef.current?._pdfDocument.verifyDigitalSignature(0);
+   *
+   * @param signatureIndex Native signatureIndex returned by `getDigitalSignatures` (not the filtered array position).
+   * @group Security
+   */
+  verifyDigitalSignature = async (
+    signatureIndex: number,
+  ): Promise<CPDFSignatureVerifyResult> => {
+    if (signatureIndex < 0) {
+      throw new Error('Signature index must be zero or greater.');
+    }
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    return fromNativeVerifyResult(
+      await CPDFViewManager.verifyDigitalSignature(tag, signatureIndex),
+    );
+  };
+
+  /**
+   * Inspects saved document-level DSS/VRI and revocation evidence.
+   * Readiness is separate from cryptographic signature validity and signer trust.
+   * @returns Evidence assessment and native diagnostics. Rejects if inspection is unavailable.
+   * @example
+   * const readiness = await document.getLtvReadiness();
+   * @group Security
+   */
+  getLtvReadiness = async (): Promise<CPDFLtvReadiness> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    return fromNativeLtvReadiness(await CPDFViewManager.getLtvReadiness(tag));
+  };
+
+  /**
+   * Adds LTV evidence to a copy of the saved signed PDF on Android and iOS.
+   * Save pending changes first. Network access may be required to collect OCSP/CRL material.
+   * The source is preserved. LTA requests must supply a different timestamp output path.
+   * @param outputPath Local LTV output file in an existing directory, different from the source.
+   * @param options PEM trust anchor, evidence sources, and optional document timestamp.
+   * @returns Native result with errors/warnings; finalPath is empty on failure.
+   * @example
+   * const result = await document.addSignatureLtv('/tmp/ltv.pdf', {
+   *   trustedCertificatePath: '/tmp/root.pem',
+   * });
+   * @group Security
+   */
+  addSignatureLtv = async (outputPath: string, options: CPDFSignatureLtvOptions): Promise<CPDFSignatureLtvResult> => {
+    if (!outputPath) throw new Error('An LTV output path is required.');
+    if (options.appendDocumentTimestamp && outputPath === options.timestampOutputPath) throw new Error('LTV and LTA output paths must differ.');
+    const nativeOptions = toNativeSignatureLtvOptions(options);
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    return fromNativeSignatureLtvResult(await CPDFViewManager.addSignatureLtv(tag, outputPath, nativeOptions));
+  };
+
+  /**
+   * Signs a signature form field with a PKCS#12 certificate and writes the signed
+   * document to `outputPath`. The current document file is not overwritten.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.writeSignature(0, widget.uuid, '/documents/signed.pdf', {
+   *   certificatePath: '/documents/signer.p12',
+   *   password: certificatePassword,
+   *   reason: 'Approval',
+   *   permissions: CPDFSignaturePermission.FILL_AND_SIGN,
+   * });
+   *
+   * @param pageIndex Page that contains the signature field.
+   * @param uuid UUID of the signature field.
+   * @param outputPath Writable path for the signed copy.
+   * @param config Certificate, password, metadata, and appearance. The password is used only for this call.
+   * @group Security
+   */
+  writeSignature = async (
+    pageIndex: number,
+    uuid: string,
+    outputPath: string,
+    config: CPDFSignatureConfig,
+  ): Promise<boolean> => {
+    if (!uuid) throw new Error('Signature widget uuid cannot be empty.');
+    if (!outputPath) throw new Error('Signature output path cannot be empty.');
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    return CPDFViewManager.writeSignature(
+      tag,
+      pageIndex,
+      uuid,
+      outputPath,
+      toNativeSignatureConfig(config),
+    );
+  };
+
+  /**
+   * Returns the native default optimization settings, as a starting point for
+   * `optimizeSaveAsCopy`.
+   *
+   * @example
+   * const options = await pdfReaderRef.current?._pdfDocument.getOptimizeOptions();
+   *
+   * @group Document Processing
+   */
+  getOptimizeOptions = async (): Promise<CPDFOptimizeOptions> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    return fromNativeOptimizeOptions(await CPDFViewManager.getOptimizeOptions(tag));
+  };
+
+  /**
+   * Writes an optimized (compressed) copy of the document to `outputPath`.
+   *
+   * The source file is not changed, but the opened document is reloaded from its
+   * source when the run ends, so **unsaved changes are lost**: save first.
+   * Only one run per reader can be in flight; a second call rejects with
+   * `OPTIMIZE_ALREADY_RUNNING`. A run stopped by `cancelOptimize()` resolves with
+   * `cancelled: true`.
+   *
+   * Platform differences:
+   * - iOS ignores `fontSubset`, and `pagesProcessed` is reported by the bridge.
+   * - The `flate` algorithm maps to JPEG 2000 on iOS; `none` and `run_length`
+   *   keep that image group's default.
+   *
+   * Image recompression requires the `compress_images` flag. Each image group's
+   * `quality` overrides `imageQuality` on both platforms, including the values
+   * returned by `getOptimizeOptions()`. To change quality for all images, set
+   * `imageQuality` and all three groups' `quality` values. A quality of 100 skips
+   * image recompression.
+   *
+   * @example
+   * const result = await pdfReaderRef.current?._pdfDocument.optimizeSaveAsCopy(
+   *   '/documents/compressed.pdf',
+   *   undefined,
+   *   false,
+   *   (pageIndex) => console.log(`optimized page ${pageIndex}`),
+   * );
+   *
+   * @param outputPath Writable path for the optimized copy; must differ from the current document.
+   * @param options One-shot optimization settings. Omit to use the native defaults.
+   * @param fontSubset Whether embedded fonts are subset while saving (Android only).
+   * @param onProgress Called with the index of each page as it is processed.
+   * @returns Optimization statistics reported by the native SDK.
+   * @group Document Processing
+   */
+  optimizeSaveAsCopy = async (
+    outputPath: string,
+    options?: CPDFOptimizeOptions,
+    fontSubset = false,
+    onProgress?: (pageIndex: number) => void,
+  ): Promise<CPDFOptimizeResult> => {
+    const path = outputPath.trim();
+    if (!path) throw new Error('Output path cannot be empty.');
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    const listener = onProgress ?? null;
+    this._optimizeProgressListener = listener;
+    try {
+      return fromNativeOptimizeResult(await CPDFViewManager.optimizeSaveAsCopy(
+        tag,
+        path,
+        options == null ? null : toNativeOptimizeOptions(options),
+        fontSubset,
+      ));
+    } finally {
+      // Progress events that arrive after the run settles are dropped.
+      if (this._optimizeProgressListener === listener) {
+        this._optimizeProgressListener = null;
+      }
+    }
+  };
+
+  /**
+   * Requests cancellation of the optimization run in progress. Does nothing when
+   * no run is in progress. The pending `optimizeSaveAsCopy` call resolves with
+   * `cancelled: true`.
+   *
+   * @group Document Processing
+   */
+  cancelOptimize = async (): Promise<void> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag == null) throw new Error('Unable to find the native view reference');
+    await CPDFViewManager.cancelOptimize(tag);
+  };
+
+  /** @internal Called by `CPDFReaderView` for `onOptimizeProgress` events. */
+  _dispatchOptimizeProgress = (pageIndex: number) => {
+    this._optimizeProgressListener?.(pageIndex);
+  };
+
+  /**
+   * Returns the PDF standard the current document declares conformance with.
+   * A plain PDF resolves to `'pdf'`.
+   *
+   * @example
+   * const standard = await pdfReaderRef.current?._pdfDocument.getPdfStandardType();
+   *
+   * @group Document Information
+   */
+  getPdfStandardType = async (): Promise<CPDFPdfStandardType> => {
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      const result = await CPDFViewManager.getPdfStandardType(tag);
+      return fromNativePdfStandardType(result);
+    }
+    return Promise.reject("Unable to find the native view reference");
+  };
+
+  /**
+   * Converts the document to `type` and writes the result to `outputPath`.
+   *
+   * The opened document, its file, and the reader stay unchanged; no reload happens.
+   * On iOS the SDK converts a copy of the in-memory document, so pending ink and
+   * content edits are committed and included. On Android a separately opened copy
+   * of the source file is converted, so unsaved changes are not included; save first.
+   *
+   * - `outputPath` must be writable, its parent directory must already exist,
+   *   and it must differ from the current document path.
+   * - Encrypted documents must be saved without a password first, otherwise the
+   *   call rejects with `ENCRYPTED_DOCUMENT_NOT_CONVERTIBLE`.
+   * - `fontSubset` controls whether font subsets are written into the output
+   *   file. It is the only setting the native entry point accepts: the ICC
+   *   output intent is supplied by the SDK itself, and no PDF/UA language or
+   *   title can be passed in.
+   * - On iOS, `'pdf'` and `'pdf_e_2'` reject with `UNSUPPORTED_PDF_STANDARD`.
+   *
+   * @example
+   * await pdfReaderRef.current?._pdfDocument.convertToPdfStandard(
+   *   '/documents/contract-pdfa2b.pdf',
+   *   'pdf_a_2b'
+   * );
+   *
+   * @group Document Operations
+   */
+  convertToPdfStandard = (
+    outputPath: string,
+    type: CPDFPdfStandardType,
+    fontSubset: boolean = true
+  ): Promise<boolean> => {
+    if (outputPath == null || outputPath.trim().length === 0) {
+      return Promise.reject("INVALID_OUTPUT_PATH: outputPath must not be empty.");
+    }
+    const tag = findNodeHandle(this._viewerRef);
+    if (tag != null) {
+      return CPDFViewManager.convertToPdfStandard(
+        tag,
+        outputPath,
+        type,
+        fontSubset
+      );
     }
     return Promise.reject("Unable to find the native view reference");
   };
@@ -527,12 +1029,14 @@ export class CPDFDocument {
   };
 
   /**
-   * Remove the user password and owner permission password
-   * set in the document, and perform an incremental save.
+   * Removes user and owner password protection, then writes the change to the current file.
+   *
+   * The document must be opened with owner permissions for the operation to succeed.
    *
    * @example
-   * const result = await pdfReaderRef.current?._pdfDocument.removePassword();
-   * @returns A promise that resolves to `true` when the passwords are removed; otherwise, `false`.
+   * const removed = await pdfReaderRef.current?._pdfDocument.removePassword();
+   *
+   * @returns `true` when the unencrypted document is written successfully.
    * @group Security
    */
   removePassword = (): Promise<boolean> => {
@@ -544,28 +1048,26 @@ export class CPDFDocument {
   };
 
   /**
+   * Applies password protection and document permissions, then writes the change to the current file.
    *
-   * This method sets the document password, including the user password for access restrictions
-   * and the owner password for granting permissions.
-   *
-   * - To enable permissions like printing or copying, the owner password must be set; otherwise,
-   * the settings will not take effect.
+   * `userPassword` is required to open the document. `ownerPassword` permits later changes to
+   * permissions and encryption. Permission flags are effective only when an owner password is set.
    *
    * @example
-   * const success = await pdfReaderRef.current?._pdfDocument.setPassword(
-   *  'user_password',
-   *  'owner_password',
-   *  false,
-   *  false,
-   *  CPDFDocumentEncryptAlgo.rc4
+   * const saved = await pdfReaderRef.current?._pdfDocument.setPassword(
+   *   'open-password',
+   *   'owner-password',
+   *   false,
+   *   false,
+   *   CPDFDocumentEncryptAlgo.AES256,
    * );
    *
-   * @param userPassword The user password for document access restrictions.
-   * @param ownerPassword The owner password to grant permissions (e.g., printing, copying).
-   * @param allowsPrinting Whether printing is allowed (true or false).
-   * @param allowsCopying Whether copying is allowed (true or false).
-   * @param encryptAlgo The encryption algorithm to use (e.g., `CPDFDocumentEncryptAlgo.rc4`).
-   * @returns A promise that resolves to `true` if the password is successfully set, otherwise `false`.
+   * @param userPassword Password required to open the document.
+   * @param ownerPassword Password used to manage restrictions and encryption.
+   * @param allowsPrinting Whether document printing remains permitted.
+   * @param allowsCopying Whether document content copying remains permitted.
+   * @param encryptAlgo Encryption algorithm applied while writing the document.
+   * @returns `true` when the encrypted document is written successfully.
    * @group Security
    */
   setPassword = (
@@ -589,11 +1091,12 @@ export class CPDFDocument {
   };
 
   /**
-   * Get the encryption algorithm of the current document
+   * Returns the encryption algorithm used by the current document.
    *
    * @example
-   * const encryptAlgo = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
-   * @returns A promise that resolves to the document encryption algorithm.
+   * const algorithm = await pdfReaderRef.current?._pdfDocument.getEncryptAlgo();
+   *
+   * @returns The current algorithm, or `CPDFDocumentEncryptAlgo.NO_ENCRYPT_ALGO`.
    * @group Security
    */
   getEncryptAlgo = async (): Promise<CPDFDocumentEncryptAlgo> => {
@@ -986,23 +1489,23 @@ export class CPDFDocument {
    * @example
    * // Android file path:
    * const imagePath = 'file:///storage/emulated/0/Download/photo.jpg';
-   * 
+   *
    * // Android content URI:
    * const imagePath = 'content://media/external/images/media/12345';
-   * 
+   *
    * // Android asset path:
    * const imagePath = 'file:///assets/photo.jpg';
-   * 
+   *
    * // iOS file path:
    * const imagePath = 'var/mobile/Containers/Data/Application/.../Documents/photo.jpg';
-   * 
+   *
    * // insert image page at index 2
    * const success = await pdfReaderRef.current?._pdfDocument.insertImagePage(2, imagePath, CPDFPageSize.custom(imageWidth, imageHeight));
-   * 
+   *
    * // need reload pages after inserting image page.
    * if (success) {
    *   await pdfReaderRef.current?.reloadPagesPreservingPosition();
-   * } 
+   * }
    * @group Pages
    */
   insertImagePage(
@@ -1619,7 +2122,7 @@ export class CPDFDocument {
    * @example
    * const majorVersion = await pdfReaderRef?.current?._pdfDocument.getMajorVersion();
    * console.log(majorVersion);
-   * 
+   *
    * @returns a Promise that resolves to the major version number.
    * @group Document Information
    */
@@ -1672,7 +2175,7 @@ export class CPDFDocument {
    * Gets the outline root of the document.
    * @example
    * const outlineRoot = await pdfReaderRef?.current?._pdfDocument.getOutlineRoot();
-   * 
+   *
    * @see CPDFOutline - Document outline class
    * @returns A promise that resolves to the outline root, or `null` when no outline is available.
    * @group Bookmarks and Outline
@@ -1694,7 +2197,7 @@ export class CPDFDocument {
    * if (!outlineRoot) {
    *    outlineRoot = await pdfReaderRef?.current?._pdfDocument.newOutlineRoot();
    * }
-   * 
+   *
    * @see CPDFOutline - Document outline class
    * @returns A promise that resolves to the newly created outline root, or `null` if it cannot be created.
    * @group Bookmarks and Outline
@@ -1837,7 +2340,7 @@ export class CPDFDocument {
    *
    * @example
    * const hasBookmark = await pdfReaderRef.current?._pdfDocument.hasBookmark(2);
-   * @param pageIndex The index of the page to check for a bookmark. 
+   * @param pageIndex The index of the page to check for a bookmark.
    * @returns A promise that resolves to whether the specified page has a bookmark.
    * @group Bookmarks and Outline
    */
@@ -1917,7 +2420,7 @@ export class CPDFDocument {
   /**
    * Updates the specified annotation in the document.
    * For modifiable properties, please refer to the update method of CPDFAnnotation and its subclasses.
-   * 
+   *
    * @example
    * // update markup annotation
    * const markupAnnotation = annotation as CPDFMarkupAnnotation;
@@ -1966,14 +2469,14 @@ export class CPDFDocument {
   /**
    * Creates a new text area in the content editor on the specified page.
    * This method is only supported on the Android platform.
-   * 
+   *
    * @param options Configuration options for the new text area
    * @param options.pageIndex The index of the page where the text area will be created
    * @param options.content The text content to display
    * @param options.offset The position (x, y) where the text area will be placed
    * @param options.maxWidth Optional maximum width of the text area
    * @param options.attr Optional text attributes (font color, size, alignment, etc.)
-   * 
+   *
    * @example
    * await pdfReaderRef.current?._pdfDocument.createNewTextArea({
    *   pageIndex: 0,
@@ -1982,7 +2485,7 @@ export class CPDFDocument {
    *   maxWidth: 300,
    *   attr: { fontColor: '#000000', fontSize: 20 }
    * });
-   * 
+   *
 
    * @returns true if the text area was created successfully, otherwise false
    * @throws Throws an error if not running on Android platform
@@ -2015,36 +2518,36 @@ export class CPDFDocument {
   /**
    * Creates a new image area in the content editor on the specified page.
    * This method is only supported on the Android platform.
-   * 
+   *
    * @param options Configuration options for the new image area
    * @param options.pageIndex The index of the page where the image area will be created
    * @param options.imageData The CPDFImageData instance containing the image source
    * @param options.offset The position (x, y) where the image area will be placed
    * @param options.width Optional width of the image area (default: 200)
-   * 
+   *
    * @example
    * - Android Assets Path:
    * const imageData = CPDFImageData.fromAsset('image.png');
-   * 
+   *
    * - Android Content URI:
    * const imageData = CPDFImageData.fromUri('content://media/external/images/media/12345');
-   * 
+   *
    * - Android File Path:
    * const imageData = CPDFImageData.fromPath('/storage/emulated/0/Download/image.png');
-   * 
+   *
    * - iOS File Path:
    * const imageData = CPDFImageData.fromPath('/var/mobile/Containers/Data/Application/.../Documents/image.png');
-   * 
+   *
    * - Base64 String:
    * const imageData = CPDFImageData.fromBase64('iVBORw0KGgoAAAANSUhEUgAAAAUA...');
-   * 
+   *
    * await pdfReaderRef.current?._pdfDocument.createNewImageArea({
    *   pageIndex: 0,
    *   imageData: imageData,
    *   offset: { x: 100, y: 100 },
    *   width: 200
    * });
-   * 
+   *
 
    * @returns true if the image area was created successfully, otherwise false
    * @throws Throws an error if not running on Android platform
@@ -2101,7 +2604,7 @@ export class CPDFDocument {
 
   /**
    * Updates the appearance of the specified widget.
-   * 
+   *
    * @example
    * await pdfDocument.updateAp(signatureWidget);
    * @param widget The form widget whose properties or appearance will be updated.
@@ -2118,7 +2621,7 @@ export class CPDFDocument {
 
   /**
    * Adds annotations to the document.
-   * 
+   *
    * @example
    * const annotations: CPDFAnnotation[] = [
    *   new CPDFNoteAnnotation({
@@ -2260,7 +2763,7 @@ export class CPDFDocument {
 
   /**
    * Adds form widgets to the document.
-   * 
+   *
    * @example
    * const widgets = [
    *   new CPDFCheckboxWidget({
@@ -2276,7 +2779,7 @@ export class CPDFDocument {
    *   })
    * ];
    * await pdfReaderRef.current?._pdfDocument.addWidgets(widgets);
-   * 
+   *
    * @see CPDFWidget - Base class for all form widgets
    * @param widgets The form widgets to add to the document.
    * @returns A promise that resolves when the operation completes.

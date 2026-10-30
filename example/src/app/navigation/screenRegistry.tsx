@@ -54,10 +54,19 @@ import DigitalSignatureExampleScreen from '../../features/security/examples/Digi
 import DocumentPermissionsExampleScreen from '../../features/security/examples/DocumentPermissionsExampleScreen';
 import RemovePasswordExampleScreen from '../../features/security/examples/RemovePasswordExampleScreen';
 import SetPasswordExampleScreen from '../../features/security/examples/SetPasswordExampleScreen';
+import HeaderFooterExampleScreen from '../../features/security/examples/HeaderFooterExampleScreen';
+import BatesExampleScreen from '../../features/security/examples/BatesExampleScreen';
+import BackgroundExampleScreen from '../../features/security/examples/BackgroundExampleScreen';
+import CertificateManagementExampleScreen from '../../features/security/examples/CertificateManagementExampleScreen';
+import RedactionAnnotationExampleScreen from '../../features/security/examples/RedactionAnnotationExampleScreen';
+import DigitalSignatureStatusExampleScreen from '../../features/security/examples/DigitalSignatureStatusExampleScreen';
+import PdfStandardExampleScreen from '../../features/document_processing/examples/PdfStandardExampleScreen';
+import DocumentOptimizeExampleScreen from '../../features/document_processing/examples/DocumentOptimizeExampleScreen';
 import CustomAnnotationCreateExampleScreen from '../../features/ui_customization/annotation_create/CustomAnnotationCreateExampleScreen';
 import CustomContextMenuExampleScreen from '../../features/ui_customization/context_menu/CustomContextMenuExampleScreen';
 import CustomToolbarExampleScreen from '../../features/ui_customization/toolbar/CustomToolbarExampleScreen';
 import CustomUiStyleExampleScreen from '../../features/ui_customization/ui_style/CustomUiStyleExampleScreen';
+import CreationPolicyExampleScreen from '../../features/ui_customization/creation_policy/CreationPolicyExampleScreen';
 import BasicViewerExampleScreen from '../../features/viewer/examples/BasicViewerExampleScreen';
 import DarkThemeViewerExampleScreen from '../../features/viewer/examples/DarkThemeViewerExampleScreen';
 import ModalViewerExampleScreen from '../../features/viewer/examples/ModalViewerExampleScreen';
@@ -205,6 +214,26 @@ export const exampleScreens: ScreenDefinition[] = [
     options: { headerShown: false },
   },
   {
+    name: EXAMPLE_ROUTES.securityBackground,
+    component: BackgroundExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.securityRedaction,
+    component: RedactionAnnotationExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.securityCertificates,
+    component: CertificateManagementExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.securitySignatures,
+    component: DigitalSignatureExampleScreen,
+    options: { headerShown: false },
+  },
+  {
     name: EXAMPLE_ROUTES.securitySetPassword,
     component: SetPasswordExampleScreen,
     options: { headerShown: false },
@@ -226,7 +255,27 @@ export const exampleScreens: ScreenDefinition[] = [
   },
   {
     name: EXAMPLE_ROUTES.securityDigitalSignature,
-    component: DigitalSignatureExampleScreen,
+    component: DigitalSignatureStatusExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.securityHeaderFooter,
+    component: HeaderFooterExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.securityBates,
+    component: BatesExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.documentProcessingPdfStandard,
+    component: PdfStandardExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.documentProcessingOptimize,
+    component: DocumentOptimizeExampleScreen,
     options: { headerShown: false },
   },
   {
@@ -377,6 +426,11 @@ export const exampleScreens: ScreenDefinition[] = [
   {
     name: EXAMPLE_ROUTES.customUiStyle,
     component: CustomUiStyleExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.creationPolicy,
+    component: CreationPolicyExampleScreen,
     options: { headerShown: false },
   },
   {

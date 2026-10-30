@@ -24,6 +24,7 @@ export type { CPDFContentEditorConfig, CPDFEditorTextAttr } from "./configuratio
 export type { CPDFFormConfig } from "./configuration/config/CPDFFormConfig";
 export type { CPDFGlobalConfig, CPDFBotaMenuItem } from "./configuration/config/CPDFGlobalConfig";
 export type { CPDFWatermarkConfig } from "./configuration/config/CPDFWatermarkConfig";
+export type { CPDFCreationConfig } from "./configuration/config/CPDFCreationConfig";
 export type * from "./configuration/config/CPDFReaderViewConfig";
 export type * from "./configuration/config/CPDFContextMenuConfig";
 export type * from "./configuration/attributes/CPDFAnnotationAttr";
@@ -44,6 +45,25 @@ export {
   fromNativeWatermark,
   toNativeWatermark,
 } from "./document/CPDFWatermark";
+export {
+  fromNativeHeaderFooter,
+  toNativeHeaderFooter,
+} from './document/CPDFHeaderFooter';
+export type {
+  CPDFHeaderFooter,
+  CPDFHeaderFooterPosition,
+  CPDFHeaderFooterSlot,
+} from './document/CPDFHeaderFooter';
+export {
+  PDF_STANDARD_TYPES,
+  fromNativePdfStandardType,
+} from './document/CPDFPdfStandard';
+export type { CPDFPdfStandardType } from './document/CPDFPdfStandard';
+export { fromNativeBates, toNativeBates } from './document/CPDFBates';
+export type { CPDFBates, CPDFBatesRule, CPDFBatesSlot } from './document/CPDFBates';
+export { fromNativeBackground, toNativeBackground, createColorBackground, createImageBackground } from './document/CPDFBackground';
+export type { CPDFBackground, CPDFBackgroundType, CPDFBackgroundHorizontalAlignment, CPDFBackgroundVerticalAlignment } from './document/CPDFBackground';
+export { CPDFRedactAnnotation } from './annotation/CPDFRedactAnnotation';
 export type {
   CPDFWatermark,
   CPDFWatermarkType,
@@ -123,6 +143,14 @@ export type { CPDFBookmark } from "./document/CPDFBookmark";
 
 // === Core Exports ===
 export { ComPDFKit };
+export * from "./signature/CPDFCertificate";
+export * from "./signature/CPDFDigitalSignature";
+export * from "./signature/CPDFSignatureConfig";
+export * from "./signature/CPDFSignatureVerifyResult";
+export * from "./document/optimize/CPDFCompressAlgorithm";
+export * from "./document/optimize/CPDFOptimizeFlag";
+export * from "./document/optimize/CPDFOptimizeOptions";
+export * from "./document/optimize/CPDFOptimizeResult";
 export { getDefaultConfig } from "./core/DefaultConfig";
 export { menus, botaMenus };
 export type { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
@@ -130,3 +158,10 @@ export type { CPDFContextMenuItemInput } from "./core/ConfigHelpers";
 // Maintain default export of PDFReaderContext
 export { default as PDFReaderContext } from "./core/PDFReaderContext";
 export default PDFReaderContext;
+
+export * from "./signature/CPDFSignatureIssue";
+export * from "./signature/CPDFLtvReadiness";
+export * from "./signature/CPDFSignatureLtvOptions";
+export * from "./signature/CPDFSignatureLtvResult";
+
+export * from "./signature/CPDFSignatureTimestamp";

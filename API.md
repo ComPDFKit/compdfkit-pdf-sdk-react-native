@@ -315,6 +315,26 @@ const uri: string = await ComPDFKit.createUri('test.pdf', '', 'application/pdf')
 
 ## CPDFReaderView - Props
 
+### Layout and System Bars (Android 15+)
+
+`CPDFReaderView` fills exactly the frame your React Native layout gives it and does not add padding for the status bar, navigation bar, or display cutout. Apps targeting Android SDK 35 or higher are drawn edge-to-edge on Android 15 and later (the opt-out was removed in Android 16), so a reader that extends to the bottom of the screen puts its bottom toolbar under the navigation bar, where it cannot be tapped.
+
+Keep the reader inside the safe area in your layout, for example with `react-native-safe-area-context`:
+
+```tsx
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+<SafeAreaView style={{ flex: 1 }}>
+  <CPDFReaderView
+    document={document}
+    configuration={ComPDFKit.getDefaultConfig({})}
+    style={{ flex: 1 }}
+  />
+</SafeAreaView>
+```
+
+`SafeAreaView` avoids all edges by default, which also covers the side navigation bar and display cutout in landscape. If you use `edges`, include `'bottom'` (and `'left'`/`'right'` for landscape) whenever the reader reaches that edge of the screen. The `SafeAreaView` exported by `react-native` has no effect on Android.
+
 ### Open Document
 
 `CPDFReaderView` is a React component designed to display PDF documents. Below are details about the required `document` prop.
@@ -627,6 +647,52 @@ Returns a Promise.
 const documentPath = await pdfReaderRef.current?._pdfDocument.getDocumentPath();
 ```
 
+#### getPdfStandardType
+
+Returns the PDF standard the current document declares conformance with. A plain PDF
+resolves to `'pdf'`.
+
+Returns a Promise.
+
+| Name | Type                  | Description                                                                                                                                                                                            |
+| ---- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| type | CPDFPdfStandardType   | One of `pdf`, `pdf_a_1a`, `pdf_a_1b`, `pdf_a_2a`, `pdf_a_2u`, `pdf_a_2b`, `pdf_a_3a`, `pdf_a_3u`, `pdf_a_3b`, `pdf_x_1a`, `pdf_x_3`, `pdf_x_4`, `pdf_e_1`, `pdf_e_2`, `pdf_ua_1`, `pdf_vt_1`, `pdf_vt_2`. |
+
+```tsx
+const standard = await pdfReaderRef.current?._pdfDocument.getPdfStandardType();
+```
+
+#### convertToPdfStandard
+
+Converts the document to the given PDF standard and writes the result to `outputPath`.
+The opened document, its file, and the reader stay unchanged; no reload happens. On iOS the SDK
+converts a copy of the in-memory document, so pending ink and content edits are committed and
+included. On Android a separately opened copy of the source file is converted, so unsaved changes
+are not included; save first.
+
+`outputPath` must be writable, its parent directory must already exist, and it must differ
+from the current document path. Encrypted documents must be saved without a password first.
+
+On iOS, `pdf` and `pdf_e_2` are not conversion targets and reject with `UNSUPPORTED_PDF_STANDARD`.
+
+Returns a Promise.
+
+| Name       | Type                    | Description                                                                                                                                            |
+| ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| outputPath | string                  | Destination path of the converted copy.                                                                                                                 |
+| type       | CPDFPdfStandardType     | Target standard.                                                                                                                                        |
+| fontSubset | boolean                 | Optional, defaults to `true`. The only setting the native entry point accepts: the ICC output intent is produced by the SDK itself. |
+| result     | boolean                 | Whether the converted copy was written.                                                                                                                 |
+
+Error codes: `INVALID_OUTPUT_PATH`, `DOCUMENT_INVALID`, `ENCRYPTED_DOCUMENT_NOT_CONVERTIBLE`,
+`PDF_STANDARD_CONVERT_FAILED`, `PDF_STANDARD_SAVE_FAILED`, `UNSUPPORTED_PDF_STANDARD` (iOS only).
+
+```tsx
+await pdfReaderRef.current?._pdfDocument.convertToPdfStandard(
+  '/documents/contract-pdfa2b.pdf',
+  'pdf_a_2b',
+);
+```
 ### Viewer
 
 #### setMargins
@@ -1944,6 +2010,69 @@ Hides the digital signature status bar if it is currently displayed.
 await pdfReaderRef.current?.hideDigitalSignStatusView();
 ```
 
+### Document Processing (3.2.0)
+
+#### Header & Footer, Bates, and Background
+
+These settings are written into the document; the reader refreshes once after each update or clear. `pages` are zero-based page indexes. Colors use `#RRGGBB`.
+
+- `CPDFDocument.getHeaderFooter()`, `updateHeaderFooter(value)`, `clearHeaderFooter()` manage text in six slots (`header_left`, `header_center`, `header_right`, `footer_left`, `footer_center`, `footer_right`). `<<1>>` in a slot's text is replaced with the page number.
+- `CPDFDocument.getBates()`, `updateBates(value)`, `clearBates()` manage Bates numbering with the same six slots, plus `pageOffset` and `rule`. On iOS the SDK always uses `pageOffset: 0` and `rule: 'v2'`.
+- `CPDFDocument.getBackground()`, `updateBackground(value)`, `clearBackground()` manage a `color` or `image` background with opacity, scale, rotation, alignment, offsets, and whether it is shown when viewing and printing.
+
+The getters resolve `null` when the document has no such content.
+
+Background `rotation` uses clockwise degrees from `0` to `360` on both platforms, like watermarks. For example, `rotation: 15` tilts an image background 15° clockwise. Android converts this to the core SDK's counterclockwise radians internally. Reapply the intended degree value to backgrounds created with the earlier Android bridge, which incorrectly passed degrees as radians. The iOS 3.2.0 SDK rounds rotation readback upward and can report 16° after setting 15°; this does not change the rendered angle.
+
+```tsx
+await pdfReaderRef.current?._pdfDocument.updateHeaderFooter({
+  pages: [0, 1, 2],
+  margin: { left: 36, top: 36, right: 36, bottom: 36 },
+  slots: [{ position: 'footer_center', text: 'Page <<1>>', fontSize: 10 }],
+});
+```
+
+#### Optimization
+
+`optimizeSaveAsCopy(outputPath, options?, fontSubset?, onProgress?)` writes an optimized copy without changing the source file. When `options` is omitted, the native defaults are used; `getOptimizeOptions()` returns them as a starting point. `onProgress(pageIndex)` is called for each processed page. `cancelOptimize()` stops the run in progress, which then resolves with `cancelled: true`.
+
+The opened document is reloaded from its source when the run ends, so unsaved changes are lost; save first. Only one run per reader may be in flight (on iOS, one across all readers); a second call rejects with `OPTIMIZE_ALREADY_RUNNING`.
+
+Image recompression is supported on Android and iOS and requires the `compress_images` flag. Each image group's `quality` takes precedence over `imageQuality`, including the default values returned by `getOptimizeOptions()`. Set all three group qualities when applying one quality level to the whole document. Lower values reduce image detail and file size; a quality of 100 skips image recompression.
+
+```tsx
+const options = await document.getOptimizeOptions();
+options.imageQuality = 25;
+for (const group of [options.colorImageOptions, options.grayscaleImageOptions, options.monochromeImageOptions]) {
+  group.quality = 25;
+}
+await document.optimizeSaveAsCopy('/documents/compressed.pdf', options);
+```
+
+Platform differences: iOS ignores `fontSubset`; on iOS the `flate` algorithm maps to JPEG 2000, and `none` / `run_length` keep that image group's default. Earlier iOS 3.2.0 development builds had an image recompression defect; use a build containing the October 13, 2026 core-library update or later.
+
+Error codes: `DOCUMENT_INVALID`, `INVALID_OUTPUT_PATH`, `INVALID_OPTIMIZE_OPTIONS`, `OPTIMIZE_ALREADY_RUNNING`, `OPTIMIZE_FAILED`, `OPTIMIZE_RESTORE_FAILED`. `OPTIMIZE_RESTORE_FAILED` means the copy may have been written but the opened document could not be reloaded and still holds the optimized content; do not save it, close and reopen the document instead.
+
+#### Redaction
+
+`CPDFRedactAnnotation` marks an area for redaction. Add, read, update, and delete it through the normal annotation APIs (`CPDFDocument.addAnnotations`, `CPDFPage.getAnnotations`, `CPDFDocument.updateAnnotation`, `CPDFPage.removeAnnotation`). Its properties are `overlayText`, `fillColor`, `outlineColor` (absent when there is no border), `textAttribute` (overlay text font, size, and color), and `alignment`. Colors use `#RRGGBB`.
+
+`CPDFDocument.applyRedaction(annotation)` applies one redaction read from the document and `applyRedactions()` applies all of them. Applying is permanent: the covered content is removed and can no longer be displayed, searched, or copied, and the area is filled with `fillColor` and `overlayText`. Both resolve `false` when there is nothing to apply; `applyRedaction` rejects a redaction without `page` and `uuid`. Ask the user to confirm before applying, and save the document to keep the result.
+
+#### Certificates
+
+`ComPDFKit.generatePkcs12Certificate(request)`, `checkPkcs12CertificatePassword(path, password)`, `loadPkcs12Certificate(path, password)`, and `addTrustedCertificate(path, password)` create, validate, inspect, and trust PKCS#12 certificates. `configureTrustedCertificateDirectories(options)` rejects with `UNSUPPORTED_CERTIFICATE_DIRECTORY_CONFIGURATION` on both platforms because the native SDKs manage certificate directories inside the application sandbox. Passwords are runtime-only values and must not be persisted or logged.
+
+In the example app, open **Security → Certificate Management**. Generate a development certificate or choose an existing `.p12` / `.pfx` file, then select **Unlock certificate** to load its metadata. **View certificate details** shows its identity, validity, and fingerprints. Add it to the trusted certificates only after confirming the trust dialog. Generated files use the temporary directory; selected files are copied to the app cache before native access. The example holds the password in memory until the certificate is replaced or the workflow is closed.
+
+`checkPkcs12CertificatePassword()` returning `false` does not uniquely identify an incorrect password: unreadable, damaged, or unsupported PKCS#12 files can produce the same result. The current iOS 3.2.0 binary was verified to reject a legacy RC2-40/3DES PKCS#12 file that Apple Security can import with the same password. The example therefore reports an opening failure that includes password and format compatibility as possible causes. Repeatedly changing the password will not resolve unsupported certificate encryption.
+
+#### Digital Signatures
+
+`CPDFDocument.getDigitalSignatures()` lists the signatures in the document with their bounds, DocMDP permission (`CPDFSignaturePermission`), signers, and signer certificates. Post-signing `modifications` are reported on iOS only; Android returns an empty list. `verifyDigitalSignature(index)` reports signature validity, document integrity, certificate trust and expiry, and timestamp trust. `writeSignature(pageIndex, uuid, outputPath, config)` signs a signature field with a PKCS#12 certificate and writes a new file without overwriting the current document.
+
+Error codes: `invalid_document`, `signature_widget_not_found`, `certificate_not_found`, `invalid_certificate_password`, `invalid_signature_config`, `invalid_output_path`, `signature_write_failed`, `signature_verification_failed`. On iOS, certificate `keyType` is empty because the SDK does not expose the public-key type.
+
 ### ContentEditor
 
 #### changeEditType
@@ -1999,3 +2128,29 @@ await historyManager.undo();
 // Perform a redo operation
 await historyManager.redo();
 ```
+
+
+### Signature timestamps and long-term validation
+
+`CPDFSignatureWidget.isSigned` is a read-only native state. It is undefined on older bridges; do not interpret undefined as an unsigned field. Intercept `signaturesFields` actions and operate on the selected widget's page and UUID. See the [field-driven example](example/src/features/security/digital_signature/README.md).
+
+`CPDFSignatureConfig.timestampServerUrl` optionally requests an embedded RFC 3161 timestamp on Android/iOS. Use an absolute HTTP(S) URL. Network or timestamp failures reject; no fallback to an untimestamped signature occurs. `appearance.content` accepts either the existing key/value array or a multiline string.
+
+`verifyDigitalSignature(signatureIndex)` uses the native index returned with metadata, not a filtered list position. Its additional optional fields are `timestampSource` (0 none, 1 local clock, 2 embedded, 3 document), `embeddedTimestampValid`, and `ltvEnabled`. Missing fields mean unavailable. Existing verification booleans retain their semantics.
+
+```ts
+const readiness = await document.getLtvReadiness();
+// Readiness describes document evidence; it does not establish signer trust.
+const result = await document.addSignatureLtv('/tmp/signed-ltv.pdf', {
+  trustedCertificatePath: '/tmp/signer-chain-root.pem',
+  appendDocumentTimestamp: true,
+  timestampServerUrl: 'http://timestamp.digicert.com',
+  timestampOutputPath: '/tmp/signed-lta.pdf',
+});
+if (result.success) {
+  // Inspect warnings and confirm the final output exists before opening it.
+  const finalPath = result.finalPath;
+}
+```
+
+Save pending reader edits first (`await reader.save()`). LTV reads the saved source and requires local output files in existing directories, distinct from the source and each other. `ocspUrls`/`crlUrls` optionally provide evidence sources. Results include native errors/warnings; failed runs expose no usable output path. These APIs require matching 3.2.0 native builds with LTV/PAdES support. The iOS development sample uses the existing local SDK Podfile option.

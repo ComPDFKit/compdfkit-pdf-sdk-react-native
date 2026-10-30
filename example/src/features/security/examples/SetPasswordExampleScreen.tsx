@@ -20,7 +20,6 @@ export default function SetPasswordExampleScreen() {
   const [saving, setSaving] = useState(false);
   const [reader, setReader] = useState<CPDFReaderView | null>(null);
   const [userPassword, setUserPassword] = useState('');
-  const [ownerPassword, setOwnerPassword] = useState('');
   const [toastMessage, setToastMessage] = useState('');
 
   const closeDialog = () => {
@@ -31,22 +30,17 @@ export default function SetPasswordExampleScreen() {
     setDialogVisible(false);
     setReader(null);
     setUserPassword('');
-    setOwnerPassword('');
   };
 
   const openDialog = (nextReader: CPDFReaderView) => {
     setReader(nextReader);
     setUserPassword('');
-    setOwnerPassword('');
     setDialogVisible(true);
   };
 
   const handleConfirm = async () => {
-    const trimmedUserPassword = userPassword.trim();
-    const trimmedOwnerPassword = ownerPassword.trim();
-
-    if (!trimmedUserPassword || !trimmedOwnerPassword) {
-      setToastMessage('Please enter both the user password and permissions password.');
+    if (!userPassword) {
+      setToastMessage('Please enter a password.');
       return;
     }
 
@@ -59,8 +53,8 @@ export default function SetPasswordExampleScreen() {
       setSaving(true);
       const success = await setDocumentPassword(
         reader,
-        trimmedUserPassword,
-        trimmedOwnerPassword,
+        userPassword,
+        userPassword,
       );
 
       setToastMessage(success ? 'Password applied successfully.' : 'Failed to apply password.');
@@ -81,7 +75,7 @@ export default function SetPasswordExampleScreen() {
     <>
       <SecurityExampleScaffold
         title="Set Password"
-        subtitle="Apply owner and user passwords with AES128 encryption."
+        subtitle="Apply user and owner passwords with AES256 encryption."
         actions={[
           {
             key: 'set-password',
@@ -94,9 +88,7 @@ export default function SetPasswordExampleScreen() {
           visible={dialogVisible}
           saving={saving}
           userPassword={userPassword}
-          ownerPassword={ownerPassword}
           onChangeUserPassword={setUserPassword}
-          onChangeOwnerPassword={setOwnerPassword}
           onClose={closeDialog}
           onConfirm={() => {
             void handleConfirm();

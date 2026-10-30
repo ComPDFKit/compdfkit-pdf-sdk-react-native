@@ -13,6 +13,7 @@
 import { CPDFAnnotationConfig } from "./config/CPDFAnnotationConfig";
 import { CPDFContentEditorConfig } from "./config/CPDFContentEditorConfig";
 import { CPDFContextMenuConfig } from "./config/CPDFContextMenuConfig";
+import { CPDFCreationConfig } from "./config/CPDFCreationConfig";
 import { CPDFFormConfig } from "./config/CPDFFormConfig";
 import { CPDFGlobalConfig } from "./config/CPDFGlobalConfig";
 import { CPDFModeConfig } from "./config/CPDFModeConfig";
@@ -91,5 +92,11 @@ export class CPDFConfiguration {
    * Context menu configuration. Customizes context menu options for annotations, forms, text, etc. in various modes.
    */
   contextMenuConfig?: CPDFContextMenuConfig;
+
+  /**
+   * Creation policy for annotations and form fields created with the reader tools: whether the
+   * tool stays active and whether the new object is selected.
+   */
+  creationConfig?: CPDFCreationConfig;
 }
 

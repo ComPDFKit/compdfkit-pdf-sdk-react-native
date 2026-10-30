@@ -75,6 +75,21 @@ example/
    yarn run android
    ```
 
+   On iOS, `yarn ios` reuses a booted simulator, or launches an available simulator
+   when none is running. React Native Community CLI 20.2.0 supports both the
+   Simulator app in older Xcode versions and Device Hub in Xcode 27 and later.
+   After updating this checkout, run `yarn install` in `example/` to install the
+   pinned CLI version.
+
+   To choose a specific simulator:
+
+   ```bash
+   xcrun simctl list devices available
+   yarn ios --simulator "iPhone 16 Pro"
+   # Or use a UDID from the list above:
+   yarn ios --udid <simulator-udid>
+   ```
+
 ## Key Patterns
 
 - **Scaffold pattern**: Each feature category provides a shared `{Feature}ExampleScaffold` that handles toolbar, PDF reader initialization, and navigation. Individual example screens only need to define their specific SDK operations.

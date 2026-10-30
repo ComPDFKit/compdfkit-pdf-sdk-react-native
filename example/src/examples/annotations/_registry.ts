@@ -22,6 +22,18 @@ export const annotationsCategory: CategoryInfo = {
   accentColor: '#7C3AED',
   examples: [
     {
+      id: 'redaction-annotation',
+      name: 'Redaction Annotation',
+      description: 'Create, inspect, update, and apply redactions',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.securityRedaction,
+      visual: {
+        badge: 'RA',
+        accentColor: '#B71C1C',
+        backgroundColor: '#FFEBEE',
+      },
+    },
+    {
       id: 'add-annotation',
       name: 'Add Annotation',
       description: 'Add common annotation types',

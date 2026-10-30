@@ -84,7 +84,7 @@ export class CPDFAnnotationHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.annotationCanUndo(tag);
-            } catch (e) {
+            } catch {
                 return false;
             }
         }
@@ -106,7 +106,7 @@ export class CPDFAnnotationHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.annotationCanRedo(tag);
-            } catch (e) {
+            } catch {
                 return false;
             }
         }
@@ -129,7 +129,7 @@ export class CPDFAnnotationHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.annotationUndo(tag);
-            } catch (e) {
+            } catch {
                 return Promise.reject(new Error('Unable to undo the annotation action'));
             }
         }
@@ -152,7 +152,7 @@ export class CPDFAnnotationHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.annotationRedo(tag);
-            } catch (e) {
+            } catch {
                 return Promise.reject(new Error('Unable to redo the annotation action'));
             }
         }

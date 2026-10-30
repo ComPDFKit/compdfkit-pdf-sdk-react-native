@@ -82,7 +82,7 @@ export async function getDocumentPermissionsSnapshot(
 }
 
 /**
- * Encrypts the document with user and owner passwords using AES-128.
+ * Encrypts the document with the same user and owner password using AES-256.
  *
  * `CPDFDocument.setPassword(userPassword, ownerPassword, allowPrinting,
  * allowCopying, algorithm)` applies PDF encryption. The `userPassword` is
@@ -98,7 +98,7 @@ export async function setDocumentPassword(
     ownerPassword,
     false,
     false,
-    CPDFDocumentEncryptAlgo.AES128,
+    CPDFDocumentEncryptAlgo.AES256,
   );
   Logger.log('setPassword:', result);
   return result;

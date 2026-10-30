@@ -208,7 +208,7 @@ function createStyles(appTheme: ReturnType<typeof useAppTheme>) {
       justifyContent: 'flex-end',
     },
     backdrop: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       backgroundColor: 'rgba(15, 23, 42, 0.28)',
     },
     container: {

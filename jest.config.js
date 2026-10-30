@@ -1,6 +1,6 @@
 module.exports = {
-  preset: 'react-native',
-  roots: ['<rootDir>/src'],
+  preset: '@react-native/jest-preset',
+  roots: ['<rootDir>/src', '<rootDir>/example/src'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
   transformIgnorePatterns: [

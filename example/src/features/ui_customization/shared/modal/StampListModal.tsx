@@ -120,7 +120,7 @@ export const StampListModal: React.FC<StampListModalProps> = ({
       );
       onSelectCustom(filePath);
       onClose();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to copy stamp file, please try again');
     } finally {
       setLoading(false);

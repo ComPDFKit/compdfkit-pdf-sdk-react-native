@@ -9,11 +9,11 @@
     "**/examples/**/*"
   ],
   "name": "ComPDF React Native",
+  "projectDocuments": [
+    "CONFIGURATION.md"
+  ],
   "readme": "typedoc.md",
   "customCss": "typedoc.css",
-  "projectDocuments": [
-    "React Native Integration Guide.md"
-  ],
   "includeVersion": true,
   "excludeInternal": true,
   "excludePrivate": true,
@@ -26,7 +26,10 @@
   "intentionallyNotExported": [
     "ComPDFKitModule",
     "NativeWatermarkPayload",
-    "CPDFWatermarkPatch"
+    "CPDFWatermarkPatch",
+    "NativeBackgroundPayload",
+    "NativeBatesPayload",
+    "NativeHeaderFooterPayload"
   ],
   "disableSources": true,
   "hideGenerator": true,

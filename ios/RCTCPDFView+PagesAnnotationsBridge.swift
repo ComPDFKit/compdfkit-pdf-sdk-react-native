@@ -75,6 +75,43 @@ extension RCTCPDFView {
     completionHandler(true)
   }
 
+  func applyRedaction(pageIndex: Int, uuid: String, completionHandler: @escaping (Bool) -> Void) {
+    let page = getPage(UInt(pageIndex))
+    let pageUtil = RCTCPDFPageUtil(page: page)
+    guard let redaction = pageUtil.getAnnotation(formUUID: uuid) as? CPDFRedactAnnotation else {
+      completionHandler(false)
+      return
+    }
+    let count = page.annotations.filter { $0 is CPDFRedactAnnotation }.count
+    redaction.applyRedaction()
+    page.reloadAnnotations()
+    pdfViewController?.pdfListView?.layoutDocumentView()
+    completionHandler(page.annotations.filter { $0 is CPDFRedactAnnotation }.count < count)
+  }
+
+  func applyRedactions(completionHandler: @escaping (Bool) -> Void) {
+    guard let document = pdfViewController?.pdfListView?.document else {
+      completionHandler(false)
+      return
+    }
+    var count = 0
+    for index in 0..<document.pageCount {
+      if let page = document.page(at: UInt(index)) {
+        count += page.annotations.filter { $0 is CPDFRedactAnnotation }.count
+      }
+    }
+    document.applyRedactions()
+    var remaining = 0
+    for index in 0..<document.pageCount {
+      if let page = document.page(at: UInt(index)) {
+        page.reloadAnnotations()
+        remaining += page.annotations.filter { $0 is CPDFRedactAnnotation }.count
+      }
+    }
+    pdfViewController?.pdfListView?.layoutDocumentView()
+    completionHandler(remaining < count)
+  }
+
   func addAnnotationReply(
     pageIndex: Int,
     annotId: String,

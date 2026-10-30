@@ -79,6 +79,8 @@ export function ToolbarActionMenu({ actions }: ToolbarActionMenuProps) {
     return () => {
       cancelAnimationFrame(frame);
     };
+    // The open animation only needs to restart when the menu becomes visible.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuVisible]);
 
   if (actions.length === 0) {
@@ -263,7 +265,7 @@ function createStyles(appTheme: ReturnType<typeof useAppTheme>) {
       flex: 1,
     },
     backdropPressTarget: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
     },
     backdrop: {
       flex: 1,

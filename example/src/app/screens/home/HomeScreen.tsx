@@ -11,7 +11,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { allCategories } from '../../../examples/registry';
 import { getSupportedExamples } from '../../../examples/runtime';
@@ -26,6 +26,7 @@ export function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
   const appTheme = useAppTheme();
   const styles = createStyles(appTheme);
+  const insets = useSafeAreaInsets();
 
   const visibleCategories = allCategories.map(category => ({
     ...category,
@@ -33,7 +34,7 @@ export function HomeScreen() {
   }));
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <HomeHeader
         title="ComPDFKit"
         subtitle="ComPDFKit React Native Demo"
@@ -42,7 +43,10 @@ export function HomeScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: appTheme.spacing.xxl + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Examples</Text>

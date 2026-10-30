@@ -24,9 +24,7 @@ type SetPasswordModalProps = {
   visible: boolean;
   saving: boolean;
   userPassword: string;
-  ownerPassword: string;
   onChangeUserPassword: (value: string) => void;
-  onChangeOwnerPassword: (value: string) => void;
   onClose: () => void;
   onConfirm: () => void;
 };
@@ -35,9 +33,7 @@ export function SetPasswordModal({
   visible,
   saving,
   userPassword,
-  ownerPassword,
   onChangeUserPassword,
-  onChangeOwnerPassword,
   onClose,
   onConfirm,
 }: SetPasswordModalProps) {
@@ -55,38 +51,22 @@ export function SetPasswordModal({
         <View style={styles.dialogCard}>
           <Text style={styles.dialogTitle}>Set Document Password</Text>
           <Text style={styles.dialogMessage}>
-            Enter the password required to open the document and the permissions password used
-            for owner access.
+            The password is used for both opening the document and owner access.
           </Text>
 
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>User Password</Text>
+            <Text style={styles.fieldLabel}>Password</Text>
             <TextInput
               style={styles.input}
               value={userPassword}
               onChangeText={onChangeUserPassword}
-              placeholder="Enter user password"
+              placeholder="Enter password"
               placeholderTextColor={appTheme.colors.textSecondary}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
               editable={!saving}
               autoFocus
-            />
-          </View>
-
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Permissions Password</Text>
-            <TextInput
-              style={styles.input}
-              value={ownerPassword}
-              onChangeText={onChangeOwnerPassword}
-              placeholder="Enter permissions password"
-              placeholderTextColor={appTheme.colors.textSecondary}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!saving}
             />
           </View>
 

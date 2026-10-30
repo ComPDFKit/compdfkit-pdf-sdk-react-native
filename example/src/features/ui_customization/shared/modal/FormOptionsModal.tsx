@@ -17,8 +17,8 @@ import {
   StyleSheet,
   FlatList,
   Alert,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CPDFWidgetItem } from '@compdfkit_pdf_sdk/react_native';
 
 interface FormOptionsModalProps {
@@ -37,7 +37,7 @@ export const FormOptionsModal: React.FC<FormOptionsModalProps> = ({
   onConfirm,
 }) => {
   const [editingOptions, setEditingOptions] = useState<CPDFWidgetItem[]>([]);
-  
+
   // 'list' | 'edit' | 'add'
   const [viewMode, setViewMode] = useState<'list' | 'edit' | 'add'>('list');
   const [currentEditIndex, setCurrentEditIndex] = useState<number>(-1);

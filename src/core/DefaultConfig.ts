@@ -127,6 +127,10 @@ export function getDefaultConfig(
 ): string {
   const isAndroid = Platform.OS === "android";
   const defaultConfig: CPDFConfiguration = {
+    creationConfig: {
+      continuousCreation: true,
+      autoSelectCreatedAnnotation: true,
+    },
     modeConfig: {
       initialViewMode: CPDFViewMode.VIEWER,
       uiVisibilityMode: "automatic",

@@ -48,16 +48,18 @@ class CPDFPageTextUtil {
     }
     return selection.selectionsByLine.enumerated().map { index, line in
       let bounds = line.bounds
+      // PDF page space (origin at bottom-left): top is maxY and bottom is minY,
+      // matching Android and the other rect APIs on iOS.
       return [
         "pageIndex": pageIndex,
         "lineIndex": index,
         "location": line.range.location,
         "length": line.range.length,
         "rect": [
-          "left": bounds.origin.x,
-          "top": bounds.origin.y,
-          "right": bounds.origin.x + bounds.size.width,
-          "bottom": bounds.origin.y + bounds.size.height,
+          "left": bounds.minX,
+          "top": bounds.maxY,
+          "right": bounds.maxX,
+          "bottom": bounds.minY,
         ],
       ]
     }

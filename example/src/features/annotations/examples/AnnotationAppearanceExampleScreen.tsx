@@ -619,7 +619,7 @@ export default function AnnotationAppearanceExampleScreen() {
 function createStyles(appTheme: ReturnType<typeof useAppTheme>) {
   return StyleSheet.create({
     overlayRoot: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       justifyContent: 'flex-end',
       paddingHorizontal: appTheme.spacing.md,
       paddingBottom: appTheme.spacing.md,

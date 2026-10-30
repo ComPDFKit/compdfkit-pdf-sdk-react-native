@@ -11,6 +11,7 @@ import { NativeModules } from "react-native";
 import CPDFFontName from "../document/CPDFFontName";
 import type { CPDFConfiguration } from "../configuration/CPDFConfiguration";
 import { getDefaultConfig } from "./DefaultConfig";
+import { CPDFCertificateInfo, CPDFCertificateRequest, fromNativeCertificateInfo, toNativeCertificateRequest } from "../signature/CPDFCertificate";
 
 /** @internal */
 type NativeCPDFFontName = {
@@ -190,6 +191,11 @@ interface NativeComPDFKitModule {
    * Mainly used to configure fonts for FreeText annotations and content editing.
    */
   getFonts(): Promise<NativeCPDFFontName[]>;
+  generatePkcs12Certificate(request: object): Promise<boolean>;
+  checkPkcs12CertificatePassword(path: string, password: string): Promise<boolean>;
+  loadPkcs12Certificate(path: string, password: string): Promise<any>;
+  configureTrustedCertificateDirectories(options: object): Promise<boolean>;
+  addTrustedCertificate(path: string, password: string): Promise<boolean>;
 }
 
 /**
@@ -234,6 +240,7 @@ const nativeMethodNames = [
   "setImportFontDir",
   "updateImportFontDir",
   "getFonts",
+  "generatePkcs12Certificate", "checkPkcs12CertificatePassword", "loadPkcs12Certificate", "configureTrustedCertificateDirectories", "addTrustedCertificate",
 ] as const;
 
 const nativeComPDFKit = NativeModules.ComPDFKit as
@@ -307,6 +314,11 @@ const comPDFKitBase: Partial<ComPDFKitModule> = {
       ? fonts.map((font) => CPDFFontName.fromJson(font))
       : [];
   },
+  async generatePkcs12Certificate(request: CPDFCertificateRequest) { return getRequiredNativeMethod("generatePkcs12Certificate")(toNativeCertificateRequest(request)); },
+  async checkPkcs12CertificatePassword(path: string, password: string) { if (!path) throw new Error("Certificate path cannot be empty."); return getRequiredNativeMethod("checkPkcs12CertificatePassword")(path, password); },
+  async loadPkcs12Certificate(path: string, password: string): Promise<CPDFCertificateInfo | null> { if (!path) throw new Error("Certificate path cannot be empty."); const value = await getRequiredNativeMethod("loadPkcs12Certificate")(path, password); return value == null ? null : fromNativeCertificateInfo(value); },
+  async configureTrustedCertificateDirectories(options: { trustedDirectory?: string; exportDirectory?: string } = {}) { return getRequiredNativeMethod("configureTrustedCertificateDirectories")({ trusted_directory: options.trustedDirectory, export_directory: options.exportDirectory }); },
+  async addTrustedCertificate(path: string, password: string) { if (!path) throw new Error("Certificate path cannot be empty."); return getRequiredNativeMethod("addTrustedCertificate")(path, password); },
 };
 
 const ComPDFKit = new Proxy(comPDFKitBase, {

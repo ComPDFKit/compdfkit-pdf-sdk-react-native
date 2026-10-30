@@ -15,7 +15,7 @@ import ComPDFKit
 
 extension RCTDocumentManager {
   // MARK: - Pages Methods
-  
+
   @objc(getAnnotations: withPageIndex: withResolver: withRejecter:)
   func getAnnotations(
     forCPDFViewTag tag : Int,
@@ -29,7 +29,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getForms: withPageIndex: withResolver: withRejecter:)
   func getForms(
     forCPDFViewTag tag : Int,
@@ -43,7 +43,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     setWidgetIsChecked: withPage: withUuid: withIsChecked: withResolver: withRejecter:
   )
@@ -60,7 +60,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(
     setTextWidgetText: withPage: withUuid: withText: withResolver: withRejecter:
   )
@@ -77,7 +77,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(
     addWidgetImageSignature: withPage: withUuid: withImagePath: withResolver: withRejecter:
   )
@@ -95,7 +95,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(updateAp: withPage: withUuid: withResolver: withRejecter:)
   func updateAp(
     forCPDFViewTag tag : Int,
@@ -109,7 +109,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(reloadPages: withResolver: withRejecter:)
   func reloadPages(
     forCPDFViewTag tag : Int,
@@ -121,7 +121,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(
     removeAnnotation: withPageIndex: withAnnotId: withResolver: withRejecter:
   )
@@ -136,6 +136,30 @@ extension RCTDocumentManager {
       view.removeAnnotation(pageIndex: pageIndex, annotId: annotId) { success in
         resolve(success)
       }
+    }
+  }
+
+  @objc(applyRedaction: withPageIndex: withUuid: withResolver: withRejecter:)
+  func applyRedaction(
+    forCPDFViewTag tag: Int,
+    pageIndex: Int,
+    uuid: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.applyRedaction(pageIndex: pageIndex, uuid: uuid) { success in resolve(success) }
+    }
+  }
+
+  @objc(applyRedactions: withResolver: withRejecter:)
+  func applyRedactions(
+    forCPDFViewTag tag: Int,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    withCPDFView(tag: tag, reject: reject) { view in
+      view.applyRedactions { success in resolve(success) }
     }
   }
 
@@ -300,7 +324,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(removeWidget: withPageIndex: withWidgetId: withResolver: withRejecter:)
   func removeWidget(
     forCPDFViewTag tag : Int,
@@ -315,9 +339,9 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   // MARK: - Annotation Methods
-  
+
   @objc(setAnnotationMode: withMode: withResolver: withRejecter:)
   func setAnnotationMode(
     forCPDFViewTag tag : Int,
@@ -330,7 +354,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(getAnnotationMode: withResolver: withRejecter:)
   func getAnnotationMode(
     forCPDFViewTag tag : Int,
@@ -343,7 +367,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(annotationCanRedo: withResolver: withRejecter:)
   func annotationCanRedo(
     forCPDFViewTag tag : Int,
@@ -356,7 +380,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(annotationCanUndo: withResolver: withRejecter:)
   func annotationCanUndo(
     forCPDFViewTag tag : Int,
@@ -369,7 +393,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(annotationUndo:withResolver: withRejecter:)
   func annotationUndo(
     forCPDFViewTag tag : Int,
@@ -381,7 +405,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(annotationRedo: withResolver: withRejecter:)
   func annotationRedo(
     forCPDFViewTag tag : Int,
@@ -393,7 +417,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(setFormCreationMode: withMode: withResolver: withRejecter:)
   func setFormCreationMode(
     forCPDFViewTag tag : Int,
@@ -406,7 +430,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(getFormCreationMode: withResolver: withRejecter:)
   func getFormCreationMode(
     forCPDFViewTag tag : Int,
@@ -419,7 +443,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(verifyDigitalSignatureStatus: withResolver: withRejecter:)
   func verifyDigitalSignatureStatus(
     forCPDFViewTag tag : Int,
@@ -431,7 +455,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(hideDigitalSignStatusView: withResolver: withRejecter:)
   func hideDigitalSignStatusView(
     forCPDFViewTag tag : Int,
@@ -443,7 +467,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(clearDisplayRect: withResolver: withRejecter:)
   func clearDisplayRect(
     forCPDFViewTag tag : Int,
@@ -455,7 +479,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(dismissContextMenu: withResolver: withRejecter:)
   func dismissContextMenu(
     forCPDFViewTag tag : Int,
@@ -467,7 +491,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(showSearchTextView: withResolver: withRejecter:)
   func showSearchTextView(
     forCPDFViewTag tag : Int,
@@ -479,7 +503,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(hideSearchTextView: withResolver: withRejecter:)
   func hideSearchTextView(
     forCPDFViewTag tag : Int,
@@ -491,7 +515,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(saveCurrentInk: withResolver: withRejecter:)
   func saveCurrentInk(
     forCPDFViewTag tag : Int,
@@ -503,7 +527,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(saveCurrentPencil: withResolver: withRejecter:)
   func saveCurrentPencil(
     forCPDFViewTag tag : Int,
@@ -515,7 +539,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(changeEditType: withEditTypes: withResolver: withRejecter:)
   func changeEditType(
     forCPDFViewTag tag : Int,
@@ -528,7 +552,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(editorCanUndo: withResolver: withRejecter:)
   func editorCanUndo(
     forCPDFViewTag tag : Int,
@@ -541,7 +565,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(editorCanRedo: withResolver: withRejecter:)
   func editorCanRedo(
     forCPDFViewTag tag : Int,
@@ -554,7 +578,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(editorUndo: withResolver: withRejecter:)
   func editorUndo(
     forCPDFViewTag tag : Int,
@@ -566,7 +590,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(editorRedo: withResolver: withRejecter:)
   func editorRedo(
     forCPDFViewTag tag : Int,
@@ -578,7 +602,7 @@ extension RCTDocumentManager {
       resolve(nil)
     }
   }
-  
+
   @objc(searchText: withText: withSearchOption: withResolver: withRejecter:)
   func searchText(
     forCPDFViewTag tag: Int,
@@ -593,7 +617,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(selection: range: withResolver: withRejecter:)
   func selection(
     forCPDFViewTag tag: Int,
@@ -611,7 +635,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(clearSearch: withResolver: withRejecter:)
   func clearSearch(
     forCPDFViewTag tag: Int,
@@ -628,7 +652,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     getSearchText: withPageIndex: withLocation: withLength: withResolver: withRejecter:
   )
@@ -689,7 +713,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getPageSize: withPageIndex: withResolver: withRejecter:)
   func getPageSize(
     forCPDFViewTag tag: Int,
@@ -703,7 +727,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     renderPage: withPageIndex: withWidth: withHeight: withBackgroundColor: withDrawAnnot: withDrawForm: withPageCompression: withResolver: withRejecter:
   )
@@ -752,7 +776,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(getPageRotation: withPageIndex: withResolver: withRejecter:)
   func getPageRotation(
     forCPDFViewTag tag: Int,
@@ -766,7 +790,7 @@ extension RCTDocumentManager {
       }
     }
   }
-  
+
   @objc(
     setPageRotation: withPageIndex: withRotation: withResolver: withRejecter:
   )

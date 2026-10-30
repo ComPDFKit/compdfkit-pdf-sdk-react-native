@@ -146,7 +146,8 @@ This example uses native bundled file paths. If you run `expo prebuild --clean` 
 Replace the contents of `index.tsx` with the following example:
 
 ```tsx
-import { Platform, SafeAreaView } from 'react-native';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Component } from 'react';
 import { ComPDFKit, CPDFReaderView } from '@compdfkit_pdf_sdk/react_native';
 
@@ -188,6 +189,8 @@ export default class HomeScreen extends Component<Props> {
 ```
 
 Before running the app, replace `androidLicense` and `iosLicense` with your actual ComPDFKit license values.
+
+`SafeAreaView` here comes from `react-native-safe-area-context` (install it with `npx expo install react-native-safe-area-context`). Apps targeting Android SDK 35 or higher are drawn edge-to-edge on Android 15 and later, and `CPDFReaderView` does not avoid the system bars by itself, so keep it inside the safe area. Otherwise its bottom toolbar ends up under the navigation bar. The `SafeAreaView` exported by `react-native` has no effect on Android.
 
 > Trial licenses for the ComPDFKit React Native SDK are available in the [GitHub example project](https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native/blob/5b16c6af7561941b85256beaa05268145faa04a7/example/App.tsx#L26) or by [contacting the ComPDFKit sales team](https://www.compdf.com/contact-sales).
 

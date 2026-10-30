@@ -12,7 +12,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   type AppTheme,
@@ -36,6 +36,7 @@ export function CategoryScreen() {
   const category = getCategoryById(route.params.categoryId);
   const appTheme = useAppTheme();
   const styles = createStyles(appTheme);
+  const insets = useSafeAreaInsets();
 
   const visibleExamples = category
     ? getSupportedExamples(category.examples)
@@ -43,7 +44,7 @@ export function CategoryScreen() {
 
   if (!category) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <AppToolbar title="Category" onBackPress={() => navigation.goBack()} />
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>Category not found</Text>
@@ -56,7 +57,7 @@ export function CategoryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <AppToolbar
         title={category.name}
         subtitle={category.description}
@@ -64,7 +65,10 @@ export function CategoryScreen() {
       />
       <FlatList
         style={styles.list}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: appTheme.spacing.xxl + insets.bottom },
+        ]}
         data={visibleExamples}
         keyExtractor={item => item.id}
         ListHeaderComponent={

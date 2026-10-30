@@ -22,6 +22,7 @@ import com.compdfkit.core.annotation.CPDFStampAnnotation.TextStampShape;
 import com.compdfkit.core.annotation.CPDFTextAlignment;
 import com.compdfkit.core.annotation.form.CPDFWidget.CheckStyle;
 import com.compdfkit.core.annotation.form.CPDFWidget.WidgetType;
+import com.compdfkit.core.document.CPDFDocument.PDFDocumentType;
 import com.compdfkit.core.document.action.CPDFAction;
 import com.compdfkit.core.document.action.CPDFAction.ActionType;
 import com.compdfkit.core.edit.CPDFEditTextArea.PDFEditAlignType;
@@ -29,7 +30,9 @@ import com.compdfkit.core.font.CPDFFont;
 import com.compdfkit.core.watermark.CPDFWatermark;
 import com.compdfkit.tools.common.views.pdfproperties.CAnnotationType;
 import com.compdfkit.tools.common.views.pdfproperties.pdfstyle.CStyleType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides enum conversion helpers between native values and React Native-friendly strings.
@@ -665,5 +668,48 @@ public class RnEnumConverter {
             default:
                 return StampType.UNKNOWN_STAMP;
         }
+    }
+
+    private static final Map<PDFDocumentType, String> PDF_STANDARD_TO_VALUE = new HashMap<>();
+    private static final Map<String, PDFDocumentType> VALUE_TO_PDF_STANDARD = new HashMap<>();
+
+    static {
+        registerPdfStandard(PDFDocumentType.PDFType, "pdf");
+        registerPdfStandard(PDFDocumentType.PDFTypeA1a, "pdf_a_1a");
+        registerPdfStandard(PDFDocumentType.PDFTypeA1b, "pdf_a_1b");
+        registerPdfStandard(PDFDocumentType.PDFTypeA2a, "pdf_a_2a");
+        registerPdfStandard(PDFDocumentType.PDFTypeA2u, "pdf_a_2u");
+        registerPdfStandard(PDFDocumentType.PDFTypeA2b, "pdf_a_2b");
+        registerPdfStandard(PDFDocumentType.PDFTypeA3a, "pdf_a_3a");
+        registerPdfStandard(PDFDocumentType.PDFTypeA3u, "pdf_a_3u");
+        registerPdfStandard(PDFDocumentType.PDFTypeA3b, "pdf_a_3b");
+        registerPdfStandard(PDFDocumentType.PDFTypeX1a, "pdf_x_1a");
+        registerPdfStandard(PDFDocumentType.PDFTypeX3, "pdf_x_3");
+        registerPdfStandard(PDFDocumentType.PDFTypeX4, "pdf_x_4");
+        registerPdfStandard(PDFDocumentType.PDFTypeE1, "pdf_e_1");
+        registerPdfStandard(PDFDocumentType.PDFTypeE2, "pdf_e_2");
+        registerPdfStandard(PDFDocumentType.PDFTypeUA1, "pdf_ua_1");
+        registerPdfStandard(PDFDocumentType.PDFTypeVT1, "pdf_vt_1");
+        registerPdfStandard(PDFDocumentType.PDFTypeVT2, "pdf_vt_2");
+    }
+
+    private static void registerPdfStandard(PDFDocumentType type, String value) {
+        PDF_STANDARD_TO_VALUE.put(type, value);
+        VALUE_TO_PDF_STANDARD.put(value, type);
+    }
+
+    /**
+     * Returns the bridge string for the given PDF standard, {@code "pdf"} when unknown.
+     */
+    public static String pdfStandardTypeToString(PDFDocumentType type) {
+        String value = type == null ? null : PDF_STANDARD_TO_VALUE.get(type);
+        return value == null ? "pdf" : value;
+    }
+
+    /**
+     * Returns the PDF standard for the given bridge string, {@code null} when unknown.
+     */
+    public static PDFDocumentType stringToPdfStandardType(String value) {
+        return value == null ? null : VALUE_TO_PDF_STANDARD.get(value);
     }
 }

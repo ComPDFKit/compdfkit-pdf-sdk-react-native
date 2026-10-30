@@ -8,7 +8,7 @@
  */
 
 import React, { ReactNode, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native';
 import PDFReaderContext, { CPDFReaderView, ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,9 +16,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { AppStackParamList } from '../../../app/navigation/routes';
 import { AppToolbar } from '../../../widgets/common/AppToolbar';
 import { ToolbarActionMenu } from '../../../widgets/common/ToolbarActionMenu';
+import { PlatformNotice } from '../../../widgets/common/PlatformNotice';
+import { describeError } from '../../../util/exampleError';
 import { getDefaultSecurityDocument } from './defaultDocument';
 
 type SecurityRouteName =
+  | 'CPDFBatesExample'
+  | 'CPDFBackgroundExample'
+  | 'CPDFRedactionExample'
+  | 'CPDFCertificatesExample'
+  | 'CPDFSignaturesExample'
   | 'CPDFSetPasswordExample'
   | 'CPDFRemovePasswordExample'
   | 'CPDFWatermarkOperationsExample'
@@ -37,6 +44,9 @@ type SecurityExampleScaffoldProps = {
   title: string;
   subtitle: string;
   actions?: ActionButton[];
+  /** Platform differences shown in a notice bar above the reader. */
+  platformNotice?: { ios?: string; android?: string };
+  beforeViewer?: ReactNode;
   children?: ReactNode;
 };
 
@@ -44,16 +54,36 @@ export function SecurityExampleScaffold({
   title,
   subtitle,
   actions = [],
+  platformNotice,
+  beforeViewer,
   children,
 }: SecurityExampleScaffoldProps) {
   const pdfReaderRef = useRef<CPDFReaderView | null>(null);
   const navigation = useNavigation<any>();
   const route = useRoute<SecurityRoute>();
   const [document] = useState(route.params?.document ?? getDefaultSecurityDocument());
+  const [busyLabel, setBusyLabel] = useState<string | null>(null);
+
+  // Runs one action at a time with a visible busy state; errors not handled by the
+  // action itself are shown with their native code.
+  const runAction = async (action: ActionButton) => {
+    const reader = pdfReaderRef.current;
+    if (!reader || busyLabel) {
+      return;
+    }
+    setBusyLabel(action.label);
+    try {
+      await action.onPress(reader);
+    } catch (error) {
+      Alert.alert(title, describeError(error));
+    } finally {
+      setBusyLabel(null);
+    }
+  };
 
   return (
     <PDFReaderContext.Provider value={pdfReaderRef.current}>
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <AppToolbar
             title={title}
@@ -65,17 +95,15 @@ export function SecurityExampleScaffold({
                   actions={actions.map((action) => ({
                     key: action.key,
                     label: action.label,
-                    onPress: async () => {
-                      if (pdfReaderRef.current) {
-                        await action.onPress(pdfReaderRef.current);
-                      }
-                    },
+                    onPress: () => runAction(action),
                   }))}
                 />
               ) : undefined
             }
           />
 
+          {platformNotice ? <PlatformNotice {...platformNotice} /> : null}
+          {beforeViewer}
           <View style={styles.viewerWrap}>
             <CPDFReaderView
               ref={pdfReaderRef}
@@ -84,6 +112,12 @@ export function SecurityExampleScaffold({
               onIOSClickBackPressed={() => navigation.goBack()}
             />
             {children}
+            {busyLabel ? (
+              <View style={styles.busyOverlay} pointerEvents="auto">
+                <ActivityIndicator color="#FFFFFF" />
+                <Text style={styles.busyText}>{busyLabel}...</Text>
+              </View>
+            ) : null}
           </View>
         </View>
       </SafeAreaView>
@@ -101,5 +135,17 @@ const styles = StyleSheet.create({
   },
   viewerWrap: {
     flex: 1,
+  },
+  busyOverlay: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    gap: 10,
+    justifyContent: 'center',
+  },
+  busyText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

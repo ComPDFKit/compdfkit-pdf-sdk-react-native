@@ -22,6 +22,7 @@ import { CPDFSignatureAnnotation } from "./CPDFSignatureAnnotation";
 import { CPDFSoundAnnotation } from "./CPDFSoundAnnotation";
 import { CPDFSquareAnnotation } from "./CPDFSquareAnnotation";
 import { CPDFStampAnnotation } from "./CPDFStampAnnotation";
+import { CPDFRedactAnnotation } from './CPDFRedactAnnotation';
 
 export class CPDFAnnotationFactory {
 
@@ -42,6 +43,7 @@ export class CPDFAnnotationFactory {
         [CPDFAnnotationType.PICTURES, (json) => CPDFImageAnnotation.fromJson(json)],
         [CPDFAnnotationType.SIGNATURE, (json) => CPDFSignatureAnnotation.fromJson(json)],
         [CPDFAnnotationType.SOUND, (json) => CPDFSoundAnnotation.fromJson(json)],
+        [CPDFAnnotationType.REDACT, (json) => CPDFRedactAnnotation.fromJson(json)],
     ]);
 
     static create(json: any): CPDFAnnotation {

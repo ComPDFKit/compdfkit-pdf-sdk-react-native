@@ -192,6 +192,11 @@ export function normalizeColorsInAnnotation(annotData: any): any {
     case 'freetext':
       normalizeTextAttribute();
       break;
+    case 'redact':
+      normalizeField('fillColor');
+      normalizeField('outlineColor');
+      normalizeTextAttribute();
+      break;
     default:
       // For unknown types, don't normalize
       break;

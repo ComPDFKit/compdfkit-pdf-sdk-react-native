@@ -60,4 +60,10 @@ RCT_EXTERN_METHOD(getFonts: (RCTPromiseResolveBlock)resolve
   return NO;
 }
 
+RCT_EXTERN_METHOD(generatePkcs12Certificate:(NSDictionary *)request withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(checkPkcs12CertificatePassword:(NSString *)path withPassword:(NSString *)password withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(loadPkcs12Certificate:(NSString *)path withPassword:(NSString *)password withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(configureTrustedCertificateDirectories:(NSDictionary *)options withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(addTrustedCertificate:(NSString *)path withPassword:(NSString *)password withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+
 @end

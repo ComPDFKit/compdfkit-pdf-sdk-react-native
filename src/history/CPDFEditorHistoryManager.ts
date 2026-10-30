@@ -64,7 +64,7 @@ export class CPDFEditorHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.editorCanUndo(tag);
-            } catch (e) {
+            } catch {
                 return false;
             }
         }
@@ -86,7 +86,7 @@ export class CPDFEditorHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.editorCanRedo(tag);
-            } catch (e) {
+            } catch {
                 return false;
             }
         }
@@ -109,7 +109,7 @@ export class CPDFEditorHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.editorUndo(tag);
-            } catch (e) {
+            } catch {
                 return Promise.reject(new Error('Unable to undo the editor action'));
             }
         }
@@ -132,7 +132,7 @@ export class CPDFEditorHistoryManager extends CPDFHistoryManagerBase {
         if (tag) {
             try {
                 return await CPDFViewManager.editorRedo(tag);
-            } catch (e) {
+            } catch {
                 return Promise.reject(new Error('Unable to redo the editor action'));
             }
         }

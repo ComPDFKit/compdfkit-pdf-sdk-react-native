@@ -48,7 +48,7 @@ export class CPDFPage {
         if (tag != null) {
             try {
                 return await CPDFViewManager.getPageText(tag, this.pageIndex);
-            } catch (e) {
+            } catch {
                 return '';
             }
         }
@@ -64,7 +64,7 @@ export class CPDFPage {
         if (tag != null) {
             try {
                 return await CPDFViewManager.getPageTextInRect(tag, this.pageIndex, rect);
-            } catch (e) {
+            } catch {
                 return '';
             }
         }
@@ -73,6 +73,10 @@ export class CPDFPage {
 
     /**
      * Retrieves all text lines on the current page.
+     *
+     * Each line's `rect` is in PDF page coordinates (origin at the bottom-left),
+     * so `top` is greater than `bottom`. The rect can be passed directly to
+     * {@link getTextInRect} or used as an annotation rect.
      */
     getTextLines = async (): Promise<CPDFTextLine[]> => {
         const tag = findNodeHandle(this._viewerRef);
@@ -83,7 +87,7 @@ export class CPDFPage {
                     return [];
                 }
                 return data.map((item: any) => CPDFTextLine.fromJson(item));
-            } catch (e) {
+            } catch {
                 return [];
             }
         }
@@ -106,7 +110,7 @@ export class CPDFPage {
         if (tag != null) {
             try {
                 return await CPDFViewManager.getSearchText(tag, line.pageIndex, line.location, line.length);
-            } catch (e) {
+            } catch {
                 return '';
             }
         }
@@ -133,7 +137,7 @@ export class CPDFPage {
             try {
                 const data = await CPDFViewManager.getAnnotations(tag, this.pageIndex);
                 return CPDFAnnotationFactory.createFromArray(data);
-            } catch (e) {
+            } catch {
                 return [];
             }
         }

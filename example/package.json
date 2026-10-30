@@ -1,7 +1,7 @@
 {
   "name": "@compdfkit_pdf_sdk/react_native-example",
-  "version": "3.0.2",
-  "versionCode": "38",
+  "version": "3.2.0",
+  "versionCode": "39",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -13,27 +13,27 @@
     "@react-native-documents/picker": "^10.1.5",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/native-stack": "^7.3.21",
-    "react": "19.0.0",
-    "react-native": "0.79.2",
+    "react": "19.2.3",
+    "react-native": "0.85.3",
     "react-native-fs": "^2.20.0",
     "react-native-image-picker": "^8.2.1",
-    "react-native-popup-menu": "^0.18.0",
+    "react-native-popup-menu": "^0.19.0",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "4.13.1"
+    "react-native-screens": "^4.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "^18.0.0",
-    "@react-native-community/cli-platform-android": "18.0.0",
-    "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.2",
-    "@react-native/metro-config": "0.79.2",
-    "@react-native/typescript-config": "0.79.2",
+    "@react-native-community/cli": "20.2.0",
+    "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native-community/cli-platform-ios": "20.2.0",
+    "@react-native/babel-preset": "0.85.3",
+    "@react-native/metro-config": "0.85.3",
+    "@react-native/typescript-config": "0.85.3",
     "babel-plugin-module-resolver": "^5.0.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.4"
   }
 }

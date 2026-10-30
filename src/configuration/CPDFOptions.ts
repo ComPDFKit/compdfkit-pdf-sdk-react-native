@@ -215,7 +215,9 @@ export const CPDFAnnotationType = {
 
     LINK: 'link',
 
-    SOUND: 'sound'
+    SOUND: 'sound',
+
+    REDACT: 'redact'
 
 } as const
 export type CPDFAnnotationType = ValueOf<typeof CPDFAnnotationType>;
@@ -475,8 +477,8 @@ export type CPDFActionType = ValueOf<typeof CPDFActionType>;
 export const CPDFSignatureType = {
 
     /**
-     * Manually select the signature method. 
-     * Configure this method. When you click the signature form field, 
+     * Manually select the signature method.
+     * Configure this method. When you click the signature form field,
      * a pop-up window will pop up to select the signature method.
      */
     MANUAL : 'manual',
@@ -485,7 +487,7 @@ export const CPDFSignatureType = {
      * Enter the digital signature process
      */
     DIGITAL : 'digital',
-    
+
     /**
      * Enter the electronic signature process
      */
@@ -549,7 +551,7 @@ export const CPDFEditType = {
     NONE: 0,
 
     TEXT: 1,
-    
+
     IMAGE: 2,
 
     PATH: 4
@@ -564,7 +566,7 @@ export const CPDFStandardStamp = {
     APPROVED: 'Approved',
 
     COMPLETED: 'Completed',
-    
+
     FINAL_: 'Final',
 
     DRAFT: 'Draft',
@@ -600,7 +602,7 @@ export const CPDFStandardStamp = {
     PRIVATEREJECTED: 'PrivateMark#2',
 
     PRIVATERADIOMARK: 'PrivateMark#3',
-    
+
     UNKNOWN: 'Unknown',
 } as const;
 export type CPDFStandardStamp = ValueOf<typeof CPDFStandardStamp>;
@@ -847,8 +849,8 @@ export type BorderWidth = RangeOf2<1, 10>
 /** @hidden */
 export type DashGap = RangeOf2<0.0, 10.0>
 
-/** 
- * @hidden 
+/**
+ * @hidden
  * Represents hexadecimal color values.
  * Format: "#RRGGBB" or "#AARRGGBB"
  * @example "#FF0000" // Red
@@ -857,7 +859,7 @@ export type DashGap = RangeOf2<0.0, 10.0>
 export type HexColor = `#${string}`;
 
 /**
- * @hidden 
+ * @hidden
  * Represents font size values.
  * Valid range: 0-100 points
  */

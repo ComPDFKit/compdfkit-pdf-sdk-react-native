@@ -237,7 +237,11 @@ export class CPDFReaderView extends PureComponent<CPDFReaderViewProps, any> {
 
   /** @internal */
   onChange = (event: any) => {
-    if ("onPageChanged" in event.nativeEvent) {
+    if ("onOptimizeProgress" in event.nativeEvent) {
+      this._pdfDocument._dispatchOptimizeProgress(
+        Number(event.nativeEvent.onOptimizeProgress?.page_index ?? -1)
+      );
+    } else if ("onPageChanged" in event.nativeEvent) {
       if (this.props.onPageChanged) {
         this.props.onPageChanged(event.nativeEvent.onPageChanged);
       }

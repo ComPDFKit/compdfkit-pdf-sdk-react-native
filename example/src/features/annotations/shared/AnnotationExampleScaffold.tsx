@@ -75,7 +75,7 @@ export function AnnotationExampleScaffold({
 
   return (
     <PDFReaderContext.Provider value={pdfReader}>
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <AppToolbar
             title={title}

@@ -32,6 +32,7 @@ public class RnSignatureFieldWidgetCodec extends RnBaseWidgetCodec {
   @Override
   public void covert(CPDFWidget widget, WritableMap map) {
     map.putString("type", "signaturesFields");
+    map.putBoolean("isSigned", ((CPDFSignatureWidget) widget).isSigned());
   }
 
   /**

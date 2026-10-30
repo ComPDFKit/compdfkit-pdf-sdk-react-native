@@ -3,7 +3,7 @@ It documents the public TypeScript surface used to view, annotate, edit, fill,
 search, and manage PDF documents on Android and iOS.
 
 For an end-to-end setup walkthrough, see the
-[React Native Integration Guide](./React%20Native%20Integration%20Guide.md).
+[React Native Integration Guide](https://www.compdf.com/guides/pdf-sdk/react-native/overview).
 
 ## Start Here
 

@@ -219,7 +219,7 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
       let documentTypes = ["com.adobe.pdf"]
       let documentPickerViewController = UIDocumentPickerViewController(documentTypes: documentTypes, in: .open)
       documentPickerViewController.delegate = self
-      UIApplication.presentedViewController()?.present(documentPickerViewController, animated: true, completion: nil)
+      ComPDFKit.presentedViewController()?.present(documentPickerViewController, animated: true, completion: nil)
       self._resolve = resolve
     }
   }
@@ -298,9 +298,11 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
    */
   class func presentedViewController() -> UIViewController? {
     
-    var rootViewController: UIViewController? = nil
-    
-    if let appDelegate = UIApplication.shared.delegate as? NSObject {
+    // Scene-based apps (required since iOS 27) have no app delegate window, so
+    // prefer the key window of the foreground scene.
+    var rootViewController = activeKeyWindow()?.rootViewController
+
+    if rootViewController == nil, let appDelegate = UIApplication.shared.delegate as? NSObject {
       if appDelegate.responds(to: Selector(("viewController"))) {
         rootViewController = appDelegate.value(forKey: "viewController") as? UIViewController
       }
@@ -308,12 +310,6 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
     
     if rootViewController == nil, let appDelegate = UIApplication.shared.delegate as? NSObject, appDelegate.responds(to: #selector(getter: UIApplicationDelegate.window)) {
       if let window = appDelegate.value(forKey: "window") as? UIWindow {
-        rootViewController = window.rootViewController
-      }
-    }
-    
-    if rootViewController == nil {
-      if let window = UIApplication.shared.keyWindow {
         rootViewController = window.rootViewController
       }
     }
@@ -333,6 +329,14 @@ class ComPDFKit: NSObject, CPDFViewBaseControllerDelete, UIDocumentPickerDelegat
     }
     
     return currentViewController
+  }
+
+  private class func activeKeyWindow() -> UIWindow? {
+    let windowScenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+    let scene = windowScenes.first { $0.activationState == .foregroundActive }
+      ?? windowScenes.first { $0.activationState == .foregroundInactive }
+      ?? windowScenes.first
+    return scene?.keyWindow ?? scene?.windows.first { $0.isKeyWindow } ?? scene?.windows.first
   }
   
   //MARK: - UIDocumentPickerDelegate

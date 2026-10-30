@@ -10,6 +10,7 @@
 import { annotationsCategory } from './annotations/_registry';
 import { contentEditorCategory } from './content_editor/_registry';
 import { contentExtractionCategory } from './content_extraction/_registry';
+import { documentProcessingCategory } from './document_processing/_registry';
 import { formsCategory } from './forms/_registry';
 import { pagesCategory } from './pages/_registry';
 import { searchNavigationCategory } from './search_navigation/_registry';
@@ -40,6 +41,7 @@ export const allCategories: CategoryInfo[] = [
   widgetControllerCategory,
   searchNavigationCategory,
   uiCustomizationCategory,
+  documentProcessingCategory,
 ];
 
 export const featuredViewerEntry: ExampleItem = {

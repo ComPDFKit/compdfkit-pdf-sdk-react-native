@@ -18,9 +18,13 @@ import { CPDFWidget } from "./CPDFWidget";
  */
 export class CPDFSignatureWidget extends CPDFWidget {
 
+    /** Whether the native field already contains a digital signature. Undefined on older bridges. */
+    readonly isSigned?: boolean;
+
     constructor(params: Partial<CPDFSignatureWidget>) {
         super(params);
         this.type = 'signaturesFields';
+        this.isSigned = params.isSigned;
     }
 
     /**

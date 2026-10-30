@@ -11,13 +11,13 @@ import React, { useState } from 'react';
 import {
   Image,
   Modal,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAppTheme } from '../../../theme/appTheme';
 import AnnotationsTab from './AnnotationsTab';
@@ -131,7 +131,7 @@ export const CPDFBotaScreen = ({
       animationType="slide"
       presentationStyle="pageSheet"
       onRequestClose={onClose}>
-      <MenuProvider skipInstanceCheck>
+      <MenuProvider skipInstanceCheck SafeAreaComponent={SafeAreaView}>
         <SafeAreaView style={styles.container}>
           {renderToolbar()}
           {renderTabBar()}

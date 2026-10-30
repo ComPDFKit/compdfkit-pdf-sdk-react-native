@@ -205,6 +205,40 @@ RCT_EXTERN_METHOD(getPageCount:(NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getHeaderFooter:(NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateHeaderFooter:(NSInteger) tag
+                  withInfo:(NSDictionary) info
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(clearHeaderFooter:(NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getBates:(NSInteger) tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(optimizeSaveAsCopy:(NSInteger)tag withOutputPath:(NSString *)outputPath withOptions:(NSDictionary *)options withFontSubset:(BOOL)fontSubset withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getOptimizeOptions:(NSInteger)tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(cancelOptimize:(NSInteger)tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(updateBates:(NSInteger) tag withInfo:(NSDictionary) info withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(clearBates:(NSInteger) tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getBackground:(NSInteger) tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(updateBackground:(NSInteger) tag withInfo:(NSDictionary) info withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(clearBackground:(NSInteger) tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPdfStandardType:(NSInteger) tag
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(convertToPdfStandard:(NSInteger) tag
+                  withOutputPath:(NSString *) outputPath
+                  withType:(NSString *) type
+                  withFontSubset:(BOOL) fontSubset
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(createWatermark:(NSInteger) tag
                   withInfo:(NSDictionary) info
                   withResolver:(RCTPromiseResolveBlock)resolve
@@ -342,7 +376,7 @@ RCT_EXTERN_METHOD(movePage: (NSInteger)tag
                   withToIndex:(NSInteger) toIndex
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                   
+
 RCT_EXTERN_METHOD(getInfo: (NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -358,7 +392,7 @@ RCT_EXTERN_METHOD(getMinorVersion: (NSInteger) tag
 RCT_EXTERN_METHOD(getPermissionsInfo: (NSInteger) tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                  
+
 
 // MARK: - Pages Methods
 
@@ -378,7 +412,7 @@ RCT_EXTERN_METHOD(setWidgetIsChecked:(NSInteger)tag
                   withIsChecked:(BOOL)isChecked
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                  
+
 
 RCT_EXTERN_METHOD(setTextWidgetText:(NSInteger)tag
                   withPage:(NSInteger) page
@@ -386,7 +420,7 @@ RCT_EXTERN_METHOD(setTextWidgetText:(NSInteger)tag
                   withText:(NSString *)text
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                  
+
 
 RCT_EXTERN_METHOD(addWidgetImageSignature:(NSInteger)tag
                   withPage:(NSInteger) page
@@ -409,6 +443,21 @@ RCT_EXTERN_METHOD(reloadPages:(NSInteger)tag
 RCT_EXTERN_METHOD(removeAnnotation:(NSInteger)tag
                   withPageIndex:(NSInteger)pageIndex
                   withAnnotId:(NSString *)uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getLtvReadiness:(NSInteger)tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(addSignatureLtv:(NSInteger)tag withOutputPath:(NSString *)path withOptions:(NSDictionary *)options withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getDigitalSignatures:(NSInteger)tag withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(verifyDigitalSignature:(NSInteger)tag withIndex:(NSInteger)index withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(writeSignature:(NSInteger)tag withPageIndex:(NSInteger)pageIndex withUuid:(NSString *)uuid withOutputPath:(NSString *)outputPath withConfig:(NSDictionary *)config withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(applyRedaction:(NSInteger)tag
+                  withPageIndex:(NSInteger)pageIndex
+                  withUuid:(NSString *)uuid
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(applyRedactions:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -720,7 +769,7 @@ RCT_EXTERN_METHOD(updateDefaultAnnotationStyle:(NSInteger)tag
                   withAttr:(NSDictionary) attr
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                  
+
 RCT_EXTERN_METHOD(fetchDefaultWidgetStyle:(NSInteger)tag
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -734,7 +783,7 @@ RCT_EXTERN_METHOD(updateAnnotation: (NSInteger)tag
                   withAnnotation:(NSDictionary) annotationMap
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
-                  
+
 RCT_EXTERN_METHOD(updateWidget: (NSInteger)tag
                   withWidget:(NSDictionary) widgetMap
                   withResolver:(RCTPromiseResolveBlock)resolve
@@ -781,12 +830,12 @@ RCT_EXTERN_METHOD(showAnnotationPropertiesView: (NSInteger)tag
 RCT_EXTERN_METHOD(showWidgetPropertiesView: (NSInteger)tag
                   withWidget:(NSDictionary *) widget
                   withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)    
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(showEditAreaPropertiesView: (NSInteger)tag
                   withEditArea:(NSDictionary *) editArea
                   withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)       
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(prepareNextSignature: (NSInteger)tag
                   withSignaturePath:(NSString *) signaturePath

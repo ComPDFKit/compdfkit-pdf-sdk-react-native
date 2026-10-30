@@ -10,6 +10,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { initializeComPDFKit } from './initialization/initializeComPDFKit';
 import { applyPersistedReaderConfigDefaults } from './settings/exampleReaderConfig';
@@ -66,7 +67,8 @@ export function AppRoot() {
   );
 
   return (
-    <MenuProvider>
+    // Use the maintained safe-area component for popup menu positioning.
+    <MenuProvider SafeAreaComponent={SafeAreaView}>
       {bootstrapState.status === 'ready' ? (
         <NavigationContainer theme={navigationTheme}>
           <AppNavigator />

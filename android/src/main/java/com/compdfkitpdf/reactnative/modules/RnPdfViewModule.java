@@ -13,6 +13,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.compdfkit.tools.common.pdf.config.CPDFWatermarkConfig;
+import com.compdfkit.tools.common.utils.threadpools.CThreadPoolUtils;
 import com.compdfkitpdf.reactnative.util.RnFileUtils;
 import com.compdfkitpdf.reactnative.viewer.RnPdfViewManager;
 import com.facebook.react.bridge.Promise;
@@ -617,6 +618,56 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
     resolveValue(promise, () -> mPDFViewInstance.getPageCount(tag));
   }
 
+  /** Returns the current document header and footer. */
+  @ReactMethod
+  public void getHeaderFooter(int tag, Promise promise) {
+    resolveValue(promise, () -> mPDFViewInstance.getHeaderFooter(tag));
+  }
+
+  /** Replaces the current document header and footer. */
+  @ReactMethod
+  public void updateHeaderFooter(int tag, ReadableMap info, Promise promise) {
+    resolveValue(promise, "HEADER_FOOTER_FAIL",
+      () -> mPDFViewInstance.updateHeaderFooter(tag, info));
+  }
+
+  /** Clears the current document header and footer. */
+  @ReactMethod
+  public void clearHeaderFooter(int tag, Promise promise) {
+    resolveValue(promise, "HEADER_FOOTER_FAIL",
+      () -> mPDFViewInstance.clearHeaderFooter(tag));
+  }
+
+  @ReactMethod public void getBates(int tag, Promise promise) { resolveValue(promise, () -> mPDFViewInstance.getBates(tag)); }
+  @ReactMethod public void updateBates(int tag, ReadableMap info, Promise promise) { resolveValue(promise, "BATES_FAIL", () -> mPDFViewInstance.updateBates(tag, info)); }
+  @ReactMethod public void clearBates(int tag, Promise promise) { resolveValue(promise, "BATES_FAIL", () -> mPDFViewInstance.clearBates(tag)); }
+  @ReactMethod public void getBackground(int tag, Promise promise) { resolveValue(promise, () -> mPDFViewInstance.getBackground(tag)); }
+  @ReactMethod public void updateBackground(int tag, ReadableMap info, Promise promise) {
+    runOnUiThread(promise, "BACKGROUND_FAIL",
+      () -> mPDFViewInstance.updateBackground(tag, info, promise));
+  }
+  @ReactMethod public void clearBackground(int tag, Promise promise) { resolveValue(promise, "BACKGROUND_FAIL", () -> mPDFViewInstance.clearBackground(tag)); }
+  @ReactMethod public void applyRedaction(int tag, int pageIndex, String uuid, Promise promise) { resolveValue(promise, "APPLY_REDACTION_FAIL", () -> mPDFViewInstance.applyRedaction(tag, pageIndex, uuid)); }
+  @ReactMethod public void applyRedactions(int tag, Promise promise) { resolveValue(promise, "APPLY_REDACTION_FAIL", () -> mPDFViewInstance.applyRedactions(tag)); }
+
+  /**
+   * Returns the PDF standard the current document declares conformance with.
+   */
+  @ReactMethod
+  public void getPdfStandardType(int tag, Promise promise) {
+    resolveValue(promise, "DOCUMENT_INVALID", () -> mPDFViewInstance.getPdfStandardType(tag));
+  }
+
+  /**
+   * Converts the current document to the given PDF standard and writes the result to outputPath.
+   */
+  @ReactMethod
+  public void convertToPdfStandard(int tag, String outputPath, String type, boolean fontSubset,
+    Promise promise) {
+    runOnUiThread(promise, "PDF_STANDARD_CONVERT_FAILED",
+      () -> mPDFViewInstance.convertToPdfStandard(tag, outputPath, type, fontSubset, promise));
+  }
+
   /**
    * Creates a document watermark.
    */
@@ -687,6 +738,52 @@ public class RnPdfViewModule extends ReactContextBaseJavaModule {
   public void saveAs(int tag, String savePath, boolean removeSecurity, boolean fontSubset, Promise promise) {
     runOnUiThread(promise,
       () -> mPDFViewInstance.saveAs(tag, savePath, removeSecurity, fontSubset, promise));
+  }
+
+  /**
+   * Writes an optimized copy of the document without replacing the source file.
+   */
+  @ReactMethod
+  public void optimizeSaveAsCopy(int tag, String path, ReadableMap options,
+      boolean fontSubset, Promise promise) {
+    mPDFViewInstance.optimizeSaveAsCopy(tag, path, options, fontSubset, promise);
+  }
+
+  /**
+   * Returns the configuration optimizeSaveAsCopy uses when no options are passed.
+   */
+  @ReactMethod
+  public void getOptimizeOptions(int tag, Promise promise) {
+    resolveValue(promise, "DOCUMENT_INVALID", () -> mPDFViewInstance.getOptimizeOptions(tag));
+  }
+
+  /**
+   * Requests cancellation of the optimize run in flight on this reader.
+   */
+  @ReactMethod
+  public void cancelOptimize(int tag, Promise promise) {
+    resolveValue(promise, "DOCUMENT_INVALID", () -> {
+      mPDFViewInstance.cancelOptimize(tag);
+      return null;
+    });
+  }
+  /** Signature and LTV work can perform network IO; never block the UI queue. */
+  @ReactMethod public void getDigitalSignatures(int tag, Promise promise) { signatureWork(promise, () -> mPDFViewInstance.getDigitalSignatures(tag)); }
+  @ReactMethod public void verifyDigitalSignature(int tag, int index, Promise promise) { signatureWork(promise, () -> mPDFViewInstance.verifyDigitalSignature(tag, index)); }
+  @ReactMethod public void writeSignature(int tag, int page, String uuid, String path, ReadableMap config, Promise promise) { signatureWork(promise, () -> mPDFViewInstance.writeSignature(tag, page, uuid, path, config)); }
+  @ReactMethod public void getLtvReadiness(int tag, Promise promise) { signatureWork(promise, () -> mPDFViewInstance.getLtvReadiness(tag)); }
+  @ReactMethod public void addSignatureLtv(int tag, String path, ReadableMap options, Promise promise) { signatureWork(promise, () -> mPDFViewInstance.addSignatureLtv(tag, path, options)); }
+
+  private void signatureWork(Promise promise, java.util.concurrent.Callable<Object> action) {
+    CThreadPoolUtils.getInstance().executeIO(() -> {
+      try { promise.resolve(action.call()); }
+      catch (Exception error) {
+        String code = error.getMessage();
+        if (code == null || !java.util.Arrays.asList("invalid_document", "signature_widget_not_found", "certificate_not_found", "invalid_certificate_password", "invalid_signature_config", "invalid_output_path", "signature_write_failed", "signature_already_signed", "signature_timestamp_failed", "signature_verification_failed", "ltv_readiness_failed", "ltv_output_invalid").contains(code)) code = "signature_operation_failed";
+        // Native exception text can contain credentials or paths; return a safe stage code only.
+        promise.reject(code, "The signature operation failed (" + code + ").");
+      }
+    });
   }
 
   /**

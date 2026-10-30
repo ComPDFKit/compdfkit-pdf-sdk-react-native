@@ -80,7 +80,7 @@ export class CPDFTextSearcher {
             try {
                 console.log('ComPDFKitRN', 'Setting selection:', range);
                 return CPDFViewManager.selection(tag, range.toJson());
-            } catch (e) {
+            } catch {
                 // Handle error if necessary
                 return Promise.resolve();
             }
@@ -104,7 +104,7 @@ export class CPDFTextSearcher {
         if (tag != null) {
             try {
                 return CPDFViewManager.clearSearch(tag);
-            } catch (e) {
+            } catch {
                 // Handle error if necessary
                 return Promise.resolve();
             }
@@ -132,7 +132,7 @@ export class CPDFTextSearcher {
         if (tag != null) {
             try {
                 return CPDFViewManager.getSearchText(tag, range.pageIndex, range.location, range.length);
-            } catch (e) {
+            } catch {
                 return Promise.resolve('');
             }
         }

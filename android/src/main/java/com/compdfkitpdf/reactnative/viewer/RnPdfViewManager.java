@@ -572,6 +572,41 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
     return documentOps.getPageCount(findContext(tag));
   }
 
+  /** Returns the current document header and footer. */
+  public WritableMap getHeaderFooter(int tag) {
+    return documentOps.getHeaderFooter(requireContext(tag));
+  }
+
+  /** Replaces the current document header and footer. */
+  public boolean updateHeaderFooter(int tag, ReadableMap info) {
+    return documentOps.updateHeaderFooter(requireContext(tag), info);
+  }
+
+  /** Clears the current document header and footer. */
+  public boolean clearHeaderFooter(int tag) {
+    return documentOps.clearHeaderFooter(requireContext(tag));
+  }
+
+  public WritableMap getBates(int tag) { return documentOps.getBates(requireContext(tag)); }
+  public boolean updateBates(int tag, ReadableMap info) { return documentOps.updateBates(requireContext(tag), info); }
+  public boolean clearBates(int tag) { return documentOps.clearBates(requireContext(tag)); }
+  public WritableMap getBackground(int tag) { return documentOps.getBackground(requireContext(tag)); }
+  public void updateBackground(int tag, ReadableMap info, Promise promise) { documentOps.updateBackground(requireContext(tag), info, promise); }
+  public boolean clearBackground(int tag) { return documentOps.clearBackground(requireContext(tag)); }
+  public boolean applyRedaction(int tag, int pageIndex, String uuid) { return annotationOps.applyRedaction(requireContext(tag), pageIndex, uuid); }
+  public boolean applyRedactions(int tag) { return annotationOps.applyRedactions(requireContext(tag)); }
+
+  /** Returns the PDF standard the current document declares conformance with. */
+  public String getPdfStandardType(int tag) {
+    return documentOps.getPdfStandardType(requireContext(tag));
+  }
+
+  /** Converts the current document to the given PDF standard. */
+  public void convertToPdfStandard(int tag, String outputPath, String type, boolean fontSubset,
+    Promise promise) {
+    documentOps.convertToPdfStandard(requireContext(tag), outputPath, type, fontSubset, promise);
+  }
+
   /**
    * Creates a watermark.
    */
@@ -628,6 +663,27 @@ public class RnPdfViewManager extends ViewGroupManager<RnPdfView> {
     Promise result) {
     documentOps.saveAs(requireContext(tag), savePath, removeSecurity, fontSubSet, result);
   }
+
+  /**
+   * Writes an optimized copy of the document without replacing the source file.
+   */
+  public void optimizeSaveAsCopy(int tag, String path, ReadableMap options,
+      boolean fontSubset, Promise promise) {
+    documentOps.optimizeSaveAsCopy(requireContext(tag), path, options, fontSubset, promise);
+  }
+
+  public WritableMap getOptimizeOptions(int tag) {
+    return documentOps.getOptimizeOptions(requireContext(tag));
+  }
+
+  public void cancelOptimize(int tag) {
+    documentOps.cancelOptimize(requireContext(tag));
+  }
+  public WritableArray getDigitalSignatures(int tag) { return documentOps.getDigitalSignatures(requireContext(tag)); }
+  public WritableMap verifyDigitalSignature(int tag, int index) { return documentOps.verifyDigitalSignature(requireContext(tag), index); }
+  public WritableMap getLtvReadiness(int tag) { return documentOps.getLtvReadiness(requireContext(tag)); }
+  public WritableMap addSignatureLtv(int tag, String path, ReadableMap options) { return documentOps.addSignatureLtv(requireContext(tag), path, options); }
+  public boolean writeSignature(int tag, int page, String uuid, String path, ReadableMap config) { return documentOps.writeSignature(requireContext(tag), page, uuid, path, config); }
 
   /**
    * Handles print.

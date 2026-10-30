@@ -56,6 +56,18 @@ export const uiCustomizationCategory: CategoryInfo = {
       },
     },
     {
+      id: 'creation-policy',
+      name: 'Creation Policy',
+      description: 'Single or continuous creation, with or without auto-selection',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.creationPolicy,
+      visual: {
+        badge: 'CP',
+        accentColor: '#1565C0',
+        backgroundColor: '#E3F2FD',
+      },
+    },
+    {
       id: 'event-listeners',
       name: 'Event Listeners',
       description: 'Listen to UI events',

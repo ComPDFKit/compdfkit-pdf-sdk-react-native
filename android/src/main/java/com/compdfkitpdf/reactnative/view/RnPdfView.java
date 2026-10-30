@@ -49,7 +49,8 @@ import com.compdfkitpdf.reactnative.util.RnEnumConverter;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.facebook.react.uimanager.UIManagerHelper;
+import com.facebook.react.uimanager.events.EventDispatcher;
 import java.util.Map;
 
 
@@ -58,7 +59,6 @@ import java.util.Map;
  */
 public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
 
-  private static final String REACT_EVENT_NAME = "topChange";
   private static final String EVENT_DOCUMENT_READY = "onDocumentIsReady";
   private static final String EVENT_PAGE_CHANGED = "onPageChanged";
   private static final String EVENT_TAP_MAIN_DOC_AREA = "onTapMainDocArea";
@@ -536,10 +536,17 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
    * Emits event.
    */
   private void emitEvent(WritableMap event) {
-    themedReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-      getId(),
-      REACT_EVENT_NAME,
-      event);
+    EventDispatcher dispatcher =
+      UIManagerHelper.getEventDispatcherForReactTag(themedReactContext, getId());
+    if (dispatcher == null) {
+      return;
+    }
+    dispatcher.dispatchEvent(
+      // This view is rendered through the legacy view-manager interop layer, whose events are
+      // only routed when dispatched without a surface id (-1), as the legacy RCTEventEmitter did.
+      // Asking UIManagerHelper for the surface id of this view also logs a SoftException, because
+      // the view is created with the host activity as its context.
+      new RnPdfChangeEvent(-1, getId(), event));
   }
 
   /**
@@ -547,6 +554,15 @@ public class RnPdfView extends FrameLayout implements CPDFCustomEventCallback {
    */
   private WritableMap createEvent() {
     return Arguments.createMap();
+  }
+
+  /**
+   * Emits the page progress of a running document optimization to the JS {@code onChange} handler.
+   */
+  public void emitOptimizeProgress(int pageIndex) {
+    WritableMap progress = Arguments.createMap();
+    progress.putInt("page_index", pageIndex);
+    emitMapEvent("onOptimizeProgress", progress);
   }
 
   /**

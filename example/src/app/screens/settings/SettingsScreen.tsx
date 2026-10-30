@@ -22,7 +22,7 @@ import {
 } from 'react-native';
 import { ComPDFKit } from '@compdfkit_pdf_sdk/react_native';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppTheme, type AppTheme } from '../../../theme/appTheme';
 import { AppToolbar } from '../../../widgets/common/AppToolbar';
@@ -70,6 +70,7 @@ export function SettingsScreen() {
   const navigation = useNavigation<AppNavigation>();
   const appTheme = useAppTheme();
   const styles = createStyles(appTheme);
+  const insets = useSafeAreaInsets();
   const [versionCode, setVersionCode] = useState('');
   const [settings, dispatch] = useReducer(settingsReducer, DEFAULT_PERSISTED_SETTINGS);
   const [authorDraft, setAuthorDraft] = useState('');
@@ -178,7 +179,7 @@ export function SettingsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <AppToolbar
         title="Settings"
         subtitle="Settings and Information"
@@ -190,7 +191,10 @@ export function SettingsScreen() {
       />
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: appTheme.spacing.xxl + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}>
         <Text style={styles.sectionLabel}>Global setting</Text>
         <View style={styles.groupCard}>
