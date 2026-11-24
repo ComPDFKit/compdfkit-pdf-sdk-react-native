@@ -21,8 +21,8 @@ target 'CompdfkitPdfExample' do
     pod 'ComPDFKit', :path => '../vendor/compdfkit-ios-3.2.0/ComPDFKit'
     pod 'ComPDFKit_Tools', :path => '../vendor/compdfkit-ios-3.2.0/ComPDFKit_Tools'
   else
-    pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.2.0'
-    pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.2.0'
+    pod 'ComPDFKit', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.2.1'
+    pod 'ComPDFKit_Tools', :git => 'https://github.com/ComPDFKit/compdfkit-pdf-sdk-ios-swift.git', :tag => '3.2.1'
   end
 
   use_react_native!(

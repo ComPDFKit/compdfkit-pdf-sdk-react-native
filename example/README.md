@@ -51,6 +51,7 @@ example/
 - Node.js >= 18
 - Yarn
 - Xcode (for iOS) / Android Studio (for Android)
+- iOS 15.1 or later for the example app, as required by React Native 0.85.3
 - A valid ComPDFKit license file (`license_key_rn.xml`) placed in:
   - **Android**: `android/app/src/main/assets/`
   - **iOS**: added to the Xcode project bundle

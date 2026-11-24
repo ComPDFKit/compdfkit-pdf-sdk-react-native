@@ -14,6 +14,7 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import PDFReaderContext, {
   CPDFAnnotation,
+  CPDFAnnotationType,
   CPDFGoToAction,
   CPDFLinkAnnotation,
   CPDFNoteAnnotation,
@@ -33,8 +34,18 @@ type InterceptAnnotationRoute = RouteProp<
 
 const defaultDocument =
   Platform.OS === 'android'
-    ? 'file:///android_asset/PDF_Document.pdf'
-    : 'PDF_Document.pdf';
+    ? 'file:///android_asset/annotation_interception_test.pdf'
+    : 'annotation_interception_test.pdf';
+
+const annotationNames: Partial<Record<CPDFAnnotationType, string>> = {
+  line: 'Line or arrow',
+  arrow: 'Line or arrow',
+  stamp: 'Stamp, picture, or signature',
+  pictures: 'Stamp, picture, or signature',
+  signature: 'Stamp, picture, or signature',
+  freetext: 'Free text',
+  redact: 'Redaction',
+};
 
 export default function InterceptAnnotationActionExampleScreen() {
   const pdfReaderRef = useRef<CPDFReaderView>(null);
@@ -54,6 +65,9 @@ export default function InterceptAnnotationActionExampleScreen() {
   };
 
   const onInterceptAnnotationActionCallback = (annotation: CPDFAnnotation) => {
+    if (!pdfReaderRef.current) {
+      return;
+    }
     if (annotation instanceof CPDFNoteAnnotation) {
       Alert.alert('Note Annotation', annotation.content || 'No content');
       return;
@@ -65,8 +79,8 @@ export default function InterceptAnnotationActionExampleScreen() {
         case 'uri': {
           const uriAction = action as CPDFUriAction;
           const uri = uriAction.uri;
-          if (uri.startsWith('mailto:')) {
-            Alert.alert('Email Link', uri.replace('mailto:', ''));
+          if (/^mailto:/i.test(uri)) {
+            Alert.alert('Email Link', uri.slice('mailto:'.length));
           } else {
             Alert.alert('Web Link', uri);
           }
@@ -74,13 +88,31 @@ export default function InterceptAnnotationActionExampleScreen() {
         }
         case 'goTo': {
           const goToAction = action as CPDFGoToAction;
-          Alert.alert('Go To Page', `Jump to page ${goToAction.pageIndex + 1}`);
+          const reader = pdfReaderRef.current;
+          Alert.alert('Go To Page', `Jump to page ${goToAction.pageIndex + 1}`, [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Go',
+              onPress: () => {
+                if (reader && pdfReaderRef.current === reader) {
+                  reader.setDisplayPageIndex(goToAction.pageIndex).catch(
+                    (error) => Logger.error('Could not jump to link target:', error),
+                  );
+                }
+              },
+            },
+          ]);
           break;
         }
         default:
+          Alert.alert('Link Annotation', 'No supported link action.');
           break;
       }
+      return;
     }
+    const name = annotationNames[annotation.type] ??
+      annotation.type.charAt(0).toUpperCase() + annotation.type.slice(1);
+    Alert.alert(`${name} Annotation`, `Action intercepted on page ${annotation.page + 1}.`);
   };
 
   return (
@@ -104,8 +136,7 @@ export default function InterceptAnnotationActionExampleScreen() {
                 initialViewMode: CPDFViewMode.ANNOTATIONS,
               },
               annotationsConfig: {
-                interceptLinkAction: true,
-                interceptNoteAction: true,
+                interceptAllAnnotationActions: true,
               },
             })}
             onInterceptAnnotationActionCallback={

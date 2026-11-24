@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import { CPDFAnnotationType, CPDFConfigTool } from "../CPDFOptions";
+import { CPDFAnnotationType, CPDFConfigTool, CPDFInkUndoRedoMode } from "../CPDFOptions";
 import { CPDFAnnotationAttr } from "../attributes/CPDFAnnotationAttr";
 
 /**
@@ -15,6 +15,25 @@ import { CPDFAnnotationAttr } from "../attributes/CPDFAnnotationAttr";
  * @group Configuration
  */
 export interface CPDFAnnotationConfig {
+    /**
+     * History source for Ink undo and redo. Defaults to `hybrid`.
+     * Supported on Android; iOS forwards the value to the native SDK.
+     */
+    inkUndoRedoMode?: CPDFInkUndoRedoMode;
+
+    /**
+     * Intercept supported default annotation actions. Android currently
+     * intercepts Note and Link; Note has no default action in viewer mode.
+     * Defaults to `false`. iOS forwards this setting to the native SDK.
+     */
+    interceptAllAnnotationActions?: boolean;
+
+    /**
+     * Select default actions to intercept (currently `note` and `link` on Android).
+     * Other taps remain native selection or editing gestures. An explicit empty
+     * list disables selective interception without falling back to the legacy flags.
+     */
+    interceptAnnotationActions?: CPDFAnnotationType[];
 
     /**
      * {@link CPDFViewMode.ANNOTATIONS} mode, default author for new annotations.
@@ -89,6 +108,7 @@ export interface CPDFAnnotationConfig {
      * Default is false (not intercepted). Clicking a note annotation will directly pop up the note content editing dialog.
      * When set to true, the click event is intercepted via [CPDFReaderView.onInterceptAnnotationActionCallback].
      * Developers can handle custom note content editing dialogs through the callback.
+     * Used only when neither new annotation interception option is specified.
      */
     interceptNoteAction?: boolean;
 
@@ -97,6 +117,7 @@ export interface CPDFAnnotationConfig {
      * Default is false (not intercepted). Clicking a link annotation will directly execute the link jump action.
      * When set to true, the click event is intercepted via [CPDFReaderView.onInterceptAnnotationActionCallback].
      * Developers can handle custom link jump actions through the callback.
+     * Used only when neither new annotation interception option is specified.
      */
     interceptLinkAction?: boolean;
 

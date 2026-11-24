@@ -1,3 +1,19 @@
+## 3.2.1
+1. Added support for ComPDF SDK for iOS V3.2.1.
+2. Added support for ComPDF SDK for Android V3.2.1.
+3. Raised the minimum supported iOS version to iOS 15.0.
+4. Added the read-only `isRequired` property to `CPDFWidget` to indicate whether a form field is required. It defaults to `false` when the Required flag is absent.
+5. Added configuration options to intercept default actions for Note and Link annotations while retaining support for the existing switches.
+6. Fixed an issue on Android where extracting selected text could return extra characters at the end.
+7. Fixed an issue on Android where tapping a blank area in content editing mode could not create text or insert an image.
+8. Improved Line annotation hit detection on Android to reduce accidental selection when tapping blank areas near a line.
+9. Standardized the spacing between selection borders and the contents of selected annotations and form fields on Android.
+10. Fixed an issue on iOS where annotations marked Hidden or NoView could still be drawn or selected by tapping.
+11. Improved interactions with read-only and locked annotations on iOS. Notes with locked contents can still be opened for viewing, but their contents cannot be edited.
+12. Improved the built-in iOS reader layout on foldable devices and in iPad Split View and windowed modes. The layout now adapts to the current window size and safe areas.
+13. Fixed a potential crash when retrieving page text while the page was rendering on iOS.
+14. Fixed potential crashes caused by threading issues in watermark, header and footer, and document background operations on iOS.
+
 ## 3.2.0
 1. Added support for ComPDFKit PDF SDK for iOS V3.2.0.
 2. Added support for ComPDFKit PDF SDK for Android V3.2.0.

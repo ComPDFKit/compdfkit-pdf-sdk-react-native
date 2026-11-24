@@ -74,7 +74,7 @@ async function createValue(reader: CPDFReaderView, updated: boolean): Promise<CP
       : { left: 36, top: 36, right: 36, bottom: 36 },
     slots: updated
       ? [
-        { position: 'header_left', text: 'ComPDF 3.2.0', fontSize: 11 },
+        { position: 'header_left', text: 'ComPDF 3.2.1', fontSize: 11 },
         { position: 'footer_center', text: 'Updated page <<1>>', fontSize: 11 },
       ]
       : [

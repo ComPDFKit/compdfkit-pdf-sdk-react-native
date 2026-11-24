@@ -7,17 +7,19 @@
  * This notice may not be removed from this file.
  */
 
-import React, { useCallback, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import {
   CPDFCheckboxWidget,
   CPDFComboboxWidget,
+  CPDFGoToAction,
   CPDFListboxWidget,
   CPDFPushbuttonWidget,
   CPDFRadiobuttonWidget,
   CPDFReaderView,
   CPDFSignatureWidget,
   CPDFTextWidget,
+  CPDFUriAction,
   CPDFViewMode,
   CPDFWidget,
   CPDFWidgetType,
@@ -25,8 +27,94 @@ import {
 } from '@compdfkit_pdf_sdk/react_native';
 
 import { SignatureListModal } from '../../ui_customization/shared/modal/SignatureListModal';
-import { addCommonFormFields } from '../shared/formExampleActions';
 import { FormExampleScaffold } from '../shared/FormExampleScaffold';
+import { useAppTheme } from '../../../theme/appTheme';
+import { ActionBottomSheet } from '../../../widgets/common/ActionBottomSheet';
+
+const formDocument = Platform.OS === 'android'
+  ? 'file:///android_asset/form_interception_test.pdf'
+  : 'form_interception_test.pdf';
+
+type WidgetPrompt = {
+  title: string;
+  category: string;
+  message?: string;
+  input?: { text: string; save: (text: string) => void };
+  options?: { label: string; run: () => void }[];
+  selectedIndex?: number;
+  action?: { label: string; run: () => void };
+};
+
+const widgetCategories: Partial<Record<CPDFWidgetType, string>> = {
+  textField: 'Text field',
+  checkBox: 'Checkbox',
+  radioButton: 'Radio button',
+  listBox: 'List box',
+  comboBox: 'Combo box',
+  pushButton: 'Push button',
+};
+
+function WidgetActionModal({ prompt, onClose, onApply }: {
+  prompt: WidgetPrompt;
+  onClose: () => void;
+  onApply: (action: () => void) => void;
+}) {
+  const [text, setText] = useState(prompt.input?.text ?? '');
+  const [selectedIndex, setSelectedIndex] = useState(prompt.selectedIndex ?? -1);
+  const { colors } = useAppTheme();
+  const input = prompt.input;
+  const hasOptions = Boolean(prompt.options?.length);
+  const option = prompt.options?.[selectedIndex];
+  const action = input
+    ? { label: 'Save changes', run: () => input.save(text) }
+    : prompt.action ?? (hasOptions ? { label: 'Apply selection', run: () => option?.run() } : undefined);
+  return (
+    <ActionBottomSheet
+      title={prompt.title}
+      category={prompt.category}
+      onClose={onClose}
+      actionLabel={action?.label}
+      onAction={action ? () => onApply(action.run) : undefined}
+      actionDisabled={hasOptions && !option}
+    >
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.options} contentContainerStyle={styles.body}>
+        {prompt.message ? <Text style={[styles.message, { color: colors.textSecondary }]}>{prompt.message}</Text> : null}
+        {input && (
+          <View style={styles.field}>
+            <Text style={[styles.fieldLabel, { color: colors.textPrimary }]}>Field value</Text>
+            <TextInput
+              accessibilityLabel="Field value"
+              value={text}
+              onChangeText={setText}
+              style={[styles.input, { color: colors.textPrimary, borderColor: colors.outline, backgroundColor: colors.surfaceAlt }]}
+            />
+          </View>
+        )}
+        {prompt.options?.map(({ label }, index) => {
+          const checked = selectedIndex === index;
+          return (
+            <Pressable
+              key={index}
+              accessibilityRole="radio"
+              accessibilityState={{ checked }}
+              onPress={() => setSelectedIndex(index)}
+              style={({ pressed }) => [
+                styles.choice,
+                { borderColor: checked ? colors.primary : colors.outline,
+                  backgroundColor: checked || pressed ? colors.surfaceAlt : colors.surface },
+              ]}
+            >
+              <View style={[styles.radio, { borderColor: checked ? colors.primary : colors.textSecondary }]}>
+                {checked && <View style={[styles.dot, { backgroundColor: colors.primary }]} />}
+              </View>
+              <Text style={[styles.choiceLabel, { color: colors.textPrimary }]}>{label}</Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </ActionBottomSheet>
+  );
+}
 
 type LastEvent = {
   type: string;
@@ -36,9 +124,23 @@ type LastEvent = {
 
 export default function InterceptWidgetActionExampleScreen() {
   const readerRef = useRef<CPDFReaderView | null>(null);
-  const pendingSignatureWidgetRef = useRef<CPDFSignatureWidget | null>(null);
+  const mountedRef = useRef(false);
+  const pendingSignatureWidgetRef = useRef<{ widget: CPDFSignatureWidget; reader: CPDFReaderView } | null>(null);
+  const pendingPromptRef = useRef<WidgetPrompt | null>(null);
   const [signaturePickerVisible, setSignaturePickerVisible] = useState(false);
+  const [prompt, setPrompt] = useState<WidgetPrompt | null>(null);
   const [lastEvent, setLastEvent] = useState<LastEvent | null>(null);
+  const { colors } = useAppTheme();
+
+  useLayoutEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      readerRef.current = null;
+      pendingPromptRef.current = null;
+      pendingSignatureWidgetRef.current = null;
+    };
+  }, []);
 
   const configuration = ComPDFKit.getDefaultConfig({
     modeConfig: {
@@ -57,114 +159,167 @@ export default function InterceptWidgetActionExampleScreen() {
     },
   });
 
-  const updateLastEvent = useCallback((widget: CPDFWidget, result: string) => {
+  const updateLastEvent = (widget: CPDFWidget, result: string) => {
     setLastEvent({
       type: widget.type,
       title: widget.title || widget.uuid,
       result,
     });
-  }, []);
+  };
 
-  const handleInterceptWidgetAction = useCallback(
-    async (widget: CPDFWidget) => {
+  const closePrompt = () => {
+    pendingPromptRef.current = null;
+    if (mountedRef.current) setPrompt(null);
+  };
+
+  const closeSignaturePicker = () => {
+    pendingSignatureWidgetRef.current = null;
+    if (mountedRef.current) setSignaturePickerVisible(false);
+  };
+
+  const handleInterceptWidgetAction = (widget: CPDFWidget) => {
       const reader = readerRef.current;
-      if (!reader) {
+      if (!reader || pendingPromptRef.current || pendingSignatureWidgetRef.current) {
         return;
       }
+
+      const title = widget.title || widget.type;
+      const showPrompt = (next: Omit<WidgetPrompt, 'category'>) => {
+        const sheet = { ...next, category: widgetCategories[widget.type] ?? 'Form field' };
+        pendingPromptRef.current = sheet;
+        setPrompt(sheet);
+      };
+      const commit = async (update: () => void, result: string) => {
+        if (readerRef.current !== reader) return;
+        try {
+          update();
+          await reader._pdfDocument.updateWidget(widget);
+          if (readerRef.current === reader) updateLastEvent(widget, result);
+        } catch {
+          if (readerRef.current === reader) Alert.alert('Could not update field', title);
+        }
+      };
 
       switch (widget.type) {
         case CPDFWidgetType.TEXT_FIELD: {
           const textWidget = widget as CPDFTextWidget;
-          textWidget.update({ text: 'Handled by React Native' });
-          await reader._pdfDocument.updateWidget(textWidget);
-          updateLastEvent(widget, 'Updated text field value');
+          showPrompt({
+            title,
+            input: {
+              text: textWidget.text,
+              save: (text) => commit(() => textWidget.update({ text }), 'Updated text field value'),
+            },
+          });
           break;
         }
-        case CPDFWidgetType.CHECKBOX: {
-          const checkBox = widget as CPDFCheckboxWidget;
-          checkBox.update({ isChecked: !checkBox.isChecked });
-          await reader._pdfDocument.updateWidget(checkBox);
-          updateLastEvent(widget, checkBox.isChecked ? 'Checked' : 'Unchecked');
-          break;
-        }
+        case CPDFWidgetType.CHECKBOX:
         case CPDFWidgetType.RADIO_BUTTON: {
-          const radioButton = widget as CPDFRadiobuttonWidget;
-          radioButton.update({ isChecked: !radioButton.isChecked });
-          await reader._pdfDocument.updateWidget(radioButton);
-          updateLastEvent(widget, 'Selected current radio button');
+          const toggle = widget as CPDFCheckboxWidget | CPDFRadiobuttonWidget;
+          const isChecked = !toggle.isChecked;
+          const label = isChecked ? 'Check' : 'Uncheck';
+          showPrompt({
+            title,
+            message: `Currently ${toggle.isChecked ? 'checked' : 'unchecked'}.`,
+            action: {
+              label,
+              run: () => commit(() => toggle.update({ isChecked }), isChecked ? 'Checked' : 'Unchecked'),
+            },
+          });
           break;
         }
         case CPDFWidgetType.LISTBOX:
         case CPDFWidgetType.COMBOBOX: {
           const choiceWidget = widget as CPDFListboxWidget | CPDFComboboxWidget;
           const options = choiceWidget.options ?? [];
-          if (options.length === 0) {
-            updateLastEvent(widget, 'No options available');
-            return;
-          }
-          const nextIndex = (choiceWidget.selectItemAtIndex + 1) % options.length;
-          choiceWidget.update({ selectItemAtIndex: nextIndex });
-          await reader._pdfDocument.updateWidget(choiceWidget);
-          updateLastEvent(widget, `Selected ${options[nextIndex]?.text ?? nextIndex}`);
+          showPrompt({
+            title,
+            message: options.length === 0 ? 'No options available.' :
+              `Current selection: ${options[choiceWidget.selectItemAtIndex]?.text ?? 'None'}`,
+            selectedIndex: choiceWidget.selectItemAtIndex,
+            options: options.map((option, index) => ({
+              label: option.text,
+              run: () => commit(
+                () => choiceWidget.update({ selectItemAtIndex: index }),
+                `Selected ${option.text}`,
+              ),
+            })),
+          });
           break;
         }
         case CPDFWidgetType.PUSH_BUTTON: {
           const pushButton = widget as CPDFPushbuttonWidget;
-          Alert.alert('Push Button Intercepted', pushButton.buttonTitle || widget.title);
-          updateLastEvent(widget, 'Displayed custom push button action');
+          const action = pushButton.action;
+          const buttonTitle = pushButton.buttonTitle || title;
+          if (action instanceof CPDFGoToAction) {
+            showPrompt({
+              title: buttonTitle,
+              message: `Jump to page ${action.pageIndex + 1}?`,
+              action: {
+                label: 'Go to page',
+                run: async () => {
+                  if (readerRef.current !== reader) return;
+                  try {
+                    await reader.setDisplayPageIndex(action.pageIndex);
+                    if (readerRef.current === reader) updateLastEvent(widget, 'Jumped to target page');
+                  } catch {
+                    if (readerRef.current === reader) Alert.alert('Could not jump to target page');
+                  }
+                },
+              },
+            });
+          } else {
+            showPrompt({
+              title: buttonTitle,
+              message: action instanceof CPDFUriAction ? `URL: ${action.uri}` : 'No supported button action.',
+            });
+          }
           break;
         }
         case CPDFWidgetType.SIGNATURES_FIELDS: {
-          pendingSignatureWidgetRef.current = widget as CPDFSignatureWidget;
+          pendingSignatureWidgetRef.current = { widget: widget as CPDFSignatureWidget, reader };
           setSignaturePickerVisible(true);
-          updateLastEvent(widget, 'Waiting for signature image');
           break;
         }
         default:
           updateLastEvent(widget, 'Unsupported widget type');
           break;
       }
-    },
-    [updateLastEvent],
-  );
+  };
 
-  const handleSignatureSelected = useCallback(
-    async (imagePath: string) => {
-      const reader = readerRef.current;
-      const signatureWidget = pendingSignatureWidgetRef.current;
-      if (!reader || !signatureWidget) {
-        return;
+  const handleSignatureSelected = async (imagePath: string) => {
+    const pending = pendingSignatureWidgetRef.current;
+    if (!pending || readerRef.current !== pending.reader) return;
+    const { reader, widget } = pending;
+    pendingSignatureWidgetRef.current = null;
+    try {
+      const added = await reader._pdfDocument.addSignatureImage(widget, imagePath);
+      if (readerRef.current !== reader) return;
+      const updated = added && await reader._pdfDocument.updateAp(widget);
+      if (readerRef.current === reader) {
+        updateLastEvent(widget, updated ? 'Signature image added' : 'Could not update signature appearance');
       }
-
-      const result = await reader._pdfDocument.addSignatureImage(signatureWidget, imagePath);
-      if (result) {
-        await reader._pdfDocument.updateAp(signatureWidget);
-      }
-      updateLastEvent(
-        signatureWidget,
-        result ? 'Signature image added' : 'Failed to add signature image',
-      );
-      pendingSignatureWidgetRef.current = null;
-    },
-    [updateLastEvent],
-  );
+    } catch {
+      if (readerRef.current === reader) Alert.alert('Could not add signature');
+    }
+  };
 
   return (
     <FormExampleScaffold
       title="Intercept Widget Action"
       subtitle="Intercept form widget taps and handle the behavior in React Native."
+      document={formDocument}
       configuration={configuration}
-      onViewCreated={async (reader) => {
-        readerRef.current = reader;
-        await addCommonFormFields(reader);
+      onViewCreated={(reader) => {
+        if (mountedRef.current) readerRef.current = reader;
       }}
       readerViewProps={{
+        pageIndex: 1,
         onInterceptWidgetActionCallback: handleInterceptWidgetAction,
       }}
       bottomAccessory={
-        <View style={styles.eventPanel}>
-          <Text style={styles.eventTitle}>Last intercepted widget</Text>
-          <Text style={styles.eventText}>
+        <View style={[styles.eventPanel, { backgroundColor: colors.surface, borderTopColor: colors.outlineVariant }]}>
+          <Text style={[styles.eventTitle, { color: colors.textPrimary }]}>Last form action result</Text>
+          <Text accessibilityLiveRegion="polite" style={[styles.eventText, { color: colors.textSecondary }]}>
             {lastEvent
               ? `${lastEvent.type} · ${lastEvent.title}\n${lastEvent.result}`
               : 'Tap a form widget to handle it with custom UI.'}
@@ -173,32 +328,66 @@ export default function InterceptWidgetActionExampleScreen() {
       }
     >
       {() => (
-        <SignatureListModal
-          visible={signaturePickerVisible}
-          onClose={() => setSignaturePickerVisible(false)}
-          onSelectSignature={handleSignatureSelected}
-        />
+        <>
+          {prompt && (
+            <WidgetActionModal
+              prompt={prompt}
+              onClose={closePrompt}
+              onApply={(action) => {
+                if (pendingPromptRef.current !== prompt || !readerRef.current) return;
+                closePrompt();
+                action();
+              }}
+            />
+          )}
+          {signaturePickerVisible && (
+            <SignatureListModal
+              visible
+              bottomSheet
+              onClose={closeSignaturePicker}
+              onSelectSignature={handleSignatureSelected}
+            />
+          )}
+        </>
       )}
     </FormExampleScaffold>
   );
 }
 
 const styles = StyleSheet.create({
+  body: { paddingHorizontal: 20, paddingBottom: 16, gap: 8 },
+  field: { gap: 8 },
+  message: { fontSize: 15, lineHeight: 22 },
+  fieldLabel: { fontSize: 14, fontWeight: '600' },
+  input: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    fontSize: 16,
+  },
+  options: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  choice: {
+    minHeight: 48, borderWidth: 1, borderRadius: 12, padding: 12,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+  },
+  choiceLabel: { flex: 1, fontSize: 16 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  dot: { width: 8, height: 8, borderRadius: 4 },
   eventPanel: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#D8DEE8',
-    backgroundColor: '#FFFFFF',
   },
   eventTitle: {
-    color: '#1F2937',
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
   },
   eventText: {
-    color: '#4B5563',
     fontSize: 13,
     lineHeight: 18,
   },

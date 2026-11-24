@@ -44,6 +44,18 @@ export const formsCategory: CategoryInfo = {
       },
     },
     {
+      id: 'check-required-fields',
+      name: 'Check Required Fields',
+      description: 'Validate required fields through the read-only isRequired flag',
+      routeType: EXAMPLE_ROUTE_TYPES.screen,
+      routeName: EXAMPLE_ROUTES.formCheckRequiredFields,
+      visual: {
+        badge: 'RQ',
+        accentColor: '#B45309',
+        backgroundColor: '#FEF3C7',
+      },
+    },
+    {
       id: 'fill-form',
       name: 'Fill Form',
       description: 'Programmatically fill form fields',
@@ -94,7 +106,7 @@ export const formsCategory: CategoryInfo = {
     {
       id: 'intercept-widget-action',
       name: 'Intercept Widget Action',
-      description: 'Intercept form widget taps and handle custom actions',
+      description: 'Intercept seven form widget types in a dedicated sample PDF',
       routeType: EXAMPLE_ROUTE_TYPES.screen,
       routeName: EXAMPLE_ROUTES.formInterceptWidgetAction,
       visual: {

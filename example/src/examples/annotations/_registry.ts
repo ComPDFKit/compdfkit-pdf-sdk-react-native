@@ -168,7 +168,7 @@ export const annotationsCategory: CategoryInfo = {
     {
       id: 'annotation-action',
       name: 'Intercept Action',
-      description: 'Intercept link and note annotation actions',
+      description: 'Intercept Note and Link default actions in annotation mode',
       routeType: EXAMPLE_ROUTE_TYPES.screen,
       routeName: EXAMPLE_ROUTES.interceptAnnotationAction,
       visual: {

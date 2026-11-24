@@ -11,6 +11,9 @@
 		0C80B921A6F3F58F76C31292 /* libPods-CompdfkitPdfExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CompdfkitPdfExample.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		0D02A4A0614F01AAFFEF391F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		5C1F0A000000000000000002 /* required_fields_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 5C1F0A000000000000000001 /* required_fields_test.pdf */; };
+		5C1F0A000000000000000004 /* annotation_interception_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 5C1F0A000000000000000003 /* annotation_interception_test.pdf */; };
+		5C1F0A000000000000000006 /* form_interception_test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 5C1F0A000000000000000005 /* form_interception_test.pdf */; };
 		7699B88040F8A987B510C191 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CompdfkitPdfExample-CompdfkitPdfExampleTests.a */; };
 		7B0127202F20D0C3003D9E18 /* ic_test_add_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 7B0127012F20D0C3003D9E18 /* ic_test_add_image.png */; };
 		7B0127212F20D0C3003D9E18 /* ic_test_cursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 7B0127092F20D0C3003D9E18 /* ic_test_cursor.png */; };
@@ -105,6 +108,9 @@
 		3B4392A12AC88292D35C810B /* Pods-CompdfkitPdfExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample.debug.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-CompdfkitPdfExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample.release.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample/Pods-CompdfkitPdfExample.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests/Pods-CompdfkitPdfExample-CompdfkitPdfExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5C1F0A000000000000000001 /* required_fields_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Documents/required_fields_test.pdf; sourceTree = "<group>"; };
+		5C1F0A000000000000000003 /* annotation_interception_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ../assets/annotation_interception_test.pdf; sourceTree = SOURCE_ROOT; };
+		5C1F0A000000000000000005 /* form_interception_test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ../assets/form_interception_test.pdf; sourceTree = SOURCE_ROOT; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-CompdfkitPdfExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CompdfkitPdfExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0127012F20D0C3003D9E18 /* ic_test_add_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_test_add_image.png; sourceTree = "<group>"; };
 		7B0127022F20D0C3003D9E18 /* ic_test_add_text.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_test_add_text.png; sourceTree = "<group>"; };
@@ -334,6 +340,9 @@
 				A04200000000000000000002 /* unsigned_signature.pdf */,
 				EC9B30152D7AC832004E62E0 /* test_sign_pic.png */,
 				EC9B30132D7AB9CD004E62E0 /* annot_test.pdf */,
+				5C1F0A000000000000000001 /* required_fields_test.pdf */,
+				5C1F0A000000000000000003 /* annotation_interception_test.pdf */,
+				5C1F0A000000000000000005 /* form_interception_test.pdf */,
 				EC09D8202D3DE886001B2CB3 /* test.xfdf */,
 			);
 			path = Resources;
@@ -486,6 +495,9 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				EC4EF3572D36664A00EEA52B /* extraFonts in Resources */,
 				EC9B30142D7AB9CD004E62E0 /* annot_test.pdf in Resources */,
+				5C1F0A000000000000000002 /* required_fields_test.pdf in Resources */,
+				5C1F0A000000000000000004 /* annotation_interception_test.pdf in Resources */,
+				5C1F0A000000000000000006 /* form_interception_test.pdf in Resources */,
 				C9FCF5E32C475A9100CEFDBB /* Localizable.strings in Resources */,
 				ECBEE6F32E9E46B4002D0414 /* ic_logo.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -794,7 +806,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2.0;
+				MARKETING_VERSION = 3.2.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -831,7 +843,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2.0;
+				MARKETING_VERSION = 3.2.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

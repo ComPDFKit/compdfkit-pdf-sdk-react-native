@@ -14,3 +14,10 @@ export function getDefaultFormDocument() {
     ? 'file:///android_asset/annot_test.pdf'
     : 'annot_test.pdf';
 }
+
+/** One-page AcroForm fixture whose fields mix the Required flag (Ff bit 2). */
+export function getRequiredFieldsTestDocument() {
+  return Platform.OS === 'android'
+    ? 'file:///android_asset/required_fields_test.pdf'
+    : 'required_fields_test.pdf';
+}

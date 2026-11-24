@@ -222,6 +222,15 @@ export const CPDFAnnotationType = {
 } as const
 export type CPDFAnnotationType = ValueOf<typeof CPDFAnnotationType>;
 
+/** History source used for Ink undo and redo. */
+export const CPDFInkUndoRedoMode = {
+  INK_ONLY: "inkOnly",
+  DOCUMENT_ONLY: "documentOnly",
+  HYBRID: "hybrid",
+} as const;
+
+export type CPDFInkUndoRedoMode = ValueOf<typeof CPDFInkUndoRedoMode>;
+
 /**
   * {@link CPDFViewMode.ANNOTATIONS}, {@link CPDFViewMode.CONTENT_EDITOR},{@link CPDFViewMode.FORMS} function tools.
   * {@link CPDFConfigTool.SETTING} is not available in form functionality.

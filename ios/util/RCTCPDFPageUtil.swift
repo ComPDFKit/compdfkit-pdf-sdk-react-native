@@ -826,6 +826,19 @@ class RCTCPDFPageUtil: NSObject {
       return formDicts
   }
   
+  /// Reads the PDF field Required flag (Ff bit 2).
+  ///
+  /// ComPDFKit exposes `requiredFlag` only in the non-public
+  /// `CPDFWidgetAnnotation (Protected)` category, so resolve the selector at
+  /// runtime and fall back to `false` when it is unavailable.
+  private func isRequiredField(_ widgetAnnotation: CPDFWidgetAnnotation) -> Bool {
+      let selector = NSSelectorFromString("requiredFlag")
+      guard widgetAnnotation.responds(to: selector) else {
+          return false
+      }
+      return (widgetAnnotation.value(forKey: "requiredFlag") as? Bool) ?? false
+  }
+
   func getForm(FormAnnotation widgetAnnotation: CPDFWidgetAnnotation) -> Dictionary<String, Any> {
       let type: String = widgetAnnotation.type
       var formDict: [String : Any] = [:]
@@ -1002,7 +1015,11 @@ class RCTCPDFPageUtil: NSObject {
       default:
           print("Unhandled widget type: \(widgetType)")
       }
-      
+
+      if !formDict.isEmpty {
+          formDict["isRequired"] = isRequiredField(widgetAnnotation)
+      }
+
       return formDict
   }
   

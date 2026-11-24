@@ -1,0 +1,116 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /AcroForm 5 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /Helv 4 0 R >> >> /Contents 6 0 R /Annots [10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R] >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Fields [10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 18 0 R 19 0 R 20 0 R 21 0 R] /DA (/Helv 12 Tf 0 g) /DR << /Font << /Helv 4 0 R >> >> /NeedAppearances true >>
+endobj
+6 0 obj
+<< /Length 595 >>
+stream
+BT /Helv 16 Tf 40 770 Td (isRequired test form: * = Required flag) Tj ET
+BT /Helv 11 Tf 40 725 Td (name_required *) Tj ET
+BT /Helv 11 Tf 40 685 Td (nickname_optional) Tj ET
+BT /Helv 11 Tf 40 645 Td (email_required_readonly *) Tj ET
+BT /Helv 11 Tf 40 605 Td (agree_required *) Tj ET
+BT /Helv 11 Tf 40 575 Td (newsletter_optional) Tj ET
+BT /Helv 11 Tf 40 535 Td (gender_required * (A / B)) Tj ET
+BT /Helv 11 Tf 40 485 Td (country_required *) Tj ET
+BT /Helv 11 Tf 40 430 Td (hobby_optional) Tj ET
+BT /Helv 11 Tf 40 340 Td (signature_required *) Tj ET
+BT /Helv 11 Tf 40 265 Td (submit_button) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 20 20] /Length 18 >>
+stream
+0 g 4 4 12 12 re f
+endstream
+endobj
+8 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 20 20] /Length 0 >>
+stream
+
+endstream
+endobj
+9 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 100 24] /Resources << /Font << /Helv 4 0 R >> >> /Length 97 >>
+stream
+q 0.8 0.8 0.8 rg 0 0 100 24 re f Q 0 0 0 RG 0 0 100 24 re S BT /Helv 11 Tf 30 7 Td (Submit) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Tx /T (name_required) /Ff 2 /Rect [200 720 420 744] /V () >>
+endobj
+11 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Tx /T (nickname_optional) /Ff 0 /Rect [200 680 420 704] /V () >>
+endobj
+12 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Tx /T (email_required_readonly) /Ff 3 /Rect [200 640 420 664] /V (a@b.c) >>
+endobj
+13 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Btn /T (agree_required) /Ff 2 /Rect [200 600 220 620] /V /Off /AS /Off /AP << /N << /Yes 7 0 R /Off 8 0 R >> >> >>
+endobj
+14 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Btn /T (newsletter_optional) /Rect [200 570 220 590] /V /Off /AS /Off /AP << /N << /Yes 7 0 R /Off 8 0 R >> >> >>
+endobj
+15 0 obj
+<< /FT /Btn /T (gender_required) /Ff 49154 /V /Off /Kids [16 0 R 17 0 R] >>
+endobj
+16 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /Parent 15 0 R /Rect [200 530 220 550] /AS /Off /AP << /N << /A 7 0 R /Off 8 0 R >> >> >>
+endobj
+17 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /Parent 15 0 R /Rect [260 530 280 550] /AS /Off /AP << /N << /B 7 0 R /Off 8 0 R >> >> >>
+endobj
+18 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Ch /T (country_required) /Ff 131074 /Rect [200 480 420 504] /Opt [(China) (USA) (Japan)] >>
+endobj
+19 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Ch /T (hobby_optional) /Ff 0 /Rect [200 400 420 460] /Opt [(Reading) (Music) (Sport)] >>
+endobj
+20 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Sig /T (signature_required) /Ff 2 /Rect [200 320 420 370] >>
+endobj
+21 0 obj
+<< /Type /Annot /Subtype /Widget /P 3 0 R /F 4 /MK << /BC [0 0 0] /BG [1 1 1] >> /DA (/Helv 12 Tf 0 g) /FT /Btn /T (submit_button) /Ff 65536 /Rect [200 260 300 284] /MK << /BC [0 0 0] /BG [0.8 0.8 0.8] /CA (Submit) >> /AP << /N 9 0 R >> >>
+endobj
+xref
+0 22
+0000000000 65535 f 
+0000000015 00000 n 
+0000000080 00000 n 
+0000000137 00000 n 
+0000000352 00000 n 
+0000000449 00000 n 
+0000000628 00000 n 
+0000001273 00000 n 
+0000001389 00000 n 
+0000001486 00000 n 
+0000001723 00000 n 
+0000001908 00000 n 
+0000002097 00000 n 
+0000002297 00000 n 
+0000002536 00000 n 
+0000002774 00000 n 
+0000002866 00000 n 
+0000003075 00000 n 
+0000003284 00000 n 
+0000003500 00000 n 
+0000003713 00000 n 
+0000003898 00000 n 
+trailer
+<< /Size 22 /Root 1 0 R >>
+startxref
+4154
+%%EOF

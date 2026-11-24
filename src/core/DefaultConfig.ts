@@ -17,6 +17,7 @@ import {
   CPDFConfigTool,
   CPDFContentEditorType,
   CPDFDisplayMode,
+  CPDFInkUndoRedoMode,
   CPDFLineType,
   CPDFThemeMode,
   CPDFThemes,
@@ -176,6 +177,9 @@ export function getDefaultConfig(
       autoShowStampPicker: true,
       interceptLinkAction: false,
       interceptNoteAction: false,
+      inkUndoRedoMode: CPDFInkUndoRedoMode.HYBRID,
+      interceptAllAnnotationActions: false,
+      interceptAnnotationActions: [],
       availableTypes: [
         CPDFAnnotationType.NOTE,
         CPDFAnnotationType.HIGHLIGHT,
@@ -588,5 +592,21 @@ export function getDefaultConfig(
       },
     },
   };
-  return JSON.stringify(mergeDeep(defaultConfig, overrides), null, 2);
+  const config = mergeDeep(defaultConfig, overrides);
+  const annotations = overrides.annotationsConfig;
+  if (annotations) {
+    if (
+      annotations.interceptAllAnnotationActions !== undefined ||
+      annotations.interceptAnnotationActions !== undefined
+    ) {
+      config.annotationsConfig.interceptNoteAction = false;
+      config.annotationsConfig.interceptLinkAction = false;
+    } else {
+      config.annotationsConfig.interceptAnnotationActions = [
+        ...(annotations.interceptNoteAction ? [CPDFAnnotationType.NOTE] : []),
+        ...(annotations.interceptLinkAction ? [CPDFAnnotationType.LINK] : []),
+      ];
+    }
+  }
+  return JSON.stringify(config, null, 2);
 }

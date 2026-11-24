@@ -27,6 +27,7 @@ import { CPDFRectF } from "../../util/CPDFRectF";
  * @property {CPDFRectF | null} rect - The rectangular coordinates of the form widget (default: null).
  * @property {string} borderColor - The border color of the form widget (default: '#000000').
  * @property {string} fillColor - The fill color of the form widget (default: '#000000').
+ * @property {boolean} isRequired - Whether the form field is marked as required (default: false).
  */
 export class CPDFWidget {
 
@@ -57,6 +58,18 @@ export class CPDFWidget {
 
     borderWidth: number;
 
+    /**
+     * Whether the form field is marked as required (PDF field flag `Ff` bit 2).
+     *
+     * The value is read from the native document on the current platform and is read-only:
+     * it is ignored when the widget is written back. PDF viewers do not enforce it, so the
+     * app must check required fields before submitting a form. Defaults to `false` when the
+     * flag is absent or the native SDK cannot read it.
+     *
+     * @since 3.2.1
+     */
+    readonly isRequired: boolean;
+
     constructor(params: Partial<CPDFWidget>) {
         this.type = CPDFWidget.parseType(params.type);
         this.title = params.title ?? "";
@@ -67,6 +80,7 @@ export class CPDFWidget {
         this.borderColor = params.borderColor ?? '#000000';
         this.fillColor = params.fillColor ?? '#000000';
         this.borderWidth = params.borderWidth ?? 0;
+        this.isRequired = params.isRequired === true;
     }
 
     static fromJson<T extends CPDFWidget>(this: new (params: Partial<T>) => T, json: any): T {
@@ -101,7 +115,7 @@ export class CPDFWidget {
      * widget.update({ title: 'New Title', fillColor: '#FF0000', borderColor: '#00FF00' });
      * await document.updateWidget(widget);
      */
-    update(updates: Partial<Omit<this, 'type' | 'page' | 'uuid' | 'createDate'>>): this {
+    update(updates: Partial<Omit<this, 'type' | 'page' | 'uuid' | 'createDate' | 'isRequired'>>): this {
         Object.assign(this, updates);
         return this;
     }

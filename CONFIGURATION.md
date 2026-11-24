@@ -1,11 +1,11 @@
 ## CPDFConfiguration Descriptions
 
-This document outlines the UI configurations and PDF properties that can be defined when using the ComPDFKit PDF mobile SDK, including cross-platform support for React Native and Flutter, for opening PDF views. While the method for modifying configurations may vary across platforms due to different programming languages, the parameters remain consistent.
+This guide describes the configuration used by ComPDFKit for React Native **3.2.1**. React Native passes configuration JSON to the native Android and iOS SDKs. A field can be valid in React Native but have no effect on an older native SDK. The native and Flutter examples below are included for reference.
 
 This configuration is only effective when you are using the default PDF view interfaces provided by the **ComPDFKit_Tools** module on **Android** and **iOS** platforms. **React Native** and **Flutter** already include the **ComPDFKit_Tools** module by default.
 
 * **Android:** `CPDFDocumentActivity`、`CPDFDocumentFragment`
-* **iOS:** `CPDFCPDFViewController`
+* **iOS:** `CPDFViewController`
 
 ### Usage Examples
 
@@ -40,7 +40,7 @@ CPDFViewController(filePath: path, password: nil, configuration: configuration)
 **React Native**
 
 ```tsx
-var configuration = ComPDFKit.getDefaultConfig({
+const configuration = ComPDFKit.getDefaultConfig({
   modeConfig: {
     initialViewMode: CPDFViewMode.VIEWER,
     availableViewModes: [
@@ -55,7 +55,7 @@ ComPDFKit.openDocument(document, '', configuration)
 // Use in UI components
 <CPDFReaderView
 	document={samplePDF}
-	configuration={config}
+	configuration={configuration}
 	style={{ flex: 1 }}
 />
 ```
@@ -225,6 +225,48 @@ Configure annotation-related settings, such as enabling types displayed in the a
 | initAttribute    | Array  | Set default attributes for annotations.                                  |
 | annotationAuthor | String | Set the author name when adding annotations and replying to annotations. |
 | autoShowNoteEditDialog | Boolean | Whether to automatically show the default edit dialog immediately after creating a Note annotation. Default is `true`. Set to `false` to receive the created Note via `onAnnotationCreationPrepared`. |
+| inkUndoRedoMode | `CPDFInkUndoRedoMode` | Ink history source: `inkOnly`, `documentOnly`, or `hybrid` (default). |
+| interceptAllAnnotationActions | Boolean | Intercept supported default annotation actions (currently Note and Link on Android). Default: `false`. |
+| interceptAnnotationActions | `CPDFAnnotationType[]` | Select default actions to intercept. Currently `note` and `link` can produce intercepted actions on Android. Default: `[]`. |
+| interceptNoteAction | Boolean | Legacy switch for the Note default action. Default: `false`. |
+| interceptLinkAction | Boolean | Legacy switch for the Link default action. Default: `false`. |
+
+##### Annotation action interception in React Native
+
+| Override passed to `ComPDFKit.getDefaultConfig` | Result on a native SDK that supports the new fields |
+| --- | --- |
+| `interceptAllAnnotationActions: true` | Intercepts all supported default actions, regardless of the list. |
+| `interceptAnnotationActions: [CPDFAnnotationType.LINK]` | Intercepts Link only. |
+| Explicit `false` with no list, or explicit `[]` without `true` | Intercepts nothing. An explicit `false` with a non-empty list still allows the listed actions. |
+| Both new fields omitted | Enabled legacy flags are copied to the new list as `note` and `link`; the legacy flags are preserved for older native SDKs. |
+
+**Android:** The default dependency is `com.compdf:compdfkit-tools:3.2.1-SNAPSHOT`.
+Make the snapshot available in your local Maven repository before running `yarn --cwd example build:android`. Only Note and Link have supported default actions for interception. Other taps remain native selection or editing gestures. A Note has no default edit action in viewer mode, so use annotation mode to demonstrate Note interception.
+
+**iOS:** React Native forwards the JSON; behavior depends on the installed Tools
+framework. The example's stock iOS `3.2.0` Pods expose only the legacy Note/Link
+switches. For those Pods, use `interceptNoteAction` and `interceptLinkAction`
+without either new interception option. The new fields were validated separately
+with the Flutter-matched Simulator frameworks; this does not establish support
+in the stock Pods or on iOS devices.
+
+```tsx
+const configuration = ComPDFKit.getDefaultConfig({
+  modeConfig: { initialViewMode: CPDFViewMode.ANNOTATIONS },
+  annotationsConfig: {
+    inkUndoRedoMode: CPDFInkUndoRedoMode.HYBRID,
+    interceptAnnotationActions: [CPDFAnnotationType.NOTE, CPDFAnnotationType.LINK],
+  },
+});
+
+<CPDFReaderView
+  document={documentPath}
+  configuration={configuration}
+  onInterceptAnnotationActionCallback={(annotation) => {
+    console.log(annotation.type);
+  }}
+/>;
+```
 
 ##### **availableTypes Constants**
 
@@ -376,6 +418,9 @@ Configure annotation-related settings, such as enabling types displayed in the a
 {
 "annotationsConfig": {
     "autoShowNoteEditDialog": true,
+    "inkUndoRedoMode": "hybrid",
+    "interceptAllAnnotationActions": false,
+    "interceptAnnotationActions": [],
     "availableTypes": [
       "note",
       "highlight",
@@ -566,6 +611,14 @@ This section is used to configure the types of forms enabled in the view's botto
 | availableTypes | Array | Types of forms enabled.                    |
 | availableTools | Array | Form tools enabled.                        |
 | initAttribute  | obj   | Default attributes for various form types. |
+| interceptAllFormWidgetActions | Boolean | Intercept all supported form widget actions. Default: `false`. |
+| interceptFormWidgetActions | `CPDFWidgetType[]` | Intercept actions for the listed form widget types. Default: `[]`. |
+
+Register `CPDFReaderView.onInterceptWidgetActionCallback` to receive intercepted
+widgets. For example, set
+`formsConfig: { interceptFormWidgetActions: [CPDFWidgetType.TEXT_FIELD] }` to
+handle text-field taps in your own UI. Canceling that UI should discard the
+draft; update the widget only when the user confirms.
 
 ##### availableTypes Constants
 
@@ -698,6 +751,8 @@ This section is used to configure the types of forms enabled in the view's botto
 ```json
 {
   "formsConfig": {
+    "interceptAllFormWidgetActions": false,
+    "interceptFormWidgetActions": [],
     "availableTypes": [
       "textField",
       "checkBox",
@@ -1132,6 +1187,9 @@ The context menu configuration in form mode displays different context menu opti
   },
   "annotationsConfig": {
     "annotationAuthor": "Guest",
+    "inkUndoRedoMode": "hybrid",
+    "interceptAllAnnotationActions": false,
+    "interceptAnnotationActions": [],
     "availableTypes": [
       "note",
       "highlight",
@@ -1258,6 +1316,8 @@ The context menu configuration in form mode displays different context menu opti
     }
   },
   "formsConfig": {
+    "interceptAllFormWidgetActions": false,
+    "interceptFormWidgetActions": [],
     "availableTypes": [
       "textField",
       "checkBox",

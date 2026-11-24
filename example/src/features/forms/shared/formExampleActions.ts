@@ -26,6 +26,7 @@ import {
   CPDFTextWidget,
   CPDFUriAction,
   CPDFWidget,
+  CPDFWidgetType,
 } from '@compdfkit_pdf_sdk/react_native';
 import { Logger } from '../../../util/logger';
 import { keepLocalCopy, pick, types } from '@react-native-documents/picker';
@@ -53,6 +54,84 @@ export async function fetchAllWidgets(reader: CPDFReaderView) {
   }
 
   return allWidgets;
+}
+
+export type RequiredFieldCheckResult = {
+  requiredCount: number;
+  emptyFields: string[];
+};
+
+/**
+ * Collects every required form field that still has no value.
+ *
+ * PDF viewers do not enforce required fields, so the app has to check them
+ * before submitting. Radio buttons share one parent field flag: treat the group
+ * as filled when any button in it is checked.
+ */
+export async function checkRequiredFields(
+  reader: CPDFReaderView,
+): Promise<RequiredFieldCheckResult> {
+  const widgets = await fetchAllWidgets(reader);
+
+  const checkedRadioGroups = new Set(
+    widgets
+      .filter(widget => widget.type === CPDFWidgetType.RADIO_BUTTON)
+      .filter(widget => (widget as CPDFRadiobuttonWidget).isChecked)
+      .map(widget => widget.title),
+  );
+
+  const requiredKeys = new Set<string>();
+  const emptyFields: string[] = [];
+
+  for (const widget of widgets.filter(item => item.isRequired)) {
+    const isRadioGroup = widget.type === CPDFWidgetType.RADIO_BUTTON;
+    const fieldKey = isRadioGroup
+      ? `radio:${widget.title}`
+      : `${widget.type}:${widget.uuid}`;
+    if (requiredKeys.has(fieldKey)) {
+      continue;
+    }
+    requiredKeys.add(fieldKey);
+
+    let isEmpty = false;
+    switch (widget.type) {
+      case CPDFWidgetType.TEXT_FIELD:
+        isEmpty = ((widget as CPDFTextWidget).text ?? '').trim().length === 0;
+        break;
+      case CPDFWidgetType.CHECKBOX:
+        isEmpty = !(widget as CPDFCheckboxWidget).isChecked;
+        break;
+      case CPDFWidgetType.RADIO_BUTTON:
+        isEmpty = !checkedRadioGroups.has(widget.title);
+        break;
+      case CPDFWidgetType.LISTBOX:
+      case CPDFWidgetType.COMBOBOX:
+        // Android reports 0 when nothing is selected while iOS reports -1, so
+        // an empty field and a selected first option are indistinguishable here.
+        isEmpty = (widget as CPDFListboxWidget).selectItemAtIndex <= 0;
+        break;
+      case CPDFWidgetType.SIGNATURES_FIELDS:
+        isEmpty = !(widget as CPDFSignatureWidget).isSigned;
+        break;
+      default:
+        break;
+    }
+
+    if (isEmpty) {
+      emptyFields.push(`${widget.title || '(untitled)'} (page ${widget.page + 1})`);
+    }
+  }
+
+  const result: RequiredFieldCheckResult = {
+    requiredCount: requiredKeys.size,
+    emptyFields,
+  };
+  Logger.log(
+    emptyFields.length === 0
+      ? `All ${result.requiredCount} required fields are filled.`
+      : `Required fields still empty:\n${emptyFields.join('\n')}`,
+  );
+  return result;
 }
 
 export async function fillSampleWidgets(reader: CPDFReaderView) {

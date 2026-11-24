@@ -7,7 +7,7 @@
  * This notice may not be removed from this file.
  */
 
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import {
   Modal,
   View,
@@ -23,9 +23,12 @@ import {
 import RNFS from "react-native-fs";
 import { Logger } from '../../../../util/logger';
 import { CPDFFileUtil } from '../../../../util/CPDFFileUtil';
+import { useAppTheme } from '../../../../theme/appTheme';
+import { ActionBottomSheet } from '../../../../widgets/common/ActionBottomSheet';
 
 interface SignatureListModalProps {
   visible: boolean;
+  bottomSheet?: boolean;
   onClose: () => void;
   onSelectSignature: (imagePath: string) => void;
 }
@@ -67,10 +70,34 @@ const signatureImages: SignatureImage[] = SIGNATURE_FILES.map((item, index) => (
 
 export const SignatureListModal: React.FC<SignatureListModalProps> = ({
   visible,
+  bottomSheet = false,
   onClose,
   onSelectSignature,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<SignatureImage | null>(null);
+  const [copyFailed, setCopyFailed] = useState(false);
+  const { colors } = useAppTheme();
+  const pendingCopy = useRef<object | null>(null);
+  const visibleRef = useRef(false);
+
+  useLayoutEffect(() => {
+    visibleRef.current = visible;
+    if (visible) {
+      setLoading(false);
+      setSelected(null);
+      setCopyFailed(false);
+    }
+    return () => {
+      visibleRef.current = false;
+      pendingCopy.current = null;
+    };
+  }, [visible]);
+
+  const dismiss = () => {
+    pendingCopy.current = null;
+    onClose();
+  };
 
   const copyImageToDevice = async (
     imageSource: string,
@@ -86,16 +113,28 @@ export const SignatureListModal: React.FC<SignatureListModalProps> = ({
   };
 
   const handleSelectSignature = async (item: SignatureImage) => {
+    if (!visibleRef.current || pendingCopy.current) return;
+    const request = {};
+    pendingCopy.current = request;
     setLoading(true);
+    setCopyFailed(false);
     try {
       const filePath = await copyImageToDevice(item.assetPath, item.name);
+      if (pendingCopy.current !== request) return;
+      pendingCopy.current = null;
+      setLoading(false);
       onSelectSignature(filePath);
       onClose();
     } catch (error) {
-      Alert.alert("Error", "Failed to copy signature file, please try again");
-      Logger.error("Failed to copy signature:", error);
-    } finally {
+      if (pendingCopy.current !== request) return;
+      pendingCopy.current = null;
       setLoading(false);
+      if (bottomSheet) {
+        setCopyFailed(true);
+      } else {
+        Alert.alert("Error", "Failed to copy signature file, please try again");
+      }
+      Logger.error("Failed to copy signature:", error);
     }
   };
 
@@ -113,17 +152,72 @@ export const SignatureListModal: React.FC<SignatureListModalProps> = ({
     </TouchableOpacity>
   );
 
+  if (bottomSheet) {
+    return (
+      <ActionBottomSheet
+        visible={visible}
+        title="Add a signature"
+        category="Signature field"
+        onClose={dismiss}
+        actionLabel={loading ? 'Preparing…' : 'Add signature'}
+        actionDisabled={!selected || loading}
+        onAction={() => {
+          if (selected) handleSelectSignature(selected);
+        }}
+      >
+        <FlatList
+          style={styles.sheetList}
+          contentContainerStyle={styles.sheetListContent}
+          data={signatureImages}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          ListHeaderComponent={
+            <Text style={[styles.sheetMessage, { color: colors.textSecondary }]}>
+              Pick a sample image, then confirm to add it to the PDF.
+            </Text>
+          }
+          ListFooterComponent={copyFailed ? (
+            <Text accessibilityRole="alert" style={[styles.sheetMessage, { color: colors.textPrimary }]}>
+              Could not prepare the signature image. Try again.
+            </Text>
+          ) : null}
+          renderItem={({ item }) => {
+            const checked = selected?.id === item.id;
+            return (
+              <TouchableOpacity
+                accessibilityRole="radio"
+                accessibilityLabel={`Signature ${item.id}`}
+                accessibilityState={{ checked, disabled: loading }}
+                disabled={loading}
+                onPress={() => setSelected(item)}
+                style={[styles.sheetSignature, {
+                  borderColor: checked ? colors.primary : colors.outline,
+                  backgroundColor: checked ? colors.surfaceVariant : colors.surfaceAlt,
+                }]}
+              >
+                <Image source={item.preview} style={styles.sheetSignatureImage} resizeMode="contain" />
+                <Text style={{ color: colors.textPrimary }}>
+                  {checked ? `✓ Signature ${item.id}` : `Signature ${item.id}`}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </ActionBottomSheet>
+    );
+  }
+
   return (
     <Modal
       visible={visible}
       transparent={true}
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={dismiss}
     >
       <TouchableOpacity
         style={styles.modalOverlay}
         activeOpacity={1}
-        onPress={onClose}
+        onPress={dismiss}
       >
         <View
           style={styles.modalContent}
@@ -132,9 +226,8 @@ export const SignatureListModal: React.FC<SignatureListModalProps> = ({
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Signature List</Text>
             <TouchableOpacity
-              onPress={onClose}
+              onPress={dismiss}
               style={styles.closeButton}
-              disabled={loading}
             >
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
@@ -161,6 +254,14 @@ export const SignatureListModal: React.FC<SignatureListModalProps> = ({
 };
 
 const styles = StyleSheet.create({
+  sheetList: { flexGrow: 0, flexShrink: 1 },
+  sheetListContent: { paddingHorizontal: 16, paddingBottom: 12 },
+  sheetMessage: { marginHorizontal: 4, marginBottom: 8, fontSize: 15, lineHeight: 22 },
+  sheetSignature: {
+    flex: 1, minHeight: 96, margin: 4, padding: 8, alignItems: 'center',
+    justifyContent: 'center', borderRadius: 12, borderWidth: 1, gap: 4,
+  },
+  sheetSignatureImage: { height: 56, width: '100%', backgroundColor: '#FFFFFF', borderRadius: 6 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",

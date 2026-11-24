@@ -68,6 +68,7 @@ export const EXAMPLE_ROUTES = {
   formInterceptWidgetAction: 'CPDFInterceptWidgetActionExample',
   formCreationMode: 'CPDFApiFormCreationModeExample',
   formFieldSelectionObservation: 'CPDFFieldSelectionObservationExample',
+  formCheckRequiredFields: 'CPDFCheckRequiredFieldsExample',
   customToolbar: 'CPDFCustomToolbarExample',
   eventListener: 'CPDFEventListenerExample',
   customUiStyle: 'CPDFCustomUiStyleExample',

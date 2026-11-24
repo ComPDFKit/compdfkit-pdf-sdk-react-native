@@ -26,6 +26,8 @@ import com.facebook.react.bridge.WritableMap;
  */
 public abstract class RnBaseWidgetCodec implements RnWidgetCodec {
 
+  /** PDF field flag bit 2 (Ff), "Required". See ISO 32000-1 Table 221. */
+  private static final int FIELD_FLAG_REQUIRED = 1 << 1;
 
   /**
    * Returns the widget.
@@ -37,6 +39,7 @@ public abstract class RnBaseWidgetCodec implements RnWidgetCodec {
     map.putInt("page", widget.pdfPage.getPageNum());
     map.putString("title", widget.getFieldName());
     map.putString("uuid", widget.getAnnotPtr()+"");
+    map.putBoolean("isRequired", (widget.getFieldFlag() & FIELD_FLAG_REQUIRED) != 0);
     RectF rect = annotation.getRect();
     WritableMap rectMap = Arguments.createMap();
     rectMap.putDouble("left",RnAppUtils.roundTo2f(rect.left));

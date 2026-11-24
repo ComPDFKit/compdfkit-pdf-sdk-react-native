@@ -1785,6 +1785,24 @@ const widgets = await page?.getWidgets();
 | CPDFCheckboxWidget    | Checkbox widget                 |
 | CPDFComboboxWidget    | Combo box widget                |
 
+#### Required Form Fields
+
+Each `CPDFWidget` returned by `getWidgets` exposes a read-only `isRequired` property, which reflects the PDF field flag `Ff` bit 2 (`Required`).
+
+| Property   | Type    | Description                                                                                                                                                                                                     |
+| ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| isRequired | boolean | Whether the field is marked as required. Read-only: it is ignored when the widget is written back. Defaults to `false` when the flag is absent or the native SDK cannot read it. Available since 3.2.1. |
+
+PDF viewers do not enforce required fields, so check them in the app before submitting a form. For radio button groups the flag is stored on the parent field, so every button in the group reports `true`; treat the group as filled when any button in it is checked.
+
+```tsx
+const page = pdfReaderRef.current?._pdfDocument.pageAtIndex(0);
+const widgets = await page?.getWidgets();
+const emptyRequiredFields = widgets?.filter(
+  widget => widget.isRequired && widget.type === 'textField' && !(widget as CPDFTextWidget).text,
+);
+```
+
 #### Fill Form Fields
 
 ComPDFKit supports programmatically filling form fields in a PDF document.
@@ -2133,6 +2151,11 @@ await historyManager.redo();
 ### Signature timestamps and long-term validation
 
 `CPDFSignatureWidget.isSigned` is a read-only native state. It is undefined on older bridges; do not interpret undefined as an unsigned field. Intercept `signaturesFields` actions and operate on the selected widget's page and UUID. See the [field-driven example](example/src/features/security/digital_signature/README.md).
+
+Configure annotation action interception through `annotationsConfig` and handle
+intercepted annotations with `CPDFReaderView.onInterceptAnnotationActionCallback`.
+See [annotation configuration](CONFIGURATION.md#annotationsconfig) for the
+supported options, legacy compatibility, and native SDK requirements.
 
 `CPDFSignatureConfig.timestampServerUrl` optionally requests an embedded RFC 3161 timestamp on Android/iOS. Use an absolute HTTP(S) URL. Network or timestamp failures reject; no fallback to an untimestamped signature occurs. `appearance.content` accepts either the existing key/value array or a multiline string.
 

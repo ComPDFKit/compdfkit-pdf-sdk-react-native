@@ -20,10 +20,12 @@ const config = {
   resolver: {
     blockList: modules.map(
       (m) =>
+        // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp, javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal -- Package names and escaped paths come from local configuration.
         new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
     ),
 
     extraNodeModules: modules.reduce((acc, name) => {
+      // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal -- Package names come from local configuration.
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),

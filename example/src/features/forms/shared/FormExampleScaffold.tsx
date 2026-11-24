@@ -31,7 +31,9 @@ type FormRouteName =
   | 'CPDFListFormFieldsExample'
   | 'CPDFCustomFormCreationExample'
   | 'CPDFApiFormCreationModeExample'
-  | 'CPDFFieldSelectionObservationExample';
+  | 'CPDFFieldSelectionObservationExample'
+  | 'CPDFInterceptWidgetActionExample'
+  | 'CPDFCheckRequiredFieldsExample';
 
 type FormExampleRoute = RouteProp<AppStackParamList, FormRouteName>;
 
@@ -46,9 +48,10 @@ type FormExampleScaffoldProps = {
   subtitle: string;
   actions?: ActionButton[];
   configuration?: string;
+  document?: string;
   bottomAccessory?: ReactNode;
   onViewCreated?: (reader: CPDFReaderView) => void;
-  readerViewProps?: Pick<CPDFReaderViewProps, 'onInterceptWidgetActionCallback'>;
+  readerViewProps?: Pick<CPDFReaderViewProps, 'onInterceptWidgetActionCallback' | 'pageIndex'>;
   children?: (context: {
     pdfReader: CPDFReaderView | null;
     pdfReaderRef: React.RefObject<CPDFReaderView | null>;
@@ -60,6 +63,7 @@ export function FormExampleScaffold({
   subtitle,
   actions = [],
   configuration,
+  document,
   bottomAccessory,
   onViewCreated,
   readerViewProps,
@@ -69,7 +73,9 @@ export function FormExampleScaffold({
   const [pdfReader, setPdfReader] = useState<CPDFReaderView | null>(null);
   const navigation = useNavigation<any>();
   const route = useRoute<FormExampleRoute>();
-  const [document] = useState(route.params?.document ?? getDefaultFormDocument());
+  const [initialDocument] = useState(
+    route.params?.document ?? document ?? getDefaultFormDocument(),
+  );
 
   useEffect(() => {
     if (pdfReaderRef.current) {
@@ -129,7 +135,7 @@ export function FormExampleScaffold({
           <View style={styles.viewerWrap}>
             <CPDFReaderView
               ref={pdfReaderRef}
-              document={document}
+              document={initialDocument}
               onIOSClickBackPressed={() => navigation.goBack()}
               onViewCreated={() => {
                 if (pdfReaderRef.current) {

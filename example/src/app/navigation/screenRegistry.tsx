@@ -29,6 +29,7 @@ import TextEditingExampleScreen from '../../features/content_editor/examples/Tex
 import ImageExtractionExampleScreen from '../../features/content_extraction/examples/ImageExtractionExampleScreen';
 import PageTextExtractionExampleScreen from '../../features/content_extraction/examples/PageTextExtractionExampleScreen';
 import ApiFormCreationModeExampleScreen from '../../features/forms/examples/ApiFormCreationModeExampleScreen';
+import CheckRequiredFieldsExampleScreen from '../../features/forms/examples/CheckRequiredFieldsExampleScreen';
 import CreateFormFieldsExampleScreen from '../../features/forms/examples/CreateFormFieldsExampleScreen';
 import CustomFormCreationExampleScreen from '../../features/forms/examples/CustomFormCreationExampleScreen';
 import EditFormDefaultStyleExampleScreen from '../../features/forms/examples/EditFormDefaultStyleExampleScreen';
@@ -371,6 +372,11 @@ export const exampleScreens: ScreenDefinition[] = [
   {
     name: EXAMPLE_ROUTES.formCreateFields,
     component: CreateFormFieldsExampleScreen,
+    options: { headerShown: false },
+  },
+  {
+    name: EXAMPLE_ROUTES.formCheckRequiredFields,
+    component: CheckRequiredFieldsExampleScreen,
     options: { headerShown: false },
   },
   {

@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  s.platforms    = { :ios => [Gem::Version.new("15.0"), Gem::Version.new(min_ios_version_supported)].max.to_s }
   s.source       = { :git => "https://github.com/ComPDFKit/compdfkit-pdf-sdk-react-native.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
